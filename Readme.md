@@ -45,3 +45,9 @@ MAX_RETRIES_AFTER_WAIT=
 # The timeout period in milliseconds for a request to wait for a response (default 20000ms)
 REQUEST_TIMEOUT=
 ```
+# Instalando paquete
+```
+go get github.com/ecsavigne/client_wa_oficial
+ó
+go get github.com/ecsavigne/client_wa_oficial@latest
+```
