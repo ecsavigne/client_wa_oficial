@@ -8,9 +8,10 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"oficial_gin/client_oficial/types"
 	"path"
 	"time"
+
+	"github.com/ecsavigne/client_wa_oficial/types"
 
 	"github.com/gorilla/websocket"
 )

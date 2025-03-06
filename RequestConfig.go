@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"oficial_gin/client_oficial/types"
 	"strings"
+
+	"github.com/ecsavigne/client_wa_oficial/types"
 )
 
 func deafaultHeader(c *Config) {
