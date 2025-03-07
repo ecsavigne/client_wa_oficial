@@ -1,4 +1,4 @@
-# Code of example of how to use client official and handle of the event
+# # Code of example of how to use client official and handle of the event
 ```
 package main
 

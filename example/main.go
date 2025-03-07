@@ -10,6 +10,7 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/types"
 )
 
+// EventHandler is a function that handles events
 func EventHandler(data any) {
 	switch v := data.(type) {
 	case []byte:
@@ -19,10 +20,12 @@ func EventHandler(data any) {
 	}
 }
 
+// main
 func main() {
+	// Create one Client of WhatsApp Official
 	my_client := clientoficial.NewClientWA(clientoficial.Config{
 		EnvFilePath:   "./config_env",
-		WebhookSocket: "wss://webhooks.savcoe-services.com/wa_official/ws1",
+		WebhookSocket: "wss://ws.example.com/ws1",
 		EventHandle:   EventHandler,
 	})
 
