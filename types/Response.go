@@ -34,6 +34,10 @@ func (e *Error) String() string {
 	return val(e)
 }
 
+func (e *Error) Error() string {
+	return fmt.Sprintf("Error is: %s, type: %s, code: %d, ErrorSubcode: %d, FbtraceID: %s", e.Message, e.Type, e.Code, e.ErrorSubcode, e.FbtraceID)
+}
+
 type ContactResponse struct {
 	Input string `json:"input"`
 	WaID  string `json:"wa_id"`

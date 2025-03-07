@@ -28,3 +28,10 @@ const (
 	InteractiveTypeButtonResponse interactiveType = "button"
 	InteractiveTypeList           interactiveType = "list"
 )
+
+// Event types
+type EventType = string
+
+const (
+	EventTypeErrorSocketConnect EventType = "EventErrorSocketConnect"
+)

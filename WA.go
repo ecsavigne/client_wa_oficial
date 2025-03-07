@@ -1,10 +1,11 @@
+//lint:file-ignore ST1005 Ignore capitalized strings error
 package clientoficial
 
 import (
 	"fmt"
-	"os"
 	"path"
 
+	"github.com/ecsavigne/client_wa_oficial/types"
 	"github.com/spf13/viper"
 )
 
@@ -24,7 +25,7 @@ var (
 	REQUEST_TIMEOUT            string
 )
 
-func setEnv(envPath string) {
+func setEnv(envPath string) error {
 	pathDir := path.Dir(envPath)
 	envName := path.Base(envPath)
 	viper.AddConfigPath(pathDir)
@@ -33,7 +34,11 @@ func setEnv(envPath string) {
 	viper.SetConfigName(fmt.Sprintf("%s.env", envName))
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("\033[31mError: No encontrado archivo app.env ni .cobraToml de tipo (toml) en\033[30m %s\n", pathDir)
-		os.Exit(2)
+		return &types.Error{
+			Type:    types.TypeErrorConfig,
+			Code:    types.CodeErrorEnvNotFound,
+			Message: types.MsgErrorEnvNotFound,
+		}
 	} else {
 		// Variables .env API_WHATSAPP
 		WA_BASE_URL = viper.GetString("WA_BASE_URL")
@@ -50,4 +55,5 @@ func setEnv(envPath string) {
 		MAX_RETRIES_AFTER_WAIT = viper.GetString("MAX_RETRIES_AFTER_WAIT")
 		REQUEST_TIMEOUT = viper.GetString("REQUEST_TIMEOUT")
 	}
+	return nil
 }

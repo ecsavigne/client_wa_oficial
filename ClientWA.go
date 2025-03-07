@@ -9,8 +9,10 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 	"time"
 
+	"github.com/ecsavigne/client_wa_oficial/event"
 	"github.com/ecsavigne/client_wa_oficial/types"
 
 	"github.com/gorilla/websocket"
@@ -43,7 +45,30 @@ func (cl *ClientWA) initWebHookSocket() {
 	// Conectar al servidor WebSocket
 	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
 	if err != nil {
-		log.Fatalf("Error connecting to WebSocket error is : %v", err)
+		evt := &event.EventErrorSocketConnect{}
+		switch {
+		case websocket.IsUnexpectedCloseError(err):
+			evt.Error = types.Error{
+				Type:    types.TypeErrorUnexpectedClose,
+				Code:    types.CodeErrorUnexpectedClose,
+				Message: types.MsgErrorUnexpectedClose,
+			}
+		case strings.Contains(err.Error(), "tls: internal error"):
+			evt.Error = types.Error{
+				Type:    types.TypeErrorTlsInternal,
+				Code:    types.CodeErrorTlsInternal,
+				Message: types.MsgErrorTlsInternal,
+			}
+		case strings.Contains(err.Error(), "bad handshake"):
+			evt.Error = types.Error{
+				Type:    types.TypeErrorBadHandshake,
+				Code:    types.CodeErrorBadHandshake,
+				Message: types.MsgErrorBadHandshake,
+			}
+		}
+		cl.EventHandle(evt)
+		return
+		// cl.Error = fmt.Errorf("Error connecting to WebSocket error is : %v", err)
 	}
 	defer conn.Close()
 
@@ -58,16 +83,28 @@ func (cl *ClientWA) initWebHookSocket() {
 	}
 }
 
+// Create one Client of WhatsApp Official return *ClientWA :
+// - If the EnvFilePath or Path in Config.EnvFilePath not found. ClientWA.Error = &types.Error{Type: types.TypeErrorConfig, Code: types.CodeErrorEnvNotFound, Message: types.MsgErrorEnvNotFound}
+// - If occurred error in conection with WebHook Socket emit one event type: event.EventErrorSocketConnect
 func NewClientWA(c ...Config) *ClientWA {
 	if len(c) == 0 {
 		c = append(c, Config{})
 	}
 
-	setEnv(c[0].EnvFilePath)
-
 	cl := &ClientWA{
-		Config: newConfig(c[0]),
+		Config: &c[0],
 	}
+	err := setEnv(c[0].EnvFilePath)
+	if err != nil {
+		cl.Error = err
+		return cl
+	}
+
+	cl.Config = newConfig(c[0])
+	if cl.Error != nil {
+		return cl
+	}
+
 	if c[0].WebhookSocket != "" && c[0].EventHandle != nil {
 		go cl.initWebHookSocket()
 	}
@@ -76,29 +113,32 @@ func NewClientWA(c ...Config) *ClientWA {
 }
 
 func newConfig(c Config) *Config {
-	var (
-		log string
-	)
 	c.Error = nil
 	if WA_BASE_URL == "" {
-		log = "BaseUrl (WA_BASE_URL) is empty in .env file"
-		fmt.Println(log)
-		c.Error = fmt.Errorf("%s", log)
-		panic(c.Error)
+		c.Error = &types.Error{
+			Type:    types.TypeErrorBaseUrlEmpty,
+			Code:    types.CodeErrorBadHandshake,
+			Message: types.MsgErrorBaseUrlEmpty,
+		}
+		return &c
 	}
 
 	if CLOUD_API_VERSION == "" {
-		log = "Cloud API Version (CLOUD_API_VERSION) is empty in .env file"
-		fmt.Println(log)
-		c.Error = fmt.Errorf("%s", log)
-		panic(c.Error)
+		c.Error = &types.Error{
+			Type:    types.TypeErrorApiVersionEmpty,
+			Code:    types.CodeErrorApiVersionEmpty,
+			Message: types.MsgErrorApiVersionEmpty,
+		}
+		return &c
 	}
 
 	if WA_PHONE_NUMBER_ID == "" {
-		log = "WA Phone number ID (WA_PHONE_NUMBER_ID) is empty in .env file"
-		fmt.Println(log)
-		c.Error = fmt.Errorf("%s", log)
-		panic(c.Error)
+		c.Error = &types.Error{
+			Type:    types.TypeErrorPhoneIdEmpty,
+			Code:    types.CodeErrorPhoneIdEmpty,
+			Message: types.MsgErrorPhoneIdEmpty,
+		}
+		return &c
 	}
 
 	c.path = path.Join(CLOUD_API_VERSION, WA_PHONE_NUMBER_ID)
