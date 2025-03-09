@@ -574,11 +574,18 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeAudio, m.GetType()),
 		}
 	} else {
-		if m.(*types.MessageAudio).Link != "" || m.(*types.MessageAudio).Id == "" {
+		if m.(*types.MessageAudio).Link != "" {
 			return &types.Error{
 				Type:    types.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message.id expect and Message.link not expect, but get Message.id: '%s' and Message.link: '%s'", m.(*types.MessageAudio).Id, m.(*types.MessageAudio).Link),
+				Message: "Message.link can't be exist",
+			}
+		}
+		if m.(*types.MessageAudio).Id == "" {
+			return &types.Error{
+				Type:    types.ResponseError,
+				Code:    401,
+				Message: "Message.id can't be empty",
 			}
 		}
 	}
@@ -610,7 +617,7 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeImage, m.GetType()),
 		}
 	} else {
-		if m.(*types.MessageImage).Link != "" && m.(*types.MessageImage).Id == "" {
+		if m.(*types.MessageImage).Link != "" && m.(*types.MessageImage).Id != "" {
 			return &types.Error{
 				Type:    types.ResponseError,
 				Code:    401,
@@ -646,7 +653,7 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeVideo, m.GetType()),
 		}
 	} else {
-		if m.(*types.MessageVideo).Link != "" && m.(*types.MessageVideo).Id == "" {
+		if m.(*types.MessageVideo).Link != "" && m.(*types.MessageVideo).Id != "" {
 			return &types.Error{
 				Type:    types.ResponseError,
 				Code:    401,
@@ -682,7 +689,7 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeDocument, m.GetType()),
 		}
 	} else {
-		if m.(*types.MessageDocument).Link != "" && m.(*types.MessageDocument).Id == "" {
+		if m.(*types.MessageDocument).Link != "" && m.(*types.MessageDocument).Id != "" {
 			return &types.Error{
 				Type:    types.ResponseError,
 				Code:    401,
@@ -718,11 +725,18 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeSticker, m.GetType()),
 		}
 	} else {
-		if m.(*types.MessageSticker).Link != "" || m.(*types.MessageSticker).Id == "" {
+		if m.(*types.MessageSticker).Link != "" {
 			return &types.Error{
 				Type:    types.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message.id expect and Message.link not expect, but get Message.id: '%s' and Message.link: '%s'", m.(*types.MessageAudio).Id, m.(*types.MessageAudio).Link),
+				Message: "Message.link can't be exist",
+			}
+		}
+		if m.(*types.MessageSticker).Id == "" {
+			return &types.Error{
+				Type:    types.ResponseError,
+				Code:    401,
+				Message: "Message.id can't be empty",
 			}
 		}
 	}
