@@ -17,7 +17,7 @@ type ResponserRequest interface {
 
 type Message struct {
 	ID            string `json:"id"`
-	MessageStatus string `json:"message_status"`
+	MessageStatus string `json:"message_status,omitempty"`
 }
 
 type Error struct {
