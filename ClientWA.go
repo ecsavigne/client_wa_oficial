@@ -573,6 +573,14 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeAudio, m.GetType()),
 		}
+	} else {
+		if m.(*types.MessageAudio).Link != "" || m.(*types.MessageAudio).Id == "" {
+			return &types.Error{
+				Type:    types.ResponseError,
+				Code:    401,
+				Message: fmt.Sprintf("Message.id expect and Message.link not expect, but get Message.id: '%s' and Message.link: '%s'", m.(*types.MessageAudio).Id, m.(*types.MessageAudio).Link),
+			}
+		}
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
@@ -601,6 +609,14 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeImage, m.GetType()),
 		}
+	} else {
+		if m.(*types.MessageImage).Link != "" && m.(*types.MessageImage).Id == "" {
+			return &types.Error{
+				Type:    types.ResponseError,
+				Code:    401,
+				Message: "Expect Message.id or Message.link, but not both",
+			}
+		}
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
@@ -628,6 +644,14 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 			Type:    types.ResponseError,
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeVideo, m.GetType()),
+		}
+	} else {
+		if m.(*types.MessageVideo).Link != "" && m.(*types.MessageVideo).Id == "" {
+			return &types.Error{
+				Type:    types.ResponseError,
+				Code:    401,
+				Message: "Expect Message.id or Message.link, but not both",
+			}
 		}
 	}
 
