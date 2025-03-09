@@ -538,11 +538,11 @@ func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 			Message: fmt.Sprintf("Message expect '%s', but get '%s'", "response", m.GetType()),
 		}
 	} else {
-		if m.(types.MessageResponse).Type != types.MessageTypeText {
+		if m.(*types.MessageResponse).Type != types.MessageTypeText {
 			return &types.Error{
 				Type:    types.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeText, m.(types.MessageResponse).Type),
+				Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeText, m.(*types.MessageResponse).Type),
 			}
 		}
 	}
