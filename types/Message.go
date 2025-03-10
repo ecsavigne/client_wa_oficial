@@ -9,11 +9,15 @@ import (
 type Messager interface {
 	GetType() string
 	ToJSONReader() *strings.Reader
+	GetMessagingProduct() string
+	GetMessageLink() string
 }
 
 type messagerKernel struct {
-	Type string
-	m    Messager
+	Type             string
+	Link             string
+	MessagingProduct string
+	m                Messager
 }
 
 func (m *messagerKernel) GetType() string {
@@ -31,4 +35,12 @@ func toJonReader(m Messager) *strings.Reader {
 
 func (m *messagerKernel) ToJSONReader() *strings.Reader {
 	return toJonReader(m.m)
+}
+
+func (m *messagerKernel) GetMessagingProduct() string {
+	return m.MessagingProduct
+}
+
+func (m *messagerKernel) GetMessageLink() string {
+	return m.Link
 }

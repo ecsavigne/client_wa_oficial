@@ -8,8 +8,10 @@ type MessageImage struct {
 
 func NewMessageImage(m MessageImage) Messager {
 	mk := &messagerKernel{
-		Type: MessageTypeImage,
-		m:    m,
+		Type:             MessageTypeImage,
+		m:                m,
+		Link:             m.Link,
+		MessagingProduct: m.MessagingProduct,
 	}
 
 	m.Messager = mk

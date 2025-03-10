@@ -47,6 +47,7 @@ type Success struct {
 	MessagingProduct string            `json:"messaging_product"`
 	Contacts         []ContactResponse `json:"contacts"`
 	Messages         []Message         `json:"messages"`
+	Id               string            `json:"id,omitempty"`
 }
 
 func (*Success) GetType() string { return ResponseSuccess }

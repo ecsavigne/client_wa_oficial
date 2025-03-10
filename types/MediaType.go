@@ -29,3 +29,13 @@ type Media struct {
 	*/
 	Provider string `json:"provider,omitempty"`
 }
+
+type MediaType = string
+
+const (
+	AUDIO    MediaType = "audio"
+	DOCUMENT MediaType = "document"
+	IMAGE    MediaType = "image"
+	STICKER  MediaType = "sticker"
+	VIDEO    MediaType = "video"
+)

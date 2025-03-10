@@ -8,8 +8,10 @@ type MessageVideo struct {
 
 func NewMessageVideo(m MessageVideo) Messager {
 	mk := &messagerKernel{
-		Type: MessageTypeVideo,
-		m:    m,
+		Type:             MessageTypeVideo,
+		m:                m,
+		Link:             m.Link,
+		MessagingProduct: m.MessagingProduct,
 	}
 
 	m.Messager = mk

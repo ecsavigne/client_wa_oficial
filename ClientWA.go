@@ -159,7 +159,12 @@ func newConfig(c Config) *Config {
 }
 
 func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager) (*types.ResponseRequest, error) {
-	deafaultRequest(methoth, ePoint, c.Config, msg)
+	if msg.GetMessageLink() != "" {
+		multipartRequest(methoth, ePoint, c.Config, msg)
+	} else {
+		deafaultRequest(methoth, ePoint, c.Config, msg)
+	}
+
 	if c.Config.Error != nil {
 		log := fmt.Sprintf("Error in function makeRequest creting request of ClientWA. error is: %s", c.Config.Error.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
@@ -626,9 +631,21 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 		}
 	}
 
+	if m.(*types.MessageImage).Link != "" {
+		resp, e := c.makeRequest(http.MethodPost, "/media", m)
+		if e != nil {
+			log = fmt.Sprintln("Error en SendImage request of ClientWA. error is: ", e.Error())
+			fmt.Println(log)
+			panic(log)
+		} else if resp.Error != nil {
+			return resp.Error
+		}
+		m.(*types.MessageImage).Id = resp.Id
+	}
+
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendIma request of ClientWA. error is: ", e.Error())
+		log = fmt.Sprintln("Error en SendImage request of ClientWA. error is: ", e.Error())
 		fmt.Println(log)
 		panic(log)
 	}
@@ -811,4 +828,12 @@ func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 	}
 
 	return r
+}
+
+func (c *ClientWA) UploadFile(mt types.MediaType) {
+
+}
+
+func (c *ClientWA) DownloadFile() {
+
 }

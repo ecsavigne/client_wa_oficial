@@ -15,8 +15,10 @@ type MessageSticker struct {
 
 func NewMessageSticker(m MessageSticker) Messager {
 	mk := &messagerKernel{
-		Type: MessageTypeSticker,
-		m:    m,
+		Type:             MessageTypeSticker,
+		m:                m,
+		Link:             m.Link,
+		MessagingProduct: m.MessagingProduct,
 	}
 
 	m.Messager = mk
