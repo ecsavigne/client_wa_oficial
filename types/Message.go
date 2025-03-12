@@ -11,6 +11,8 @@ type Messager interface {
 	ToJSONReader() *strings.Reader
 	GetMessagingProduct() string
 	GetMessageLink() string
+	SetLink(string)
+	SetId(string)
 }
 
 type messagerKernel struct {
@@ -42,5 +44,23 @@ func (m *messagerKernel) GetMessagingProduct() string {
 }
 
 func (m *messagerKernel) GetMessageLink() string {
-	return m.Link
+	if v, ok := m.m.(MessageImage); ok {
+		return v.Media.Link
+	}
+	//return m.Link
+	return ""
+}
+
+func (m *messagerKernel) SetLink(link string) {
+	if v, ok := m.m.(MessageImage); ok {
+		v.Media.Link = link
+		m.m = v
+	}
+}
+
+func (m *messagerKernel) SetId(id string) {
+	if v, ok := m.m.(MessageImage); ok {
+		v.Media.Id = id
+		m.m = v
+	}
 }
