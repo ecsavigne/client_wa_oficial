@@ -47,7 +47,23 @@ func (m *messagerKernel) GetMessageLink() string {
 	if v, ok := m.m.(MessageImage); ok {
 		return v.Media.Link
 	}
-	//return m.Link
+
+	if v, ok := m.m.(MessageVideo); ok {
+		return v.Media.Link
+	}
+
+	if v, ok := m.m.(MessageAudio); ok {
+		return v.Media.Link
+	}
+
+	if v, ok := m.m.(MessageDocument); ok {
+		return v.Media.Link
+	}
+
+	if v, ok := m.m.(MessageSticker); ok {
+		return v.Media.Link
+	}
+
 	return ""
 }
 
@@ -56,10 +72,50 @@ func (m *messagerKernel) SetLink(link string) {
 		v.Media.Link = link
 		m.m = v
 	}
+
+	if v, ok := m.m.(MessageVideo); ok {
+		v.Media.Link = link
+		m.m = v
+	}
+
+	if v, ok := m.m.(MessageAudio); ok {
+		v.Media.Link = link
+		m.m = v
+	}
+
+	if v, ok := m.m.(MessageDocument); ok {
+		v.Media.Link = link
+		m.m = v
+	}
+
+	if v, ok := m.m.(MessageSticker); ok {
+		v.Media.Link = link
+		m.m = v
+	}
 }
 
 func (m *messagerKernel) SetId(id string) {
 	if v, ok := m.m.(MessageImage); ok {
+		v.Media.Id = id
+		m.m = v
+	}
+
+	if v, ok := m.m.(MessageVideo); ok {
+		v.Media.Id = id
+		m.m = v
+	}
+
+	if v, ok := m.m.(MessageAudio); ok {
+		v.Media.Id = id
+		m.m = v
+	}
+
+	if v, ok := m.m.(MessageDocument); ok {
+		v.Media.Id = id
+		m.m = v
+	}
+
+	if v, ok := m.m.(MessageSticker); ok {
 		v.Media.Id = id
 		m.m = v
 	}

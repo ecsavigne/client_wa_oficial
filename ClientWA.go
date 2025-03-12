@@ -640,7 +640,8 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 		} else if resp.Error != nil {
 			return resp.Error
 		}
-		m.(*types.MessageImage).Id = resp.Id
+		m.(*types.MessageImage).SetId(resp.Id)
+		m.(*types.MessageImage).SetLink("")
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
