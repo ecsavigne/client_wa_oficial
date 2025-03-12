@@ -61,7 +61,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 
 	resp, err := http.Get(msg.GetMessageLink())
 	if err != nil {
-		c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", e.Error())
+		c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", err.Error())
 		return nil, c.Error
 	}
 	defer resp.Body.Close()
