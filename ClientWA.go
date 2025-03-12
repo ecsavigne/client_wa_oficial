@@ -595,6 +595,19 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 		}
 	}
 
+	if m.(*types.MessageAudio).Link != "" {
+		resp, e := c.makeRequest(http.MethodPost, "/media", m)
+		if e != nil {
+			log = fmt.Sprintln("Error en SendAudioMessage request of ClientWA. error is: ", e.Error())
+			fmt.Println(log)
+			panic(log)
+		} else if resp.Error != nil {
+			return resp.Error
+		}
+		m.(*types.MessageAudio).SetId(resp.Id)
+		m.(*types.MessageAudio).SetLink("")
+	}
+
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendAudioMessage request of ClientWA. error is: ", e.Error())
@@ -680,6 +693,19 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 		}
 	}
 
+	if m.(*types.MessageVideo).Link != "" {
+		resp, e := c.makeRequest(http.MethodPost, "/media", m)
+		if e != nil {
+			log = fmt.Sprintln("Error en SendVideoMessage request of ClientWA. error is: ", e.Error())
+			fmt.Println(log)
+			panic(log)
+		} else if resp.Error != nil {
+			return resp.Error
+		}
+		m.(*types.MessageVideo).SetId(resp.Id)
+		m.(*types.MessageVideo).SetLink("")
+	}
+
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendVideoMessage request of ClientWA. error is: ", e.Error())
@@ -714,6 +740,19 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 				Message: "Expect Message.id or Message.link, but not both",
 			}
 		}
+	}
+
+	if m.(*types.MessageDocument).Link != "" {
+		resp, e := c.makeRequest(http.MethodPost, "/media", m)
+		if e != nil {
+			log = fmt.Sprintln("Error en SendDocument request of ClientWA. error is: ", e.Error())
+			fmt.Println(log)
+			panic(log)
+		} else if resp.Error != nil {
+			return resp.Error
+		}
+		m.(*types.MessageDocument).SetId(resp.Id)
+		m.(*types.MessageDocument).SetLink("")
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
@@ -757,6 +796,19 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 				Message: "Message.id can't be empty",
 			}
 		}
+	}
+
+	if m.(*types.MessageSticker).Link != "" {
+		resp, e := c.makeRequest(http.MethodPost, "/media", m)
+		if e != nil {
+			log = fmt.Sprintln("Error en SendStMessageSticker request of ClientWA. error is: ", e.Error())
+			fmt.Println(log)
+			panic(log)
+		} else if resp.Error != nil {
+			return resp.Error
+		}
+		m.(*types.MessageSticker).SetId(resp.Id)
+		m.(*types.MessageSticker).SetLink("")
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
