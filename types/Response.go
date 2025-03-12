@@ -45,11 +45,18 @@ type ContactResponse struct {
 	WaID  string `json:"wa_id"`
 }
 
+type MediaInfo struct {
+	Type     string `json:"type,omitempty"`
+	ID       string `json:"id,omitempty"`
+	UrlMedia string `json:"url_media,omitempty"`
+}
+
 type Success struct {
 	MessagingProduct string            `json:"messaging_product"`
 	Contacts         []ContactResponse `json:"contacts"`
 	Messages         []Message         `json:"messages"`
 	Id               string            `json:"id,omitempty"`
+	MediaInfo        `json:"media_info"`
 }
 
 func (*Success) GetType() string { return ResponseSuccess }

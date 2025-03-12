@@ -11,6 +11,7 @@ type Messager interface {
 	ToJSONReader() *strings.Reader
 	GetMessagingProduct() string
 	GetMessageLink() string
+	GetMessageId() string
 	SetLink(string)
 	SetId(string)
 }
@@ -62,6 +63,30 @@ func (m *messagerKernel) GetMessageLink() string {
 
 	if v, ok := m.m.(MessageSticker); ok {
 		return v.Media.Link
+	}
+
+	return ""
+}
+
+func (m *messagerKernel) GetMessageId() string {
+	if v, ok := m.m.(MessageImage); ok {
+		return v.Media.Id
+	}
+
+	if v, ok := m.m.(MessageVideo); ok {
+		return v.Media.Id
+	}
+
+	if v, ok := m.m.(MessageAudio); ok {
+		return v.Media.Id
+	}
+
+	if v, ok := m.m.(MessageDocument); ok {
+		return v.Media.Id
+	}
+
+	if v, ok := m.m.(MessageSticker); ok {
+		return v.Media.Id
 	}
 
 	return ""
