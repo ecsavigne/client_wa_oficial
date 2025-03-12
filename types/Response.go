@@ -5,9 +5,11 @@ import (
 	"fmt"
 )
 
+type ResponseType = string
+
 const (
-	ResponseSuccess = "response_success"
-	ResponseError   = "response_error"
+	ResponseSuccess ResponseType = "response_success"
+	ResponseError   ResponseType = "response_error"
 )
 
 type ResponserRequest interface {
