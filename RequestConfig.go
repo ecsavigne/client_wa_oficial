@@ -2,11 +2,13 @@
 package clientoficial
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"mime"
 	"mime/multipart"
 	"net/http"
+	"net/textproto"
 	"net/url"
 	"path"
 	"strings"
@@ -19,9 +21,9 @@ func deafaultHeader(c *Config) {
 	c.request.Header.Set("Content-Type", "application/json")
 }
 
-func multiparHeader(c *Config, m *multipart.Writer) {
+func multiparHeader(c *Config, contentType string) {
 	c.request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
-	c.request.Header.Set("Content-Type", m.FormDataContentType())
+	c.request.Header.Set("Content-Type", contentType)
 }
 
 func deafaultRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
@@ -37,7 +39,6 @@ func deafaultRequest(methoth string, ePoint string, c *Config, msg types.Message
 
 	urlPath, _ = url.Parse(c.path + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
-
 	c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
 	if e != nil {
 		c.Error = fmt.Errorf("Error in deafaultRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
@@ -50,103 +51,74 @@ func deafaultRequest(methoth string, ePoint string, c *Config, msg types.Message
 func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
 	var e error
 	var urlPath *url.URL
-
+	fmt.Println("ePoint: ", ePoint)
 	if !strings.HasPrefix(ePoint, "/") {
-		var log = "Error in deafultRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
+		var log = "Error in multipartRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
 		fmt.Println(log)
 		c.Error = fmt.Errorf("%s", log)
 		panic(c.Error)
 	}
 
+	resp, err := http.Get(msg.GetMessageLink())
+	if err != nil {
+		c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", e.Error())
+		return nil, c.Error
+	}
+	defer resp.Body.Close()
+
+	filename, ext, contentType := "", "", ""
+
+	contentType = resp.Header.Get("Content-Type")
+
+	// get file extension
+	if filename == "" {
+		filename = "tmp"
+		exts, err := mime.ExtensionsByType(contentType)
+		if err == nil && len(exts) > 0 {
+			ext = strings.ToLower(exts[len(exts)-1])
+		}
+	} else {
+		ext = path.Ext(filename)
+	}
+
+	nameFile := filename + ext
+
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+
+	if err := writer.WriteField("messaging_product", msg.GetMessagingProduct()); err != nil {
+		c.Error = fmt.Errorf("Error in multiparRequest when write messaging_product. Error is: %s", err.Error())
+		return nil, c.Error
+	}
+
+	if err := writer.WriteField("type", contentType); err != nil {
+		c.Error = fmt.Errorf("Error in multiparRequest when write type. Error is: %s", err.Error())
+		return nil, c.Error
+	}
+
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "file", nameFile))
+	h.Set("Content-Type", contentType)
+
+	part, err := writer.CreatePart(h)
+	if err != nil {
+		return nil, nil
+	}
+
+	if _, err = io.Copy(part, resp.Body); err != nil {
+		c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())
+		return nil, c.Error
+	}
+
 	urlPath, _ = url.Parse(c.path + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
-
-	pr, pw := io.Pipe()
-	writer := multipart.NewWriter(pw)
-	go func() {
-		defer pw.Close()
-
-		// Obtener informacion del archivo
-		resp, err := http.Get(msg.GetMessageLink())
-		if err != nil {
-			pw.CloseWithError(err)
-			c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", e.Error())
-			return
-		}
-		defer resp.Body.Close()
-
-		// get name
-		filename, ext := "", ""
-		if disp := resp.Header.Get("Content-Disposition"); disp != "" {
-			_, params, err := mime.ParseMediaType(disp)
-			if err == nil {
-				filename = params["filename"]
-			}
-		}
-
-		// get file extension
-		if filename == "" {
-			filename = "tmp"
-			// Obtener typeMime del archivo
-			contentType := resp.Header.Get("Content-Type")
-			exts, err := mime.ExtensionsByType(contentType)
-			if err == nil && len(exts) > 0 {
-				ext = strings.ToLower(exts[0])
-			}
-		} else {
-			ext = path.Ext(filename)
-		}
-
-		// Crea o abre el archivo donde se almacenará el contenido
-		nameFile := filename + "." + ext
-		// file, err := os.Create(nameFile)
-		// if err != nil {
-		// 	log.Fatalf("Error in creating file: %v", err)
-		// }
-		// defer file.Close()
-
-		// // Copy to path local
-		// if _, err = io.Copy(file, resp.Body); err != nil {
-		// 	pw.CloseWithError(err)
-		// 	return
-		// }
-
-		if err := writer.WriteField("messaging_product", msg.GetMessagingProduct()); err != nil {
-			pw.CloseWithError(err)
-			c.Error = fmt.Errorf("Error in multiparRequest when write messaging_product. Error is: %s", e.Error())
-			return
-		}
-
-		// Crear el campo del archivo en el formulario
-		part, err := writer.CreateFormFile("file", nameFile)
-		if err != nil {
-			pw.CloseWithError(err)
-			c.Error = fmt.Errorf("Error in multiparRequest when create form file. Error is: %s", e.Error())
-			return
-		}
-
-		// Copiar el contenido del archivo al formulario
-		// if _, err = io.Copy(part, file); err != nil {
-		if _, err = io.Copy(part, resp.Body); err != nil {
-			pw.CloseWithError(err)
-			c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", e.Error())
-			return
-		}
-
-		// close body multipart
-		if err = writer.Close(); err != nil {
-			pw.CloseWithError(err)
-			c.Error = fmt.Errorf("Error in multiparRequest when close body multipart. Error is: %s", e.Error())
-			return
-		}
-	}()
-
-	c.request, e = http.NewRequest(methoth, urlPath.String(), pr)
+	c.request, e = http.NewRequest(methoth, urlPath.String(), payload)
 	if e != nil {
 		c.Error = fmt.Errorf("Error in multipartRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
 		return nil, c.Error
 	}
 
-	multiparHeader(c, writer)
+	multiparHeader(c, writer.FormDataContentType())
 	return c.request, nil
+
 }
