@@ -6,7 +6,7 @@ type MessageImage struct {
 	Media `json:"image"`
 }
 
-func NewMessageImage(m MessageImage) Messager {
+func NewMessageImage(m *MessageImage) Messager {
 	mk := &messagerKernel{
 		Type:             MessageTypeImage,
 		m:                m,
@@ -15,5 +15,5 @@ func NewMessageImage(m MessageImage) Messager {
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

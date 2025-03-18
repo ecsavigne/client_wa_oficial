@@ -2,8 +2,6 @@
 package clientoficial
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -159,7 +157,7 @@ func newConfig(c Config) *Config {
 	return &c
 }
 
-func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager) (*types.ResponseRequest, error) {
+func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager) (types.ResponserRequest, error) {
 	if msg.GetMessageLink() != "" {
 		multipartRequest(methoth, ePoint, c.Config, msg)
 	} else {
@@ -169,7 +167,6 @@ func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager
 	if c.Config.Error != nil {
 		log := fmt.Sprintf("Error in function makeRequest creting request of ClientWA. error is: %s", c.Config.Error.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
-		fmt.Println(log)
 		return nil, c.Config.Error
 	}
 
@@ -177,26 +174,24 @@ func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager
 	if e != nil {
 		log := fmt.Sprintf("Error in function makeRequest executing request of ClientWA. Message type: %s. error is: %s", msg.GetType(), e.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
-		fmt.Println(log)
 		return nil, c.Config.Error
 	}
 	defer res.Body.Close()
 
-	var responseReq *types.ResponseRequest
+	var responseReq types.ResponserRequest
 	bodyResponse, e := io.ReadAll(res.Body)
 	if e != nil {
 		log := fmt.Sprintf("Error in function makeRequest reading response of ClientWA. Message type: %s. error is: %s", msg.GetType(), e.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
-		fmt.Println(log)
 		return nil, c.Config.Error
 	}
 
-	err := json.Unmarshal(bodyResponse, &responseReq)
-	if err != nil {
-		log := fmt.Sprintf("Error in function makeRequest creating responseReq of ClientWA. Message type: %s. error is: %s", msg.GetType(), err.Error())
-		fmt.Println(log)
+	responseReq = types.JsonWrapperResponseRequest(bodyResponse)
+	if responseReq.GetResponseError() != nil {
+		log := fmt.Sprintf("Error in function makeRequest Unmarshal response. Message type: %s. error is: %s", msg.GetType(), responseReq.GetResponseError().Error())
+		responseReq.(*types.Error).Message = log
 		c.Config.Error = fmt.Errorf("%s", log)
-		return nil, c.Config.Error
+		return responseReq.GetResponseError(), c.Config.Error
 	}
 
 	return responseReq, nil
@@ -212,7 +207,6 @@ func validTypeInteractive(msg types.MessageInteractive, interactiveType string) 
 
 func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeTemplate) {
 		return &types.Error{
@@ -225,23 +219,15 @@ func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendTemplate request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 // SendTextMessage send a text message
 func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeText) {
 		return &types.Error{
@@ -254,22 +240,14 @@ func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendText request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeReaction) {
 		return &types.Error{
@@ -282,22 +260,14 @@ func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendReaction request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -316,22 +286,14 @@ func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendInteractiveList request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -350,22 +312,14 @@ func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.Respons
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendInteractiveButtonResponse request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -384,22 +338,14 @@ func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserReq
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendInteractiveButtonUrl request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -418,22 +364,14 @@ func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRe
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendInteractiveMsgProcess request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -452,22 +390,14 @@ func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRe
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendInteractiveOneProduct request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -486,22 +416,14 @@ func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.Responser
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendInteractiveMultiProduct request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -520,22 +442,14 @@ func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserReque
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendInteractiveCatalog request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, "response") {
 		return &types.Error{
@@ -556,22 +470,26 @@ func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendResponseMsg request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
+	return resp
+}
+
+func (c *ClientWA) validLinAndId(m types.Messager) types.ResponserRequest {
+	if m.GetMessageLink() != "" && m.GetMessageId() != "" {
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    401,
+			Message: "Expect Message.id or Message.link, but not both",
+		}
 	}
 
-	return r
+	return nil
 }
 
 func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeAudio) {
 		return &types.Error{
@@ -579,63 +497,32 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeAudio, m.GetType()),
 		}
-	} else {
-		if m.(*types.MessageAudio).Link != "" {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: "Message.link can't be exist",
-			}
-		}
-		if m.(*types.MessageAudio).Id == "" {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: "Message.id can't be empty",
-			}
-		}
+	} else if r := c.validLinAndId(m); r != nil {
+		return r
 	}
 
-	if m.(*types.MessageAudio).Link != "" {
-		// resp, e := c.makeRequest(http.MethodPost, "/media", m)
-		// if e != nil {
-		// 	log = fmt.Sprintln("Error en SendAudioMessage request of ClientWA. error is: ", e.Error())
-		// 	fmt.Println(log)
-		// 	panic(log)
-		// } else if resp.Error != nil {
-		// 	return resp.Error
-		// }
-		// m.(*types.MessageAudio).SetId(resp.Id)
-		// m.(*types.MessageAudio).SetLink("")
-		err := c.UploadFile(m, types.MessageTypeAudio)
-		if err != nil {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: err.Error(),
-			}
+	if m.GetMessageLink() != "" {
+		r := c.UploadFile(m, types.AUDIO)
+		if r != nil && r.GetResponseError() != nil {
+			return r.GetResponseError()
 		}
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendAudioMessage request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
-		panic(log)
+		log = fmt.Sprintln("Error en SendAudio request of ClientWA. error is: ", e.Error())
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    401,
+			Message: log,
+		}
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeImage) {
 		return &types.Error{
@@ -643,56 +530,33 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeImage, m.GetType()),
 		}
-	} else {
-		if m.(*types.MessageImage).Link != "" && m.(*types.MessageImage).Id != "" {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: "Expect Message.id or Message.link, but not both",
-			}
-		}
+	} else if r := c.validLinAndId(m); r != nil {
+		return r
 	}
 
-	if m.(*types.MessageImage).Link != "" {
-		// resp, e := c.makeRequest(http.MethodPost, "/media", m)
-		// if e != nil {
-		// 	log = fmt.Sprintln("Error en SendImage request of ClientWA. error is: ", e.Error())
-		// 	fmt.Println(log)
-		// 	panic(log)
-		// } else if resp.Error != nil {
-		// 	return resp.Error
-		// }
-		// m.(*types.MessageImage).SetId(resp.Id)
-		// m.(*types.MessageImage).SetLink("")
-		err := c.UploadFile(m, types.MessageTypeImage)
-		if err != nil {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: err.Error(),
-			}
+	if m.GetMessageLink() != "" {
+		r := c.UploadFile(m, types.IMAGE)
+		if r != nil && r.GetResponseError() != nil {
+			return r.GetResponseError()
 		}
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendImage request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
-		panic(log)
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    401,
+			Message: log,
+		}
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
+	// var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeVideo) {
 		return &types.Error{
@@ -700,56 +564,32 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeVideo, m.GetType()),
 		}
-	} else {
-		if m.(*types.MessageVideo).Link != "" && m.(*types.MessageVideo).Id != "" {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: "Expect Message.id or Message.link, but not both",
-			}
-		}
+	} else if r := c.validLinAndId(m); r != nil {
+		return r
 	}
 
-	if m.(*types.MessageVideo).Link != "" {
-		// resp, e := c.makeRequest(http.MethodPost, "/media", m)
-		// if e != nil {
-		// 	log = fmt.Sprintln("Error en SendVideoMessage request of ClientWA. error is: ", e.Error())
-		// 	fmt.Println(log)
-		// 	panic(log)
-		// } else if resp.Error != nil {
-		// 	return resp.Error
-		// }
-		// m.(*types.MessageVideo).SetId(resp.Id)
-		// m.(*types.MessageVideo).SetLink("")
-		err := c.UploadFile(m, types.MessageTypeVideo)
-		if err != nil {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: err.Error(),
-			}
+	if m.GetMessageLink() != "" {
+		r := c.UploadFile(m, types.VIDEO)
+		if r != nil && r.GetResponseError() != nil {
+			return r.GetResponseError()
 		}
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendVideoMessage request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
-		panic(log)
+		log = fmt.Sprintln("Error en SendVideo request of ClientWA. error is: ", e.Error())
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    401,
+			Message: log,
+		}
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeDocument) {
 		return &types.Error{
@@ -757,56 +597,32 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeDocument, m.GetType()),
 		}
-	} else {
-		if m.(*types.MessageDocument).Link != "" && m.(*types.MessageDocument).Id != "" {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: "Expect Message.id or Message.link, but not both",
-			}
-		}
+	} else if r := c.validLinAndId(m); r != nil {
+		return r
 	}
 
-	if m.(*types.MessageDocument).Link != "" {
-		// resp, e := c.makeRequest(http.MethodPost, "/media", m)
-		// if e != nil {
-		// 	log = fmt.Sprintln("Error en SendDocument request of ClientWA. error is: ", e.Error())
-		// 	fmt.Println(log)
-		// 	panic(log)
-		// } else if resp.Error != nil {
-		// 	return resp.Error
-		// }
-		// m.(*types.MessageDocument).SetId(resp.Id)
-		// m.(*types.MessageDocument).SetLink("")
-		err := c.UploadFile(m, types.MessageTypeDocument)
-		if err != nil {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: err.Error(),
-			}
+	if m.GetMessageLink() != "" {
+		r := c.UploadFile(m, types.DOCUMENT)
+		if r != nil && r.GetResponseError() != nil {
+			return r.GetResponseError()
 		}
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendDocumentMessage request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
-		panic(log)
+		log = fmt.Sprintln("Error en SendDocument request of ClientWA. error is: ", e.Error())
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    401,
+			Message: log,
+		}
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeSticker) {
 		return &types.Error{
@@ -814,63 +630,32 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 			Code:    401,
 			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeSticker, m.GetType()),
 		}
-	} else {
-		if m.(*types.MessageSticker).Link != "" {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: "Message.link can't be exist",
-			}
-		}
-		if m.(*types.MessageSticker).Id == "" {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: "Message.id can't be empty",
-			}
-		}
+	} else if r := c.validLinAndId(m); r != nil {
+		return r
 	}
 
-	if m.(*types.MessageSticker).Link != "" {
-		// resp, e := c.makeRequest(http.MethodPost, "/media", m)
-		// if e != nil {
-		// 	log = fmt.Sprintln("Error en SendStMessageSticker request of ClientWA. error is: ", e.Error())
-		// 	fmt.Println(log)
-		// 	panic(log)
-		// } else if resp.Error != nil {
-		// 	return resp.Error
-		// }
-		// m.(*types.MessageSticker).SetId(resp.Id)
-		// m.(*types.MessageSticker).SetLink("")
-		err := c.UploadFile(m, types.MessageTypeSticker)
-		if err != nil {
-			return &types.Error{
-				Type:    types.ResponseError,
-				Code:    401,
-				Message: err.Error(),
-			}
+	if m.GetMessageLink() != "" {
+		r := c.UploadFile(m, types.STICKER)
+		if r != nil && r.GetResponseError() != nil {
+			return r.GetResponseError()
 		}
 	}
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendStickerMessage request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
-		panic(log)
+		log = fmt.Sprintln("Error en SendSticker request of ClientWA. error is: ", e.Error())
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    401,
+			Message: log,
+		}
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeLocation) {
 		return &types.Error{
@@ -883,22 +668,14 @@ func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendLocationMessage request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
 func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	var r types.ResponserRequest
 
 	if !validTypeMsg(m, types.MessageTypeContact) {
 		return &types.Error{
@@ -911,57 +688,39 @@ func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		log = fmt.Sprintln("Error en SendContactMessage request of ClientWA. error is: ", e.Error())
-		fmt.Println(log)
 		panic(log)
 	}
 
-	if resp.Error != nil {
-		r = resp.Error
-	} else {
-		r = resp.Success
-	}
-
-	return r
+	return resp
 }
 
-func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) error {
+func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) types.ResponserRequest {
 	resp, e := c.makeRequest(http.MethodPost, "/media", m)
 	if e != nil {
 		msgError := fmt.Sprintln("Error in UploadFile request of ClientWA. error is: ", e.Error())
-		return errors.New(msgError)
-	} else if resp.Error != nil {
-		return resp.Error
-	}
-
-	switch mt {
-	case types.MessageTypeImage:
-		m.(*types.MessageImage).SetId(resp.Id)
-		m.(*types.MessageImage).SetLink("")
-
-	case types.MessageTypeVideo:
-		m.(*types.MessageVideo).SetId(resp.Id)
-		m.(*types.MessageVideo).SetLink("")
-
-	case types.MessageTypeAudio:
-		m.(*types.MessageAudio).SetId(resp.Id)
-		m.(*types.MessageAudio).SetLink("")
-
-	case types.MessageTypeDocument:
-		m.(*types.MessageDocument).SetId(resp.Id)
-		m.(*types.MessageDocument).SetLink("")
-
-	case types.MessageTypeSticker:
-		m.(*types.MessageSticker).SetId(resp.Id)
-		m.(*types.MessageSticker).SetLink("")
-	default:
 		return &types.Error{
 			Type:    types.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeSticker, m.GetType()),
+			Message: msgError,
 		}
+
+	} else if resp.GetType() == types.ResponseError {
+		return resp.GetResponseError()
 	}
 
-	return nil
+	id := ""
+
+	if resp.GetType() == types.ResponseMediaInfo {
+		id = resp.GetResponseMediaInfo().ID
+	}
+
+	switch mt {
+	case types.AUDIO, types.IMAGE, types.VIDEO, types.DOCUMENT, types.STICKER:
+		m.SetId(id)
+		m.SetLink("")
+	}
+
+	return resp
 }
 
 func (c *ClientWA) DownloadFile() {

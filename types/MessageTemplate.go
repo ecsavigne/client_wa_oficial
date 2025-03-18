@@ -52,12 +52,12 @@ type MessageTemplate struct {
 	Template `json:"template"`
 }
 
-func NewMessageTemplate(m MessageTemplate) Messager {
+func NewMessageTemplate(m *MessageTemplate) Messager {
 	mk := &messagerKernel{
 		Type: MessageTypeTemplate,
 		m:    m,
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

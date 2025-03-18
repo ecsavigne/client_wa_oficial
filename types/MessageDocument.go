@@ -6,7 +6,7 @@ type MessageDocument struct {
 	Media `json:"document"`
 }
 
-func NewMessageDocument(m MessageDocument) Messager {
+func NewMessageDocument(m *MessageDocument) Messager {
 	mk := &messagerKernel{
 		Type:             MessageTypeDocument,
 		m:                m,
@@ -15,5 +15,5 @@ func NewMessageDocument(m MessageDocument) Messager {
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

@@ -28,12 +28,12 @@ LA REACCIÓN NO SE ENVIARÁ EN LOS SIGUIENTES CASOS:
 
 Si el identificador es de un mensaje que se eliminó, este no se entregará.
 */
-func NewMessageReaction(m MessageReaction) Messager {
+func NewMessageReaction(m *MessageReaction) Messager {
 	mk := &messagerKernel{
 		Type: MessageTypeReaction,
 		m:    m,
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

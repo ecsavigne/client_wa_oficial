@@ -45,103 +45,75 @@ func (m *messagerKernel) GetMessagingProduct() string {
 }
 
 func (m *messagerKernel) GetMessageLink() string {
-	if v, ok := m.m.(MessageImage); ok {
+	switch v := m.m.(type) {
+	case MessageImage:
 		return v.Media.Link
-	}
-
-	if v, ok := m.m.(MessageVideo); ok {
+	case MessageVideo:
 		return v.Media.Link
-	}
-
-	if v, ok := m.m.(MessageAudio); ok {
+	case MessageAudio:
 		return v.Media.Link
-	}
-
-	if v, ok := m.m.(MessageDocument); ok {
+	case MessageDocument:
 		return v.Media.Link
-	}
-
-	if v, ok := m.m.(MessageSticker); ok {
+	case MessageSticker:
 		return v.Media.Link
+	default:
+		return ""
 	}
-
-	return ""
 }
 
 func (m *messagerKernel) GetMessageId() string {
-	if v, ok := m.m.(MessageImage); ok {
+	switch v := m.m.(type) {
+	case MessageImage:
 		return v.Media.Id
-	}
-
-	if v, ok := m.m.(MessageVideo); ok {
+	case MessageVideo:
 		return v.Media.Id
-	}
-
-	if v, ok := m.m.(MessageAudio); ok {
+	case MessageAudio:
 		return v.Media.Id
-	}
-
-	if v, ok := m.m.(MessageDocument); ok {
+	case MessageDocument:
 		return v.Media.Id
-	}
-
-	if v, ok := m.m.(MessageSticker); ok {
+	case MessageSticker:
 		return v.Media.Id
+	default:
+		return ""
 	}
-
-	return ""
 }
 
 func (m *messagerKernel) SetLink(link string) {
-	if v, ok := m.m.(MessageImage); ok {
+	switch v := m.m.(type) {
+	case *MessageImage:
 		v.Media.Link = link
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageVideo); ok {
+		v.Media.Id = ""
+	case *MessageVideo:
 		v.Media.Link = link
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageAudio); ok {
+		v.Media.Id = ""
+	case *MessageAudio:
 		v.Media.Link = link
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageDocument); ok {
+		v.Media.Id = ""
+	case *MessageDocument:
 		v.Media.Link = link
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageSticker); ok {
+		v.Media.Id = ""
+	case *MessageSticker:
 		v.Media.Link = link
-		m.m = v
+		v.Media.Id = ""
 	}
 }
 
 func (m *messagerKernel) SetId(id string) {
-	if v, ok := m.m.(MessageImage); ok {
+	switch v := m.m.(type) {
+	case *MessageImage:
 		v.Media.Id = id
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageVideo); ok {
+		v.Media.Link = ""
+	case *MessageVideo:
 		v.Media.Id = id
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageAudio); ok {
+		v.Media.Link = ""
+	case *MessageAudio:
 		v.Media.Id = id
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageDocument); ok {
+		v.Media.Link = ""
+	case *MessageDocument:
 		v.Media.Id = id
-		m.m = v
-	}
-
-	if v, ok := m.m.(MessageSticker); ok {
+		v.Media.Link = ""
+	case *MessageSticker:
 		v.Media.Id = id
-		m.m = v
+		v.Media.Link = ""
 	}
 }

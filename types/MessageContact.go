@@ -58,12 +58,12 @@ type MessageContact struct {
 	Contact []Contact `json:"contacts"`
 }
 
-func NewMessageContact(m MessageContact) Messager {
+func NewMessageContact(m *MessageContact) Messager {
 	mk := &messagerKernel{
 		Type: MessageTypeContact,
 		m:    m,
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

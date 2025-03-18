@@ -6,12 +6,12 @@ type MessageInteractive struct {
 	InteractiveProto `json:"interactive"`
 }
 
-func NewMessageInteractive(m MessageInteractive) Messager {
+func NewMessageInteractive(m *MessageInteractive) Messager {
 	mk := &messagerKernel{
 		Type: MessageTypeInteractive,
 		m:    m,
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

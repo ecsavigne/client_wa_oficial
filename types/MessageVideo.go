@@ -6,7 +6,7 @@ type MessageVideo struct {
 	Media `json:"video"`
 }
 
-func NewMessageVideo(m MessageVideo) Messager {
+func NewMessageVideo(m *MessageVideo) Messager {
 	mk := &messagerKernel{
 		Type:             MessageTypeVideo,
 		m:                m,
@@ -15,5 +15,5 @@ func NewMessageVideo(m MessageVideo) Messager {
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

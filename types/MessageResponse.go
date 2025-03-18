@@ -11,12 +11,12 @@ type MessageResponse struct {
 	Text    `json:"text"`
 }
 
-func NewMessageResponse(m MessageResponse) Messager {
+func NewMessageResponse(m *MessageResponse) Messager {
 	mk := &messagerKernel{
 		Type: "response",
 		m:    m,
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

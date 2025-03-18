@@ -13,12 +13,12 @@ type MessageLocation struct {
 	Location `json:"location,omitempty"`
 }
 
-func NewMessageLocation(m MessageLocation) Messager {
+func NewMessageLocation(m *MessageLocation) Messager {
 	mk := &messagerKernel{
 		Type: MessageTypeLocation,
 		m:    m,
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

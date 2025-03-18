@@ -13,7 +13,7 @@ type MessageSticker struct {
 	Media `json:"sticker"`
 }
 
-func NewMessageSticker(m MessageSticker) Messager {
+func NewMessageSticker(m *MessageSticker) Messager {
 	mk := &messagerKernel{
 		Type:             MessageTypeSticker,
 		m:                m,
@@ -22,5 +22,5 @@ func NewMessageSticker(m MessageSticker) Messager {
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

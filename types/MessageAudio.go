@@ -6,7 +6,7 @@ type MessageAudio struct {
 	Media `json:"audio"`
 }
 
-func NewMessageAudio(m MessageAudio) Messager {
+func NewMessageAudio(m *MessageAudio) Messager {
 	mk := &messagerKernel{
 		Type:             MessageTypeAudio,
 		m:                m,
@@ -15,5 +15,5 @@ func NewMessageAudio(m MessageAudio) Messager {
 	}
 
 	m.Messager = mk
-	return &m
+	return m
 }

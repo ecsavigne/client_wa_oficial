@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/ecsavigne/client_wa_oficial/types"
+	"golang.org/x/net/http2"
 )
 
 func deafaultHeader(c *Config) {
@@ -32,7 +33,6 @@ func deafaultRequest(methoth string, ePoint string, c *Config, msg types.Message
 
 	if !strings.HasPrefix(ePoint, "/") {
 		var log = "Error in deafultRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
-		fmt.Println(log)
 		c.Error = fmt.Errorf("%s", log)
 		panic(c.Error)
 	}
@@ -51,20 +51,32 @@ func deafaultRequest(methoth string, ePoint string, c *Config, msg types.Message
 func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
 	var e error
 	var urlPath *url.URL
-	fmt.Println("ePoint: ", ePoint)
 	if !strings.HasPrefix(ePoint, "/") {
 		var log = "Error in multipartRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
-		fmt.Println(log)
 		c.Error = fmt.Errorf("%s", log)
 		panic(c.Error)
 	}
 
-	resp, err := http.Get(msg.GetMessageLink())
+	tr := &http.Transport{}
+	err := http2.ConfigureTransport(tr)
+	if err != nil {
+		c.Error = fmt.Errorf("Error configuring HTTP/2. Error is: %s", err.Error())
+		return nil, c.Error
+	}
+
+	client := &http.Client{Transport: tr}
+
+	resp, err := client.Get(msg.GetMessageLink())
 	if err != nil {
 		c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", err.Error())
 		return nil, c.Error
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == 404 {
+		c.Error = fmt.Errorf("Error code is 404. Error is: %s", resp.Status)
+		return nil, c.Error
+	}
 
 	filename, ext, contentType := "", "", ""
 
@@ -120,5 +132,4 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 
 	multiparHeader(c, writer.FormDataContentType())
 	return c.request, nil
-
 }
