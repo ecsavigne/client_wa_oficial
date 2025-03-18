@@ -178,6 +178,33 @@ func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager
 	}
 	defer res.Body.Close()
 
+	switch res.StatusCode {
+	case 400:
+		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), res.Status)
+		c.Config.Error = &types.Error{
+			Type:    types.TypeErrorBadRequest,
+			Code:    types.CodeErrorBadRequest,
+			Message: log,
+		}
+		return nil, c.Config.Error
+	case 401:
+		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), res.Status)
+		c.Config.Error = &types.Error{
+			Type:    types.TypeErrorUnauthorized,
+			Code:    types.CodeErrorUnauthorized,
+			Message: log,
+		}
+		return nil, c.Config.Error
+	case 404:
+		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), res.Status)
+		c.Config.Error = &types.Error{
+			Type:    types.TypeErrorUrlNotFound,
+			Code:    types.CodeErrorUrlNotFound,
+			Message: log,
+		}
+		return nil, c.Config.Error
+	}
+
 	var responseReq types.ResponserRequest
 	bodyResponse, e := io.ReadAll(res.Body)
 	if e != nil {

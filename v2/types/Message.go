@@ -82,19 +82,14 @@ func (m *messagerKernel) SetLink(link string) {
 	switch v := m.m.(type) {
 	case *MessageImage:
 		v.Media.Link = link
-		v.Media.Id = ""
 	case *MessageVideo:
 		v.Media.Link = link
-		v.Media.Id = ""
 	case *MessageAudio:
 		v.Media.Link = link
-		v.Media.Id = ""
 	case *MessageDocument:
 		v.Media.Link = link
-		v.Media.Id = ""
 	case *MessageSticker:
 		v.Media.Link = link
-		v.Media.Id = ""
 	}
 }
 
@@ -102,18 +97,13 @@ func (m *messagerKernel) SetId(id string) {
 	switch v := m.m.(type) {
 	case *MessageImage:
 		v.Media.Id = id
-		v.Media.Link = ""
 	case *MessageVideo:
 		v.Media.Id = id
-		v.Media.Link = ""
 	case *MessageAudio:
 		v.Media.Id = id
-		v.Media.Link = ""
 	case *MessageDocument:
 		v.Media.Id = id
-		v.Media.Link = ""
 	case *MessageSticker:
 		v.Media.Id = id
-		v.Media.Link = ""
 	}
 }

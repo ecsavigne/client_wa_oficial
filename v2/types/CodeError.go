@@ -14,6 +14,9 @@ const (
 	MsgErrorBadHandshake    MessageError = "websocket: bad handshake"
 	MsgErrorUnexpectedClose MessageError = "Is Unexpected Close Error in socket"
 	MsgErrorPhoneIdEmpty    MessageError = "WA Phone number ID (WA_PHONE_NUMBER_ID) is empty in .env file"
+	MsgErrorBadRequest      MessageError = "Bad Request"
+	MsgErrorUrlNotFound     MessageError = "Url Not Found"
+	MsgErrorUnauthorized    MessageError = "Unauthorized"
 )
 
 // CodeErrors
@@ -25,6 +28,9 @@ const (
 	CodeErrorBaseUrlEmpty    CodeError = 5
 	CodeErrorApiVersionEmpty CodeError = 6
 	CodeErrorPhoneIdEmpty    CodeError = 7
+	CodeErrorBadRequest      CodeError = 400
+	CodeErrorUnauthorized    CodeError = 401
+	CodeErrorUrlNotFound     CodeError = 404
 )
 
 // TypeErrors
@@ -36,4 +42,7 @@ const (
 	TypeErrorBaseUrlEmpty    TypeError = "base_url_empty"
 	TypeErrorApiVersionEmpty TypeError = "api_version_empty"
 	TypeErrorPhoneIdEmpty    TypeError = "phone_id_empty"
+	TypeErrorBadRequest      TypeError = "bad_request"
+	TypeErrorUnauthorized    TypeError = "unauthorized"
+	TypeErrorUrlNotFound     TypeError = "url_not_found"
 )

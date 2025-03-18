@@ -73,8 +73,30 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 404 {
-		c.Error = fmt.Errorf("Error code is 404. Error is: %s", resp.Status)
+	switch resp.StatusCode {
+	case 400:
+		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
+		c.Error = &types.Error{
+			Type:    types.TypeErrorBadRequest,
+			Code:    types.CodeErrorBadRequest,
+			Message: log,
+		}
+		return nil, c.Error
+	case 401:
+		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
+		c.Error = &types.Error{
+			Type:    types.TypeErrorUnauthorized,
+			Code:    types.CodeErrorUnauthorized,
+			Message: log,
+		}
+		return nil, c.Error
+	case 404:
+		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
+		c.Error = &types.Error{
+			Type:    types.TypeErrorUrlNotFound,
+			Code:    types.CodeErrorUrlNotFound,
+			Message: log,
+		}
 		return nil, c.Error
 	}
 
