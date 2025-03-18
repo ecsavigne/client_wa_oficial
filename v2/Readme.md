@@ -47,7 +47,12 @@ REQUEST_TIMEOUT=
 ```
 # Instalando paquete
 ```
-go get github.com/ecsavigne/client_wa_oficial
+go get github.com/ecsavigne/client_wa_oficial/v2
 ó
-go get github.com/ecsavigne/client_wa_oficial@latest
+go get github.com/ecsavigne/client_wa_oficial/v2@latest
+
+Version 2
+
+go get github.com/ecsavigne/client_wa_oficial/v2/v2@latest
+go mod tidy
 ```

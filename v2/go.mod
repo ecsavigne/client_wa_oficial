@@ -1,4 +1,4 @@
-module github.com/ecsavigne/client_wa_oficial
+module github.com/ecsavigne/client_wa_oficial/v2
 
 go 1.24.0
 

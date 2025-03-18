@@ -7,9 +7,9 @@ import (
 	"os"
 	"os/signal"
 
-	clientoficial "github.com/ecsavigne/client_wa_oficial"
-	"github.com/ecsavigne/client_wa_oficial/event"
-	"github.com/ecsavigne/client_wa_oficial/types"
+	clientoficial "github.com/ecsavigne/client_wa_oficial/v2"
+	"github.com/ecsavigne/client_wa_oficial/v2/event"
+	"github.com/ecsavigne/client_wa_oficial/v2/types"
 )
 
 func EventHandler(data any) {

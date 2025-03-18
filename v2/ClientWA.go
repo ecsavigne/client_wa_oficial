@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ecsavigne/client_wa_oficial/event"
-	"github.com/ecsavigne/client_wa_oficial/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/event"
+	"github.com/ecsavigne/client_wa_oficial/v2/types"
 
 	"github.com/gorilla/websocket"
 )

@@ -13,7 +13,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/ecsavigne/client_wa_oficial/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"golang.org/x/net/http2"
 )
 

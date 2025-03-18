@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/ecsavigne/client_wa_oficial/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/spf13/viper"
 )
 
