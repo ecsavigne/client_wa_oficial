@@ -3,6 +3,7 @@ package clientoficial
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"mime"
@@ -57,13 +58,11 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 		panic(c.Error)
 	}
 
-	tr := &http.Transport{}
-	err := http2.ConfigureTransport(tr)
-	if err != nil {
-		c.Error = fmt.Errorf("Error configuring HTTP/2. Error is: %s", err.Error())
-		return nil, c.Error
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12},
 	}
-
+	http2.ConfigureTransport(tr)
 	client := &http.Client{Transport: tr}
 
 	resp, err := client.Get(msg.GetMessageLink())

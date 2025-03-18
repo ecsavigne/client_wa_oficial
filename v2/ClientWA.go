@@ -2,6 +2,7 @@
 package clientoficial
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/ecsavigne/client_wa_oficial/v2/event"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	"golang.org/x/net/http2"
 
 	"github.com/gorilla/websocket"
 )
@@ -67,11 +69,10 @@ func (cl *ClientWA) initWebHookSocket() {
 		}
 		cl.EventHandle(evt)
 		return
-		// cl.Error = fmt.Errorf("Error connecting to WebSocket error is : %v", err)
 	}
 	defer conn.Close()
 
-	// Escuchar mensajes del servidor
+	// Listener message of the server way socket
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
@@ -79,6 +80,12 @@ func (cl *ClientWA) initWebHookSocket() {
 			break
 		}
 		cl.Config.EventHandle(message)
+	}
+}
+
+func (cl *ClientWA) resetError() {
+	if cl.Error != nil {
+		cl.Error = nil
 	}
 }
 
@@ -149,8 +156,15 @@ func newConfig(c Config) *Config {
 	}
 
 	if c.Client == nil {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{
+				MinVersion: tls.VersionTLS12},
+		}
+		http2.ConfigureTransport(tr)
+
 		c.Client = &http.Client{
-			Timeout: 30 * time.Second,
+			Timeout:   30 * time.Second,
+			Transport: tr,
 		}
 	}
 
@@ -235,6 +249,8 @@ func validTypeInteractive(msg types.MessageInteractive, interactiveType string) 
 func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m, types.MessageTypeTemplate) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -256,6 +272,8 @@ func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m, types.MessageTypeText) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -276,6 +294,8 @@ func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m, types.MessageTypeReaction) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -295,6 +315,8 @@ func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 
 func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest {
 	log := ""
+
+	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -322,6 +344,8 @@ func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest 
 func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -347,6 +371,8 @@ func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.Respons
 
 func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserRequest {
 	log := ""
+
+	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -374,6 +400,8 @@ func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserReq
 func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -399,6 +427,8 @@ func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRe
 
 func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRequest {
 	log := ""
+
+	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -426,6 +456,8 @@ func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRe
 func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -452,6 +484,8 @@ func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.Responser
 func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -477,6 +511,8 @@ func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserReque
 
 func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 	log := ""
+
+	c.resetError()
 
 	if !validTypeMsg(m, "response") {
 		return &types.Error{
@@ -518,6 +554,8 @@ func (c *ClientWA) validLinAndId(m types.Messager) types.ResponserRequest {
 func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m, types.MessageTypeAudio) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -551,6 +589,8 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m, types.MessageTypeImage) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -583,7 +623,8 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 
 func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 	log := ""
-	// var r types.ResponserRequest
+
+	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeVideo) {
 		return &types.Error{
@@ -618,6 +659,8 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m, types.MessageTypeDocument) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -650,6 +693,8 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 
 func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 	log := ""
+
+	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeSticker) {
 		return &types.Error{
@@ -684,6 +729,8 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest {
 	log := ""
 
+	c.resetError()
+
 	if !validTypeMsg(m, types.MessageTypeLocation) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -703,6 +750,8 @@ func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest 
 
 func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 	log := ""
+
+	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeContact) {
 		return &types.Error{

@@ -46,15 +46,15 @@ func (m *messagerKernel) GetMessagingProduct() string {
 
 func (m *messagerKernel) GetMessageLink() string {
 	switch v := m.m.(type) {
-	case MessageImage:
+	case *MessageImage:
 		return v.Media.Link
-	case MessageVideo:
+	case *MessageVideo:
 		return v.Media.Link
-	case MessageAudio:
+	case *MessageAudio:
 		return v.Media.Link
-	case MessageDocument:
+	case *MessageDocument:
 		return v.Media.Link
-	case MessageSticker:
+	case *MessageSticker:
 		return v.Media.Link
 	default:
 		return ""
@@ -63,15 +63,15 @@ func (m *messagerKernel) GetMessageLink() string {
 
 func (m *messagerKernel) GetMessageId() string {
 	switch v := m.m.(type) {
-	case MessageImage:
+	case *MessageImage:
 		return v.Media.Id
-	case MessageVideo:
+	case *MessageVideo:
 		return v.Media.Id
-	case MessageAudio:
+	case *MessageAudio:
 		return v.Media.Id
-	case MessageDocument:
+	case *MessageDocument:
 		return v.Media.Id
-	case MessageSticker:
+	case *MessageSticker:
 		return v.Media.Id
 	default:
 		return ""
