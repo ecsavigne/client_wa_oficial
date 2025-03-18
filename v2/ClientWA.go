@@ -799,5 +799,18 @@ func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) types.Respon
 	return resp
 }
 
-func (c *ClientWA) DownloadFile() {
+func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
+	return nil
+}
+
+func (c *ClientWA) getFileInfo(id string) {
+
+}
+
+func (c *ClientWA) DeleteFile(id string) error {
+	return nil
+}
+
+func (c *ClientWA) DeleteMessage(id string) error {
+	return nil
 }
