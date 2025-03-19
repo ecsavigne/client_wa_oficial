@@ -4,6 +4,7 @@ package clientoficial
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
 	"mime"
@@ -28,9 +29,32 @@ func multiparHeader(c *Config, contentType string) {
 	c.request.Header.Set("Content-Type", contentType)
 }
 
-func deafaultRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
-	var e error
-	var urlPath *url.URL
+func deafaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, error) {
+	var (
+		e        error
+		urlPath  *url.URL
+		msg      types.Messager
+		formData *bytes.Buffer
+	)
+
+	if len(params) == 0 {
+		formData = bytes.NewBuffer([]byte{})
+	} else {
+		switch v := params[0].(type) {
+		case types.Messager:
+			msg = v
+		case map[string]any:
+			b, err := json.Marshal(v)
+			if err != nil {
+				return nil, &types.Error{
+					Type:    types.TypeErrorUnrecognized,
+					Code:    types.CodeErrorUnrecognized,
+					Message: err.Error(),
+				}
+			}
+			formData = bytes.NewBuffer(b)
+		}
+	}
 
 	if !strings.HasPrefix(ePoint, "/") {
 		var log = "Error in deafultRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
@@ -40,7 +64,11 @@ func deafaultRequest(methoth string, ePoint string, c *Config, msg types.Message
 
 	urlPath, _ = url.Parse(c.path + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
-	c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
+	if msg != nil {
+		c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
+	} else {
+		c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
+	}
 	if e != nil {
 		c.Error = fmt.Errorf("Error in deafaultRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
 		return nil, c.Error

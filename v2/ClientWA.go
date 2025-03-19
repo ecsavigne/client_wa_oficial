@@ -171,6 +171,52 @@ func newConfig(c Config) *Config {
 	return &c
 }
 
+func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) {
+	res, e := c.clientHttp.Do(req)
+	if e != nil {
+		log := fmt.Sprintf("Error in function doRequest of ClientWA when send HTTP request to server with Do. Error is: %s", e.Error())
+		c.Config.Error = fmt.Errorf("%s", log)
+		return nil, c.Config.Error
+	}
+	defer res.Body.Close()
+
+	switch res.StatusCode {
+	case 400:
+		log := fmt.Sprintf("Error in function doRequest of ClientWA. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		c.Config.Error = &types.Error{
+			Type:    types.TypeErrorBadRequest,
+			Code:    types.CodeErrorBadRequest,
+			Message: log,
+		}
+		return nil, c.Config.Error
+	case 401:
+		log := fmt.Sprintf("Error in function doRequest of ClientWA. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		c.Config.Error = &types.Error{
+			Type:    types.TypeErrorUnauthorized,
+			Code:    types.CodeErrorUnauthorized,
+			Message: log,
+		}
+		return nil, c.Config.Error
+	case 404:
+		log := fmt.Sprintf("Error in function doRequest of ClientWA. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		c.Config.Error = &types.Error{
+			Type:    types.TypeErrorUrlNotFound,
+			Code:    types.CodeErrorUrlNotFound,
+			Message: log,
+		}
+		return nil, c.Config.Error
+	}
+
+	bodyResponse, e := io.ReadAll(res.Body)
+	if e != nil {
+		log := fmt.Sprintf("Error in function doRequest of ClientWA when reading response body. Error is: %s", e.Error())
+		c.Config.Error = fmt.Errorf("%s", log)
+		return nil, c.Config.Error
+	}
+
+	return types.JsonWrapperResponseRequest(bodyResponse), nil
+}
+
 func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager) (types.ResponserRequest, error) {
 	if msg.GetMessageLink() != "" {
 		multipartRequest(methoth, ePoint, c.Config, msg)
@@ -184,55 +230,18 @@ func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager
 		return nil, c.Config.Error
 	}
 
-	res, e := c.clientHttp.Do(c.request)
-	if e != nil {
-		log := fmt.Sprintf("Error in function makeRequest executing request of ClientWA. Message type: %s. error is: %s", msg.GetType(), e.Error())
-		c.Config.Error = fmt.Errorf("%s", log)
-		return nil, c.Config.Error
-	}
-	defer res.Body.Close()
+	var (
+		responseReq types.ResponserRequest
+		e           error
+	)
 
-	switch res.StatusCode {
-	case 400:
-		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), res.Status)
-		c.Config.Error = &types.Error{
-			Type:    types.TypeErrorBadRequest,
-			Code:    types.CodeErrorBadRequest,
-			Message: log,
-		}
-		return nil, c.Config.Error
-	case 401:
-		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), res.Status)
-		c.Config.Error = &types.Error{
-			Type:    types.TypeErrorUnauthorized,
-			Code:    types.CodeErrorUnauthorized,
-			Message: log,
-		}
-		return nil, c.Config.Error
-	case 404:
-		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), res.Status)
-		c.Config.Error = &types.Error{
-			Type:    types.TypeErrorUrlNotFound,
-			Code:    types.CodeErrorUrlNotFound,
-			Message: log,
-		}
-		return nil, c.Config.Error
-	}
-
-	var responseReq types.ResponserRequest
-	bodyResponse, e := io.ReadAll(res.Body)
-	if e != nil {
-		log := fmt.Sprintf("Error in function makeRequest reading response of ClientWA. Message type: %s. error is: %s", msg.GetType(), e.Error())
-		c.Config.Error = fmt.Errorf("%s", log)
-		return nil, c.Config.Error
-	}
-
-	responseReq = types.JsonWrapperResponseRequest(bodyResponse)
+	responseReq, e = c.doRequest(c.request)
 	if responseReq.GetResponseError() != nil {
-		log := fmt.Sprintf("Error in function makeRequest Unmarshal response. Message type: %s. error is: %s", msg.GetType(), responseReq.GetResponseError().Error())
-		responseReq.(*types.Error).Message = log
-		c.Config.Error = fmt.Errorf("%s", log)
-		return responseReq.GetResponseError(), c.Config.Error
+		return responseReq.GetResponseError(), nil
+	}
+
+	if e != nil {
+		return nil, c.Config.Error
 	}
 
 	return responseReq, nil
@@ -247,8 +256,6 @@ func validTypeInteractive(msg types.MessageInteractive, interactiveType string) 
 }
 
 func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeTemplate) {
@@ -261,8 +268,15 @@ func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendTemplate request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendTemplate request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
@@ -270,8 +284,6 @@ func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 
 // SendTextMessage send a text message
 func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeText) {
@@ -284,16 +296,21 @@ func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendText request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendText request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeReaction) {
@@ -306,16 +323,21 @@ func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendReaction request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendReaction request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
@@ -334,16 +356,21 @@ func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest 
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendInteractiveList request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendInteractiveList request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
@@ -362,16 +389,21 @@ func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.Respons
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendInteractiveButtonResponse request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendInteractiveButtonResponse request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
@@ -390,16 +422,21 @@ func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserReq
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendInteractiveButtonUrl request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendInteractiveButtonUrl request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
@@ -418,16 +455,21 @@ func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRe
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendInteractiveMsgProcess request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendInteractiveMsgProcess request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
@@ -446,16 +488,21 @@ func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRe
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendInteractiveOneProduct request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendInteractiveOneProduct request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
@@ -474,16 +521,21 @@ func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.Responser
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendInteractiveMultiProduct request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendInteractiveMultiProduct request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
@@ -502,16 +554,21 @@ func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserReque
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendInteractiveCatalog request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendInteractiveCatalog request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, "response") {
@@ -532,8 +589,15 @@ func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendResponseMsg request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendResponseMsg request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
@@ -552,8 +616,6 @@ func (c *ClientWA) validLinAndId(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeAudio) {
@@ -575,11 +637,14 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendAudio request of ClientWA. error is: ", e.Error())
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
 		return &types.Error{
 			Type:    types.ResponseError,
-			Code:    401,
-			Message: log,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendAudio request of ClientWA. error is: ", e.Error()),
 		}
 	}
 
@@ -587,8 +652,6 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeImage) {
@@ -610,11 +673,14 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendImage request of ClientWA. error is: ", e.Error())
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
 		return &types.Error{
 			Type:    types.ResponseError,
-			Code:    401,
-			Message: log,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendImage request of ClientWA. error is: ", e.Error()),
 		}
 	}
 
@@ -622,8 +688,6 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeVideo) {
@@ -645,11 +709,14 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendVideo request of ClientWA. error is: ", e.Error())
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
 		return &types.Error{
 			Type:    types.ResponseError,
-			Code:    401,
-			Message: log,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendVideo request of ClientWA. error is: ", e.Error()),
 		}
 	}
 
@@ -657,8 +724,6 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeDocument) {
@@ -680,11 +745,14 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendDocument request of ClientWA. error is: ", e.Error())
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
 		return &types.Error{
 			Type:    types.ResponseError,
-			Code:    401,
-			Message: log,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendDocument request of ClientWA. error is: ", e.Error()),
 		}
 	}
 
@@ -692,8 +760,6 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 }
 
 func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeSticker) {
@@ -715,11 +781,14 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendSticker request of ClientWA. error is: ", e.Error())
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
 		return &types.Error{
 			Type:    types.ResponseError,
-			Code:    401,
-			Message: log,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendSticker request of ClientWA. error is: ", e.Error()),
 		}
 	}
 
@@ -727,8 +796,6 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeLocation) {
@@ -741,16 +808,21 @@ func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest 
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendLocationMessage request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendLocationMessage request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
 }
 
 func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
-	log := ""
-
 	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeContact) {
@@ -763,8 +835,15 @@ func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		log = fmt.Sprintln("Error en SendContactMessage request of ClientWA. error is: ", e.Error())
-		panic(log)
+		if ok := e.(*types.Error); ok != nil {
+			return e.(*types.Error)
+		}
+
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error en SendContactMessage request of ClientWA. error is: ", e.Error()),
+		}
 	}
 
 	return resp
@@ -804,7 +883,8 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 }
 
 func (c *ClientWA) getFileInfo(id string) {
-
+	// Crear request
+	deafaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config)
 }
 
 func (c *ClientWA) DeleteFile(id string) error {

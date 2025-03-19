@@ -17,6 +17,7 @@ const (
 	MsgErrorBadRequest      MessageError = "Bad Request"
 	MsgErrorUrlNotFound     MessageError = "Url Not Found"
 	MsgErrorUnauthorized    MessageError = "Unauthorized"
+	MsgErrorUnrecognized    MessageError = "Unrecognized"
 )
 
 // CodeErrors
@@ -28,6 +29,7 @@ const (
 	CodeErrorBaseUrlEmpty    CodeError = 5
 	CodeErrorApiVersionEmpty CodeError = 6
 	CodeErrorPhoneIdEmpty    CodeError = 7
+	CodeErrorUnrecognized    CodeError = 8
 	CodeErrorBadRequest      CodeError = 400
 	CodeErrorUnauthorized    CodeError = 401
 	CodeErrorUrlNotFound     CodeError = 404
@@ -45,4 +47,5 @@ const (
 	TypeErrorBadRequest      TypeError = "bad_request"
 	TypeErrorUnauthorized    TypeError = "unauthorized"
 	TypeErrorUrlNotFound     TypeError = "url_not_found"
+	TypeErrorUnrecognized    TypeError = "unrecognized"
 )
