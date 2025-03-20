@@ -19,7 +19,7 @@ import (
 	"golang.org/x/net/http2"
 )
 
-func deafaultHeader(c *Config) {
+func defaultHeader(c *Config) {
 	c.request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
 	c.request.Header.Set("Content-Type", "application/json")
 }
@@ -29,7 +29,14 @@ func multiparHeader(c *Config, contentType string) {
 	c.request.Header.Set("Content-Type", contentType)
 }
 
-func deafaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, error) {
+func resetError(c *Config) {
+	if c.Error != nil {
+		c.Error = nil
+	}
+}
+
+func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, error) {
+	resetError(c)
 	var (
 		e        error
 		urlPath  *url.URL
@@ -70,14 +77,15 @@ func deafaultRequest(methoth string, ePoint string, c *Config, params ...any) (*
 		c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
 	}
 	if e != nil {
-		c.Error = fmt.Errorf("Error in deafaultRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
+		c.Error = fmt.Errorf("Error in defaultRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
 		return nil, c.Error
 	}
-	deafaultHeader(c)
+	defaultHeader(c)
 	return c.request, nil
 }
 
 func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
+	resetError(c)
 	var e error
 	var urlPath *url.URL
 	if !strings.HasPrefix(ePoint, "/") {

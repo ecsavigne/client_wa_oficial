@@ -21,6 +21,7 @@ type ResponserRequest interface {
 	GetResponseError() *Error
 	GetResponseSuccess() *Success
 	GetResponseMediaInfo() *MediaInfo
+	IsType(ResponseType) bool
 }
 
 type Message struct {
@@ -56,6 +57,10 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("Error is: %s, type: %s, code: %d, ErrorSubcode: %d, FbtraceID: %s", e.Message, e.Type, e.Code, e.ErrorSubcode, e.FbtraceID)
 }
 
+func (e *Error) IsType(t ResponseType) bool {
+	return ResponseError == t
+}
+
 type ContactResponse struct {
 	Input string `json:"input"`
 	WaID  string `json:"wa_id"`
@@ -66,12 +71,17 @@ type Success struct {
 	MessagingProduct string            `json:"messaging_product,omitempty"`
 	Contacts         []ContactResponse `json:"contacts,omitempty"`
 	Messages         []Message         `json:"messages,omitempty"`
+	Success          bool              `json:"success,omitempty"`
 }
 
 func (*Success) GetType() string { return ResponseSuccess }
 
 func (s *Success) String() string {
 	return val(s)
+}
+
+func (s *Success) IsType(t ResponseType) bool {
+	return ResponseSuccess == t
 }
 
 func (s *Success) GetResponseError() *Error {
@@ -83,12 +93,6 @@ func (s *Success) GetResponseSuccess() *Success {
 func (s *Success) GetResponseMediaInfo() *MediaInfo {
 	return nil
 }
-
-// type ResponseRequest struct {
-// 	Error
-// 	Success
-// 	MediaInfo
-// }
 
 func val(r any) string {
 	by, msg_e := json.MarshalIndent(r, "", "  ")
@@ -118,6 +122,10 @@ func (m *MediaInfo) GetId() string {
 	return m.ID
 }
 
+func (m *MediaInfo) IsType(t ResponseType) bool {
+	return ResponseMediaInfo == t
+}
+
 func (mi *MediaInfo) GetResponseError() *Error {
 	return nil
 }
@@ -140,19 +148,19 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 	}
 
 	sliceKey := slices.Collect(maps.Keys(wrapper))
-	isMediaInfo := !slices.ContainsFunc(sliceKey, func(v string) bool {
+	isMediaInfo := !slices.ContainsFunc(sliceKey, func(k string) bool {
 		mediaInfo := []string{"messaging_product", "mimetype", "sha256", "file_size", "id", "url"}
-		return !slices.Contains(mediaInfo, v)
+		return !slices.Contains(mediaInfo, k)
 	})
 
-	isError := !slices.ContainsFunc(sliceKey, func(v string) bool {
+	isError := !slices.ContainsFunc(sliceKey, func(k string) bool {
 		errorResponse := []string{"message", "code", "error_subcode", "fbtrace_id"}
-		return !slices.Contains(errorResponse, v)
+		return !slices.Contains(errorResponse, k)
 	})
 
-	isSuccess := !slices.ContainsFunc(sliceKey, func(v string) bool {
-		successResponse := []string{"messaging_product", "contacts", "messages"}
-		return !slices.Contains(successResponse, v)
+	isSuccess := !slices.ContainsFunc(sliceKey, func(k string) bool {
+		successResponse := []string{"messaging_product", "contacts", "messages", "success"}
+		return !slices.Contains(successResponse, k)
 	})
 
 	switch {

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 	"time"
@@ -80,12 +81,6 @@ func (cl *ClientWA) initWebHookSocket() {
 			break
 		}
 		cl.Config.EventHandle(message)
-	}
-}
-
-func (cl *ClientWA) resetError() {
-	if cl.Error != nil {
-		cl.Error = nil
 	}
 }
 
@@ -171,10 +166,10 @@ func newConfig(c Config) *Config {
 	return &c
 }
 
-func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) {
+func doRequest(req *http.Request, c *ClientWA) (io.Reader, error) {
 	res, e := c.clientHttp.Do(req)
 	if e != nil {
-		log := fmt.Sprintf("Error in function doRequest of ClientWA when send HTTP request to server with Do. Error is: %s", e.Error())
+		log := fmt.Sprintf("Error in function doRequest when send HTTP request to server with Do. Error is: %s", e.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
 		return nil, c.Config.Error
 	}
@@ -182,7 +177,7 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 
 	switch res.StatusCode {
 	case 400:
-		log := fmt.Sprintf("Error in function doRequest of ClientWA. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s.", res.StatusCode, res.Status)
 		c.Config.Error = &types.Error{
 			Type:    types.TypeErrorBadRequest,
 			Code:    types.CodeErrorBadRequest,
@@ -190,7 +185,7 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 		}
 		return nil, c.Config.Error
 	case 401:
-		log := fmt.Sprintf("Error in function doRequest of ClientWA. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s.", res.StatusCode, res.Status)
 		c.Config.Error = &types.Error{
 			Type:    types.TypeErrorUnauthorized,
 			Code:    types.CodeErrorUnauthorized,
@@ -198,7 +193,7 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 		}
 		return nil, c.Config.Error
 	case 404:
-		log := fmt.Sprintf("Error in function doRequest of ClientWA. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s.", res.StatusCode, res.Status)
 		c.Config.Error = &types.Error{
 			Type:    types.TypeErrorUrlNotFound,
 			Code:    types.CodeErrorUrlNotFound,
@@ -207,7 +202,15 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 		return nil, c.Config.Error
 	}
 
-	bodyResponse, e := io.ReadAll(res.Body)
+	return res.Body, nil
+}
+
+func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) {
+	res, e := doRequest(req, c)
+	if e != nil {
+		return nil, c.Config.Error
+	}
+	bodyResponse, e := io.ReadAll(res)
 	if e != nil {
 		log := fmt.Sprintf("Error in function doRequest of ClientWA when reading response body. Error is: %s", e.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
@@ -221,7 +224,7 @@ func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager
 	if msg.GetMessageLink() != "" {
 		multipartRequest(methoth, ePoint, c.Config, msg)
 	} else {
-		deafaultRequest(methoth, ePoint, c.Config, msg)
+		defaultRequest(methoth, ePoint, c.Config, msg)
 	}
 
 	if c.Config.Error != nil {
@@ -256,7 +259,6 @@ func validTypeInteractive(msg types.MessageInteractive, interactiveType string) 
 }
 
 func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
-	c.resetError()
 
 	if !validTypeMsg(m, types.MessageTypeTemplate) {
 		return &types.Error{
@@ -284,8 +286,6 @@ func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 
 // SendTextMessage send a text message
 func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeText) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -311,8 +311,6 @@ func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeReaction) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -338,8 +336,6 @@ func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -371,8 +367,6 @@ func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest 
 }
 
 func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -404,8 +398,6 @@ func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.Respons
 }
 
 func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -437,8 +429,6 @@ func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserReq
 }
 
 func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -470,8 +460,6 @@ func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRe
 }
 
 func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -503,8 +491,6 @@ func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRe
 }
 
 func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -536,8 +522,6 @@ func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.Responser
 }
 
 func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -569,8 +553,6 @@ func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserReque
 }
 
 func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, "response") {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -616,8 +598,6 @@ func (c *ClientWA) validLinAndId(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeAudio) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -652,8 +632,6 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeImage) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -688,8 +666,6 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeVideo) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -724,8 +700,6 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeDocument) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -760,8 +734,6 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 }
 
 func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeSticker) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -796,8 +768,6 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 }
 
 func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeLocation) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -823,8 +793,6 @@ func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest 
 }
 
 func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
-	c.resetError()
-
 	if !validTypeMsg(m, types.MessageTypeContact) {
 		return &types.Error{
 			Type:    types.ResponseError,
@@ -879,12 +847,79 @@ func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) types.Respon
 }
 
 func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
+	responseReq, e := c.getFileInfo(id)
+	if e != nil {
+		return c.Config.Error
+	}
+
+	if responseReq.IsType(types.ResponseError) {
+		return responseReq.GetResponseError()
+	}
+
+	if responseReq.IsType(types.ResponseMediaInfo) {
+		// Get binaryFile
+		mInfo := responseReq.GetResponseMediaInfo()
+		defaultRequest(http.MethodGet, fmt.Sprintf("/%s", mInfo.Url), c.Config)
+
+		responseReq, e = c.doRequest(c.request)
+		if responseReq.GetResponseError() != nil {
+			return responseReq.GetResponseError()
+		} else if e != nil {
+			return c.Config.Error
+		} else {
+			// Save binaryFile in path
+			res, e := doRequest(c.request, c)
+			if e != nil {
+				return e
+			} else {
+				file, e := os.Create(path + nameFile)
+				if e != nil {
+					return e
+				}
+				defer file.Close()
+
+				data, e := io.ReadAll(res)
+				if e != nil {
+					return &types.Error{
+						Type:    types.ResponseError,
+						Code:    types.CodeErrorUnrecognized,
+						Message: fmt.Sprintln("Error in DownloadFile request of ClientWA. error is: ", e.Error()),
+					}
+				}
+
+				_, e = file.Write(data)
+				if e != nil {
+					return &types.Error{
+						Type:    types.ResponseError,
+						Code:    types.CodeErrorUnrecognized,
+						Message: fmt.Sprintln("Error in DownloadFile request of ClientWA. error is: ", e.Error()),
+					}
+				}
+			}
+		}
+	}
 	return nil
 }
 
-func (c *ClientWA) getFileInfo(id string) {
+func (c *ClientWA) getFileInfo(id string) (types.ResponserRequest, error) {
 	// Crear request
-	deafaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config)
+	defaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config)
+
+	var (
+		responseReq types.ResponserRequest
+		e           error
+	)
+
+	responseReq, e = c.doRequest(c.request)
+	if responseReq.GetResponseError() != nil {
+		return responseReq.GetResponseError(), nil
+	}
+
+	if e != nil {
+		return nil, c.Config.Error
+	}
+
+	return responseReq, nil
 }
 
 func (c *ClientWA) DeleteFile(id string) error {
