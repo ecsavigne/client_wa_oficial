@@ -166,14 +166,13 @@ func newConfig(c Config) *Config {
 	return &c
 }
 
-func doRequest(req *http.Request, c *ClientWA) (io.Reader, error) {
+func doRequest(req *http.Request, c *ClientWA) (io.ReadCloser, error) {
 	res, e := c.clientHttp.Do(req)
 	if e != nil {
 		log := fmt.Sprintf("Error in function doRequest when send HTTP request to server with Do. Error is: %s", e.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
 		return nil, c.Config.Error
 	}
-	defer res.Body.Close()
 
 	switch res.StatusCode {
 	case 400:
@@ -210,6 +209,8 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 	if e != nil {
 		return nil, c.Config.Error
 	}
+	defer res.Close()
+
 	bodyResponse, e := io.ReadAll(res)
 	if e != nil {
 		log := fmt.Sprintf("Error in function doRequest of ClientWA when reading response body. Error is: %s", e.Error())
@@ -859,13 +860,10 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 	if responseReq.IsType(types.ResponseMediaInfo) {
 		// Get binaryFile
 		mInfo := responseReq.GetResponseMediaInfo()
-		defaultRequest(http.MethodGet, fmt.Sprintf("/%s", mInfo.Url), c.Config)
+		defaultRequest(http.MethodGet, fmt.Sprintf("/%s", mInfo.Url), c.Config, RequestChangeUrlFull)
 
-		responseReq, e = c.doRequest(c.request)
-		if responseReq.GetResponseError() != nil {
-			return responseReq.GetResponseError()
-		} else if e != nil {
-			return c.Config.Error
+		if c.Error != nil {
+			return c.Error
 		} else {
 			// Save binaryFile in path
 			res, e := doRequest(c.request, c)
@@ -877,17 +875,7 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 					return e
 				}
 				defer file.Close()
-
-				data, e := io.ReadAll(res)
-				if e != nil {
-					return &types.Error{
-						Type:    types.ResponseError,
-						Code:    types.CodeErrorUnrecognized,
-						Message: fmt.Sprintln("Error in DownloadFile request of ClientWA. error is: ", e.Error()),
-					}
-				}
-
-				_, e = file.Write(data)
+				_, e = io.Copy(file, res)
 				if e != nil {
 					return &types.Error{
 						Type:    types.ResponseError,
@@ -903,7 +891,7 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 
 func (c *ClientWA) getFileInfo(id string) (types.ResponserRequest, error) {
 	// Crear request
-	defaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config)
+	defaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config, RequestGetMessageInfo)
 
 	var (
 		responseReq types.ResponserRequest

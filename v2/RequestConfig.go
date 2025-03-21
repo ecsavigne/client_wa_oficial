@@ -19,6 +19,13 @@ import (
 	"golang.org/x/net/http2"
 )
 
+type TypeRequest = string
+
+const (
+	RequestGetMessageInfo TypeRequest = "RequestGetMessageInfo"
+	RequestChangeUrlFull  TypeRequest = "RequestChangeUrlFull"
+)
+
 func defaultHeader(c *Config) {
 	c.request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
 	c.request.Header.Set("Content-Type", "application/json")
@@ -35,18 +42,25 @@ func resetError(c *Config) {
 	}
 }
 
+// defaultRequest func
+// methoth: GET, POST, PUT, PATCH, DELETE
+// ePoint: EndPoint
+// c: Config
+// params: [Optional]
+// - map[string]any. body request,dataForm.
+// - types.Messager protocol of message to send,
+// - name of request ej> "GetMessageInfo"
 func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, error) {
 	resetError(c)
 	var (
-		e        error
-		urlPath  *url.URL
-		msg      types.Messager
-		formData *bytes.Buffer
+		e              error
+		urlPath        *url.URL
+		urlAlternative string = ""
+		msg            types.Messager
+		formData       *bytes.Buffer = bytes.NewBuffer([]byte{})
 	)
 
-	if len(params) == 0 {
-		formData = bytes.NewBuffer([]byte{})
-	} else {
+	if len(params) > 0 && len(params) == 1 {
 		switch v := params[0].(type) {
 		case types.Messager:
 			msg = v
@@ -60,10 +74,20 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 				}
 			}
 			formData = bytes.NewBuffer(b)
+		case TypeRequest:
+			switch v {
+			case RequestGetMessageInfo:
+				c.path = ""
+				c.BaseUrl.Path = ePoint
+			case RequestChangeUrlFull:
+				urlAlternative = strings.TrimPrefix(ePoint, "/")
+			}
 		}
+	} else {
+		// validation posible
 	}
 
-	if !strings.HasPrefix(ePoint, "/") {
+	if !strings.HasPrefix(ePoint, "/") && urlAlternative == "" {
 		var log = "Error in deafultRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
 		c.Error = fmt.Errorf("%s", log)
 		panic(c.Error)
@@ -74,7 +98,11 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 	if msg != nil {
 		c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
 	} else {
-		c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
+		if urlAlternative != "" {
+			c.request, e = http.NewRequest(methoth, urlAlternative, formData)
+		} else {
+			c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
+		}
 	}
 	if e != nil {
 		c.Error = fmt.Errorf("Error in defaultRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())

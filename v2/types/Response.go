@@ -105,9 +105,9 @@ func val(r any) string {
 type MediaInfo struct {
 	Type             string `json:"type,omitempty"`
 	MessagingProduct string `json:"messaging_product,omitempty"`
-	MimeType         string `json:"mimetype,omitempty"`
+	MimeType         string `json:"mime_type,omitempty"`
 	Sha256           string `json:"sha256,omitempty"`
-	FileSize         string `json:"file_size,omitempty"`
+	FileSize         uint64 `json:"file_size,omitempty"`
 	ID               string `json:"id,omitempty"`
 	Url              string `json:"url,omitempty"`
 }
@@ -149,7 +149,7 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 
 	sliceKey := slices.Collect(maps.Keys(wrapper))
 	isMediaInfo := !slices.ContainsFunc(sliceKey, func(k string) bool {
-		mediaInfo := []string{"messaging_product", "mimetype", "sha256", "file_size", "id", "url"}
+		mediaInfo := []string{"messaging_product", "mime_type", "sha256", "file_size", "id", "url"}
 		return !slices.Contains(mediaInfo, k)
 	})
 
@@ -168,16 +168,19 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 		mInfo := &MediaInfo{}
 		b, _ := json.Marshal(wrapper)
 		json.Unmarshal(b, mInfo)
+		mInfo.Type = ResponseMediaInfo
 		return mInfo
 	case isError:
 		errorResponse := &Error{}
 		b, _ := json.Marshal(wrapper)
 		json.Unmarshal(b, errorResponse)
+		errorResponse.Type = ResponseError
 		return errorResponse
 	case isSuccess:
 		successResponse := &Success{}
 		b, _ := json.Marshal(wrapper)
 		json.Unmarshal(b, successResponse)
+		successResponse.Type = ResponseSuccess
 		return successResponse
 	}
 
