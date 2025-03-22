@@ -35,7 +35,8 @@ type Config struct {
 	EventHandle   func(any) // Funcion para manejar los eventos del servidor WebHook WebSocket
 	path          string
 	clientHttp
-	request *http.Request
+	request   *http.Request
+	MediaInfo *types.MediaInfo
 }
 
 type ClientWA struct {
@@ -166,7 +167,7 @@ func newConfig(c Config) *Config {
 	return &c
 }
 
-func doRequest(req *http.Request, c *ClientWA) (io.ReadCloser, error) {
+func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 	res, e := c.clientHttp.Do(req)
 	if e != nil {
 		log := fmt.Sprintf("Error in function doRequest when send HTTP request to server with Do. Error is: %s", e.Error())
@@ -201,7 +202,7 @@ func doRequest(req *http.Request, c *ClientWA) (io.ReadCloser, error) {
 		return nil, c.Config.Error
 	}
 
-	return res.Body, nil
+	return res, nil
 }
 
 func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) {
@@ -209,14 +210,14 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 	if e != nil {
 		return nil, c.Config.Error
 	}
-	defer res.Close()
-
-	bodyResponse, e := io.ReadAll(res)
+	bodyResponse, e := io.ReadAll(res.Body)
 	if e != nil {
 		log := fmt.Sprintf("Error in function doRequest of ClientWA when reading response body. Error is: %s", e.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
 		return nil, c.Config.Error
 	}
+
+	defer res.Body.Close()
 
 	return types.JsonWrapperResponseRequest(bodyResponse), nil
 }
@@ -629,6 +630,10 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 		}
 	}
 
+	if resp.GetType() == types.ResponseSuccess {
+		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+	}
+
 	return resp
 }
 
@@ -661,6 +666,10 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintln("Error en SendImage request of ClientWA. error is: ", e.Error()),
 		}
+	}
+
+	if resp.GetType() == types.ResponseSuccess {
+		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
 	}
 
 	return resp
@@ -697,6 +706,10 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 		}
 	}
 
+	if resp.GetType() == types.ResponseSuccess {
+		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+	}
+
 	return resp
 }
 
@@ -731,6 +744,10 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 		}
 	}
 
+	if resp.GetType() == types.ResponseSuccess {
+		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+	}
+
 	return resp
 }
 
@@ -763,6 +780,10 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintln("Error en SendSticker request of ClientWA. error is: ", e.Error()),
 		}
+	}
+
+	if resp.GetType() == types.ResponseSuccess {
+		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
 	}
 
 	return resp
@@ -835,7 +856,8 @@ func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) types.Respon
 	id := ""
 
 	if resp.GetType() == types.ResponseMediaInfo {
-		id = resp.GetResponseMediaInfo().ID
+		c.Config.MediaInfo = resp.GetResponseMediaInfo()
+		id = c.Config.MediaInfo.ID
 	}
 
 	switch mt {
@@ -860,22 +882,24 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 	if responseReq.IsType(types.ResponseMediaInfo) {
 		// Get binaryFile
 		mInfo := responseReq.GetResponseMediaInfo()
-		defaultRequest(http.MethodGet, fmt.Sprintf("/%s", mInfo.Url), c.Config, RequestChangeUrlFull)
+		_, cancel, _ := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", mInfo.Url), c.Config, RequestChangeUrlFull)
 
-		if c.Error != nil {
-			return c.Error
+		if c.Config.Error != nil {
+			return c.Config.Error
 		} else {
 			// Save binaryFile in path
 			res, e := doRequest(c.request, c)
+			ext := strings.Split(res.Header.Get("Content-Disposition"), ".")
 			if e != nil {
 				return e
 			} else {
-				file, e := os.Create(path + nameFile)
+				file, e := os.Create(fmt.Sprintf("%s%s.%s", path, nameFile, ext[len(ext)-1]))
 				if e != nil {
 					return e
 				}
 				defer file.Close()
-				_, e = io.Copy(file, res)
+
+				_, e = io.Copy(file, res.Body)
 				if e != nil {
 					return &types.Error{
 						Type:    types.ResponseError,
@@ -883,6 +907,8 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 						Message: fmt.Sprintln("Error in DownloadFile request of ClientWA. error is: ", e.Error()),
 					}
 				}
+				defer res.Body.Close()
+				defer cancel()
 			}
 		}
 	}

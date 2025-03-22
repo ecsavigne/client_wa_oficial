@@ -3,6 +3,7 @@ package clientoficial
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"golang.org/x/net/http2"
@@ -50,7 +52,7 @@ func resetError(c *Config) {
 // - map[string]any. body request,dataForm.
 // - types.Messager protocol of message to send,
 // - name of request ej> "GetMessageInfo"
-func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, error) {
+func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, context.CancelFunc, error) {
 	resetError(c)
 	var (
 		e              error
@@ -60,6 +62,9 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		formData       *bytes.Buffer = bytes.NewBuffer([]byte{})
 	)
 
+	urlPath, _ = url.Parse(c.path + ePoint)
+	urlPath = c.BaseUrl.ResolveReference(urlPath)
+
 	if len(params) > 0 && len(params) == 1 {
 		switch v := params[0].(type) {
 		case types.Messager:
@@ -67,7 +72,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		case map[string]any:
 			b, err := json.Marshal(v)
 			if err != nil {
-				return nil, &types.Error{
+				return nil, nil, &types.Error{
 					Type:    types.TypeErrorUnrecognized,
 					Code:    types.CodeErrorUnrecognized,
 					Message: err.Error(),
@@ -77,8 +82,8 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		case TypeRequest:
 			switch v {
 			case RequestGetMessageInfo:
-				c.path = ""
-				c.BaseUrl.Path = ePoint
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", path.Dir(c.path), ePoint))
+				urlPath = c.BaseUrl.ResolveReference(urlPath)
 			case RequestChangeUrlFull:
 				urlAlternative = strings.TrimPrefix(ePoint, "/")
 			}
@@ -87,29 +92,36 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		// validation posible
 	}
 
-	if !strings.HasPrefix(ePoint, "/") && urlAlternative == "" {
+	if !strings.HasPrefix(ePoint, "/") {
 		var log = "Error in deafultRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
 		c.Error = fmt.Errorf("%s", log)
-		panic(c.Error)
+		return nil, nil, c.Error
 	}
 
-	urlPath, _ = url.Parse(c.path + ePoint)
-	urlPath = c.BaseUrl.ResolveReference(urlPath)
+	var (
+		ctx    context.Context
+		cancel context.CancelFunc
+	)
+
 	if msg != nil {
 		c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
 	} else {
 		if urlAlternative != "" {
-			c.request, e = http.NewRequest(methoth, urlAlternative, formData)
+			ctx, cancel = context.WithTimeout(context.Background(), 60*time.Second)
+			c.request, e = http.NewRequestWithContext(ctx, methoth, urlAlternative, formData)
 		} else {
 			c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
 		}
 	}
 	if e != nil {
+		if cancel != nil {
+			cancel()
+		}
 		c.Error = fmt.Errorf("Error in defaultRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
-		return nil, c.Error
+		return nil, nil, c.Error
 	}
 	defaultHeader(c)
-	return c.request, nil
+	return c.request, cancel, nil
 }
 
 func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {

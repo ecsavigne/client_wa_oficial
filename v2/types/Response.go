@@ -72,6 +72,7 @@ type Success struct {
 	Contacts         []ContactResponse `json:"contacts,omitempty"`
 	Messages         []Message         `json:"messages,omitempty"`
 	Success          bool              `json:"success,omitempty"`
+	MediaInfo        *MediaInfo        `json:"media_info,omitempty"`
 }
 
 func (*Success) GetType() string { return ResponseSuccess }
