@@ -25,7 +25,9 @@ type TypeRequest = string
 
 const (
 	RequestGetMessageInfo TypeRequest = "RequestGetMessageInfo"
+	RequestDeleteMedia    TypeRequest = "RequestDeleteMedia"
 	RequestChangeUrlFull  TypeRequest = "RequestChangeUrlFull"
+	RequestWithQuery      TypeRequest = "RequestWithQuery"
 )
 
 func defaultHeader(c *Config) {
@@ -81,7 +83,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 			formData = bytes.NewBuffer(b)
 		case TypeRequest:
 			switch v {
-			case RequestGetMessageInfo:
+			case RequestGetMessageInfo, RequestDeleteMedia:
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", path.Dir(c.path), ePoint))
 				urlPath = c.BaseUrl.ResolveReference(urlPath)
 			case RequestChangeUrlFull:
@@ -89,7 +91,16 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 			}
 		}
 	} else {
-		// validation posible
+		// if len(params) == 2 // if send query params in request where params[1] is map[string]any represent queryData
+		//  and params[0] is type request ej: RequestWithQuery
+		if len(params) > 2 {
+			c.Error = &types.Error{
+				Type:    types.TypeErrorUnrecognized,
+				Code:    types.CodeErrorUnrecognized,
+				Message: "Error in deafultRequest, file: RequestConfig.go. Context: len(params) > 2",
+			}
+			return nil, nil, c.Error
+		}
 	}
 
 	if !strings.HasPrefix(ePoint, "/") {

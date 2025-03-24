@@ -260,6 +260,9 @@ func validTypeInteractive(msg types.MessageInteractive, interactiveType string) 
 	return msg.InteractiveProto.Type == interactiveType
 }
 
+// SendTemplate sends a template message. It validates the message type to ensure it is a template.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 
 	if !validTypeMsg(m, types.MessageTypeTemplate) {
@@ -286,7 +289,9 @@ func (c *ClientWA) SendTemplate(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
-// SendTextMessage send a text message
+// SendTextMessage sends a text message. It validates the message type to ensure it is a text.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeText) {
 		return &types.Error{
@@ -312,6 +317,9 @@ func (c *ClientWA) SendTextMessage(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
+// SendReaction sends a reaction message. It validates the message type to ensure it is a reaction.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeReaction) {
 		return &types.Error{
@@ -337,6 +345,9 @@ func (c *ClientWA) SendReaction(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
+// SendInteractiveList sends an interactive list message. It validates the message type to ensure it is an interactive of type list.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -368,6 +379,9 @@ func (c *ClientWA) SendInteractiveList(m types.Messager) types.ResponserRequest 
 	return resp
 }
 
+// SendInteractiveButtonResponse sends an interactive button response message. It validates the message type to ensure it is an
+// interactive of type button response. If the message type is incorrect, it returns an error. Otherwise, it makes a request to
+// send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -399,6 +413,9 @@ func (c *ClientWA) SendInteractiveButtonResponse(m types.Messager) types.Respons
 	return resp
 }
 
+// SendInteractiveButtonUrl sends an interactive button URL message. It validates the message type to ensure it is an
+// interactive of type button URL. If the message type is incorrect, it returns an error. Otherwise, it makes a request
+// to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -430,6 +447,9 @@ func (c *ClientWA) SendInteractiveButtonUrl(m types.Messager) types.ResponserReq
 	return resp
 }
 
+// SendInteractiveMsgProcess sends an interactive process message. It validates the message type to ensure it is an
+// interactive of type process. If the message type is incorrect, it returns an error. Otherwise, it makes a request
+// to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -461,6 +481,9 @@ func (c *ClientWA) SendInteractiveMsgProcess(m types.Messager) types.ResponserRe
 	return resp
 }
 
+// SendInteractiveOneProduct sends an interactive message of type product. It validates the message type to ensure it is an
+// interactive of type product. If the message type is incorrect, it returns an error. Otherwise, it makes a request
+// to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -492,6 +515,10 @@ func (c *ClientWA) SendInteractiveOneProduct(m types.Messager) types.ResponserRe
 	return resp
 }
 
+// SendInteractiveMultiProduct sends an interactive message of type multi product. It validates the message type to
+// ensure it is an interactive of type multi product. If the message type is incorrect, it returns an error. Otherwise,
+// it makes a request to send the message. If the request is successful, the response is returned; otherwise, an error
+// is returned.
 func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -523,6 +550,10 @@ func (c *ClientWA) SendInteractiveMultiProduct(m types.Messager) types.Responser
 	return resp
 }
 
+// SendInteractiveCatalog sends an interactive catalog message. It validates the message type
+// to ensure it is an interactive of type catalog. If the message type is incorrect, it returns
+// an error. Otherwise, it makes a request to send the message. If the request is successful,
+// the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m.(types.MessageInteractive), types.MessageTypeInteractive) {
 		return &types.Error{
@@ -554,6 +585,9 @@ func (c *ClientWA) SendInteractiveCatalog(m types.Messager) types.ResponserReque
 	return resp
 }
 
+// SendResponseMsg sends a response message. It validates the message type to ensure it is a response
+// message. If the message type is incorrect, it returns an error. Otherwise, it makes a request to send
+// the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, "response") {
 		return &types.Error{
@@ -599,6 +633,9 @@ func (c *ClientWA) validLinAndId(m types.Messager) types.ResponserRequest {
 	return nil
 }
 
+// SendAudioMessage sends an audio message. It validates the message type to ensure it is an audio.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeAudio) {
 		return &types.Error{
@@ -637,6 +674,9 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
+// SendImageMessage sends an image message. It validates the message type to ensure it is an image.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeImage) {
 		return &types.Error{
@@ -675,6 +715,9 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
+// SendVideoMessage sends a video message. It validates the message type to ensure it is a video.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeVideo) {
 		return &types.Error{
@@ -713,6 +756,9 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
+// SendDocumentMessage sends a document message. It validates the message type to ensure it is a document.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeDocument) {
 		return &types.Error{
@@ -751,6 +797,9 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 	return resp
 }
 
+// SendStickerMessage sends a sticker message. It validates the message type to ensure it is a sticker. If the message type is
+// incorrect, it returns an error. Otherwise, it makes a request to send the message. If the request is successful, the response
+// is returned; otherwise, an error is returned.
 func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeSticker) {
 		return &types.Error{
@@ -789,6 +838,10 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
+// SendLocationMessage sends a location message. It validates the message type
+// to ensure it is a location message. If the message type is incorrect, it
+// returns an error. Otherwise, it makes a request to send the message. If the
+// request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeLocation) {
 		return &types.Error{
@@ -814,6 +867,9 @@ func (c *ClientWA) SendLocationMessage(m types.Messager) types.ResponserRequest 
 	return resp
 }
 
+// SendContactMessage sends a contact message. It first validates the message type to ensure it is a contact message.
+// If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
+// If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 	if !validTypeMsg(m, types.MessageTypeContact) {
 		return &types.Error{
@@ -839,6 +895,9 @@ func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 	return resp
 }
 
+// UploadFile uploads a file to the server. It validates the message type to ensure it is either a text, audio, image, video,
+// document, or sticker message. If the message type is incorrect, it returns an error. Otherwise, it makes a request to upload
+// the file. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) types.ResponserRequest {
 	resp, e := c.makeRequest(http.MethodPost, "/media", m)
 	if e != nil {
@@ -869,6 +928,11 @@ func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) types.Respon
 	return resp
 }
 
+// DownloadFile downloads a file using its unique identifier. It first retrieves the file information
+// and checks if the response indicates an error or contains media information. If media information
+// is available, it sends a request to download the file and saves it to the specified path with the
+// given name. If an error occurs during any step, it returns an error. Otherwise, it completes the
+// download process successfully.
 func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 	responseReq, e := c.getFileInfo(id)
 	if e != nil {
@@ -936,8 +1000,39 @@ func (c *ClientWA) getFileInfo(id string) (types.ResponserRequest, error) {
 	return responseReq, nil
 }
 
-func (c *ClientWA) DeleteFile(id string) error {
-	return nil
+func (c *ClientWA) DeleteFile(id string) types.ResponserRequest {
+	// Crear request
+	_, _, err := defaultRequest(http.MethodDelete, fmt.Sprintf("/%s", id), c.Config, RequestDeleteMedia)
+	if err != nil {
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in DeleteFile request of ClientWA. error is: ", err.Error()),
+		}
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in DeleteFile request of ClientWA. error is: ", err.Error()),
+		}
+	}
+	resp.Body.Close()
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return &types.Error{
+			Type:    types.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in DeleteFile request of ClientWA. error is: ", err.Error()),
+		}
+	}
+
+	return types.JsonWrapperResponseRequest(b)
 }
 
 func (c *ClientWA) DeleteMessage(id string) error {
