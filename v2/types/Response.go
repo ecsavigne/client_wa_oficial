@@ -13,6 +13,7 @@ const (
 	ResponseSuccess   ResponseType = "response_success"
 	ResponseError     ResponseType = "response_error"
 	ResponseMediaInfo ResponseType = "response_media_info"
+	ResponseAnother   ResponseType = "another_response"
 )
 
 type ResponserRequest interface {
@@ -21,6 +22,7 @@ type ResponserRequest interface {
 	GetResponseError() *Error
 	GetResponseSuccess() *Success
 	GetResponseMediaInfo() *MediaInfo
+	GetResponseAnother() *Another
 	IsType(ResponseType) bool
 }
 
@@ -50,6 +52,10 @@ func (e *Error) GetResponseSuccess() *Success {
 	return nil
 }
 func (e *Error) GetResponseMediaInfo() *MediaInfo {
+	return nil
+}
+
+func (e *Error) GetResponseAnother() *Another {
 	return nil
 }
 
@@ -95,6 +101,10 @@ func (s *Success) GetResponseMediaInfo() *MediaInfo {
 	return nil
 }
 
+func (s *Success) GetResponseAnother() *Another {
+	return nil
+}
+
 func val(r any) string {
 	by, msg_e := json.MarshalIndent(r, "", "  ")
 	if msg_e != nil {
@@ -137,6 +147,10 @@ func (mi *MediaInfo) GetResponseMediaInfo() *MediaInfo {
 	return mi
 }
 
+func (mi *MediaInfo) GetResponseAnother() *Another {
+	return nil
+}
+
 func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 	// wrapper := &ResponseRequest{}
 	wrapper := map[string]any{}
@@ -145,6 +159,13 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 		return &Error{
 			Code:    401,
 			Message: err.Error(),
+		}
+	}
+
+	if _, ok := wrapper["error"]; ok {
+		return &Error{
+			Message: wrapper["error"].(string),
+			Code:    401,
 		}
 	}
 
@@ -183,13 +204,11 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 		json.Unmarshal(b, successResponse)
 		successResponse.Type = ResponseSuccess
 		return successResponse
+	default:
+		anotherResponse := &Another{}
+		b, _ := json.Marshal(wrapper)
+		json.Unmarshal(b, anotherResponse)
+		anotherResponse.Type = ResponseAnother
+		return anotherResponse
 	}
-
-	if _, ok := wrapper["error"]; ok {
-		return &Error{
-			Message: wrapper["error"].(string),
-			Code:    401,
-		}
-	}
-	return nil
 }

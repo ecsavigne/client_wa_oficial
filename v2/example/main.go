@@ -24,7 +24,7 @@ func EventHandler(data any) {
 func main() {
 	// Create one Client of WhatsApp Official
 	my_client := clientoficial.NewClientWA(clientoficial.Config{
-		EnvFilePath:   "./config_env",
+		EnvFilePath:   "../../t",
 		WebhookSocket: "wss://ws.example.com/ws1",
 		EventHandle:   EventHandler,
 	})
@@ -37,6 +37,7 @@ func main() {
 		return
 	}
 
+	fmt.Println(my_client.GetInfoAllNumberInWA())
 	// For handling the interruption of the application with Ctrl+C allows you to see the events handled by EventHandle
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)

@@ -24,11 +24,22 @@ import (
 type TypeRequest = string
 
 const (
-	RequestGetMessageInfo TypeRequest = "RequestGetMessageInfo"
-	RequestDeleteMedia    TypeRequest = "RequestDeleteMedia"
-	RequestChangeUrlFull  TypeRequest = "RequestChangeUrlFull"
-	RequestWithQuery      TypeRequest = "RequestWithQuery"
+	RequestGetMessageInfo    TypeRequest = "RequestGetMessageInfo"
+	RequestDeleteMedia       TypeRequest = "RequestDeleteMedia"
+	RequestChangeUrlFull     TypeRequest = "RequestChangeUrlFull"
+	RequestWithQueryPhone    TypeRequest = "RequestWithQueryPhone"
+	RequestWithQueryBusiness TypeRequest = "RequestWithQueryBusiness"
 )
+
+type QueryData map[string]any
+
+func (q QueryData) String() string {
+	query := ""
+	for k, v := range q {
+		query += fmt.Sprintf("%s=%v&", k, v)
+	}
+	return query
+}
 
 func defaultHeader(c *Config) {
 	c.request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
@@ -62,7 +73,15 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		urlAlternative string = ""
 		msg            types.Messager
 		formData       *bytes.Buffer = bytes.NewBuffer([]byte{})
+		ctx            context.Context
+		cancel         context.CancelFunc
 	)
+
+	if !strings.HasPrefix(ePoint, "/") {
+		var log = "Error in deafultRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
+		c.Error = fmt.Errorf("%s", log)
+		return nil, nil, c.Error
+	}
 
 	urlPath, _ = url.Parse(c.path + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
@@ -71,6 +90,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		switch v := params[0].(type) {
 		case types.Messager:
 			msg = v
+			c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
 		case map[string]any:
 			b, err := json.Marshal(v)
 			if err != nil {
@@ -81,18 +101,20 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 				}
 			}
 			formData = bytes.NewBuffer(b)
+			c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
 		case TypeRequest:
 			switch v {
 			case RequestGetMessageInfo, RequestDeleteMedia:
-				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", path.Dir(c.path), ePoint))
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", c.pathVersion, ePoint))
 				urlPath = c.BaseUrl.ResolveReference(urlPath)
+				c.request, e = http.NewRequest(methoth, urlPath.String(), nil)
 			case RequestChangeUrlFull:
 				urlAlternative = strings.TrimPrefix(ePoint, "/")
+				ctx, cancel = context.WithTimeout(context.Background(), 60*time.Second)
+				c.request, e = http.NewRequestWithContext(ctx, methoth, urlAlternative, nil)
 			}
 		}
 	} else {
-		// if len(params) == 2 // if send query params in request where params[1] is map[string]any represent queryData
-		//  and params[0] is type request ej: RequestWithQuery
 		if len(params) > 2 {
 			c.Error = &types.Error{
 				Type:    types.TypeErrorUnrecognized,
@@ -101,29 +123,35 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 			}
 			return nil, nil, c.Error
 		}
-	}
 
-	if !strings.HasPrefix(ePoint, "/") {
-		var log = "Error in deafultRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
-		c.Error = fmt.Errorf("%s", log)
-		return nil, nil, c.Error
-	}
-
-	var (
-		ctx    context.Context
-		cancel context.CancelFunc
-	)
-
-	if msg != nil {
-		c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
-	} else {
-		if urlAlternative != "" {
-			ctx, cancel = context.WithTimeout(context.Background(), 60*time.Second)
-			c.request, e = http.NewRequestWithContext(ctx, methoth, urlAlternative, formData)
-		} else {
-			c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
+		// if len(params) == 2 // if send query params in request where params[1] is QueryData represent queryData
+		//  and params[0] is type request ej: RequestWithQuery
+		switch v := params[0].(type) {
+		case TypeRequest:
+			switch v {
+			case RequestWithQueryBusiness:
+				queryData := ""
+				if obj, ok := params[1].(QueryData); ok {
+					queryData = obj.String()
+				}
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathBusiness, ePoint, queryData))
+				urlPath = c.BaseUrl.ResolveReference(urlPath)
+				c.request, e = http.NewRequest(methoth, urlPath.String(), nil)
+			}
 		}
 	}
+
+	// if msg != nil {
+	// 	c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
+	// } else {
+	// 	if urlAlternative != "" {
+	// 		ctx, cancel = context.WithTimeout(context.Background(), 60*time.Second)
+	// 		c.request, e = http.NewRequestWithContext(ctx, methoth, urlAlternative, formData)
+	// 	} else {
+	// 		c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
+	// 	}
+	// }
+
 	if e != nil {
 		if cancel != nil {
 			cancel()
