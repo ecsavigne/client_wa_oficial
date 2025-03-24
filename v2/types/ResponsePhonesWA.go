@@ -1,5 +1,9 @@
 package types
 
+/*
+Represent the response from the GET "https://graph.facebook.com/v22.0/{whatsapp-business-account-id}/phone_numbers
+*/
+
 type PhonesWA struct {
 	Data   []Datum `json:"data"`
 	Paging Paging  `json:"paging"`
@@ -31,4 +35,31 @@ type Paging struct {
 type Cursors struct {
 	Before string `json:"before"`
 	After  string `json:"after"`
+}
+
+func (a *PhonesWA) GetType() string {
+	return ResponsePhonesWA
+}
+func (a *PhonesWA) String() string {
+	return val(a)
+}
+
+func (a *PhonesWA) GetResponsePhonesWA() *PhonesWA {
+	return a
+}
+
+func (a *PhonesWA) GetGeneralResponse() *GeneralResponse {
+	return nil
+}
+
+func (a *PhonesWA) GetResponseError() *Error {
+	return nil
+}
+
+func (a *PhonesWA) GetResponseSuccess() *Success {
+	return nil
+}
+
+func (a *PhonesWA) GetResponseMediaInfo() *MediaInfo {
+	return nil
 }

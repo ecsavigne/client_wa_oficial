@@ -141,17 +141,6 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		}
 	}
 
-	// if msg != nil {
-	// 	c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
-	// } else {
-	// 	if urlAlternative != "" {
-	// 		ctx, cancel = context.WithTimeout(context.Background(), 60*time.Second)
-	// 		c.request, e = http.NewRequestWithContext(ctx, methoth, urlAlternative, formData)
-	// 	} else {
-	// 		c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
-	// 	}
-	// }
-
 	if e != nil {
 		if cancel != nil {
 			cancel()

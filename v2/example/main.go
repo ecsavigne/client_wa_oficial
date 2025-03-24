@@ -24,7 +24,7 @@ func EventHandler(data any) {
 func main() {
 	// Create one Client of WhatsApp Official
 	my_client := clientoficial.NewClientWA(clientoficial.Config{
-		EnvFilePath:   "../../t",
+		EnvFilePath:   "../../config_env",
 		WebhookSocket: "wss://ws.example.com/ws1",
 		EventHandle:   EventHandler,
 	})

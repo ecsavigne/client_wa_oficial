@@ -3,17 +3,16 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"maps"
-	"slices"
 )
 
 type ResponseType = string
 
 const (
-	ResponseSuccess   ResponseType = "response_success"
-	ResponseError     ResponseType = "response_error"
-	ResponseMediaInfo ResponseType = "response_media_info"
-	ResponseAnother   ResponseType = "another_response"
+	ResponseSuccess         ResponseType = "response_success"
+	ResponseError           ResponseType = "response_error"
+	ResponseMediaInfo       ResponseType = "response_media_info"
+	ResponseGeneralResponse ResponseType = "response_general_response"
+	ResponsePhonesWA        ResponseType = "response_phones_wa"
 )
 
 type ResponserRequest interface {
@@ -22,7 +21,8 @@ type ResponserRequest interface {
 	GetResponseError() *Error
 	GetResponseSuccess() *Success
 	GetResponseMediaInfo() *MediaInfo
-	GetResponseAnother() *Another
+	GetGeneralResponse() *GeneralResponse
+	GetResponsePhonesWA() *PhonesWA
 	IsType(ResponseType) bool
 }
 
@@ -55,7 +55,11 @@ func (e *Error) GetResponseMediaInfo() *MediaInfo {
 	return nil
 }
 
-func (e *Error) GetResponseAnother() *Another {
+func (e *Error) GetGeneralResponse() *GeneralResponse {
+	return nil
+}
+
+func (e *Error) GetResponsePhonesWA() *PhonesWA {
 	return nil
 }
 
@@ -101,7 +105,11 @@ func (s *Success) GetResponseMediaInfo() *MediaInfo {
 	return nil
 }
 
-func (s *Success) GetResponseAnother() *Another {
+func (s *Success) GetGeneralResponse() *GeneralResponse {
+	return nil
+}
+
+func (s *Success) GetResponsePhonesWA() *PhonesWA {
 	return nil
 }
 
@@ -147,7 +155,11 @@ func (mi *MediaInfo) GetResponseMediaInfo() *MediaInfo {
 	return mi
 }
 
-func (mi *MediaInfo) GetResponseAnother() *Another {
+func (mi *MediaInfo) GetResponsePhonesWA() *PhonesWA {
+	return nil
+}
+
+func (mi *MediaInfo) GetGeneralResponse() *GeneralResponse {
 	return nil
 }
 
@@ -169,46 +181,51 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 		}
 	}
 
-	sliceKey := slices.Collect(maps.Keys(wrapper))
-	isMediaInfo := !slices.ContainsFunc(sliceKey, func(k string) bool {
-		mediaInfo := []string{"messaging_product", "mime_type", "sha256", "file_size", "id", "url"}
-		return !slices.Contains(mediaInfo, k)
-	})
+	// sliceKey := slices.Collect(maps.Keys(wrapper))
+	// isMediaInfo := !slices.ContainsFunc(sliceKey, func(k string) bool {
+	// 	mediaInfo := []string{"messaging_product", "mime_type", "sha256", "file_size", "id", "url"}
+	// 	return !slices.Contains(mediaInfo, k)
+	// })
 
-	isError := !slices.ContainsFunc(sliceKey, func(k string) bool {
-		errorResponse := []string{"message", "code", "error_subcode", "fbtrace_id"}
-		return !slices.Contains(errorResponse, k)
-	})
+	// isError := !slices.ContainsFunc(sliceKey, func(k string) bool {
+	// 	errorResponse := []string{"message", "code", "error_subcode", "fbtrace_id"}
+	// 	return !slices.Contains(errorResponse, k)
+	// })
 
-	isSuccess := !slices.ContainsFunc(sliceKey, func(k string) bool {
-		successResponse := []string{"messaging_product", "contacts", "messages", "success"}
-		return !slices.Contains(successResponse, k)
-	})
+	// isSuccess := !slices.ContainsFunc(sliceKey, func(k string) bool {
+	// 	successResponse := []string{"messaging_product", "contacts", "messages", "success"}
+	// 	return !slices.Contains(successResponse, k)
+	// })
 
-	switch {
-	case isMediaInfo:
-		mInfo := &MediaInfo{}
-		b, _ := json.Marshal(wrapper)
-		json.Unmarshal(b, mInfo)
-		mInfo.Type = ResponseMediaInfo
-		return mInfo
-	case isError:
-		errorResponse := &Error{}
-		b, _ := json.Marshal(wrapper)
-		json.Unmarshal(b, errorResponse)
-		errorResponse.Type = ResponseError
-		return errorResponse
-	case isSuccess:
-		successResponse := &Success{}
-		b, _ := json.Marshal(wrapper)
-		json.Unmarshal(b, successResponse)
-		successResponse.Type = ResponseSuccess
-		return successResponse
-	default:
-		anotherResponse := &Another{}
-		b, _ := json.Marshal(wrapper)
-		json.Unmarshal(b, anotherResponse)
-		anotherResponse.Type = ResponseAnother
-		return anotherResponse
-	}
+	// switch {
+	// case isMediaInfo:
+	// 	mInfo := &MediaInfo{}
+	// 	b, _ := json.Marshal(wrapper)
+	// 	json.Unmarshal(b, mInfo)
+	// 	mInfo.Type = ResponseMediaInfo
+	// 	return mInfo
+	// case isError:
+	// 	errorResponse := &Error{}
+	// 	b, _ := json.Marshal(wrapper)
+	// 	json.Unmarshal(b, errorResponse)
+	// 	errorResponse.Type = ResponseError
+	// 	return errorResponse
+	// case isSuccess:
+	// 	successResponse := &Success{}
+	// 	b, _ := json.Marshal(wrapper)
+	// 	json.Unmarshal(b, successResponse)
+	// 	successResponse.Type = ResponseSuccess
+	// 	return successResponse
+	// default:
+	// 	gralResponse := &GeneralResponse{}
+	// 	b, _ := json.Marshal(wrapper)
+	// 	json.Unmarshal(b, gralResponse)
+	// 	gralResponse.Type = ResponseGeneralResponse
+	// 	return gralResponse
+	// }
+	gralResponse := &GeneralResponse{}
+	b, _ := json.Marshal(wrapper)
+	json.Unmarshal(b, gralResponse)
+	gralResponse.Type = ResponseGeneralResponse
+	return gralResponse.GetResponseType()
 }
