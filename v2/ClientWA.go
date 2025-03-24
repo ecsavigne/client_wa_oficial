@@ -1020,10 +1020,10 @@ func (c *ClientWA) DeleteFile(id string) types.ResponserRequest {
 			Message: fmt.Sprintln("Error in DeleteFile request of ClientWA. error is: ", err.Error()),
 		}
 	}
-	resp.Body.Close()
 
 	// prepare response
 	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
 	if err != nil {
 		return &types.Error{
 			Type:    types.ResponseError,
