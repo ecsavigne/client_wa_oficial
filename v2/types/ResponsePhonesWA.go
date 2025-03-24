@@ -5,6 +5,7 @@ Represent the response from the GET "https://graph.facebook.com/v22.0/{whatsapp-
 */
 
 type PhonesWA struct {
+	Type   string  `json:"type,omitempty"`
 	Data   []Datum `json:"data"`
 	Paging Paging  `json:"paging"`
 }

@@ -164,7 +164,6 @@ func (mi *MediaInfo) GetGeneralResponse() *GeneralResponse {
 }
 
 func JsonWrapperResponseRequest(data []byte) ResponserRequest {
-	// wrapper := &ResponseRequest{}
 	wrapper := map[string]any{}
 	err := json.Unmarshal(data, &wrapper)
 	if err != nil {
@@ -181,51 +180,8 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 		}
 	}
 
-	// sliceKey := slices.Collect(maps.Keys(wrapper))
-	// isMediaInfo := !slices.ContainsFunc(sliceKey, func(k string) bool {
-	// 	mediaInfo := []string{"messaging_product", "mime_type", "sha256", "file_size", "id", "url"}
-	// 	return !slices.Contains(mediaInfo, k)
-	// })
-
-	// isError := !slices.ContainsFunc(sliceKey, func(k string) bool {
-	// 	errorResponse := []string{"message", "code", "error_subcode", "fbtrace_id"}
-	// 	return !slices.Contains(errorResponse, k)
-	// })
-
-	// isSuccess := !slices.ContainsFunc(sliceKey, func(k string) bool {
-	// 	successResponse := []string{"messaging_product", "contacts", "messages", "success"}
-	// 	return !slices.Contains(successResponse, k)
-	// })
-
-	// switch {
-	// case isMediaInfo:
-	// 	mInfo := &MediaInfo{}
-	// 	b, _ := json.Marshal(wrapper)
-	// 	json.Unmarshal(b, mInfo)
-	// 	mInfo.Type = ResponseMediaInfo
-	// 	return mInfo
-	// case isError:
-	// 	errorResponse := &Error{}
-	// 	b, _ := json.Marshal(wrapper)
-	// 	json.Unmarshal(b, errorResponse)
-	// 	errorResponse.Type = ResponseError
-	// 	return errorResponse
-	// case isSuccess:
-	// 	successResponse := &Success{}
-	// 	b, _ := json.Marshal(wrapper)
-	// 	json.Unmarshal(b, successResponse)
-	// 	successResponse.Type = ResponseSuccess
-	// 	return successResponse
-	// default:
-	// 	gralResponse := &GeneralResponse{}
-	// 	b, _ := json.Marshal(wrapper)
-	// 	json.Unmarshal(b, gralResponse)
-	// 	gralResponse.Type = ResponseGeneralResponse
-	// 	return gralResponse
-	// }
 	gralResponse := &GeneralResponse{}
 	b, _ := json.Marshal(wrapper)
 	json.Unmarshal(b, gralResponse)
-	gralResponse.Type = ResponseGeneralResponse
 	return gralResponse.GetResponseType()
 }

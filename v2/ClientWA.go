@@ -192,6 +192,12 @@ func newConfig(c Config) *Config {
 	return &c
 }
 
+func (c *ClientWA) resetMessageInfo() {
+	if c.MediaInfo != nil {
+		c.MediaInfo = nil
+	}
+}
+
 func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 	res, e := c.clientHttp.Do(req)
 	if e != nil {
@@ -694,6 +700,7 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 
 	if resp.GetType() == types.ResponseSuccess {
 		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+		c.resetMessageInfo()
 	}
 
 	return resp
@@ -735,6 +742,7 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 
 	if resp.GetType() == types.ResponseSuccess {
 		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+		c.resetMessageInfo()
 	}
 
 	return resp
@@ -776,6 +784,7 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 
 	if resp.GetType() == types.ResponseSuccess {
 		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+		c.resetMessageInfo()
 	}
 
 	return resp
@@ -817,6 +826,7 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 
 	if resp.GetType() == types.ResponseSuccess {
 		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+		c.resetMessageInfo()
 	}
 
 	return resp
@@ -858,6 +868,7 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 
 	if resp.GetType() == types.ResponseSuccess {
 		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+		c.resetMessageInfo()
 	}
 
 	return resp
