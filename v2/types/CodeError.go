@@ -21,6 +21,8 @@ const (
 	MsgErrorUnauthorized          MessageError = "Unauthorized"
 	MsgErrorUnrecognized          MessageError = "Unrecognized"
 	MsgErrorUnrecognizedWebSocket MessageError = "Unrecognized WebSocket"
+	MsgErrorInRequestMeta         MessageError = "In Request Meta"
+	MsgErrorInRequest             MessageError = "In Request"
 )
 
 // CodeErrors
@@ -36,6 +38,8 @@ const (
 	CodeErrorBusinessIdEmpty       CodeError = 9
 	CodeErrorUnrecognizedWebSocket CodeError = 10
 	CodeErrorDialTcp               CodeError = 11
+	CodeErrorInRequestMeta         CodeError = 12
+	CodeErrorInRequest             CodeError = 13
 	CodeErrorBadRequest            CodeError = 400
 	CodeErrorUnauthorized          CodeError = 401
 	CodeErrorUrlNotFound           CodeError = 404
@@ -57,4 +61,6 @@ const (
 	TypeErrorUrlNotFound           TypeError = "url_not_found"
 	TypeErrorUnrecognized          TypeError = "unrecognized"
 	TypeErrorUnrecognizedWebSocket TypeError = "unrecognized_websocket"
+	TypeErrorInRequestMeta         TypeError = "in_request_meta"
+	TypeErrorInRequest             TypeError = "in_request"
 )

@@ -208,7 +208,7 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 
 	switch res.StatusCode {
 	case 400:
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = &types.Error{
 			Type:    types.TypeErrorBadRequest,
 			Code:    types.CodeErrorBadRequest,
@@ -216,7 +216,7 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 		}
 		return nil, c.Config.Error
 	case 401:
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = &types.Error{
 			Type:    types.TypeErrorUnauthorized,
 			Code:    types.CodeErrorUnauthorized,
@@ -224,7 +224,7 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 		}
 		return nil, c.Config.Error
 	case 404:
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s.", res.StatusCode, res.Status)
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = &types.Error{
 			Type:    types.TypeErrorUrlNotFound,
 			Code:    types.CodeErrorUrlNotFound,
@@ -238,12 +238,25 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 
 func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) {
 	res, e := doRequest(req, c)
+
+	var responser types.ResponserRequest
 	if e != nil {
-		return nil, c.Config.Error
+		responser = &types.Error{
+			Type:    types.TypeErrorInRequest,
+			Code:    types.CodeErrorInRequest,
+			Message: fmt.Sprintf("Type: %s. Error is: %s", types.MsgErrorInRequest, e.Error()),
+		}
+		return responser, c.Config.Error
 	}
+
 	bodyResponse, e := io.ReadAll(res.Body)
 	if e != nil {
 		log := fmt.Sprintf("Error in function doRequest of ClientWA when reading response body. Error is: %s", e.Error())
+		responser = &types.Error{
+			Type:    types.TypeErrorUnrecognized,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintf("Type: %s. Error is: %s", types.MsgErrorUnrecognized, e.Error()),
+		}
 		c.Config.Error = fmt.Errorf("%s", log)
 		return nil, c.Config.Error
 	}
