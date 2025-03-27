@@ -113,6 +113,14 @@ func (s *Success) GetResponsePhonesWA() *PhonesWA {
 	return nil
 }
 
+func (s *Success) GetMediaInfo() *MediaInfo {
+	return s.MediaInfo
+}
+
+func (s *Success) GetMessageId() string {
+	return s.Messages[0].ID
+}
+
 func val(r any) string {
 	by, msg_e := json.MarshalIndent(r, "", "  ")
 	if msg_e != nil {
