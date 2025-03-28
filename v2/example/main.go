@@ -8,7 +8,6 @@ import (
 	clientoficial "github.com/ecsavigne/client_wa_oficial/v2"
 	"github.com/ecsavigne/client_wa_oficial/v2/event"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
-	clientoficial "github.com/ecsavigne/client_wa_oficialhttps://pkg.go.dev/github.com/ecsavigne/client_wa_oficial/v2/v2"
 )
 
 // EventHandler is a function that handles events
