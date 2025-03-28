@@ -23,6 +23,7 @@ const (
 	MsgErrorUnrecognizedWebSocket MessageError = "Unrecognized WebSocket"
 	MsgErrorInRequestMeta         MessageError = "In Request Meta"
 	MsgErrorInRequest             MessageError = "In Request"
+	MsgErrorTokenEmpty            MessageError = "Token is empty. Not can connect to Whatsapp"
 )
 
 // CodeErrors
@@ -40,6 +41,7 @@ const (
 	CodeErrorDialTcp               CodeError = 11
 	CodeErrorInRequestMeta         CodeError = 12
 	CodeErrorInRequest             CodeError = 13
+	CodeErrorTokenEmpty            CodeError = 14
 	CodeErrorBadRequest            CodeError = 400
 	CodeErrorUnauthorized          CodeError = 401
 	CodeErrorUrlNotFound           CodeError = 404
@@ -63,4 +65,5 @@ const (
 	TypeErrorUnrecognizedWebSocket TypeError = "unrecognized_websocket"
 	TypeErrorInRequestMeta         TypeError = "in_request_meta"
 	TypeErrorInRequest             TypeError = "in_request"
+	TypeErrorTokenEmpty            TypeError = "token_empty"
 )

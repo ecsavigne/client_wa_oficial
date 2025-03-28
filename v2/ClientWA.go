@@ -26,7 +26,9 @@ type clientHttp struct {
 }
 
 type Config struct {
-	Token string `json:"token"`
+	Token               string `json:"token"`
+	WaBusinessAccountId string `json:"wa_business_account_id"`
+	WaPhoneNumberId     string `json:"wa_phone_number_id"`
 	// Path del archivo .env incluyendo el nombre del archivo sin la extensión ej: file: /.../../config_env.env -> EnvFilePath: /.../../config_env
 	EnvFilePath string `json:"env_file_path"`
 	Error       error
@@ -110,7 +112,7 @@ func NewClientWA(c ...Config) *ClientWA {
 	cl := &ClientWA{
 		Config: &c[0],
 	}
-	err := setEnv(c[0].EnvFilePath)
+	err := setEnv(c[0])
 	if err != nil {
 		cl.Error = err
 		return cl
@@ -173,7 +175,13 @@ func newConfig(c Config) *Config {
 	c.BaseUrl, _ = url.Parse(WA_BASE_URL)
 
 	if c.Token == "" {
-		c.Token = CLOUD_API_ACCESS_TOKEN
+		// c.Token = CLOUD_API_ACCESS_TOKEN
+		c.Error = &types.Error{
+			Type:    types.TypeErrorTokenEmpty,
+			Code:    types.CodeErrorTokenEmpty,
+			Message: types.MsgErrorTokenEmpty,
+		}
+		return &c
 	}
 
 	if c.Client == nil {

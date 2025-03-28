@@ -18,9 +18,9 @@ type Messager interface {
 }
 
 type messagerKernel struct {
-	Type             string
-	Link             string
-	MessagingProduct string
+	Type             string `json:"type,omitempty"`
+	Link             string `json:"link,omitempty"`
+	MessagingProduct string `json:"messaging_product,omitempty"`
 	m                Messager
 }
 

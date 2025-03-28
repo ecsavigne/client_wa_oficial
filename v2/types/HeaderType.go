@@ -5,9 +5,9 @@ type Context struct {
 }
 
 type Header struct {
-	MessagingProduct      string `json:"messaging_product" validate:"required"`
-	RecipientType         string `json:"recipient_type" validate:"required"` // "individual"
-	To                    string `json:"to" validate:"required"`
+	MessagingProduct      string `json:"messaging_product,omitempty" validate:"required"`
+	RecipientType         string `json:"recipient_type,omitempty" validate:"required"` // "individual"
+	To                    string `json:"to,omitempty" validate:"required"`
 	Type                  string `json:"type" validate:"required"` // "text" | "image" | "audio" | "document" | "location" | "video" | "button" | "interactive" | "template" | "sticker" | "contacts" | "reaction"
 	Status                string `json:"status,omitempty"`
 	BizOpaqueCallbackData string `json:"biz_opaque_callback_data,omitempty"`

@@ -25,7 +25,8 @@ var (
 	REQUEST_TIMEOUT            string
 )
 
-func setEnv(envPath string) error {
+func setEnv(c Config) error {
+	var envPath string = c.EnvFilePath
 	pathDir := path.Dir(envPath)
 	envName := path.Base(envPath)
 	viper.AddConfigPath(pathDir)
@@ -44,9 +45,15 @@ func setEnv(envPath string) error {
 		WA_BASE_URL = viper.GetString("WA_BASE_URL")
 		M4D_APP_ID = viper.GetString("M4D_APP_ID")
 		M4D_APP_SECRET = viper.GetString("M4D_APP_SECRET")
-		WA_PHONE_NUMBER_ID = viper.GetString("WA_PHONE_NUMBER_ID")
-		WA_BUSINESS_ACCOUNT_ID = viper.GetString("WA_BUSINESS_ACCOUNT_ID")
-		CLOUD_API_ACCESS_TOKEN = viper.GetString("CLOUD_API_ACCESS_TOKEN")
+		if c.WaBusinessAccountId == "" {
+			WA_BUSINESS_ACCOUNT_ID = viper.GetString("WA_BUSINESS_ACCOUNT_ID")
+		}
+		if c.WaPhoneNumberId == "" {
+			WA_PHONE_NUMBER_ID = viper.GetString("WA_PHONE_NUMBER_ID")
+		}
+		if c.Token == "" {
+			CLOUD_API_ACCESS_TOKEN = viper.GetString("CLOUD_API_ACCESS_TOKEN")
+		}
 		CLOUD_API_VERSION = viper.GetString("CLOUD_API_VERSION")
 		WEBHOOK_ENDPOINT = viper.GetString("WEBHOOK_ENDPOINT")
 		WEBHOOK_VERIFICATION_TOKEN = viper.GetString("WEBHOOK_VERIFICATION_TOKEN")
