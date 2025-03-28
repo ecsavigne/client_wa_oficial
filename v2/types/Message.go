@@ -14,6 +14,7 @@ type Messager interface {
 	GetMessageId() string
 	SetLink(string)
 	SetId(string)
+	IsTypeResponse() bool
 }
 
 type messagerKernel struct {
@@ -25,6 +26,10 @@ type messagerKernel struct {
 
 func (m *messagerKernel) GetType() string {
 	return m.Type
+}
+
+func (m *messagerKernel) IsTypeResponse() bool {
+	return false
 }
 
 func toJonReader(m Messager) *strings.Reader {
