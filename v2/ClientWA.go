@@ -175,7 +175,6 @@ func newConfig(c Config) *Config {
 	c.BaseUrl, _ = url.Parse(WA_BASE_URL)
 
 	if c.Token == "" {
-		// c.Token = CLOUD_API_ACCESS_TOKEN
 		c.Error = &types.Error{
 			Type:    types.TypeErrorTokenEmpty,
 			Code:    types.CodeErrorTokenEmpty,

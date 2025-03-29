@@ -23,6 +23,7 @@ var (
 	DEBUG                      string
 	MAX_RETRIES_AFTER_WAIT     string
 	REQUEST_TIMEOUT            string
+	TOKEN                      string
 )
 
 func setEnv(c Config) error {
@@ -47,12 +48,19 @@ func setEnv(c Config) error {
 		M4D_APP_SECRET = viper.GetString("M4D_APP_SECRET")
 		if c.WaBusinessAccountId == "" {
 			WA_BUSINESS_ACCOUNT_ID = viper.GetString("WA_BUSINESS_ACCOUNT_ID")
+		} else {
+			WA_BUSINESS_ACCOUNT_ID = c.WaBusinessAccountId
 		}
+
 		if c.WaPhoneNumberId == "" {
 			WA_PHONE_NUMBER_ID = viper.GetString("WA_PHONE_NUMBER_ID")
+		} else {
+			WA_PHONE_NUMBER_ID = c.WaPhoneNumberId
 		}
+
 		if c.Token == "" {
-			CLOUD_API_ACCESS_TOKEN = viper.GetString("CLOUD_API_ACCESS_TOKEN")
+			c.Token = viper.GetString("CLOUD_API_ACCESS_TOKEN")
+			CLOUD_API_ACCESS_TOKEN = c.Token
 		}
 		CLOUD_API_VERSION = viper.GetString("CLOUD_API_VERSION")
 		WEBHOOK_ENDPOINT = viper.GetString("WEBHOOK_ENDPOINT")
