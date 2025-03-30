@@ -70,9 +70,16 @@ func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 }
 
 func NewMessageResponse(m *MessageResponse) Messager {
+	link := ""
+	switch m.Header.Type {
+	case "audio", "image", "video", "document", "sticker":
+		link = m.Media.Link
+	}
 	mk := &messagerKernel{
-		Type: "response",
-		m:    m,
+		Type:             "response",
+		m:                m,
+		Link:             link,
+		MessagingProduct: m.MessagingProduct,
 	}
 
 	m.Messager = mk

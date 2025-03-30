@@ -43,6 +43,12 @@ func (m *messagerKernel) GetFileHeader() *multipart.FileHeader {
 		return v.Media.FileHeader
 	case *MessageSticker:
 		return v.Media.FileHeader
+	case *MessageResponse:
+		switch v.Header.Type {
+		case "audio", "image", "video", "document", "sticker":
+			return v.Media.FileHeader
+		}
+		return nil
 	default:
 		return nil
 	}
@@ -60,6 +66,11 @@ func (m *messagerKernel) ResetFileHeader() {
 		v.Media.FileHeader = nil
 	case *MessageSticker:
 		v.Media.FileHeader = nil
+	case *MessageResponse:
+		switch v.Header.Type {
+		case "audio", "image", "video", "document", "sticker":
+			v.Media.FileHeader = nil
+		}
 	}
 }
 
@@ -96,6 +107,12 @@ func (m *messagerKernel) GetMessageLink() string {
 		return v.Media.Link
 	case *MessageSticker:
 		return v.Media.Link
+	case *MessageResponse:
+		switch v.Header.Type {
+		case "audio", "image", "video", "document", "sticker":
+			return v.Media.Link
+		}
+		return ""
 	default:
 		return ""
 	}
@@ -113,6 +130,12 @@ func (m *messagerKernel) GetMessageId() string {
 		return v.Media.Id
 	case *MessageSticker:
 		return v.Media.Id
+	case *MessageResponse:
+		switch v.Header.Type {
+		case "audio", "image", "video", "document", "sticker":
+			return v.Media.Id
+		}
+		return ""
 	default:
 		return ""
 	}
@@ -130,6 +153,11 @@ func (m *messagerKernel) SetLink(link string) {
 		v.Media.Link = link
 	case *MessageSticker:
 		v.Media.Link = link
+	case *MessageResponse:
+		switch v.Header.Type {
+		case "audio", "image", "video", "document", "sticker":
+			v.Media.Link = link
+		}
 	}
 }
 
@@ -145,5 +173,10 @@ func (m *messagerKernel) SetId(id string) {
 		v.Media.Id = id
 	case *MessageSticker:
 		v.Media.Id = id
+	case *MessageResponse:
+		switch v.Header.Type {
+		case "audio", "image", "video", "document", "sticker":
+			v.Media.Id = id
+		}
 	}
 }

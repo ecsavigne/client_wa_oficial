@@ -647,7 +647,7 @@ func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 			Message: fmt.Sprintf("Message expect '%s', but get '%s'", "response", m.GetType()),
 		}
 	} else {
-		if m.IsTypeResponse() {
+		if !m.IsTypeResponse() {
 			return &types.Error{
 				Type:    types.ResponseError,
 				Code:    401,
@@ -667,6 +667,11 @@ func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintln("Error en SendResponseMsg request of ClientWA. error is: ", e.Error()),
 		}
+	}
+
+	if resp.GetType() == types.ResponseSuccess {
+		resp.GetResponseSuccess().MediaInfo = c.MediaInfo
+		c.resetMessageInfo()
 	}
 
 	return resp
