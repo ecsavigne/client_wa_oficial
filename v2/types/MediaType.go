@@ -30,7 +30,7 @@ type Media struct {
 		https://developers.facebook.com/docs/whatsapp/api/settings/media-providers
 	*/
 	Provider   string                `json:"provider,omitempty"`
-	FileHeader *multipart.FileHeader `json:"omitempty"`
+	FileHeader *multipart.FileHeader `json:",omitempty"`
 }
 
 type MediaType = string

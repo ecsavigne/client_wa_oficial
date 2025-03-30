@@ -152,7 +152,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 	return c.request, cancel, nil
 }
 
-func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager, FileHeader ...*multipart.FileHeader) (*http.Request, error) {
+func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
 	resetError(c)
 	var e error
 	var urlPath *url.URL
@@ -173,11 +173,11 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 	filename, ext, contentType := "", "", ""
 	var fileTemp multipart.File
 
-	if len(FileHeader) == 1 && FileHeader[0] != nil {
-		filename = FileHeader[0].Filename
-		contentType = FileHeader[0].Header.Get("Content-Type")
+	if msg.GetFileHeader() != nil {
+		filename = msg.GetFileHeader().Filename
+		contentType = msg.GetFileHeader().Header.Get("Content-Type")
 		ext = path.Ext(filename)
-		fileTemp, e = FileHeader[0].Open()
+		fileTemp, e = msg.GetFileHeader().Open()
 		if e != nil {
 			c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", e.Error())
 			return nil, c.Error
@@ -253,11 +253,12 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 		return nil, nil
 	}
 
-	if FileHeader[0] != nil {
+	if msg.GetFileHeader() != nil {
 		if _, err = io.Copy(part, fileTemp); err != nil {
 			c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())
 			return nil, c.Error
 		}
+		msg.ResetFileHeader()
 	} else {
 		if _, err = io.Copy(part, resp.Body); err != nil {
 			c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())

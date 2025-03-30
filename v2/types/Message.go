@@ -17,6 +17,7 @@ type Messager interface {
 	SetId(string)
 	IsTypeResponse() bool
 	GetFileHeader() *multipart.FileHeader
+	ResetFileHeader()
 }
 
 type messagerKernel struct {
@@ -44,6 +45,21 @@ func (m *messagerKernel) GetFileHeader() *multipart.FileHeader {
 		return v.Media.FileHeader
 	default:
 		return nil
+	}
+}
+
+func (m *messagerKernel) ResetFileHeader() {
+	switch v := m.m.(type) {
+	case *MessageImage:
+		v.Media.FileHeader = nil
+	case *MessageVideo:
+		v.Media.FileHeader = nil
+	case *MessageAudio:
+		v.Media.FileHeader = nil
+	case *MessageDocument:
+		v.Media.FileHeader = nil
+	case *MessageSticker:
+		v.Media.FileHeader = nil
 	}
 }
 
