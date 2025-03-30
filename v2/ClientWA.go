@@ -698,7 +698,7 @@ func (c *ClientWA) SendAudioMessage(m types.Messager) types.ResponserRequest {
 		return r
 	}
 
-	if m.GetMessageLink() != "" {
+	if m.GetMessageLink() != "" || m.GetFileHeader() != nil {
 		r := c.UploadFile(m, types.AUDIO)
 		if r != nil && r.GetResponseError() != nil {
 			return r.GetResponseError()
