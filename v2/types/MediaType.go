@@ -1,5 +1,7 @@
 package types
 
+import "mime/multipart"
+
 type Media struct {
 	// Required when type is audio, document, image, sticker, or video and you are not using a link.
 	Id string `json:"id,omitempty"`
@@ -27,7 +29,8 @@ type Media struct {
 		information on configuring providers, see the Media url:
 		https://developers.facebook.com/docs/whatsapp/api/settings/media-providers
 	*/
-	Provider string `json:"provider,omitempty"`
+	Provider   string                `json:"provider,omitempty"`
+	FileHeader *multipart.FileHeader `json:"omitempty"`
 }
 
 type MediaType = string

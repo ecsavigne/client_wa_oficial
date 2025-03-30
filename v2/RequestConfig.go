@@ -152,7 +152,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 	return c.request, cancel, nil
 }
 
-func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
+func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager, FileHeader ...*multipart.FileHeader) (*http.Request, error) {
 	resetError(c)
 	var e error
 	var urlPath *url.URL
@@ -169,43 +169,57 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 	http2.ConfigureTransport(tr)
 	client := &http.Client{Transport: tr}
 
-	resp, err := client.Get(msg.GetMessageLink())
-	if err != nil {
-		c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", err.Error())
-		return nil, c.Error
-	}
-	defer resp.Body.Close()
-
-	switch resp.StatusCode {
-	case 400:
-		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-		c.Error = &types.Error{
-			Type:    types.TypeErrorBadRequest,
-			Code:    types.CodeErrorBadRequest,
-			Message: log,
-		}
-		return nil, c.Error
-	case 401:
-		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-		c.Error = &types.Error{
-			Type:    types.TypeErrorUnauthorized,
-			Code:    types.CodeErrorUnauthorized,
-			Message: log,
-		}
-		return nil, c.Error
-	case 404:
-		log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-		c.Error = &types.Error{
-			Type:    types.TypeErrorUrlNotFound,
-			Code:    types.CodeErrorUrlNotFound,
-			Message: log,
-		}
-		return nil, c.Error
-	}
-
+	var resp *http.Response
 	filename, ext, contentType := "", "", ""
+	var fileTemp multipart.File
 
-	contentType = resp.Header.Get("Content-Type")
+	if len(FileHeader) == 1 && FileHeader[0] != nil {
+		filename = FileHeader[0].Filename
+		contentType = FileHeader[0].Header.Get("Content-Type")
+		ext = path.Ext(filename)
+		fileTemp, e = FileHeader[0].Open()
+		if e != nil {
+			c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", e.Error())
+			return nil, c.Error
+		}
+		defer fileTemp.Close()
+	} else {
+		resp, e = client.Get(msg.GetMessageLink())
+		if e != nil {
+			c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", e.Error())
+			return nil, c.Error
+		}
+		defer resp.Body.Close()
+
+		contentType = resp.Header.Get("Content-Type")
+
+		switch resp.StatusCode {
+		case 400:
+			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
+			c.Error = &types.Error{
+				Type:    types.TypeErrorBadRequest,
+				Code:    types.CodeErrorBadRequest,
+				Message: log,
+			}
+			return nil, c.Error
+		case 401:
+			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
+			c.Error = &types.Error{
+				Type:    types.TypeErrorUnauthorized,
+				Code:    types.CodeErrorUnauthorized,
+				Message: log,
+			}
+			return nil, c.Error
+		case 404:
+			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
+			c.Error = &types.Error{
+				Type:    types.TypeErrorUrlNotFound,
+				Code:    types.CodeErrorUrlNotFound,
+				Message: log,
+			}
+			return nil, c.Error
+		}
+	}
 
 	// get file extension
 	if filename == "" {
@@ -214,11 +228,8 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 		if err == nil && len(exts) > 0 {
 			ext = strings.ToLower(exts[len(exts)-1])
 		}
-	} else {
-		ext = path.Ext(filename)
+		filename += ext
 	}
-
-	nameFile := filename + ext
 
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
@@ -234,7 +245,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 	}
 
 	h := make(textproto.MIMEHeader)
-	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "file", nameFile))
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "file", filename))
 	h.Set("Content-Type", contentType)
 
 	part, err := writer.CreatePart(h)
@@ -242,9 +253,16 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 		return nil, nil
 	}
 
-	if _, err = io.Copy(part, resp.Body); err != nil {
-		c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())
-		return nil, c.Error
+	if FileHeader[0] != nil {
+		if _, err = io.Copy(part, fileTemp); err != nil {
+			c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())
+			return nil, c.Error
+		}
+	} else {
+		if _, err = io.Copy(part, resp.Body); err != nil {
+			c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())
+			return nil, c.Error
+		}
 	}
 
 	urlPath, _ = url.Parse(c.path + ePoint)

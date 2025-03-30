@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
@@ -273,9 +274,9 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 	return types.JsonWrapperResponseRequest(bodyResponse), nil
 }
 
-func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager) (types.ResponserRequest, error) {
+func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager, FileHeader ...*multipart.FileHeader) (types.ResponserRequest, error) {
 	if msg.GetMessageLink() != "" {
-		multipartRequest(methoth, ePoint, c.Config, msg)
+		multipartRequest(methoth, ePoint, c.Config, msg, FileHeader...)
 	} else {
 		defaultRequest(methoth, ePoint, c.Config, msg)
 	}
@@ -740,8 +741,8 @@ func (c *ClientWA) SendImageMessage(m types.Messager) types.ResponserRequest {
 		return r
 	}
 
-	if m.GetMessageLink() != "" {
-		r := c.UploadFile(m, types.IMAGE)
+	if m.GetMessageLink() != "" || m.GetFileHeader() != nil {
+		r := c.UploadFile(m, types.IMAGE, m.GetFileHeader())
 		if r != nil && r.GetResponseError() != nil {
 			return r.GetResponseError()
 		}
@@ -782,8 +783,8 @@ func (c *ClientWA) SendVideoMessage(m types.Messager) types.ResponserRequest {
 		return r
 	}
 
-	if m.GetMessageLink() != "" {
-		r := c.UploadFile(m, types.VIDEO)
+	if m.GetMessageLink() != "" || m.GetFileHeader() != nil {
+		r := c.UploadFile(m, types.VIDEO, m.GetFileHeader())
 		if r != nil && r.GetResponseError() != nil {
 			return r.GetResponseError()
 		}
@@ -824,8 +825,8 @@ func (c *ClientWA) SendDocumentMessage(m types.Messager) types.ResponserRequest 
 		return r
 	}
 
-	if m.GetMessageLink() != "" {
-		r := c.UploadFile(m, types.DOCUMENT)
+	if m.GetMessageLink() != "" || m.GetFileHeader() != nil {
+		r := c.UploadFile(m, types.DOCUMENT, m.GetFileHeader())
 		if r != nil && r.GetResponseError() != nil {
 			return r.GetResponseError()
 		}
@@ -866,8 +867,8 @@ func (c *ClientWA) SendStickerMessage(m types.Messager) types.ResponserRequest {
 		return r
 	}
 
-	if m.GetMessageLink() != "" {
-		r := c.UploadFile(m, types.STICKER)
+	if m.GetMessageLink() != "" || m.GetFileHeader() != nil {
+		r := c.UploadFile(m, types.STICKER, m.GetFileHeader())
 		if r != nil && r.GetResponseError() != nil {
 			return r.GetResponseError()
 		}
@@ -954,8 +955,8 @@ func (c *ClientWA) SendContactMessage(m types.Messager) types.ResponserRequest {
 // UploadFile uploads a file to the server. It validates the message type to ensure it is either a text, audio, image, video,
 // document, or sticker message. If the message type is incorrect, it returns an error. Otherwise, it makes a request to upload
 // the file. If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType) types.ResponserRequest {
-	resp, e := c.makeRequest(http.MethodPost, "/media", m)
+func (c *ClientWA) UploadFile(m types.Messager, mt types.MediaType, FileHeader ...*multipart.FileHeader) types.ResponserRequest {
+	resp, e := c.makeRequest(http.MethodPost, "/media", m, FileHeader...)
 	if e != nil {
 		msgError := fmt.Sprintln("Error in UploadFile request of ClientWA. error is: ", e.Error())
 		return &types.Error{

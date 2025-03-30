@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"mime/multipart"
 	"strings"
 )
 
@@ -15,6 +16,7 @@ type Messager interface {
 	SetLink(string)
 	SetId(string)
 	IsTypeResponse() bool
+	GetFileHeader() *multipart.FileHeader
 }
 
 type messagerKernel struct {
@@ -26,6 +28,23 @@ type messagerKernel struct {
 
 func (m *messagerKernel) GetType() string {
 	return m.Type
+}
+
+func (m *messagerKernel) GetFileHeader() *multipart.FileHeader {
+	switch v := m.m.(type) {
+	case *MessageImage:
+		return v.Media.FileHeader
+	case *MessageVideo:
+		return v.Media.FileHeader
+	case *MessageAudio:
+		return v.Media.FileHeader
+	case *MessageDocument:
+		return v.Media.FileHeader
+	case *MessageSticker:
+		return v.Media.FileHeader
+	default:
+		return nil
+	}
 }
 
 func (m *messagerKernel) IsTypeResponse() bool {
