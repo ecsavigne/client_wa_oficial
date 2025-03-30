@@ -274,7 +274,7 @@ func (c *ClientWA) doRequest(req *http.Request) (types.ResponserRequest, error) 
 }
 
 func (c *ClientWA) makeRequest(methoth string, ePoint string, msg types.Messager) (types.ResponserRequest, error) {
-	if msg.GetMessageLink() != "" {
+	if msg.GetMessageLink() != "" || msg.GetFileHeader() != nil {
 		multipartRequest(methoth, ePoint, c.Config, msg)
 	} else {
 		defaultRequest(methoth, ePoint, c.Config, msg)
