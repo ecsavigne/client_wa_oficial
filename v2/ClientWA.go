@@ -656,6 +656,13 @@ func (c *ClientWA) SendResponseMsg(m types.Messager) types.ResponserRequest {
 		}
 	}
 
+	if m.GetMessageLink() != "" || m.GetFileHeader() != nil {
+		r := c.UploadFile(m, types.AUDIO)
+		if r != nil && r.GetResponseError() != nil {
+			return r.GetResponseError()
+		}
+	}
+
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
 		if ok := e.(*types.Error); ok != nil {
