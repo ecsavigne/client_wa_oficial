@@ -1,12 +1,13 @@
-package types
+package message
 
 import (
 	"encoding/json"
+
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
 )
 
 type MessageResponse struct {
-	Messager `json:"messager,omitempty"`
-	Header
+	MessagerKernel
 	*Media            `json:",omitempty"`
 	*Text             `json:"text,omitempty"`
 	*InteractiveProto `json:"interactive,omitempty"`
@@ -31,10 +32,10 @@ func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 	}
 
 	switch {
-	case m.Header.Type != "audio" && m.Header.Type != "image" &&
-		m.Header.Type != "video" && m.Header.Type != "document" && m.Header.Type != "sticker":
+	case m.MessagerKernel.Type != "audio" && m.MessagerKernel.Type != "image" &&
+		m.MessagerKernel.Type != "video" && m.MessagerKernel.Type != "document" && m.MessagerKernel.Type != "sticker":
 		return data, nil
-	case m.Media == nil, m.Header.Type == "":
+	case m.Media == nil, m.MessagerKernel.Type == "":
 		return data, nil // without dinamic field
 	}
 
@@ -51,7 +52,7 @@ func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	result[m.Header.Type] = mediaMap
+	result[m.MessagerKernel.Type] = mediaMap
 	var mapKey map[string]any
 	b, err := json.Marshal(m.Media)
 	if err != nil {
@@ -69,29 +70,12 @@ func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(result)
 }
 
-func NewMessageResponse(m *MessageResponse) Messager {
-	link := ""
-	switch m.Header.Type {
-	case "audio", "image", "video", "document", "sticker":
-		link = m.Media.Link
-	}
-	mk := &messagerKernel{
-		Type:             "response",
-		m:                m,
-		Link:             link,
-		MessagingProduct: m.MessagingProduct,
-	}
-
-	m.Messager = mk
-	return m
-}
-
 func (m *MessageResponse) String() string {
-	return val(m)
+	return response.Val(m)
 }
 
-func (m *MessageResponse) IsTypeResponse() bool {
-	switch m.Header.Type {
+func (m MessageResponse) IsTypeResponse() bool {
+	switch m.MessagerKernel.Type {
 	case "audio", "image", "video", "document", "sticker", "interactive", "location", "contact", "text", "template", "reaction":
 		return true
 	}

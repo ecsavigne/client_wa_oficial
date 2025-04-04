@@ -7,7 +7,8 @@ import (
 
 	clientoficial "github.com/ecsavigne/client_wa_oficial/v2"
 	"github.com/ecsavigne/client_wa_oficial/v2/event"
-	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/message"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
 )
 
 // EventHandler is a function that handles events
@@ -30,23 +31,30 @@ func main() {
 	})
 
 	if my_client.Error != nil {
-		v, ok := my_client.Error.(*types.Error)
+		v, ok := my_client.Error.(*response.Error)
 		if ok {
 			fmt.Println("Errrr: \n", v)
 		}
 		return
 	}
 
-	var m types.Messager = types.NewMessageResponse(&types.MessageResponse{
-		Header: types.Header{
+	var m message.Messager = &message.MessageResponse{
+		MessagerKernel: message.MessagerKernel{
 			Type: "location",
 		},
-		Media: &types.Media{
+		Media: &message.Media{
 			Link: "https://example.com/audio.mp3",
 		},
-	})
+	}
+
+	var mText message.Messager = &message.MessageText{
+		MessagerKernel: message.MessagerKernel{
+			Type: "location",
+		},
+	}
 
 	fmt.Printf("M: %s\n", m)
+	fmt.Printf("M: %s\n", mText)
 
 	// fmt.Println(my_client.GetInfoAllNumberInWA())
 	// For handling the interruption of the application with Ctrl+C allows you to see the events handled by EventHandle

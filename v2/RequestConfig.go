@@ -18,6 +18,8 @@ import (
 	"time"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/message"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
 	"golang.org/x/net/http2"
 )
 
@@ -63,7 +65,7 @@ func resetError(c *Config) {
 // c: Config
 // params: [Optional]
 // - map[string]any. body request,dataForm.
-// - types.Messager protocol of message to send,
+// - message.Messager protocol of message to send,
 // - name of request ej> "GetMessageInfo"
 func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, context.CancelFunc, error) {
 	resetError(c)
@@ -71,7 +73,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		e              error
 		urlPath        *url.URL
 		urlAlternative string = ""
-		msg            types.Messager
+		msg            message.Messager
 		formData       *bytes.Buffer = bytes.NewBuffer([]byte{})
 		ctx            context.Context
 		cancel         context.CancelFunc
@@ -88,13 +90,13 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 
 	if len(params) > 0 && len(params) == 1 {
 		switch v := params[0].(type) {
-		case types.Messager:
+		case message.Messager:
 			msg = v
 			c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
 		case map[string]any:
 			b, err := json.Marshal(v)
 			if err != nil {
-				return nil, nil, &types.Error{
+				return nil, nil, &response.Error{
 					Type:    types.TypeErrorUnrecognized,
 					Code:    types.CodeErrorUnrecognized,
 					Message: err.Error(),
@@ -116,7 +118,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		}
 	} else {
 		if len(params) > 2 {
-			c.Error = &types.Error{
+			c.Error = &response.Error{
 				Type:    types.TypeErrorUnrecognized,
 				Code:    types.CodeErrorUnrecognized,
 				Message: "Error in deafultRequest, file: RequestConfig.go. Context: len(params) > 2",
@@ -152,7 +154,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 	return c.request, cancel, nil
 }
 
-func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messager) (*http.Request, error) {
+func multipartRequest(methoth string, ePoint string, c *Config, msg message.Messager) (*http.Request, error) {
 	resetError(c)
 	var e error
 	var urlPath *url.URL
@@ -196,7 +198,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 		switch resp.StatusCode {
 		case 400:
 			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-			c.Error = &types.Error{
+			c.Error = &response.Error{
 				Type:    types.TypeErrorBadRequest,
 				Code:    types.CodeErrorBadRequest,
 				Message: log,
@@ -204,7 +206,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 			return nil, c.Error
 		case 401:
 			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-			c.Error = &types.Error{
+			c.Error = &response.Error{
 				Type:    types.TypeErrorUnauthorized,
 				Code:    types.CodeErrorUnauthorized,
 				Message: log,
@@ -212,7 +214,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg types.Messag
 			return nil, c.Error
 		case 404:
 			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-			c.Error = &types.Error{
+			c.Error = &response.Error{
 				Type:    types.TypeErrorUrlNotFound,
 				Code:    types.CodeErrorUrlNotFound,
 				Message: log,

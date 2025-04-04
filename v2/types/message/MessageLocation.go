@@ -1,4 +1,4 @@
-package types
+package message
 
 type Location struct {
 	Latitude  float64 `json:"latitude" validate:"required"`
@@ -8,17 +8,6 @@ type Location struct {
 }
 
 type MessageLocation struct {
-	Messager `json:"messager,omitempty"`
-	Header
-	Location `json:"location,omitempty"`
-}
-
-func NewMessageLocation(m *MessageLocation) Messager {
-	mk := &messagerKernel{
-		Type: MessageTypeLocation,
-		m:    m,
-	}
-
-	m.Messager = mk
-	return m
+	MessagerKernel
+	Location `json:"location"`
 }

@@ -1,4 +1,4 @@
-package types
+package message
 
 type Language struct {
 	Code string `json:"code" validate:"required"` // code language in: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#language
@@ -47,17 +47,6 @@ type Template struct {
 }
 
 type MessageTemplate struct {
-	Messager `json:"messager,omitempty"`
-	Header
+	MessagerKernel
 	Template `json:"template"`
-}
-
-func NewMessageTemplate(m *MessageTemplate) Messager {
-	mk := &messagerKernel{
-		Type: MessageTypeTemplate,
-		m:    m,
-	}
-
-	m.Messager = mk
-	return m
 }

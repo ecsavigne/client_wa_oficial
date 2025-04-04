@@ -1,4 +1,4 @@
-package types
+package message
 
 type Button struct {
 	Id    string `json:"id"`    //  Don't have space begin or end ofof id of button, max 256 characters

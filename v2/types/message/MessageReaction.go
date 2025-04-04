@@ -1,4 +1,4 @@
-package types
+package message
 
 type Reaction struct {
 	MessageId string `json:"message_id" valid:"required"`
@@ -13,12 +13,6 @@ type Reaction struct {
 	Emoji string `json:"emoji" valid:"required"`
 }
 
-type MessageReaction struct {
-	Messager `json:"messager,omitempty"`
-	Header
-	Reaction `json:"reaction"`
-}
-
 /*
 LA REACCIÓN NO SE ENVIARÁ EN LOS SIGUIENTES CASOS:
 
@@ -28,12 +22,7 @@ LA REACCIÓN NO SE ENVIARÁ EN LOS SIGUIENTES CASOS:
 
 Si el identificador es de un mensaje que se eliminó, este no se entregará.
 */
-func NewMessageReaction(m *MessageReaction) Messager {
-	mk := &messagerKernel{
-		Type: MessageTypeReaction,
-		m:    m,
-	}
-
-	m.Messager = mk
-	return m
+type MessageReaction struct {
+	MessagerKernel
+	Reaction `json:"reaction"`
 }

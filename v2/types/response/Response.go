@@ -1,4 +1,4 @@
-package types
+package response
 
 import (
 	"encoding/json"
@@ -36,7 +36,7 @@ type ContactResponse struct {
 	WaID  string `json:"wa_id"`
 }
 
-func val(r any) string {
+func Val(r any) string {
 	by, msg_e := json.MarshalIndent(r, "", "  ")
 	if msg_e != nil {
 		panic(fmt.Sprintf("Error occurred in MarshalIndent. Error is: %s", msg_e))
@@ -44,6 +44,11 @@ func val(r any) string {
 	return string(by)
 }
 
+// JsonWrapperResponseRequest is a function that wraps a given json data into a ResponseWrapper.
+// It unmarshals the data into a map[string]any, and then checks if the map contains an "error" key.
+// If it does, it returns a types.Error object with the error message and code 401.
+// Otherwise, it marshals the map back into json and unmarshals it into a types.GeneralResponse object.
+// Finally, return interface que represent of type of response.
 func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 	wrapper := map[string]any{}
 	err := json.Unmarshal(data, &wrapper)
@@ -69,6 +74,10 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 
 type KernelResponser struct{}
 
+// GetType returns the type of the ResponserRequest interface.
+// It returns a string with the type of the interface.
+// If the interface is not of type *Error, *Success, *MediaInfo, *PhonesWA or *GeneralResponse,
+// it returns an empty string.
 func (k *KernelResponser) GetType() string {
 	switch v := any(k).(type) {
 	case *Error:
@@ -86,22 +95,30 @@ func (k *KernelResponser) GetType() string {
 	}
 }
 
+// String returns a JSON-formatted string representation of the KernelResponser
+// object. It determines the specific type of KernelResponser and uses the val
+// function to convert it to a string. If the type is not recognized, it returns
+// an empty string.
+
 func (k *KernelResponser) String() string {
 	switch v := any(k).(type) {
 	case *Error:
-		return val(v)
+		return Val(v)
 	case *Success:
-		return val(v)
+		return Val(v)
 	case *MediaInfo:
-		return val(v)
+		return Val(v)
 	case *PhonesWA:
-		return val(v)
+		return Val(v)
 	case *GeneralResponse:
-		return val(v)
+		return Val(v)
 	default:
 		return ""
 	}
 }
+
+// GetResponseError attempts to cast the KernelResponser to an *Error type.
+// If successful, it returns the *Error instance; otherwise, it returns nil.
 
 func (k *KernelResponser) GetResponseError() *Error {
 	if v, ok := any(k).(*Error); ok {
@@ -110,6 +127,8 @@ func (k *KernelResponser) GetResponseError() *Error {
 	return nil
 }
 
+// GetResponseSuccess attempts to cast the KernelResponser to an *Success type.
+// If successful, it returns the *Success instance; otherwise, it returns nil.
 func (k *KernelResponser) GetResponseSuccess() *Success {
 	if v, ok := any(k).(*Success); ok {
 		return v
@@ -117,12 +136,17 @@ func (k *KernelResponser) GetResponseSuccess() *Success {
 	return nil
 }
 
+// GetResponseMediaInfo attempts to cast the KernelResponser to an *MediaInfo type.
+// If successful, it returns the *MediaInfo instance; otherwise, it returns nil.
 func (k *KernelResponser) GetResponseMediaInfo() *MediaInfo {
 	if v, ok := any(k).(*MediaInfo); ok {
 		return v
 	}
 	return nil
 }
+
+// GetResponsePhonesWA attempts to cast the KernelResponser to a *PhonesWA type.
+// If successful, it returns the *PhonesWA instance; otherwise, it returns nil.
 
 func (k *KernelResponser) GetResponsePhonesWA() *PhonesWA {
 	if v, ok := any(k).(*PhonesWA); ok {
@@ -131,6 +155,8 @@ func (k *KernelResponser) GetResponsePhonesWA() *PhonesWA {
 	return nil
 }
 
+// GetGeneralResponse attempts to cast the KernelResponser to a *GeneralResponse type.
+// If successful, it returns the *GeneralResponse instance; otherwise, it returns nil.
 func (k *KernelResponser) GetGeneralResponse() *GeneralResponse {
 	if v, ok := any(k).(*GeneralResponse); ok {
 		return v
@@ -138,53 +164,26 @@ func (k *KernelResponser) GetGeneralResponse() *GeneralResponse {
 	return nil
 }
 
+// IsType returns true if the KernelResponser type matches the given ResponseType, and false otherwise.
 func (k *KernelResponser) IsType(pType ResponseType) bool {
 	return k.GetType() == pType
 }
 
 type Error struct {
-	ResponserRequest `json:",omitempty"`
-	Type             string `json:"type,omitempty"`
-	Message          string `json:"message,omitempty"`
-	Code             int64  `json:"code,omitempty"`
-	ErrorSubcode     int64  `json:"error_subcode,omitempty"`
-	FbtraceID        string `json:"fbtrace_id,omitempty"`
+	KernelResponser `json:",omitempty"`
+	Type            string `json:"type,omitempty"`
+	Message         string `json:"message,omitempty"`
+	Code            int64  `json:"code,omitempty"`
+	ErrorSubcode    int64  `json:"error_subcode,omitempty"`
+	FbtraceID       string `json:"fbtrace_id,omitempty"`
 }
-
-// func (*Error) GetType() string { return ResponseError }
-
-// func (e *Error) String() string {
-// 	return val(e)
-// }
-
-// func (e *Error) GetResponseError() *Error {
-// 	return e
-// }
-// func (e *Error) GetResponseSuccess() *Success {
-// 	return nil
-// }
-// func (e *Error) GetResponseMediaInfo() *MediaInfo {
-// 	return nil
-// }
-
-// func (e *Error) GetGeneralResponse() *GeneralResponse {
-// 	return nil
-// }
-
-// func (e *Error) GetResponsePhonesWA() *PhonesWA {
-// 	return nil
-// }
 
 func (e *Error) Error() string {
 	return fmt.Sprintf("Error is: %s, type: %s, code: %d, ErrorSubcode: %d, FbtraceID: %s", e.Message, e.Type, e.Code, e.ErrorSubcode, e.FbtraceID)
 }
 
-// func (e *Error) IsType(t ResponseType) bool {
-// 	return ResponseError == t
-// }
-
 type Success struct {
-	ResponserRequest `json:",omitempty"`
+	KernelResponser  `json:",omitempty"`
 	Type             string            `json:"type,omitempty"`
 	MessagingProduct string            `json:"messaging_product,omitempty"`
 	Contacts         []ContactResponse `json:"contacts,omitempty"`
@@ -193,44 +192,16 @@ type Success struct {
 	MediaInfo        *MediaInfo        `json:"media_info,omitempty"`
 }
 
-func (*Success) GetType() string { return ResponseSuccess }
+func (s *Success) GetMediaInfo() *MediaInfo {
+	return s.MediaInfo
+}
 
-// func (s *Success) String() string {
-// 	return val(s)
-// }
-
-// func (s *Success) IsType(t ResponseType) bool {
-// 	return ResponseSuccess == t
-// }
-
-// func (s *Success) GetResponseError() *Error {
-// 	return nil
-// }
-// func (s *Success) GetResponseSuccess() *Success {
-// 	return s
-// }
-// func (s *Success) GetResponseMediaInfo() *MediaInfo {
-// 	return nil
-// }
-
-// func (s *Success) GetGeneralResponse() *GeneralResponse {
-// 	return nil
-// }
-
-// func (s *Success) GetResponsePhonesWA() *PhonesWA {
-// 	return nil
-// }
-
-// func (s *Success) GetMediaInfo() *MediaInfo {
-// 	return s.MediaInfo
-// }
-
-// func (s *Success) GetMessageId() string {
-// 	return s.Messages[0].ID
-// }
+func (s *Success) GetMessageId() string {
+	return s.Messages[0].ID
+}
 
 type MediaInfo struct {
-	ResponserRequest `json:",omitempty"`
+	KernelResponser  `json:",omitempty"`
 	Type             string `json:"type,omitempty"`
 	MessagingProduct string `json:"messaging_product,omitempty"`
 	MimeType         string `json:"mime_type,omitempty"`
@@ -240,34 +211,6 @@ type MediaInfo struct {
 	Url              string `json:"url,omitempty"`
 }
 
-func (*MediaInfo) GetType() string { return ResponseMediaInfo }
-
-// func (s *MediaInfo) String() string {
-// 	return val(s)
-// }
-
-// func (m *MediaInfo) GetId() string {
-// 	return m.ID
-// }
-
-// func (m *MediaInfo) IsType(t ResponseType) bool {
-// 	return ResponseMediaInfo == t
-// }
-
-// func (mi *MediaInfo) GetResponseError() *Error {
-// 	return nil
-// }
-// func (mi *MediaInfo) GetResponseSuccess() *Success {
-// 	return nil
-// }
-// func (mi *MediaInfo) GetResponseMediaInfo() *MediaInfo {
-// 	return mi
-// }
-
-// func (mi *MediaInfo) GetResponsePhonesWA() *PhonesWA {
-// 	return nil
-// }
-
-// func (mi *MediaInfo) GetGeneralResponse() *GeneralResponse {
-// 	return nil
-// }
+func (m *MediaInfo) GetId() string {
+	return m.ID
+}

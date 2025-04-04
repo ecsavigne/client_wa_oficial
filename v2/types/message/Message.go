@@ -1,4 +1,4 @@
-package types
+package message
 
 import (
 	"encoding/json"
@@ -20,19 +20,53 @@ type Messager interface {
 	ResetFileHeader()
 }
 
-type messagerKernel struct {
-	Type             string `json:"type,omitempty"`
-	Link             string `json:"link,omitempty"`
-	MessagingProduct string `json:"messaging_product,omitempty"`
-	m                Messager
+type Context struct {
+	MessageId string `json:"message_id" valid:"required"`
 }
 
-func (m *messagerKernel) GetType() string {
-	return m.Type
+type MessagerKernel struct {
+	MessagingProduct      string `json:"messaging_product,omitempty" validate:"required"`
+	RecipientType         string `json:"recipient_type,omitempty" validate:"required"` // "individual"
+	To                    string `json:"to,omitempty" validate:"required"`
+	Type                  string `json:"type" validate:"required"` // "text" | "image" | "audio" | "document" | "location" | "video" | "button" | "interactive" | "template" | "sticker" | "contacts" | "reaction"
+	Status                string `json:"status,omitempty"`
+	BizOpaqueCallbackData string `json:"biz_opaque_callback_data,omitempty"`
+	*Context              `json:"context,omitempty"`
 }
 
-func (m *messagerKernel) GetFileHeader() *multipart.FileHeader {
-	switch v := m.m.(type) {
+func (m *MessagerKernel) GetType() string {
+	switch v := any(m).(type) {
+	case *MessageImage:
+		return v.Type
+	case *MessageAudio:
+		return v.Type
+	case *MessageVideo:
+		return v.Type
+	case *MessageDocument:
+		return v.Type
+	case *MessageSticker:
+		return v.Type
+	case *MessageResponse:
+		return v.MessagerKernel.Type
+	case *MessageLocation:
+		return v.Type
+	case *MessageContact:
+		return v.Type
+	case *MessageText:
+		return v.Type
+	case *MessageTemplate:
+		return v.Type
+	case *MessageReaction:
+		return v.Type
+	case *MessageInteractive:
+		return v.MessagerKernel.Type
+	default:
+		return ""
+	}
+}
+
+func (m *MessagerKernel) GetFileHeader() *multipart.FileHeader {
+	switch v := any(m).(type) {
 	case *MessageImage:
 		return v.Media.FileHeader
 	case *MessageVideo:
@@ -44,7 +78,7 @@ func (m *messagerKernel) GetFileHeader() *multipart.FileHeader {
 	case *MessageSticker:
 		return v.Media.FileHeader
 	case *MessageResponse:
-		switch v.Header.Type {
+		switch v.MessagerKernel.Type {
 		case "audio", "image", "video", "document", "sticker":
 			return v.Media.FileHeader
 		}
@@ -54,8 +88,8 @@ func (m *messagerKernel) GetFileHeader() *multipart.FileHeader {
 	}
 }
 
-func (m *messagerKernel) ResetFileHeader() {
-	switch v := m.m.(type) {
+func (m *MessagerKernel) ResetFileHeader() {
+	switch v := any(m).(type) {
 	case *MessageImage:
 		v.Media.FileHeader = nil
 	case *MessageVideo:
@@ -67,14 +101,14 @@ func (m *messagerKernel) ResetFileHeader() {
 	case *MessageSticker:
 		v.Media.FileHeader = nil
 	case *MessageResponse:
-		switch v.Header.Type {
+		switch v.MessagerKernel.Type {
 		case "audio", "image", "video", "document", "sticker":
 			v.Media.FileHeader = nil
 		}
 	}
 }
 
-func (m *messagerKernel) IsTypeResponse() bool {
+func (m *MessagerKernel) IsTypeResponse() bool {
 	return false
 }
 
@@ -87,16 +121,16 @@ func toJonReader(m Messager) *strings.Reader {
 	return strings.NewReader(string(databytes))
 }
 
-func (m *messagerKernel) ToJSONReader() *strings.Reader {
-	return toJonReader(m.m)
+func (m *MessagerKernel) ToJSONReader() *strings.Reader {
+	return toJonReader(m)
 }
 
-func (m *messagerKernel) GetMessagingProduct() string {
+func (m *MessagerKernel) GetMessagingProduct() string {
 	return m.MessagingProduct
 }
 
-func (m *messagerKernel) GetMessageLink() string {
-	switch v := m.m.(type) {
+func (m *MessagerKernel) GetMessageLink() string {
+	switch v := any(m).(type) {
 	case *MessageImage:
 		return v.Media.Link
 	case *MessageVideo:
@@ -108,7 +142,7 @@ func (m *messagerKernel) GetMessageLink() string {
 	case *MessageSticker:
 		return v.Media.Link
 	case *MessageResponse:
-		switch v.Header.Type {
+		switch v.MessagerKernel.Type {
 		case "audio", "image", "video", "document", "sticker":
 			return v.Media.Link
 		}
@@ -118,8 +152,8 @@ func (m *messagerKernel) GetMessageLink() string {
 	}
 }
 
-func (m *messagerKernel) GetMessageId() string {
-	switch v := m.m.(type) {
+func (m *MessagerKernel) GetMessageId() string {
+	switch v := any(m).(type) {
 	case *MessageImage:
 		return v.Media.Id
 	case *MessageVideo:
@@ -131,7 +165,7 @@ func (m *messagerKernel) GetMessageId() string {
 	case *MessageSticker:
 		return v.Media.Id
 	case *MessageResponse:
-		switch v.Header.Type {
+		switch v.MessagerKernel.Type {
 		case "audio", "image", "video", "document", "sticker":
 			return v.Media.Id
 		}
@@ -141,8 +175,8 @@ func (m *messagerKernel) GetMessageId() string {
 	}
 }
 
-func (m *messagerKernel) SetLink(link string) {
-	switch v := m.m.(type) {
+func (m *MessagerKernel) SetLink(link string) {
+	switch v := any(m).(type) {
 	case *MessageImage:
 		v.Media.Link = link
 	case *MessageVideo:
@@ -154,15 +188,15 @@ func (m *messagerKernel) SetLink(link string) {
 	case *MessageSticker:
 		v.Media.Link = link
 	case *MessageResponse:
-		switch v.Header.Type {
+		switch v.MessagerKernel.Type {
 		case "audio", "image", "video", "document", "sticker":
 			v.Media.Link = link
 		}
 	}
 }
 
-func (m *messagerKernel) SetId(id string) {
-	switch v := m.m.(type) {
+func (m *MessagerKernel) SetId(id string) {
+	switch v := any(m).(type) {
 	case *MessageImage:
 		v.Media.Id = id
 	case *MessageVideo:
@@ -174,7 +208,7 @@ func (m *messagerKernel) SetId(id string) {
 	case *MessageSticker:
 		v.Media.Id = id
 	case *MessageResponse:
-		switch v.Header.Type {
+		switch v.MessagerKernel.Type {
 		case "audio", "image", "video", "document", "sticker":
 			v.Media.Id = id
 		}

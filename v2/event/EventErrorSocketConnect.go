@@ -1,9 +1,12 @@
 package event
 
-import "github.com/ecsavigne/client_wa_oficial/v2/types"
+import (
+	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
+)
 
 type EventErrorSocketConnect struct {
-	types.Error `json:"error"`
+	response.Error `json:"error"`
 }
 
 func (*EventErrorSocketConnect) GetType() types.EventType { return types.EventTypeErrorSocketConnect }

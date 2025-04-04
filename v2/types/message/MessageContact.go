@@ -1,4 +1,4 @@
-package types
+package message
 
 type Address struct {
 	Street      string `json:"street"`
@@ -53,17 +53,6 @@ type Contact struct {
 }
 
 type MessageContact struct {
-	Messager `json:"messager,omitempty"`
-	Header
+	MessagerKernel
 	Contact []Contact `json:"contacts"`
-}
-
-func NewMessageContact(m *MessageContact) Messager {
-	mk := &messagerKernel{
-		Type: MessageTypeContact,
-		m:    m,
-	}
-
-	m.Messager = mk
-	return m
 }

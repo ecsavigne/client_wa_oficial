@@ -6,6 +6,7 @@ import (
 	"path"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
 	"github.com/spf13/viper"
 )
 
@@ -36,7 +37,7 @@ func setEnv(c Config) error {
 	viper.SetConfigName(fmt.Sprintf("%s.env", envName))
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("\033[31mError: No encontrado archivo app.env ni .cobraToml de tipo (toml) en\033[30m %s\n", pathDir)
-		return &types.Error{
+		return &response.Error{
 			Type:    types.TypeErrorConfig,
 			Code:    types.CodeErrorEnvNotFound,
 			Message: types.MsgErrorEnvNotFound,
