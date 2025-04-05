@@ -11,12 +11,3 @@ type MessageSticker struct {
 	MessagerKernel
 	Media `json:"sticker"`
 }
-
-func (*MessageSticker) NewStickerMessage(config Messager) *MessageSticker {
-	switch v := any(config).(type) {
-	case *MessageSticker:
-		v.MessagerKernel.parent = v
-		return v
-	}
-	panic("Invalid protocol type, expected *MessageSticker")
-}

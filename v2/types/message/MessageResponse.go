@@ -17,15 +17,6 @@ type MessageResponse struct {
 	*Template         `json:"template,omitempty"`
 }
 
-func (*MessageResponse) NewResponseMessage(config Messager) *MessageResponse {
-	switch v := any(config).(type) {
-	case *MessageResponse:
-		v.MessagerKernel.parent = v
-		return v
-	}
-	panic("Invalid protocol type, expected *MessageResponse")
-}
-
 func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 	type Alias MessageResponse // Evitar recursión
 	aux := &struct {

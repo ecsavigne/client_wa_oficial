@@ -36,6 +36,48 @@ type MessagerKernel struct {
 	*Context              `json:"context,omitempty"`
 }
 
+func NewMessage(config Messager) Messager {
+	switch v := config.(type) {
+	case *MessageAudio:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageContact:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageDocument:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageImage:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageInteractive:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageLocation:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageReaction:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageResponse:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageSticker:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageTemplate:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageText:
+		v.MessagerKernel.parent = v
+		return v
+	case *MessageVideo:
+		v.MessagerKernel.parent = v
+		return v
+	}
+	panic("Invalid protocol type, expected *MessageAudio, *MessageContact, *MessageDocument, *MessageImage, *MessageInteractive, *MessageLocation, *MessageReaction, *MessageResponse, *MessageSticker, *MessageTemplate, *MessageText, *MessageVideo")
+}
+
 func (m *MessagerKernel) GetType() string {
 	// switch v := m.parent.(type) {
 	// case *MessageImage:

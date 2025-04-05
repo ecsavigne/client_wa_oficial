@@ -56,12 +56,3 @@ type MessageContact struct {
 	MessagerKernel
 	Contact []Contact `json:"contacts"`
 }
-
-func (*MessageContact) NewContactMessage(config Messager) *MessageContact {
-	switch v := any(config).(type) {
-	case *MessageContact:
-		v.MessagerKernel.parent = v
-		return v
-	}
-	panic("Invalid protocol type, expected *MessageContact")
-}
