@@ -18,6 +18,7 @@ type Messager interface {
 	IsTypeResponse() bool
 	GetFileHeader() *multipart.FileHeader
 	ResetFileHeader()
+	GetInteractiveMessage() *MessageInteractive
 }
 
 type Context struct {
@@ -212,5 +213,14 @@ func (m *MessagerKernel) SetId(id string) {
 		case "audio", "image", "video", "document", "sticker":
 			v.Media.Id = id
 		}
+	}
+}
+
+func (m *MessagerKernel) GetInteractiveMessage() *MessageInteractive {
+	switch v := any(m).(type) {
+	case *MessageInteractive:
+		return v
+	default:
+		return nil
 	}
 }

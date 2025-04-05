@@ -10,3 +10,7 @@ type MessageInteractive struct {
 func (i *MessageInteractive) IsType(t string) bool {
 	return i.InteractiveProto.Type == t
 }
+
+func (i *MessageInteractive) GetInteractiveProto() InteractiveProto {
+	return i.InteractiveProto
+}
