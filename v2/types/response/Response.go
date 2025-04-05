@@ -36,6 +36,46 @@ type ContactResponse struct {
 	WaID  string `json:"wa_id"`
 }
 
+func NewError(config ResponserRequest) *Error {
+	if v, ok := config.(*Error); ok {
+		v.KernelResponser.parent = v
+		return v
+	}
+	return nil
+}
+
+func NewSuccess(config ResponserRequest) *Success {
+	if v, ok := config.(*Success); ok {
+		v.KernelResponser.parent = v
+		return v
+	}
+	return nil
+}
+
+func NewMediaInfo(config ResponserRequest) *MediaInfo {
+	if v, ok := config.(*MediaInfo); ok {
+		v.KernelResponser.parent = v
+		return v
+	}
+	return nil
+}
+
+func NewPhonesWA(config ResponserRequest) *PhonesWA {
+	if v, ok := config.(*PhonesWA); ok {
+		v.KernelResponser.parent = v
+		return v
+	}
+	return nil
+}
+
+func NewGeneralResponse(config ResponserRequest) *GeneralResponse {
+	if v, ok := config.(*GeneralResponse); ok {
+		v.KernelResponser.parent = v
+		return v
+	}
+	return nil
+}
+
 func Val(r any) string {
 	by, msg_e := json.MarshalIndent(r, "", "  ")
 	if msg_e != nil {
@@ -53,33 +93,35 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 	wrapper := map[string]any{}
 	err := json.Unmarshal(data, &wrapper)
 	if err != nil {
-		return &Error{
+		return NewError(&Error{
 			Code:    401,
 			Message: err.Error(),
-		}
+		})
 	}
 
 	if _, ok := wrapper["error"]; ok {
-		return &Error{
+		return NewError(&Error{
 			Message: wrapper["error"].(string),
 			Code:    401,
-		}
+		})
 	}
 
-	gralResponse := &GeneralResponse{}
+	gralResponse := NewGeneralResponse(&GeneralResponse{})
 	b, _ := json.Marshal(wrapper)
 	json.Unmarshal(b, gralResponse)
 	return gralResponse.GetResponseType()
 }
 
-type KernelResponser struct{}
+type KernelResponser struct {
+	parent ResponserRequest
+}
 
 // GetType returns the type of the ResponserRequest interface.
 // It returns a string with the type of the interface.
 // If the interface is not of type *Error, *Success, *MediaInfo, *PhonesWA or *GeneralResponse,
 // it returns an empty string.
 func (k *KernelResponser) GetType() string {
-	switch v := any(k).(type) {
+	switch v := k.parent.(type) {
 	case *Error:
 		return v.Type
 	case *Success:
@@ -101,7 +143,7 @@ func (k *KernelResponser) GetType() string {
 // an empty string.
 
 func (k *KernelResponser) String() string {
-	switch v := any(k).(type) {
+	switch v := k.parent.(type) {
 	case *Error:
 		return Val(v)
 	case *Success:
@@ -121,7 +163,7 @@ func (k *KernelResponser) String() string {
 // If successful, it returns the *Error instance; otherwise, it returns nil.
 
 func (k *KernelResponser) GetResponseError() *Error {
-	if v, ok := any(k).(*Error); ok {
+	if v, ok := k.parent.(*Error); ok {
 		return v
 	}
 	return nil
@@ -130,7 +172,7 @@ func (k *KernelResponser) GetResponseError() *Error {
 // GetResponseSuccess attempts to cast the KernelResponser to an *Success type.
 // If successful, it returns the *Success instance; otherwise, it returns nil.
 func (k *KernelResponser) GetResponseSuccess() *Success {
-	if v, ok := any(k).(*Success); ok {
+	if v, ok := k.parent.(*Success); ok {
 		return v
 	}
 	return nil
@@ -139,7 +181,7 @@ func (k *KernelResponser) GetResponseSuccess() *Success {
 // GetResponseMediaInfo attempts to cast the KernelResponser to an *MediaInfo type.
 // If successful, it returns the *MediaInfo instance; otherwise, it returns nil.
 func (k *KernelResponser) GetResponseMediaInfo() *MediaInfo {
-	if v, ok := any(k).(*MediaInfo); ok {
+	if v, ok := k.parent.(*MediaInfo); ok {
 		return v
 	}
 	return nil
@@ -149,7 +191,7 @@ func (k *KernelResponser) GetResponseMediaInfo() *MediaInfo {
 // If successful, it returns the *PhonesWA instance; otherwise, it returns nil.
 
 func (k *KernelResponser) GetResponsePhonesWA() *PhonesWA {
-	if v, ok := any(k).(*PhonesWA); ok {
+	if v, ok := k.parent.(*PhonesWA); ok {
 		return v
 	}
 	return nil
@@ -158,7 +200,7 @@ func (k *KernelResponser) GetResponsePhonesWA() *PhonesWA {
 // GetGeneralResponse attempts to cast the KernelResponser to a *GeneralResponse type.
 // If successful, it returns the *GeneralResponse instance; otherwise, it returns nil.
 func (k *KernelResponser) GetGeneralResponse() *GeneralResponse {
-	if v, ok := any(k).(*GeneralResponse); ok {
+	if v, ok := k.parent.(*GeneralResponse); ok {
 		return v
 	}
 	return nil
@@ -170,12 +212,12 @@ func (k *KernelResponser) IsType(pType ResponseType) bool {
 }
 
 type Error struct {
-	KernelResponser `json:",omitempty"`
-	Type            string `json:"type,omitempty"`
-	Message         string `json:"message,omitempty"`
-	Code            int64  `json:"code,omitempty"`
-	ErrorSubcode    int64  `json:"error_subcode,omitempty"`
-	FbtraceID       string `json:"fbtrace_id,omitempty"`
+	KernelResponser
+	Type         string `json:"type,omitempty"`
+	Message      string `json:"message,omitempty"`
+	Code         int64  `json:"code,omitempty"`
+	ErrorSubcode int64  `json:"error_subcode,omitempty"`
+	FbtraceID    string `json:"fbtrace_id,omitempty"`
 }
 
 func (e *Error) Error() string {
@@ -183,7 +225,7 @@ func (e *Error) Error() string {
 }
 
 type Success struct {
-	KernelResponser  `json:",omitempty"`
+	KernelResponser
 	Type             string            `json:"type,omitempty"`
 	MessagingProduct string            `json:"messaging_product,omitempty"`
 	Contacts         []ContactResponse `json:"contacts,omitempty"`
@@ -201,7 +243,7 @@ func (s *Success) GetMessageId() string {
 }
 
 type MediaInfo struct {
-	KernelResponser  `json:",omitempty"`
+	KernelResponser
 	Type             string `json:"type,omitempty"`
 	MessagingProduct string `json:"messaging_product,omitempty"`
 	MimeType         string `json:"mime_type,omitempty"`

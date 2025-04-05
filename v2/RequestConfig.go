@@ -96,11 +96,11 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		case map[string]any:
 			b, err := json.Marshal(v)
 			if err != nil {
-				return nil, nil, &response.Error{
+				return nil, nil, response.NewError(&response.Error{
 					Type:    types.TypeErrorUnrecognized,
 					Code:    types.CodeErrorUnrecognized,
 					Message: err.Error(),
-				}
+				})
 			}
 			formData = bytes.NewBuffer(b)
 			c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
@@ -118,11 +118,11 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		}
 	} else {
 		if len(params) > 2 {
-			c.Error = &response.Error{
+			c.Error = response.NewError(&response.Error{
 				Type:    types.TypeErrorUnrecognized,
 				Code:    types.CodeErrorUnrecognized,
 				Message: "Error in deafultRequest, file: RequestConfig.go. Context: len(params) > 2",
-			}
+			})
 			return nil, nil, c.Error
 		}
 
@@ -198,27 +198,27 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 		switch resp.StatusCode {
 		case 400:
 			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-			c.Error = &response.Error{
+			c.Error = response.NewError(&response.Error{
 				Type:    types.TypeErrorBadRequest,
 				Code:    types.CodeErrorBadRequest,
 				Message: log,
-			}
+			})
 			return nil, c.Error
 		case 401:
 			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-			c.Error = &response.Error{
+			c.Error = response.NewError(&response.Error{
 				Type:    types.TypeErrorUnauthorized,
 				Code:    types.CodeErrorUnauthorized,
 				Message: log,
-			}
+			})
 			return nil, c.Error
 		case 404:
 			log := fmt.Sprintf("Error in function makeRequest bad request of ClientWA. Message type: %s. error is: %s", msg.GetType(), resp.Status)
-			c.Error = &response.Error{
+			c.Error = response.NewError(&response.Error{
 				Type:    types.TypeErrorUrlNotFound,
 				Code:    types.CodeErrorUrlNotFound,
 				Message: log,
-			}
+			})
 			return nil, c.Error
 		}
 	}

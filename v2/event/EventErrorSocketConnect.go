@@ -6,7 +6,7 @@ import (
 )
 
 type EventErrorSocketConnect struct {
-	response.Error `json:"error"`
+	*response.Error `json:"error"`
 }
 
 func (*EventErrorSocketConnect) GetType() types.EventType { return types.EventTypeErrorSocketConnect }

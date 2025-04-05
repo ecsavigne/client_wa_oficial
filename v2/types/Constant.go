@@ -6,17 +6,18 @@ type (
 )
 
 const (
-	MessageTypeText        MessageType = "text"
-	MessageTypeTemplate    MessageType = "template"
-	MessageTypeReaction    MessageType = "reaction"
-	MessageTypeInteractive MessageType = "interactive"
 	MessageTypeAudio       MessageType = "audio"
-	MessageTypeImage       MessageType = "image"
-	MessageTypeVideo       MessageType = "video"
-	MessageTypeDocument    MessageType = "document"
-	MessageTypeLocation    MessageType = "location"
 	MessageTypeContact     MessageType = "contacts"
+	MessageTypeDocument    MessageType = "document"
+	MessageTypeImage       MessageType = "image"
+	MessageTypeInteractive MessageType = "interactive"
+	MessageTypeLocation    MessageType = "location"
+	MessageTypeReaction    MessageType = "reaction"
+	MessageTypeResponse    MessageType = "response"
 	MessageTypeSticker     MessageType = "sticker"
+	MessageTypeTemplate    MessageType = "template"
+	MessageTypeText        MessageType = "text"
+	MessageTypeVideo       MessageType = "video"
 )
 
 const (
