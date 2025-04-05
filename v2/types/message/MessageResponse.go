@@ -17,6 +17,15 @@ type MessageResponse struct {
 	*Template         `json:"template,omitempty"`
 }
 
+func (*MessageResponse) NewResponseMessage(config Messager) *MessageResponse {
+	switch v := any(config).(type) {
+	case *MessageResponse:
+		v.MessagerKernel.parent = v
+		return v
+	}
+	panic("Invalid protocol type, expected *MessageResponse")
+}
+
 func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 	type Alias MessageResponse // Evitar recursión
 	aux := &struct {
@@ -32,7 +41,7 @@ func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 	}
 
 	switch {
-	case m.MessagerKernel.Type != "audio" && m.MessagerKernel.Type != "image" &&
+	case m.MessagerKernel.Type != "audio" && m.MessagerKernel.Type != "Response" &&
 		m.MessagerKernel.Type != "video" && m.MessagerKernel.Type != "document" && m.MessagerKernel.Type != "sticker":
 		return data, nil
 	case m.Media == nil, m.MessagerKernel.Type == "":

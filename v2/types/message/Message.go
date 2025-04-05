@@ -26,6 +26,7 @@ type Context struct {
 }
 
 type MessagerKernel struct {
+	parent                Messager
 	MessagingProduct      string `json:"messaging_product,omitempty" validate:"required"`
 	RecipientType         string `json:"recipient_type,omitempty" validate:"required"` // "individual"
 	To                    string `json:"to,omitempty" validate:"required"`
@@ -36,38 +37,39 @@ type MessagerKernel struct {
 }
 
 func (m *MessagerKernel) GetType() string {
-	switch v := any(m).(type) {
-	case *MessageImage:
-		return v.Type
-	case *MessageAudio:
-		return v.Type
-	case *MessageVideo:
-		return v.Type
-	case *MessageDocument:
-		return v.Type
-	case *MessageSticker:
-		return v.Type
-	case *MessageResponse:
-		return v.MessagerKernel.Type
-	case *MessageLocation:
-		return v.Type
-	case *MessageContact:
-		return v.Type
-	case *MessageText:
-		return v.Type
-	case *MessageTemplate:
-		return v.Type
-	case *MessageReaction:
-		return v.Type
-	case *MessageInteractive:
-		return v.MessagerKernel.Type
-	default:
-		return ""
-	}
+	// switch v := m.parent.(type) {
+	// case *MessageImage:
+	// 	return v.Type
+	// case *MessageAudio:
+	// 	return v.Type
+	// case *MessageVideo:
+	// 	return v.Type
+	// case *MessageDocument:
+	// 	return v.Type
+	// case *MessageSticker:
+	// 	return v.Type
+	// case *MessageResponse:
+	// 	return v.MessagerKernel.Type
+	// case *MessageLocation:
+	// 	return v.Type
+	// case *MessageContact:
+	// 	return v.Type
+	// case *MessageText:
+	// 	return v.Type
+	// case *MessageTemplate:
+	// 	return v.Type
+	// case *MessageReaction:
+	// 	return v.Type
+	// case *MessageInteractive:
+	// 	return v.MessagerKernel.Type
+	// default:
+	// 	return ""
+	// }
+	return m.Type
 }
 
 func (m *MessagerKernel) GetFileHeader() *multipart.FileHeader {
-	switch v := any(m).(type) {
+	switch v := m.parent.(type) {
 	case *MessageImage:
 		return v.Media.FileHeader
 	case *MessageVideo:
@@ -131,7 +133,7 @@ func (m *MessagerKernel) GetMessagingProduct() string {
 }
 
 func (m *MessagerKernel) GetMessageLink() string {
-	switch v := any(m).(type) {
+	switch v := m.parent.(type) {
 	case *MessageImage:
 		return v.Media.Link
 	case *MessageVideo:
@@ -154,7 +156,7 @@ func (m *MessagerKernel) GetMessageLink() string {
 }
 
 func (m *MessagerKernel) GetMessageId() string {
-	switch v := any(m).(type) {
+	switch v := m.parent.(type) {
 	case *MessageImage:
 		return v.Media.Id
 	case *MessageVideo:
@@ -177,7 +179,7 @@ func (m *MessagerKernel) GetMessageId() string {
 }
 
 func (m *MessagerKernel) SetLink(link string) {
-	switch v := any(m).(type) {
+	switch v := m.parent.(type) {
 	case *MessageImage:
 		v.Media.Link = link
 	case *MessageVideo:
@@ -197,7 +199,7 @@ func (m *MessagerKernel) SetLink(link string) {
 }
 
 func (m *MessagerKernel) SetId(id string) {
-	switch v := any(m).(type) {
+	switch v := m.parent.(type) {
 	case *MessageImage:
 		v.Media.Id = id
 	case *MessageVideo:
@@ -217,7 +219,7 @@ func (m *MessagerKernel) SetId(id string) {
 }
 
 func (m *MessagerKernel) GetInteractiveMessage() *MessageInteractive {
-	switch v := any(m).(type) {
+	switch v := m.parent.(type) {
 	case *MessageInteractive:
 		return v
 	default:

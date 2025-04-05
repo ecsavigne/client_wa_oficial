@@ -50,3 +50,12 @@ type MessageTemplate struct {
 	MessagerKernel
 	Template `json:"template"`
 }
+
+func (*MessageTemplate) NewTemplateMessage(config Messager) *MessageTemplate {
+	switch v := any(config).(type) {
+	case *MessageTemplate:
+		v.MessagerKernel.parent = v
+		return v
+	}
+	panic("Invalid protocol type, expected *MessageTemplate")
+}
