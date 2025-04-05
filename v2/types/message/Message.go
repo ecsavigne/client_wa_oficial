@@ -167,7 +167,10 @@ func toJonReader(m Messager) *strings.Reader {
 }
 
 func (m *MessagerKernel) ToJSONReader() *strings.Reader {
-	return toJonReader(m)
+	if m.parent == nil {
+		return nil
+	}
+	return toJonReader(m.parent)
 }
 
 func (m *MessagerKernel) GetMessagingProduct() string {
