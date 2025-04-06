@@ -32,7 +32,7 @@ func (m *MessageResponse) MarshalJSON() ([]byte, error) {
 	}
 
 	switch {
-	case m.MessagerKernel.Type != "audio" && m.MessagerKernel.Type != "Response" &&
+	case m.MessagerKernel.Type != "audio" && m.MessagerKernel.Type != "image" &&
 		m.MessagerKernel.Type != "video" && m.MessagerKernel.Type != "document" && m.MessagerKernel.Type != "sticker":
 		return data, nil
 	case m.Media == nil, m.MessagerKernel.Type == "":

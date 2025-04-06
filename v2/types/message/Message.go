@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"mime/multipart"
 	"strings"
+
+	"github.com/ecsavigne/client_wa_oficial/v2/types"
 )
 
 type Messager interface {
@@ -79,35 +81,33 @@ func NewMessage(config Messager) Messager {
 }
 
 func (m *MessagerKernel) GetType() string {
-	// switch v := m.parent.(type) {
-	// case *MessageImage:
-	// 	return v.Type
-	// case *MessageAudio:
-	// 	return v.Type
-	// case *MessageVideo:
-	// 	return v.Type
-	// case *MessageDocument:
-	// 	return v.Type
-	// case *MessageSticker:
-	// 	return v.Type
-	// case *MessageResponse:
-	// 	return v.MessagerKernel.Type
-	// case *MessageLocation:
-	// 	return v.Type
-	// case *MessageContact:
-	// 	return v.Type
-	// case *MessageText:
-	// 	return v.Type
-	// case *MessageTemplate:
-	// 	return v.Type
-	// case *MessageReaction:
-	// 	return v.Type
-	// case *MessageInteractive:
-	// 	return v.MessagerKernel.Type
-	// default:
-	// 	return ""
-	// }
-	return m.Type
+	switch m.parent.(type) {
+	case *MessageImage:
+		return types.MessageTypeImage
+	case *MessageAudio:
+		return types.MessageTypeAudio
+	case *MessageVideo:
+		return types.MessageTypeVideo
+	case *MessageDocument:
+		return types.MessageTypeDocument
+	case *MessageSticker:
+		return types.MessageTypeSticker
+	case *MessageResponse:
+		return types.MessageTypeResponse
+	case *MessageLocation:
+		return types.MessageTypeLocation
+	case *MessageContact:
+		return types.MessageTypeContact
+	case *MessageText:
+		return types.MessageTypeText
+	case *MessageTemplate:
+		return types.MessageTypeTemplate
+	case *MessageReaction:
+		return types.MessageTypeReaction
+	case *MessageInteractive:
+		return types.MessageTypeInteractive
+	}
+	panic("Invalid protocol type")
 }
 
 func (m *MessagerKernel) GetFileHeader() *multipart.FileHeader {
@@ -134,7 +134,7 @@ func (m *MessagerKernel) GetFileHeader() *multipart.FileHeader {
 }
 
 func (m *MessagerKernel) ResetFileHeader() {
-	switch v := any(m).(type) {
+	switch v := m.parent.(type) {
 	case *MessageImage:
 		v.Media.FileHeader = nil
 	case *MessageVideo:
