@@ -21,7 +21,6 @@ func EventHandler(data any) {
 	}
 }
 
-// main
 func main() {
 	// Create one Client of WhatsApp Official
 	my_client := clientoficial.NewClientWA(clientoficial.Config{
@@ -38,14 +37,14 @@ func main() {
 		return
 	}
 
-	var m message.Messager = &message.MessageResponse{
-		MessagerKernel: message.MessagerKernel{
-			Type: "location",
-		},
-		Media: &message.Media{
-			Link: "https://example.com/audio.mp3",
-		},
-	}
+	// var m message.Messager = &message.MessageResponse{
+	// 	MessagerKernel: message.MessagerKernel{
+	// 		Type: "location",
+	// 	},
+	// 	Media: &message.Media{
+	// 		Link: "https://example.com/audio.mp3",
+	// 	},
+	// }
 
 	var mText message.Messager = &message.MessageText{
 		MessagerKernel: message.MessagerKernel{
@@ -53,8 +52,9 @@ func main() {
 		},
 	}
 
-	fmt.Printf("M: %s\n", m)
+	// fmt.Printf("M: %s\n", m)
 	fmt.Printf("M: %s\n", mText)
+	fmt.Println("Nums: \n", my_client.GetInfoAllNumberInWA())
 
 	// fmt.Println(my_client.GetInfoAllNumberInWA())
 	// For handling the interruption of the application with Ctrl+C allows you to see the events handled by EventHandle
