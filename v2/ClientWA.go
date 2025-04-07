@@ -176,7 +176,7 @@ func newConfig(c Config) *Config {
 
 	c.BaseUrl, _ = url.Parse(WA_BASE_URL)
 
-	if c.Token == "" {
+	if c.Token == "" && CLOUD_API_ACCESS_TOKEN == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorTokenEmpty,
 			Code:    types.CodeErrorTokenEmpty,
@@ -1279,6 +1279,6 @@ func (c *ClientWA) GetInfoAllNumberInWA() response.ResponserRequest {
 			Message: fmt.Sprintln("Error in GetInfoAllNumberInWA request of ClientWA. error is: ", err.Error()),
 		})
 	}
-	fmt.Println(string(b))
+
 	return response.JsonWrapperResponseRequest(b)
 }
