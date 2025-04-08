@@ -16,8 +16,8 @@ func EventHandler(data any) {
 	switch v := data.(type) {
 	case []byte:
 		fmt.Println("Data:\n", string(v))
-	case *event.EventErrorSocketConnect:
-		fmt.Println("EventErrorSocketConnect:\n", v)
+	case *event.ErrorSocketConnectEvent:
+		fmt.Println("ErrorSocketConnectEvent:\n", v)
 	}
 }
 
