@@ -6,7 +6,7 @@ import (
 
 type Metadata struct {
 	DisplayPhoneNumber string `json:"display_phone_number,omitempty"`
-	PhoneNumberID      uint   `json:"phone_number_id,omitempty"`
+	PhoneNumberID      string `json:"phone_number_id,omitempty"`
 }
 
 type Profile struct {
@@ -14,7 +14,7 @@ type Profile struct {
 }
 
 type Contact struct {
-	WaId     uint   `json:"wa_id,omitempty"`
+	WaId     string `json:"wa_id,omitempty"`
 	UserId   string `json:"user_id,omitempty"` // Additional unique, alphanumeric identifier for a WhatsApp user.
 	*Profile `json:"profile,omitempty"`
 }
@@ -74,7 +74,7 @@ type Location struct {
 }
 
 type ReferredProduct struct {
-	CatalogId         uint   `json:"catalog_id"`          // Unique identifier of the Meta catalog linked to the WhatsApp Business Account.
+	CatalogId         string `json:"catalog_id"`          // Unique identifier of the Meta catalog linked to the WhatsApp Business Account.
 	ProductRetailerId string `json:"product_retailer_id"` // Unique identifier of the product in a catalog.
 }
 
@@ -148,7 +148,7 @@ type System struct {
 
 type Identity struct {
 	Acknowledged     string `json:"acknowledged,omitempty"`
-	CreatedTimestamp uint   `json:"created_timestamp,omitempty"`
+	CreatedTimestamp string `json:"created_timestamp,omitempty"`
 	Hash             string `json:"hash,omitempty"`
 }
 
@@ -168,7 +168,7 @@ type Message struct {
 	From        string            `json:"from,omitempty"`
 	ID          string            `json:"id,omitempty"`
 	Type        string            `json:"type,omitempty"`
-	Timestamp   uint              `json:"timestamp,omitempty"`
+	Timestamp   string            `json:"timestamp,omitempty"`
 	Text        *Text             `json:"text,omitempty"`
 	Reaction    *Reaction         `json:"reaction,omitempty"`
 	Image       *Image            `json:"image,omitempty"`
@@ -200,7 +200,7 @@ type Origin struct {
 
 type Conversation struct {
 	ID                  string  `json:"id,omitempty"`
-	ExpirationTimestamp uint    `json:"expiration_timestamp,omitempty"`
+	ExpirationTimestamp string  `json:"expiration_timestamp,omitempty"`
 	Origin              *Origin `json:"origin,omitempty"`
 }
 
@@ -208,7 +208,7 @@ type Statuses struct {
 	ID                    string        `json:"id,omitempty"`
 	BizOpaqueCallbackData string        `json:"biz_opaque_callback_data,omitempty"`
 	Status                string        `json:"status,omitempty"` //delivered, read, sent
-	Timestamp             uint          `json:"timestamp,omitempty"`
+	Timestamp             string        `json:"timestamp,omitempty"`
 	RecipientID           string        `json:"recipient_id,omitempty"`
 	Conversation          *Conversation `json:"conversation,omitempty"`
 	Pricing               *Pricing      `json:"pricing,omitempty"`
@@ -230,7 +230,7 @@ type Change struct {
 }
 
 type Entry struct {
-	ID      uint     `json:"id,omitempty"`
+	ID      string   `json:"id,omitempty"`
 	Changes []Change `json:"changes,omitempty"`
 }
 
