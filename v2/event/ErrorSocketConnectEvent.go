@@ -10,3 +10,4 @@ type ErrorSocketConnectEvent struct {
 }
 
 func (*ErrorSocketConnectEvent) GetType() types.EventType { return types.EventTypeErrorSocketConnect }
+func (m *ErrorSocketConnectEvent) String() string         { return response.Val(m) }
