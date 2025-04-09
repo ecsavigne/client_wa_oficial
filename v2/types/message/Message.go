@@ -29,7 +29,7 @@ type Context struct {
 
 type MessagerKernel struct {
 	parent                Messager
-	MessagingProduct      string `json:"messaging_product,omitempty" validate:"required"`
+	MessagingProduct      string `json:"messaging_product,omitempty"`
 	RecipientType         string `json:"recipient_type,omitempty" validate:"required"` // "individual"
 	To                    string `json:"to,omitempty" validate:"required"`
 	Type                  string `json:"type" validate:"required"` // "text" | "image" | "audio" | "document" | "location" | "video" | "button" | "interactive" | "template" | "sticker" | "contacts" | "reaction"

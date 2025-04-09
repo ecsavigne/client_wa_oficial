@@ -5,8 +5,8 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
 )
 
-type EventErrorSocketConnect struct {
+type ErrorSocketConnectEvent struct {
 	*response.Error `json:"error"`
 }
 
-func (*EventErrorSocketConnect) GetType() types.EventType { return types.EventTypeErrorSocketConnect }
+func (*ErrorSocketConnectEvent) GetType() types.EventType { return types.EventTypeErrorSocketConnect }

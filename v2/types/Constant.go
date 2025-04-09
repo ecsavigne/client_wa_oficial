@@ -34,5 +34,21 @@ const (
 type EventType = string
 
 const (
-	EventTypeErrorSocketConnect EventType = "EventErrorSocketConnect"
+	EventTypeErrorSocketConnect EventType = "ErrorSocketConnectEvent"
+	EventTypeMessageAudio       EventType = "EventTypeMessageAudio"
+	EventTypeMessageButton      EventType = "EventTypeMessageButton"
+	EventTypeMessageDocument    EventType = "EventTypeMessageDocument"
+	EventTypeMessageContact     EventType = "EventTypeMessageContact"
+	EventTypeMessageText        EventType = "EventTypeMessageText"
+	EventTypeMessageImage       EventType = "EventTypeMessageImage"
+	EventTypeMessageInteractive EventType = "EventTypeMessageInteractive"
+	EventTypeMessageOrder       EventType = "EventTypeMessageOrder"
+	EventTypeMessageSticker     EventType = "EventTypeMessageSticker"
+	EventTypeMessageSystem      EventType = "EventTypeMessageSystem"
+	EventTypeMessageVideo       EventType = "EventTypeMessageVideo"
+	EventTypeMessageUnknown     EventType = "EventTypeMessageUnknown"
+	EventTypeMessageReaction    EventType = "EventTypeMessageReaction"
+	EventTypeMessageLocation    EventType = "EventTypeMessageLocation"
+	EventTypeMessage            EventType = "EventTypeMessage"
+	EventTypeStatusMessage      EventType = "EventTypeStatusMessage"
 )

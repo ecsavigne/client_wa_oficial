@@ -3,9 +3,9 @@ package clientoficial
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -49,43 +49,66 @@ type ClientWA struct {
 	*Config `json:"config"`
 }
 
+func codeWebHook(msgByte []byte) *event.MessageWebhook {
+	msg := &event.MessageWebhook{}
+	json.Unmarshal(msgByte, msg)
+	return msg
+}
+
 func (cl *ClientWA) initWebHookSocket() {
 	// url = "wss://webhooks.savcoe-services.com/ws"
 	// Conectar al servidor WebSocket
+	defer func() {
+		if r := recover(); r != nil {
+
+		}
+	}()
+
 	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
+	// evt := &event.ErrorSocketConnectEvent{}
+	var evt event.EventInterface
 	if err != nil {
-		evt := &event.EventErrorSocketConnect{}
 		switch {
 		case websocket.IsUnexpectedCloseError(err):
-			evt.Error = response.NewError(&response.Error{
-				Type:    types.TypeErrorUnexpectedClose,
-				Code:    types.CodeErrorUnexpectedClose,
-				Message: types.MsgErrorUnexpectedClose,
-			})
+			evt = &event.ErrorSocketConnectEvent{
+				Error: response.NewError(&response.Error{
+					Type:    types.TypeErrorUnexpectedClose,
+					Code:    types.CodeErrorUnexpectedClose,
+					Message: types.MsgErrorUnexpectedClose,
+				}),
+			}
 		case strings.Contains(err.Error(), "tls: internal error"):
-			evt.Error = response.NewError(&response.Error{
-				Type:    types.TypeErrorTlsInternal,
-				Code:    types.CodeErrorTlsInternal,
-				Message: types.MsgErrorTlsInternal,
-			})
+			evt = &event.ErrorSocketConnectEvent{
+				Error: response.NewError(&response.Error{
+					Type:    types.TypeErrorTlsInternal,
+					Code:    types.CodeErrorTlsInternal,
+					Message: types.MsgErrorTlsInternal,
+				}),
+			}
 		case strings.Contains(err.Error(), "bad handshake"):
-			evt.Error = response.NewError(&response.Error{
-				Type:    types.TypeErrorBadHandshake,
-				Code:    types.CodeErrorBadHandshake,
-				Message: types.MsgErrorBadHandshake,
-			})
+			evt = &event.ErrorSocketConnectEvent{
+				Error: response.NewError(&response.Error{
+					Type:    types.TypeErrorBadHandshake,
+					Code:    types.CodeErrorBadHandshake,
+					Message: types.MsgErrorBadHandshake,
+				}),
+			}
 		case strings.Contains(err.Error(), "dial tcp: lookup ws"):
-			evt.Error = response.NewError(&response.Error{
-				Type:    types.TypeErrorDialTcp,
-				Code:    types.CodeErrorDialTcp,
-				Message: types.MsgErrorDialTcp,
-			})
+			evt = &event.ErrorSocketConnectEvent{
+				Error: response.NewError(&response.Error{
+					Type:    types.TypeErrorDialTcp,
+					Code:    types.CodeErrorDialTcp,
+					Message: types.MsgErrorDialTcp,
+				}),
+			}
 		default:
-			evt.Error = response.NewError(&response.Error{
-				Type:    types.TypeErrorUnrecognizedWebSocket,
-				Code:    types.CodeErrorUnrecognizedWebSocket,
-				Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorUnrecognizedWebSocket, err.Error()),
-			})
+			evt = &event.ErrorSocketConnectEvent{
+				Error: response.NewError(&response.Error{
+					Type:    types.TypeErrorUnrecognizedWebSocket,
+					Code:    types.CodeErrorUnrecognizedWebSocket,
+					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorUnrecognizedWebSocket, err.Error()),
+				}),
+			}
 		}
 		cl.EventHandle(evt)
 		return
@@ -96,16 +119,101 @@ func (cl *ClientWA) initWebHookSocket() {
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Conexión cerrada:", err)
+			evt = &event.ErrorSocketConnectEvent{
+				Error: response.NewError(&response.Error{
+					Type:    types.TypeErrorConectionClosedWebSocket,
+					Code:    types.CodeErrorUnrecognizedWebSocket,
+					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorConectionClosedWebSocket, err.Error()),
+				}),
+			}
+			cl.EventHandle(evt)
 			break
 		}
-		cl.Config.EventHandle(message)
+
+		msg := codeWebHook(message)
+		switch {
+		case len(msg.Entry) != 0 &&
+			len(msg.Entry[0].Changes) != 0 &&
+			len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+			msg.Entry[0].Changes[0].Value.Messages[0].Type != "":
+			switch msg.Entry[0].Changes[0].Value.Messages[0].Type {
+			case "audio":
+				evt = &event.MessageAudioEvent{
+					MessageWebhook: msg,
+				}
+			case "button":
+				evt = &event.MessageButtonEvent{
+					MessageWebhook: msg,
+				}
+			case "document":
+				evt = &event.MessageDocumentEvent{
+					MessageWebhook: msg,
+				}
+			case "text":
+				evt = &event.MessageTextEvent{
+					MessageWebhook: msg,
+				}
+			case "image":
+				evt = &event.MessageImageEvent{
+					MessageWebhook: msg,
+				}
+			case "interactive":
+				evt = &event.MessageInteractiveEvent{
+					MessageWebhook: msg,
+				}
+			case "order":
+				evt = &event.MessageOrderEvent{
+					MessageWebhook: msg,
+				}
+			case "sticker":
+				evt = &event.MessageStickerEvent{
+					MessageWebhook: msg,
+				}
+			case "system":
+				evt = &event.MessageSystemEvent{
+					MessageWebhook: msg,
+				}
+			case "video":
+				evt = &event.MessageVideoEvent{
+					MessageWebhook: msg,
+				}
+			case "reaction":
+				evt = &event.MessageReactionEvent{
+					MessageWebhook: msg,
+				}
+			case "location":
+				evt = &event.MessageLocationEvent{
+					MessageWebhook: msg,
+				}
+			case "unknown":
+				evt = &event.MessageUnknownEvent{
+					MessageWebhook: msg,
+				}
+			default:
+				cl.Config.EventHandle(message)
+			}
+		case len(msg.Entry) != 0 &&
+			len(msg.Entry[0].Changes) != 0 &&
+			len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
+			evt = &event.StatusMessageEvent{
+				MessageWebhook: msg,
+			}
+		case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+			len(msg.Entry[0].Changes[0].Value.Messages[0].Contatcts) != 0:
+			evt = &event.MessageContatEvent{
+				MessageWebhook: msg,
+			}
+		default:
+			cl.Config.EventHandle(message)
+		}
+
+		cl.Config.EventHandle(evt)
 	}
 }
 
 // Create one Client of WhatsApp Official return *ClientWA :
 // - If the EnvFilePath or Path in Config.EnvFilePath not found. ClientWA.Error = &response.Error{Type: types.TypeErrorConfig, Code: types.CodeErrorEnvNotFound, Message: types.MsgErrorEnvNotFound}
-// - If occurred error in conection with WebHook Socket emit one event type: event.EventErrorSocketConnect
+// - If occurred error in conection with WebHook Socket emit one event type: event.ErrorSocketConnectEvent
 func NewClientWA(c ...Config) *ClientWA {
 	if len(c) == 0 {
 		c = append(c, Config{})
