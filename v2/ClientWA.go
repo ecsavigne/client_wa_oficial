@@ -65,7 +65,7 @@ func (cl *ClientWA) initWebHookSocket() {
 	}()
 
 	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
-	// evt := &event.ErrorSocketConnectEvent{}
+
 	var evt event.EventInterface
 	if err != nil {
 		switch {
