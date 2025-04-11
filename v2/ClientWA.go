@@ -2,6 +2,7 @@
 package clientoficial
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -1244,16 +1245,21 @@ func (c *ClientWA) UploadFile(m message.Messager, mt message.MediaType) response
 // DownloadFile downloads a file using its unique identifier. It first retrieves the file information
 // and checks if the response indicates an error or contains media information. If media information
 // is available, it sends a request to download the file and saves it to the specified path with the
-// given name. If an error occurs during any step, it returns an error. Otherwise, it completes the
+// given name whithout extension. If an error occurs during any step, it returns an error. Otherwise, it completes the
+// if param save == true, the file is saved to the specified path with the given name else it returns the response of the request.
 // download process successfully.
-func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
+func (c *ClientWA) DownloadFile(id, path, nameFile string, save ...bool) (*http.Response, context.CancelFunc, error) {
+	saveValue := true
+	if len(save) == 1 {
+		saveValue = false
+	}
 	responseReq, e := c.getFileInfo(id)
 	if e != nil {
-		return c.Config.Error
+		return nil, nil, c.Config.Error
 	}
 
 	if responseReq.IsType(response.ResponseError) {
-		return responseReq.GetResponseError()
+		return nil, nil, responseReq.GetResponseError()
 	}
 
 	if responseReq.IsType(response.ResponseMediaInfo) {
@@ -1262,23 +1268,27 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 		_, cancel, _ := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", mInfo.Url), c.Config, RequestChangeUrlFull)
 
 		if c.Config.Error != nil {
-			return c.Config.Error
+			return nil, nil, c.Config.Error
 		} else {
 			// Save binaryFile in path
 			res, e := doRequest(c.request, c)
 			ext := strings.Split(res.Header.Get("Content-Disposition"), ".")
 			if e != nil {
-				return e
+				return nil, nil, e
 			} else {
+				if !saveValue {
+					var resTemp http.Response = *res
+					return &resTemp, cancel, e
+				}
 				file, e := os.Create(fmt.Sprintf("%s%s.%s", path, nameFile, ext[len(ext)-1]))
 				if e != nil {
-					return e
+					return nil, nil, e
 				}
 				defer file.Close()
 
 				_, e = io.Copy(file, res.Body)
 				if e != nil {
-					return response.NewError(&response.Error{
+					return nil, nil, response.NewError(&response.Error{
 						Type:    response.ResponseError,
 						Code:    types.CodeErrorUnrecognized,
 						Message: fmt.Sprintln("Error in DownloadFile request of ClientWA. error is: ", e.Error()),
@@ -1289,7 +1299,7 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string) error {
 			}
 		}
 	}
-	return nil
+	return nil, nil, nil
 }
 
 func (c *ClientWA) getFileInfo(id string) (response.ResponserRequest, error) {
