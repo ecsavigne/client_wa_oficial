@@ -184,7 +184,7 @@ type Message struct {
 	Referral    *Referral         `json:"referral,omitempty"`
 	Identity    *Identity         `json:"identity,omitempty"`
 	Interactive *Interactive      `json:"interactive,omitempty"`
-	Contatcts   []message.Contact `json:"contact,omitempty"`
+	Contacts    []message.Contact `json:"contact,omitempty"`
 	Errors      []ErrorMessage    `json:"errors,omitempty"`
 }
 
@@ -204,7 +204,7 @@ type Conversation struct {
 	Origin              *Origin `json:"origin,omitempty"`
 }
 
-type Statuses struct {
+type Statuse struct {
 	ID                    string        `json:"id,omitempty"`
 	BizOpaqueCallbackData string        `json:"biz_opaque_callback_data,omitempty"`
 	Status                string        `json:"status,omitempty"` //delivered, read, sent
@@ -216,12 +216,12 @@ type Statuses struct {
 }
 
 type Value struct {
-	MessagingProduct string     `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
-	Metadata         *Metadata  `json:"metadata,omitempty"`
-	Contacts         []Contact  `json:"contacts,omitempty"`
-	Errors           []Error    `json:"errors,omitempty"`
-	Messages         []Message  `json:"messages,omitempty"`
-	Statuses         []Statuses `json:"statuses,omitempty"`
+	MessagingProduct string    `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
+	Metadata         *Metadata `json:"metadata,omitempty"`
+	Contacts         []Contact `json:"contacts,omitempty"`
+	Errors           []Error   `json:"errors,omitempty"`
+	Messages         []Message `json:"messages,omitempty"`
+	Statuses         []Statuse `json:"statuses,omitempty"`
 }
 
 type Change struct {
