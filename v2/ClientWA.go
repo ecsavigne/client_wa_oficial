@@ -201,7 +201,7 @@ func (cl *ClientWA) initWebHookSocket() {
 			}
 		case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
 			len(msg.Entry[0].Changes[0].Value.Messages[0].Contatcts) != 0:
-			evt = &event.MessageContatEvent{
+			evt = &event.MessageContactEvent{
 				MessageWebhook: msg,
 			}
 		default:

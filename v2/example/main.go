@@ -24,7 +24,7 @@ func EventHandler(data any) {
 		fmt.Println("MessageAudioEvent:\n", v.Entry[0].Changes[0].Value.Messages[0].Audio)
 	case *event.MessageButtonEvent:
 		fmt.Println("MessageButtonEvent:\n", v.Entry[0].Changes[0].Value.Messages[0].Button)
-	case *event.MessageContatEvent:
+	case *event.MessageContactEvent:
 		fmt.Println("MessageContatEvent:\n", v.Entry[0].Changes[0].Value.Contacts[0])
 	case *event.MessageDocumentEvent:
 		fmt.Println("MessageDocumentEvent:\n", v.Entry[0].Changes[0].Value.Messages[0].Document)

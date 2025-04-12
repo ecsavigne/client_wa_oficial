@@ -97,12 +97,12 @@ type MessageVideoEvent struct {
 func (*MessageVideoEvent) GetType() types.EventType { return types.EventTypeMessageVideo }
 func (m *MessageVideoEvent) String() string         { return response.Val(m) }
 
-type MessageContatEvent struct {
+type MessageContactEvent struct {
 	*MessageWebhook
 }
 
-func (*MessageContatEvent) GetType() types.EventType { return types.EventTypeMessageContact }
-func (m *MessageContatEvent) String() string         { return response.Val(m) }
+func (*MessageContactEvent) GetType() types.EventType { return types.EventTypeMessageContact }
+func (m *MessageContactEvent) String() string         { return response.Val(m) }
 
 type MessageReactionEvent struct {
 	*MessageWebhook
