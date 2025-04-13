@@ -184,7 +184,7 @@ type Message struct {
 	Referral    *Referral         `json:"referral,omitempty"`
 	Identity    *Identity         `json:"identity,omitempty"`
 	Interactive *Interactive      `json:"interactive,omitempty"`
-	Contacts    []message.Contact `json:"contact,omitempty"`
+	Contacts    []message.Contact `json:"contacts,omitempty"`
 	Errors      []ErrorMessage    `json:"errors,omitempty"`
 }
 

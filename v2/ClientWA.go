@@ -186,6 +186,10 @@ func (cl *ClientWA) initWebHookSocket() {
 				evt = &event.MessageLocationEvent{
 					MessageWebhook: msg,
 				}
+			case "contacts":
+				evt = &event.MessageContactEvent{
+					MessageWebhook: msg,
+				}
 			case "unknown":
 				evt = &event.MessageUnknownEvent{
 					MessageWebhook: msg,
