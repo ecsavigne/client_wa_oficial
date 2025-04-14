@@ -219,9 +219,9 @@ type Value struct {
 	MessagingProduct string    `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
 	Metadata         *Metadata `json:"metadata,omitempty"`
 	Contacts         []Contact `json:"contacts,omitempty"`
-	Errors           []Error   `json:"errors,omitempty"`
 	Messages         []Message `json:"messages,omitempty"`
 	Statuses         []Statuse `json:"statuses,omitempty"`
+	Errors           []Error   `json:"errors,omitempty"`
 }
 
 type Change struct {
@@ -234,7 +234,7 @@ type Entry struct {
 	Changes []Change `json:"changes,omitempty"`
 }
 
-type MessageWebhook struct {
+type Components struct {
 	Object string  `json:"object,omitempty"` // "whatsapp_business_account"
 	Entry  []Entry `json:"entry,omitempty"`
 }

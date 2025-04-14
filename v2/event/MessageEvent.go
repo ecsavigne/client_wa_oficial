@@ -6,7 +6,7 @@ import (
 )
 
 type MessageEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageEvent) GetType() types.EventType { return types.EventTypeMessage }
@@ -14,105 +14,105 @@ func (*MessageEvent) GetType() types.EventType { return types.EventTypeMessage }
 func (m *MessageEvent) String() string { return response.Val(m) }
 
 type StatusMessageEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*StatusMessageEvent) GetType() types.EventType { return types.EventTypeStatusMessage }
 func (m *StatusMessageEvent) String() string         { return response.Val(m) }
 
 type MessageAudioEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageAudioEvent) GetType() types.EventType { return types.EventTypeMessageAudio }
 func (m *MessageAudioEvent) String() string         { return response.Val(m) }
 
 type MessageButtonEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageButtonEvent) GetType() types.EventType { return types.EventTypeMessageButton }
 func (m *MessageButtonEvent) String() string         { return response.Val(m) }
 
 type MessageDocumentEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageDocumentEvent) GetType() types.EventType { return types.EventTypeMessageDocument }
 func (m *MessageDocumentEvent) String() string         { return response.Val(m) }
 
 type MessageImageEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageImageEvent) GetType() types.EventType { return types.EventTypeMessageImage }
 func (m *MessageImageEvent) String() string         { return response.Val(m) }
 
 type MessageInteractiveEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageInteractiveEvent) GetType() types.EventType { return types.EventTypeMessageInteractive }
 func (m *MessageInteractiveEvent) String() string         { return response.Val(m) }
 
 type MessageOrderEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageOrderEvent) GetType() types.EventType { return types.EventTypeMessageOrder }
 func (m *MessageOrderEvent) String() string         { return response.Val(m) }
 
 type MessageStickerEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageStickerEvent) GetType() types.EventType { return types.EventTypeMessageSticker }
 func (m *MessageStickerEvent) String() string         { return response.Val(m) }
 
 type MessageSystemEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageSystemEvent) GetType() types.EventType { return types.EventTypeMessageSystem }
 func (m *MessageSystemEvent) String() string         { return response.Val(m) }
 
 type MessageTextEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageTextEvent) GetType() types.EventType { return types.EventTypeMessageText }
 func (m *MessageTextEvent) String() string         { return response.Val(m) }
 
 type MessageUnknownEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageUnknownEvent) GetType() types.EventType { return types.EventTypeMessageUnknown }
 func (m *MessageUnknownEvent) String() string         { return response.Val(m) }
 
 type MessageVideoEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageVideoEvent) GetType() types.EventType { return types.EventTypeMessageVideo }
 func (m *MessageVideoEvent) String() string         { return response.Val(m) }
 
 type MessageContactEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageContactEvent) GetType() types.EventType { return types.EventTypeMessageContact }
 func (m *MessageContactEvent) String() string         { return response.Val(m) }
 
 type MessageReactionEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageReactionEvent) GetType() types.EventType { return types.EventTypeMessageReaction }
 func (m *MessageReactionEvent) String() string         { return response.Val(m) }
 
 type MessageLocationEvent struct {
-	*MessageWebhook
+	*Components
 }
 
 func (*MessageLocationEvent) GetType() types.EventType { return types.EventTypeMessageLocation }

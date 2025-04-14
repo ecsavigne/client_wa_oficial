@@ -50,8 +50,8 @@ type ClientWA struct {
 	*Config `json:"config"`
 }
 
-func codeWebHook(msgByte []byte) *event.MessageWebhook {
-	msg := &event.MessageWebhook{}
+func codeWebHook(msgByte []byte) *event.Components {
+	msg := &event.Components{}
 	json.Unmarshal(msgByte, msg)
 	return msg
 }
@@ -140,59 +140,59 @@ func (cl *ClientWA) initWebHookSocket() {
 			switch msg.Entry[0].Changes[0].Value.Messages[0].Type {
 			case "audio":
 				evt = &event.MessageAudioEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "button":
 				evt = &event.MessageButtonEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "document":
 				evt = &event.MessageDocumentEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "text":
 				evt = &event.MessageTextEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "image":
 				evt = &event.MessageImageEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "interactive":
 				evt = &event.MessageInteractiveEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "order":
 				evt = &event.MessageOrderEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "sticker":
 				evt = &event.MessageStickerEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "system":
 				evt = &event.MessageSystemEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "video":
 				evt = &event.MessageVideoEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "reaction":
 				evt = &event.MessageReactionEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "location":
 				evt = &event.MessageLocationEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "contacts":
 				evt = &event.MessageContactEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			case "unknown":
 				evt = &event.MessageUnknownEvent{
-					MessageWebhook: msg,
+					Components: msg,
 				}
 			default:
 				cl.Config.EventHandle(message)
@@ -201,12 +201,12 @@ func (cl *ClientWA) initWebHookSocket() {
 			len(msg.Entry[0].Changes) != 0 &&
 			len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
 			evt = &event.StatusMessageEvent{
-				MessageWebhook: msg,
+				Components: msg,
 			}
 		case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
 			len(msg.Entry[0].Changes[0].Value.Messages[0].Contacts) != 0:
 			evt = &event.MessageContactEvent{
-				MessageWebhook: msg,
+				Components: msg,
 			}
 		default:
 			cl.Config.EventHandle(message)
