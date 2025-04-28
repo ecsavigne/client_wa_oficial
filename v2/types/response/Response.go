@@ -13,6 +13,7 @@ const (
 	ResponseMediaInfo       ResponseType = "response_media_info"
 	ResponseGeneralResponse ResponseType = "response_general_response"
 	ResponsePhonesWA        ResponseType = "response_phones_wa"
+	ResponseWABA            ResponseType = "response_waba"
 )
 
 type ResponserRequest interface {
@@ -22,6 +23,7 @@ type ResponserRequest interface {
 	GetResponseSuccess() *Success
 	GetResponseMediaInfo() *MediaInfo
 	GetResponsePhonesWA() *PhonesWA
+	GetResponseWaba() *Waba
 	GetGeneralResponse() *GeneralResponse
 	IsType(ResponseType) bool
 }
@@ -68,6 +70,14 @@ func NewPhonesWA(config ResponserRequest) *PhonesWA {
 	return nil
 }
 
+func NewWABA(config ResponserRequest) *Waba {
+	if v, ok := config.(*Waba); ok {
+		v.KernelResponser.parent = v
+		return v
+	}
+	return nil
+}
+
 func NewGeneralResponse(config ResponserRequest) *GeneralResponse {
 	if v, ok := config.(*GeneralResponse); ok {
 		v.KernelResponser.parent = v
@@ -108,6 +118,23 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 
 	gralResponse := NewGeneralResponse(&GeneralResponse{})
 	b, _ := json.Marshal(wrapper)
+
+	if wrapper["data"] != nil && wrapper["paging"] != nil {
+		phonesWA := NewPhonesWA(&PhonesWA{})
+		json.Unmarshal(b, phonesWA)
+		if len(phonesWA.Data) > 0 && (phonesWA.Data[0].DisplayPhoneNumber != "" && phonesWA.Data[0].VerifiedName != "") {
+			gralResponse.PhonesWA = phonesWA
+			return gralResponse.GetResponseType()
+		} else {
+			waba := NewWABA(&Waba{})
+			json.Unmarshal(b, waba)
+			if waba != nil {
+				gralResponse.Waba = waba
+				return gralResponse.GetResponseType()
+			}
+		}
+	}
+
 	json.Unmarshal(b, gralResponse)
 	return gralResponse.GetResponseType()
 }
@@ -130,6 +157,8 @@ func (k *KernelResponser) GetType() string {
 		return v.Type
 	case *PhonesWA:
 		return v.Type
+	case *Waba:
+		return v.Type
 	case *GeneralResponse:
 		return v.Type
 	default:
@@ -151,6 +180,8 @@ func (k *KernelResponser) String() string {
 	case *MediaInfo:
 		return Val(v)
 	case *PhonesWA:
+		return Val(v)
+	case *Waba:
 		return Val(v)
 	case *GeneralResponse:
 		return Val(v)
@@ -192,6 +223,13 @@ func (k *KernelResponser) GetResponseMediaInfo() *MediaInfo {
 
 func (k *KernelResponser) GetResponsePhonesWA() *PhonesWA {
 	if v, ok := k.parent.(*PhonesWA); ok {
+		return v
+	}
+	return nil
+}
+
+func (k *KernelResponser) GetResponseWaba() *Waba {
+	if v, ok := k.parent.(*Waba); ok {
 		return v
 	}
 	return nil

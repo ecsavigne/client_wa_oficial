@@ -12,29 +12,29 @@ type PhonesWA struct {
 }
 
 type Datum struct {
-	VerifiedName           string               `json:"verified_name"`
-	CodeVerificationStatus string               `json:"code_verification_status"`
-	DisplayPhoneNumber     string               `json:"display_phone_number"`
-	QualityRating          string               `json:"quality_rating"`
-	PlatformType           string               `json:"platform_type"`
-	Throughput             Throughput           `json:"throughput"`
-	WebhookConfiguration   WebhookConfiguration `json:"webhook_configuration"`
-	ID                     string               `json:"id"`
+	VerifiedName           string               `json:"verified_name,omitempty"`
+	CodeVerificationStatus string               `json:"code_verification_status,omitempty"`
+	DisplayPhoneNumber     string               `json:"display_phone_number,omitempty"`
+	QualityRating          string               `json:"quality_rating,omitempty"`
+	PlatformType           string               `json:"platform_type,omitempty"`
+	Throughput             Throughput           `json:"throughput,omitempty"`
+	WebhookConfiguration   WebhookConfiguration `json:"webhook_configuration,omitempty"`
+	ID                     string               `json:"id,omitempty"`
 }
 
 type Throughput struct {
-	Level string `json:"level"`
+	Level string `json:"level,omitempty"`
 }
 
 type WebhookConfiguration struct {
-	Application string `json:"application"`
+	Application string `json:"application,omitempty"`
 }
 
 type Paging struct {
-	Cursors Cursors `json:"cursors"`
+	Cursors Cursors `json:"cursors,omitempty"`
 }
 
 type Cursors struct {
-	Before string `json:"before"`
-	After  string `json:"after"`
+	Before string `json:"before,omitempty"`
+	After  string `json:"after,omitempty"`
 }

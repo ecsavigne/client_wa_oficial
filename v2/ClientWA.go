@@ -28,24 +28,6 @@ type clientHttp struct {
 	BaseUrl *url.URL `json:"base_url"`
 }
 
-type Config struct {
-	Token               string `json:"token"`
-	WaBusinessAccountId string `json:"wa_business_account_id"`
-	WaPhoneNumberId     string `json:"wa_phone_number_id"`
-	// Path del archivo .env incluyendo el nombre del archivo sin la extensión ej: file: /.../../config_env.env -> EnvFilePath: /.../../config_env
-	EnvFilePath string `json:"env_file_path"`
-	Error       error
-	// Url del servidor WebHook con ruta /ws para conectar con el servidor WebSocket ej: wss://webhooks.savcoe-services.com/ws
-	WebhookSocket string    `json:"webhook_socket"`
-	EventHandle   func(any) // Funcion para manejar los eventos del servidor WebHook WebSocket
-	path          string
-	pathVersion   string
-	pathBusiness  string
-	clientHttp
-	request   *http.Request
-	MediaInfo *response.MediaInfo
-}
-
 type ClientWA struct {
 	*Config `json:"config"`
 }
@@ -227,7 +209,7 @@ func NewClientWA(c ...Config) *ClientWA {
 	cl := &ClientWA{
 		Config: &c[0],
 	}
-	err := setEnv(c[0])
+	err := setEnv(&c[0])
 	if err != nil {
 		cl.Error = err
 		return cl
@@ -247,7 +229,7 @@ func NewClientWA(c ...Config) *ClientWA {
 
 func newConfig(c Config) *Config {
 	c.Error = nil
-	if WA_BASE_URL == "" {
+	if c.wA_BASE_URL == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBaseUrlEmpty,
 			Code:    types.CodeErrorBadHandshake,
@@ -256,7 +238,7 @@ func newConfig(c Config) *Config {
 		return &c
 	}
 
-	if CLOUD_API_VERSION == "" {
+	if c.cLOUD_API_VERSION == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorApiVersionEmpty,
 			Code:    types.CodeErrorApiVersionEmpty,
@@ -265,7 +247,7 @@ func newConfig(c Config) *Config {
 		return &c
 	}
 
-	if WA_PHONE_NUMBER_ID == "" {
+	if c.wA_PHONE_NUMBER_ID == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorPhoneIdEmpty,
 			Code:    types.CodeErrorPhoneIdEmpty,
@@ -274,7 +256,7 @@ func newConfig(c Config) *Config {
 		return &c
 	}
 
-	if WA_BUSINESS_ACCOUNT_ID == "" {
+	if c.wA_BUSINESS_ACCOUNT_ID == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBusinessIdEmpty,
 			Code:    types.CodeErrorBusinessIdEmpty,
@@ -283,13 +265,13 @@ func newConfig(c Config) *Config {
 		return &c
 	}
 
-	c.path = path.Join(CLOUD_API_VERSION, WA_PHONE_NUMBER_ID)
-	c.pathBusiness = path.Join(CLOUD_API_VERSION, WA_BUSINESS_ACCOUNT_ID)
-	c.pathVersion = path.Join(CLOUD_API_VERSION)
+	c.path = path.Join(c.cLOUD_API_VERSION, c.wA_PHONE_NUMBER_ID)
+	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.wA_BUSINESS_ACCOUNT_ID)
+	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 
-	c.BaseUrl, _ = url.Parse(WA_BASE_URL)
+	c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
 
-	if c.Token == "" && CLOUD_API_ACCESS_TOKEN == "" {
+	if c.Token == "" && c.cLOUD_API_ACCESS_TOKEN == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorTokenEmpty,
 			Code:    types.CodeErrorTokenEmpty,
@@ -1369,9 +1351,9 @@ func (c *ClientWA) DeleteMessage(id string) response.ResponserRequest {
 // GetInfoAllNumberInWA returns information about all the phone numbers associated with the
 // WhatsApp Business API client. It returns a JSON response containing an array of phone
 // numbers and their associated information.
-func (c *ClientWA) GetInfoAllNumberInWA() response.ResponserRequest {
+func (c *ClientWA) GetInfoAllNumberInWaba() response.ResponserRequest {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, RequestWithQueryBusiness, QueryData{
-		"access_token": CLOUD_API_ACCESS_TOKEN,
+		"access_token": c.Token,
 	})
 	if err != nil {
 		return response.NewError(&response.Error{
@@ -1399,6 +1381,43 @@ func (c *ClientWA) GetInfoAllNumberInWA() response.ResponserRequest {
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintln("Error in GetInfoAllNumberInWA request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
+// GetInfoAllNumberInWA returns information about all the Whatsapp Business Account phone associated with the
+// WhatsApp Business API client. It returns a JSON response containing an array of phone
+// numbers and their associated information.
+func (c *ClientWA) GetInfoAllWaba(idMeta string) response.ResponserRequest {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", idMeta, "owned_whatsapp_business_accounts"), c.Config, RequestWithVersion)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetInfoAllWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetInfoAllWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetInfoAllWaba request of ClientWA. error is: ", err.Error()),
 		})
 	}
 

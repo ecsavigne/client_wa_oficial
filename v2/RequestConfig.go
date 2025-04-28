@@ -31,6 +31,7 @@ const (
 	RequestChangeUrlFull     TypeRequest = "RequestChangeUrlFull"
 	RequestWithQueryPhone    TypeRequest = "RequestWithQueryPhone"
 	RequestWithQueryBusiness TypeRequest = "RequestWithQueryBusiness"
+	RequestWithVersion       TypeRequest = "RequestWithVersion"
 )
 
 type QueryData map[string]any
@@ -106,7 +107,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 			c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
 		case TypeRequest:
 			switch v {
-			case RequestGetMessageInfo, RequestDeleteMedia:
+			case RequestGetMessageInfo, RequestDeleteMedia, RequestWithVersion:
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", c.pathVersion, ePoint))
 				urlPath = c.BaseUrl.ResolveReference(urlPath)
 				c.request, e = http.NewRequest(methoth, urlPath.String(), nil)
