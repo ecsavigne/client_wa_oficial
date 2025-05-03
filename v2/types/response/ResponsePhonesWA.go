@@ -6,9 +6,10 @@ Represent the response from the GET "https://graph.facebook.com/v22.0/{whatsapp-
 
 type PhonesWA struct {
 	KernelResponser
-	Type   string  `json:"type,omitempty"`
-	Data   []Datum `json:"data"`
-	Paging Paging  `json:"paging"`
+	Type         string  `json:"type,omitempty"`
+	ResponseType string  `json:"response_type,omitempty"`
+	Data         []Datum `json:"data"`
+	Paging       Paging  `json:"paging"`
 }
 
 type Datum struct {

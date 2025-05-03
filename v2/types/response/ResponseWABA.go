@@ -2,9 +2,10 @@ package response
 
 type Waba struct {
 	KernelResponser
-	Type   string     `json:"type,omitempty"`
-	Data   []DataWaba `json:"data"`
-	Paging Paging     `json:"paging"`
+	Type         string     `json:"type,omitempty"`
+	ResponseType string     `json:"response_type,omitempty"`
+	Data         []DataWaba `json:"data"`
+	Paging       Paging     `json:"paging"`
 }
 
 type DataWaba struct {

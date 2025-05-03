@@ -60,14 +60,24 @@ func resetError(c *Config) {
 	}
 }
 
-// defaultRequest func
-// methoth: GET, POST, PUT, PATCH, DELETE
-// ePoint: EndPoint
-// c: Config
-// params: [Optional]
-// - map[string]any. body request,dataForm.
-// - message.Messager protocol of message to send,
-// - name of request ej> "GetMessageInfo"
+// defaultRequest creates a new request with the given method, endpoint, and optional parameters.
+// If the endpoint does not start with a slash, it will be appended to the configured base URL.
+// If the first parameter is a message.Messager, it will be marshaled to JSON and used as the request body.
+// If the first parameter is a map[string]any, it will be marshaled to JSON and used as the request body.
+// If the first parameter is a TypeRequest, it will be used to determine how to construct the request URL.
+// The following types are supported:
+//   - RequestGetMessageInfo: The endpoint will be appended to the configured versioned path.
+//   - RequestDeleteMedia: The endpoint will be appended to the configured path.
+//   - RequestWithVersion: The endpoint will be appended to the configured versioned path.
+//   - RequestWithQuery: The endpoint will be appended to the configured path, and the second parameter
+//     (which must be a QueryData) will be used to construct the query string.
+//   - RequestWithQueryBusiness: The endpoint will be appended to the configured business path, and the second parameter
+//     (which must be a QueryData) will be used to construct the query string.
+//
+// If the first parameter is not one of the above types, an error will be returned.
+// The second parameter (if present) is used to construct the query string if the first parameter is a TypeRequest.
+// The third parameter (if present) is used to construct the request body if the first parameter is a message.Messager.
+// The function returns the created request, a cancel function, and an error (if any).
 func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, context.CancelFunc, error) {
 	resetError(c)
 	var (

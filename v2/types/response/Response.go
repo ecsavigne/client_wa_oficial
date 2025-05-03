@@ -150,17 +150,17 @@ type KernelResponser struct {
 func (k *KernelResponser) GetType() string {
 	switch v := k.parent.(type) {
 	case *Error:
-		return v.Type
+		return v.ResponseType
 	case *Success:
-		return v.Type
+		return v.ResponseType
 	case *MediaInfo:
-		return v.Type
+		return v.ResponseType
 	case *PhonesWA:
-		return v.Type
+		return v.ResponseType
 	case *Waba:
-		return v.Type
+		return v.ResponseType
 	case *GeneralResponse:
-		return v.Type
+		return v.ResponseType
 	default:
 		return ""
 	}
@@ -251,11 +251,16 @@ func (k *KernelResponser) IsType(pType ResponseType) bool {
 
 type Error struct {
 	KernelResponser
-	Type         string `json:"type,omitempty"`
-	Message      string `json:"message,omitempty"`
-	Code         int64  `json:"code,omitempty"`
-	ErrorSubcode int64  `json:"error_subcode,omitempty"`
-	FbtraceID    string `json:"fbtrace_id,omitempty"`
+	Type           string `json:"type,omitempty"`
+	ResponseType   string `json:"response_type,omitempty"`
+	Message        string `json:"message,omitempty"`
+	Code           int64  `json:"code,omitempty"`
+	ErrorSubcode   int64  `json:"error_subcode,omitempty"`
+	IsTransient    bool   `json:"is_transient,omitempty"`
+	ErrorUserTitle string `json:"error_user_title,omitempty"`
+	ErrorUserMsg   string `json:"error_user_msg,omitempty"`
+
+	FbtraceID string `json:"fbtrace_id,omitempty"`
 }
 
 func (e *Error) Error() string {
@@ -265,6 +270,7 @@ func (e *Error) Error() string {
 type Success struct {
 	KernelResponser
 	Type             string            `json:"type,omitempty"`
+	ResponseType     string            `json:"response_type,omitempty"`
 	MessagingProduct string            `json:"messaging_product,omitempty"`
 	Contacts         []ContactResponse `json:"contacts,omitempty"`
 	Messages         []Message         `json:"messages,omitempty"`
@@ -283,6 +289,7 @@ func (s *Success) GetMessageId() string {
 type MediaInfo struct {
 	KernelResponser
 	Type             string `json:"type,omitempty"`
+	ResponseType     string `json:"response_type,omitempty"`
 	MessagingProduct string `json:"messaging_product,omitempty"`
 	MimeType         string `json:"mime_type,omitempty"`
 	Sha256           string `json:"sha256,omitempty"`

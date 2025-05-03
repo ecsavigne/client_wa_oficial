@@ -17,9 +17,9 @@ type Config struct {
 	// Url del servidor WebHook con ruta /ws para conectar con el servidor WebSocket ej: wss://webhooks.savcoe-services.com/ws
 	WebhookSocket string    `json:"webhook_socket"`
 	EventHandle   func(any) // Funcion para manejar los eventos del servidor WebHook WebSocket
-	path          string
-	pathVersion   string
-	pathBusiness  string
+	path          string    // URL, ej: https://graph.facebook.com/v15.0/PHONE_NUMBER_ID
+	pathVersion   string    // URL, ej: https://graph.facebook.com/v15.0
+	pathBusiness  string    // URL, ej: https://graph.facebook.com/v15.0/BUSINESS_ACCOUNT_ID
 	clientHttp
 	request                    *http.Request
 	MediaInfo                  *response.MediaInfo
@@ -56,7 +56,7 @@ func (c *Config) setWaPhoneNumberId(wa_phone_number_id string) {
 	c.path = path.Join(c.cLOUD_API_VERSION, c.wA_PHONE_NUMBER_ID)
 }
 
-func (c *Config) SetWaBusinessAccountId(wa_business_account_id string) {
+func (c *Config) setWaBusinessAccountId(wa_business_account_id string) {
 	c.wA_BUSINESS_ACCOUNT_ID = wa_business_account_id
 	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.wA_BUSINESS_ACCOUNT_ID)
 }

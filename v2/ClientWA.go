@@ -5,12 +5,15 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
 	"path"
+	"slices"
 	"strings"
 	"time"
 
@@ -203,12 +206,19 @@ func (cl *ClientWA) initWebHookSocket() {
 // - If occurred error in conection with WebHook Socket emit one event type: event.ErrorSocketConnectEvent
 func NewClientWA(c ...Config) *ClientWA {
 	if len(c) == 0 {
-		c = append(c, Config{})
+		c = append(c, Config{
+			Error: errors.New("config is required"),
+		})
 	}
 
 	cl := &ClientWA{
 		Config: &c[0],
 	}
+
+	if c[0].Error != nil {
+		return cl
+	}
+
 	err := setEnv(&c[0])
 	if err != nil {
 		cl.Error = err
@@ -1422,4 +1432,191 @@ func (c *ClientWA) GetInfoAllWaba(idMeta string) response.ResponserRequest {
 	}
 
 	return response.JsonWrapperResponseRequest(b)
+}
+
+func validKeyInMapInFunc(data map[string]string, key []string, funcName string) response.ResponserRequest {
+	if data == nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintf("Error in %s. error is: params data is required and is cannot absent or nil", funcName),
+		})
+	}
+
+	keysData := slices.Collect(maps.Keys(data))
+	for _, v := range slices.All(key) {
+		if !slices.Contains(keysData, v) {
+			return response.NewError(&response.Error{
+				Type:    response.ResponseError,
+				Code:    types.CodeErrorUnrecognized,
+				Message: fmt.Sprintf("Error in %s. error is: %s required and cannot be absent", funcName, v),
+			})
+		} else {
+			if data[v] == "" {
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorUnrecognized,
+					Message: fmt.Sprintf("Error in %s. error is: %s required and cannot be empty", funcName, v),
+				})
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *ClientWA) RegisterNumberInWaba(data map[string]string) response.ResponserRequest {
+	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "RegisterNumberInWaba"); err != nil {
+		return err
+	}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in RegisterNumberInWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in RegisterNumberInWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in RegisterNumberInWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
+func (c *ClientWA) GetVerificationCode(data map[string]string) response.ResponserRequest {
+	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "GetverificationCode"); err != nil {
+		return err
+	}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetverificationCode request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetverificationCode request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetverificationCode request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
+func (c *ClientWA) VerifyCode(data map[string]string) response.ResponserRequest {
+	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "VerifyCode"); err != nil {
+		return err
+	}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in VerifyCode request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in VerifyCode request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in VerifyCode request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
+func (c *ClientWA) RegisterForUseApi(data map[string]string) response.ResponserRequest {
+	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "RegisterForUseApi"); err != nil {
+		return err
+	}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in RegisterForUseApi request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in RegisterForUseApi request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in RegisterForUseApi request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
+func (c *ClientWA) SetWaBusinessAccountId(waba_id string) {
+	c.Config.setWaBusinessAccountId(waba_id)
 }
