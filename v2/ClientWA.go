@@ -257,7 +257,7 @@ func newConfig(c Config) *Config {
 		return &c
 	}
 
-	if c.wA_PHONE_NUMBER_ID == "" {
+	if c.WaPhoneNumberId == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorPhoneIdEmpty,
 			Code:    types.CodeErrorPhoneIdEmpty,
@@ -266,7 +266,7 @@ func newConfig(c Config) *Config {
 		return &c
 	}
 
-	if c.wA_BUSINESS_ACCOUNT_ID == "" {
+	if c.WaBusinessAccountId == "" {
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBusinessIdEmpty,
 			Code:    types.CodeErrorBusinessIdEmpty,
@@ -275,8 +275,8 @@ func newConfig(c Config) *Config {
 		return &c
 	}
 
-	c.path = path.Join(c.cLOUD_API_VERSION, c.wA_PHONE_NUMBER_ID)
-	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.wA_BUSINESS_ACCOUNT_ID)
+	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
+	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
 	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 
 	c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
@@ -322,6 +322,10 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 
 	switch res.StatusCode {
 	case 400:
+		if e, ok := response.GetResponseRequest(res.Body, "doRequest", "400").(*response.Error); ok {
+			c.Config.Error = e
+			return nil, e
+		}
 		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBadRequest,
@@ -330,6 +334,10 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 		})
 		return nil, c.Config.Error
 	case 401:
+		if e, ok := response.GetResponseRequest(res.Body, "doRequest", "401").(*response.Error); ok {
+			c.Config.Error = e
+			return nil, e
+		}
 		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorUnauthorized,
@@ -338,6 +346,10 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 		})
 		return nil, c.Config.Error
 	case 404:
+		if e, ok := response.GetResponseRequest(res.Body, "doRequest", "404").(*response.Error); ok {
+			c.Config.Error = e
+			return nil, e
+		}
 		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorUrlNotFound,
@@ -1323,6 +1335,9 @@ func (c *ClientWA) DeleteFile(id string) response.ResponserRequest {
 	// Crear request
 	_, _, err := defaultRequest(http.MethodDelete, fmt.Sprintf("/%s", id), c.Config, RequestDeleteMedia)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1333,6 +1348,9 @@ func (c *ClientWA) DeleteFile(id string) response.ResponserRequest {
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1366,6 +1384,9 @@ func (c *ClientWA) GetInfoAllNumberInWaba() response.ResponserRequest {
 		"access_token": c.Token,
 	})
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1376,6 +1397,9 @@ func (c *ClientWA) GetInfoAllNumberInWaba() response.ResponserRequest {
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1434,7 +1458,7 @@ func (c *ClientWA) GetInfoAllWaba(idMeta string) response.ResponserRequest {
 	return response.JsonWrapperResponseRequest(b)
 }
 
-func validKeyInMapInFunc(data map[string]string, key []string, funcName string) response.ResponserRequest {
+func validKeyInMapInFunc(data map[string]any, key []string, funcName string) response.ResponserRequest {
 	if data == nil {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1465,13 +1489,16 @@ func validKeyInMapInFunc(data map[string]string, key []string, funcName string) 
 	return nil
 }
 
-func (c *ClientWA) RegisterNumberInWaba(data map[string]string) response.ResponserRequest {
-	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "RegisterNumberInWaba"); err != nil {
+func (c *ClientWA) RegisterNumberInWaba(data map[string]any) response.ResponserRequest {
+	if err := validKeyInMapInFunc(data, []string{"cc", "phone_number", "verified_name"}, "RegisterNumberInWaba"); err != nil {
 		return err
 	}
 
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s/%s", c.GetWabaId(), "phone_numbers"), c.Config, RequestWithVersion, data)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1482,6 +1509,9 @@ func (c *ClientWA) RegisterNumberInWaba(data map[string]string) response.Respons
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1489,27 +1519,19 @@ func (c *ClientWA) RegisterNumberInWaba(data map[string]string) response.Respons
 		})
 	}
 
-	// prepare response
-	b, err := io.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	if err != nil {
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in RegisterNumberInWaba request of ClientWA. error is: ", err.Error()),
-		})
-	}
-
-	return response.JsonWrapperResponseRequest(b)
+	return response.GetResponseRequest(resp.Body, "RegisterNumberInWaba", "ClientWA")
 }
 
-func (c *ClientWA) GetVerificationCode(data map[string]string) response.ResponserRequest {
-	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "GetverificationCode"); err != nil {
+func (c *ClientWA) GetVerificationCode(data map[string]any) response.ResponserRequest {
+	if err := validKeyInMapInFunc(data, []string{"code_method", "language"}, "GetverificationCode"); err != nil {
 		return err
 	}
 
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s", "request_code"), c.Config, RequestWithQueryPhone, QueryData(data))
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1520,6 +1542,9 @@ func (c *ClientWA) GetVerificationCode(data map[string]string) response.Response
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1527,27 +1552,19 @@ func (c *ClientWA) GetVerificationCode(data map[string]string) response.Response
 		})
 	}
 
-	// prepare response
-	b, err := io.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	if err != nil {
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in GetverificationCode request of ClientWA. error is: ", err.Error()),
-		})
-	}
-
-	return response.JsonWrapperResponseRequest(b)
+	return response.GetResponseRequest(resp.Body, "GetverificationCode", "ClientWA")
 }
 
-func (c *ClientWA) VerifyCode(data map[string]string) response.ResponserRequest {
-	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "VerifyCode"); err != nil {
+func (c *ClientWA) VerifyCode(data map[string]any) response.ResponserRequest {
+	if err := validKeyInMapInFunc(data, []string{"code"}, "VerifyCode"); err != nil {
 		return err
 	}
 
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s", "verify_code"), c.Config, RequestWithQueryPhone, QueryData(data))
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1558,6 +1575,9 @@ func (c *ClientWA) VerifyCode(data map[string]string) response.ResponserRequest 
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1565,27 +1585,20 @@ func (c *ClientWA) VerifyCode(data map[string]string) response.ResponserRequest 
 		})
 	}
 
-	// prepare response
-	b, err := io.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	if err != nil {
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in VerifyCode request of ClientWA. error is: ", err.Error()),
-		})
-	}
-
-	return response.JsonWrapperResponseRequest(b)
+	return response.GetResponseRequest(resp.Body, "VerifyCode", "ClientWA")
 }
 
-func (c *ClientWA) RegisterForUseApi(data map[string]string) response.ResponserRequest {
-	if err := validKeyInMapInFunc(data, []string{"Cc", "PhoneNumber", "VerifiedName"}, "RegisterForUseApi"); err != nil {
-		return err
+func (c *ClientWA) RegisterForUseApi() response.ResponserRequest {
+	data := map[string]any{
+		"messaging_product": "whatsapp",
+		"pin":               "123456",
 	}
 
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, data)
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s", "register"), c.Config, data)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1596,6 +1609,9 @@ func (c *ClientWA) RegisterForUseApi(data map[string]string) response.ResponserR
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
@@ -1603,20 +1619,20 @@ func (c *ClientWA) RegisterForUseApi(data map[string]string) response.ResponserR
 		})
 	}
 
-	// prepare response
-	b, err := io.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	if err != nil {
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in RegisterForUseApi request of ClientWA. error is: ", err.Error()),
-		})
-	}
-
-	return response.JsonWrapperResponseRequest(b)
+	return response.GetResponseRequest(resp.Body, "RegisterForUseApi", "ClientWA")
 }
 
 func (c *ClientWA) SetWaBusinessAccountId(waba_id string) {
 	c.Config.setWaBusinessAccountId(waba_id)
+}
+func (c *ClientWA) SetPhoneNumberId(phone_id string) {
+	c.Config.setWaPhoneNumberId(phone_id)
+}
+
+func (c ClientWA) GetWabaId() string {
+	return c.WaBusinessAccountId
+}
+
+func (c ClientWA) GetPhoneNumberId() string {
+	return c.WaPhoneNumberId
 }

@@ -9,7 +9,7 @@ type PhonesWA struct {
 	Type         string  `json:"type,omitempty"`
 	ResponseType string  `json:"response_type,omitempty"`
 	Data         []Datum `json:"data"`
-	Paging       Paging  `json:"paging"`
+	Paging       *Paging `json:"paging,omitempty"`
 }
 
 type Datum struct {

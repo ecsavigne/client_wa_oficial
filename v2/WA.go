@@ -10,23 +10,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-// WA_BASE_URL                string
-// M4D_APP_ID                 string
-// M4D_APP_SECRET             string
-// WA_PHONE_NUMBER_ID         string
-// WA_BUSINESS_ACCOUNT_ID     string
-// CLOUD_API_ACCESS_TOKEN     string
-// CLOUD_API_VERSION          string
-// WEBHOOK_ENDPOINT           string
-// WEBHOOK_VERIFICATION_TOKEN string
-// LISTENER_PORT              string
-// DEBUG                      string
-// MAX_RETRIES_AFTER_WAIT     string
-// REQUEST_TIMEOUT            string
-// TOKEN                      string
-)
-
 func setEnv(c *Config) error {
 	var envPath string = c.EnvFilePath
 	pathDir := path.Dir(envPath)
@@ -48,15 +31,11 @@ func setEnv(c *Config) error {
 		c.m4D_APP_ID = viper.GetString("M4D_APP_ID")
 		c.m4D_APP_SECRET = viper.GetString("M4D_APP_SECRET")
 		if c.WaBusinessAccountId == "" {
-			c.wA_BUSINESS_ACCOUNT_ID = viper.GetString("WA_BUSINESS_ACCOUNT_ID")
-		} else {
-			c.wA_BUSINESS_ACCOUNT_ID = c.WaBusinessAccountId
+			c.WaBusinessAccountId = viper.GetString("WA_BUSINESS_ACCOUNT_ID")
 		}
 
 		if c.WaPhoneNumberId == "" {
-			c.wA_PHONE_NUMBER_ID = viper.GetString("WA_PHONE_NUMBER_ID")
-		} else {
-			c.wA_PHONE_NUMBER_ID = c.WaPhoneNumberId
+			c.WaPhoneNumberId = viper.GetString("WA_PHONE_NUMBER_ID")
 		}
 
 		if c.Token == "" {

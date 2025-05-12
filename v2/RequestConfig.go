@@ -44,9 +44,14 @@ func (q QueryData) String() string {
 	return query
 }
 
-func defaultHeader(c *Config) {
+func defaultHeader(c *Config, contentType ...string) {
+	cT := "application/json"
+	if len(contentType) > 0 {
+		cT = contentType[0]
+	}
+
 	c.request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
-	c.request.Header.Set("Content-Type", "application/json")
+	c.request.Header.Set("Content-Type", cT)
 }
 
 func multiparHeader(c *Config, contentType string) {
@@ -137,21 +142,34 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 			return nil, nil, c.Error
 		}
 
-		// if len(params) == 2 // if send query params in request where params[1] is QueryData represent queryData
-		//  and params[0] is type request ej: RequestWithQuery
+		queryData := ""
+		if obj, ok := params[1].(QueryData); ok {
+			queryData = obj.String()
+		}
+
 		switch v := params[0].(type) {
 		case TypeRequest:
 			switch v {
 			case RequestWithQueryBusiness:
-				queryData := ""
-				if obj, ok := params[1].(QueryData); ok {
-					queryData = obj.String()
-				}
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathBusiness, ePoint, queryData))
-				urlPath = c.BaseUrl.ResolveReference(urlPath)
-				c.request, e = http.NewRequest(methoth, urlPath.String(), nil)
+			case RequestWithQueryPhone:
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.path, ePoint, queryData))
+			case RequestWithVersion:
+				b, err := json.Marshal(params[1])
+				if err != nil {
+					return nil, nil, response.NewError(&response.Error{
+						Type:    types.TypeErrorUnrecognized,
+						Code:    types.CodeErrorUnrecognized,
+						Message: err.Error(),
+					})
+				}
+				formData = bytes.NewBuffer(b)
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", c.pathVersion, ePoint))
 			}
 		}
+
+		urlPath = c.BaseUrl.ResolveReference(urlPath)
+		c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
 	}
 
 	if e != nil {

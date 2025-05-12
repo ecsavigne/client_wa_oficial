@@ -40,6 +40,7 @@ type ContactResponse struct {
 
 func NewError(config ResponserRequest) *Error {
 	if v, ok := config.(*Error); ok {
+		v.ResponseType = ResponseError
 		v.KernelResponser.parent = v
 		return v
 	}
@@ -48,6 +49,7 @@ func NewError(config ResponserRequest) *Error {
 
 func NewSuccess(config ResponserRequest) *Success {
 	if v, ok := config.(*Success); ok {
+		v.ResponseType = ResponseSuccess
 		v.KernelResponser.parent = v
 		return v
 	}
@@ -56,6 +58,7 @@ func NewSuccess(config ResponserRequest) *Success {
 
 func NewMediaInfo(config ResponserRequest) *MediaInfo {
 	if v, ok := config.(*MediaInfo); ok {
+		v.ResponseType = ResponseMediaInfo
 		v.KernelResponser.parent = v
 		return v
 	}
@@ -64,6 +67,7 @@ func NewMediaInfo(config ResponserRequest) *MediaInfo {
 
 func NewPhonesWA(config ResponserRequest) *PhonesWA {
 	if v, ok := config.(*PhonesWA); ok {
+		v.ResponseType = ResponsePhonesWA
 		v.KernelResponser.parent = v
 		return v
 	}
@@ -72,6 +76,7 @@ func NewPhonesWA(config ResponserRequest) *PhonesWA {
 
 func NewWABA(config ResponserRequest) *Waba {
 	if v, ok := config.(*Waba); ok {
+		v.ResponseType = ResponseWABA
 		v.KernelResponser.parent = v
 		return v
 	}
@@ -80,6 +85,7 @@ func NewWABA(config ResponserRequest) *Waba {
 
 func NewGeneralResponse(config ResponserRequest) *GeneralResponse {
 	if v, ok := config.(*GeneralResponse); ok {
+		v.ResponseType = ResponseGeneralResponse
 		v.KernelResponser.parent = v
 		return v
 	}
@@ -99,9 +105,11 @@ func Val(r any) string {
 // If it does, it returns a types.Error object with the error message and code 401.
 // Otherwise, it marshals the map back into json and unmarshals it into a types.GeneralResponse object.
 // Finally, return interface que represent of type of response.
-func JsonWrapperResponseRequest(data []byte) ResponserRequest {
+func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 	wrapper := map[string]any{}
-	err := json.Unmarshal(data, &wrapper)
+	gralResponse := NewGeneralResponse(&GeneralResponse{})
+
+	err := json.Unmarshal(dataBin, &wrapper)
 	if err != nil {
 		return NewError(&Error{
 			Code:    401,
@@ -110,24 +118,33 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 	}
 
 	if _, ok := wrapper["error"]; ok {
-		return NewError(&Error{
-			Message: wrapper["error"].(string),
-			Code:    401,
-		})
+		switch wrapper["error"].(type) {
+		case string:
+			return NewError(&Error{
+				Message: wrapper["error"].(string),
+				Code:    401,
+			})
+		default:
+			data, _ := json.Marshal(wrapper["error"])
+			errorResponse := NewError(&Error{})
+			json.Unmarshal(data, errorResponse)
+			gralResponse.Error = errorResponse
+			return gralResponse.GetResponseType()
+		}
+
 	}
 
-	gralResponse := NewGeneralResponse(&GeneralResponse{})
-	b, _ := json.Marshal(wrapper)
+	data, _ := json.Marshal(wrapper)
 
 	if wrapper["data"] != nil && wrapper["paging"] != nil {
 		phonesWA := NewPhonesWA(&PhonesWA{})
-		json.Unmarshal(b, phonesWA)
+		json.Unmarshal(data, phonesWA)
 		if len(phonesWA.Data) > 0 && (phonesWA.Data[0].DisplayPhoneNumber != "" && phonesWA.Data[0].VerifiedName != "") {
 			gralResponse.PhonesWA = phonesWA
 			return gralResponse.GetResponseType()
 		} else {
 			waba := NewWABA(&Waba{})
-			json.Unmarshal(b, waba)
+			json.Unmarshal(data, waba)
 			if waba != nil {
 				gralResponse.Waba = waba
 				return gralResponse.GetResponseType()
@@ -135,7 +152,7 @@ func JsonWrapperResponseRequest(data []byte) ResponserRequest {
 		}
 	}
 
-	json.Unmarshal(b, gralResponse)
+	json.Unmarshal(data, gralResponse)
 	return gralResponse.GetResponseType()
 }
 

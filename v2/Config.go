@@ -21,13 +21,13 @@ type Config struct {
 	pathVersion   string    // URL, ej: https://graph.facebook.com/v15.0
 	pathBusiness  string    // URL, ej: https://graph.facebook.com/v15.0/BUSINESS_ACCOUNT_ID
 	clientHttp
-	request                    *http.Request
-	MediaInfo                  *response.MediaInfo
-	wA_BASE_URL                string
-	m4D_APP_ID                 string
-	m4D_APP_SECRET             string
-	wA_PHONE_NUMBER_ID         string
-	wA_BUSINESS_ACCOUNT_ID     string
+	request        *http.Request
+	MediaInfo      *response.MediaInfo
+	wA_BASE_URL    string
+	m4D_APP_ID     string
+	m4D_APP_SECRET string
+	// wA_PHONE_NUMBER_ID         string
+	// wA_BUSINESS_ACCOUNT_ID     string
 	cLOUD_API_ACCESS_TOKEN     string
 	cLOUD_API_VERSION          string
 	wEBHOOK_ENDPOINT           string
@@ -36,7 +36,7 @@ type Config struct {
 	dEBUG                      string
 	mAX_RETRIES_AFTER_WAIT     string
 	rEQUEST_TIMEOUT            string
-	tOKEN                      string
+	// tOKEN                      string
 }
 
 func (c *Config) setWaBaseUrl(wa_base_url string) {
@@ -52,13 +52,13 @@ func (c *Config) setM4DAppSecret(m4d_app_secret string) {
 }
 
 func (c *Config) setWaPhoneNumberId(wa_phone_number_id string) {
-	c.wA_PHONE_NUMBER_ID = wa_phone_number_id
-	c.path = path.Join(c.cLOUD_API_VERSION, c.wA_PHONE_NUMBER_ID)
+	c.WaPhoneNumberId = wa_phone_number_id
+	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
 }
 
 func (c *Config) setWaBusinessAccountId(wa_business_account_id string) {
-	c.wA_BUSINESS_ACCOUNT_ID = wa_business_account_id
-	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.wA_BUSINESS_ACCOUNT_ID)
+	c.WaBusinessAccountId = wa_business_account_id
+	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
 }
 
 func (c *Config) setCloudApiAccessToken(cloud_api_access_token string) {
@@ -68,8 +68,8 @@ func (c *Config) setCloudApiAccessToken(cloud_api_access_token string) {
 func (c *Config) setCloudApiVersion(cloud_api_version string) {
 	c.cLOUD_API_VERSION = cloud_api_version
 	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
-	c.path = path.Join(c.cLOUD_API_VERSION, c.wA_PHONE_NUMBER_ID)
-	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.wA_BUSINESS_ACCOUNT_ID)
+	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
+	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
 }
 
 func (c *Config) setWebhookEndpoint(webhook_endpoint string) {

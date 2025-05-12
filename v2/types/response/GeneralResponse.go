@@ -1,5 +1,12 @@
 package response
 
+import (
+	"fmt"
+	"io"
+
+	"github.com/ecsavigne/client_wa_oficial/v2/types"
+)
+
 type GeneralResponse struct {
 	KernelResponser
 	ResponseType string `json:"response_type,omitempty"`
@@ -35,4 +42,18 @@ func (a *GeneralResponse) GetResponseType() ResponserRequest {
 	}
 
 	return nil
+}
+
+func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string) ResponserRequest {
+	b, err := io.ReadAll(bodyResponse)
+	defer bodyResponse.Close()
+	if err != nil {
+		return NewError(&Error{
+			Type:    ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintf("Error reading in %s the data of request of %s. error is: %v", funcName, who, err),
+		})
+	}
+
+	return JsonWrapperResponseRequest(b)
 }
