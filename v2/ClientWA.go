@@ -1421,10 +1421,50 @@ func (c *ClientWA) GetInfoAllNumberInWaba() response.ResponserRequest {
 	return response.JsonWrapperResponseRequest(b)
 }
 
+func (c *ClientWA) GetNumberInfo(phone_id string) response.ResponserRequest {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", phone_id), c.Config, RequestWithVersion, nil)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
 // GetInfoAllNumberInWA returns information about all the Whatsapp Business Account phone associated with the
 // WhatsApp Business API client. It returns a JSON response containing an array of phone
 // numbers and their associated information.
-func (c *ClientWA) GetInfoAllWaba(idMeta string) response.ResponserRequest {
+func (c *ClientWA) GetOwnedWaba(idMeta string) response.ResponserRequest {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", idMeta, "owned_whatsapp_business_accounts"), c.Config, RequestWithVersion)
 	if err != nil {
 		return response.NewError(&response.Error{
@@ -1635,4 +1675,84 @@ func (c ClientWA) GetWabaId() string {
 
 func (c ClientWA) GetPhoneNumberId() string {
 	return c.WaPhoneNumberId
+}
+
+func (c *ClientWA) GetWabaInfo(waba_id string) response.ResponserRequest {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", waba_id), c.Config, RequestWithVersion, nil)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
+func (c *ClientWA) GetBusinessInfo(business_id string) response.ResponserRequest {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithVersion, QueryData{"fields": "id,name,created_by, extended_updated_time"})
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
 }
