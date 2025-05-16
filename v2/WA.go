@@ -16,7 +16,6 @@ func setEnv(c *Config) error {
 	envName := path.Base(envPath)
 	viper.AddConfigPath(pathDir)
 	viper.SetConfigType("env")
-	// viper.SetConfigName("config_env.env")
 	viper.SetConfigName(fmt.Sprintf("%s.env", envName))
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("\033[31mError: No encontrado archivo app.env ni .cobraToml de tipo (toml) en\033[30m %s\n", pathDir)
