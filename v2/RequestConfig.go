@@ -30,6 +30,7 @@ const (
 	RequestDeleteMedia       TypeRequest = "RequestDeleteMedia"
 	RequestChangeUrlFull     TypeRequest = "RequestChangeUrlFull"
 	RequestWithQueryPhone    TypeRequest = "RequestWithQueryPhone"
+	RequestWithQuery         TypeRequest = "RequestWithQuery"
 	RequestWithQueryBusiness TypeRequest = "RequestWithQueryBusiness"
 	RequestWithVersion       TypeRequest = "RequestWithVersion"
 )
@@ -41,6 +42,7 @@ func (q QueryData) String() string {
 	for k, v := range q {
 		query += fmt.Sprintf("%s=%v&", k, v)
 	}
+	query = strings.TrimSuffix(query, "&")
 	return query
 }
 
@@ -154,6 +156,8 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathBusiness, ePoint, queryData))
 			case RequestWithQueryPhone:
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.path, ePoint, queryData))
+			case RequestWithQuery:
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathVersion, ePoint, queryData))
 			case RequestWithVersion:
 				b, err := json.Marshal(params[1])
 				if err != nil {

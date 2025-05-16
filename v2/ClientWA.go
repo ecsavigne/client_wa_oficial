@@ -276,7 +276,7 @@ func newConfig(c Config) *Config {
 	}
 
 	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
-	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
+	// c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
 	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 
 	c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
@@ -1376,13 +1376,10 @@ func (c *ClientWA) DeleteMessage(id string) response.ResponserRequest {
 	return nil
 }
 
-// GetInfoAllNumberInWA returns information about all the phone numbers associated with the
-// WhatsApp Business API client. It returns a JSON response containing an array of phone
-// numbers and their associated information.
-func (c *ClientWA) GetInfoAllNumberInWaba() response.ResponserRequest {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "phone_numbers"), c.Config, RequestWithQueryBusiness, QueryData{
-		"access_token": c.Token,
-	})
+// GetInfoAllNumberInWaba retrieves information about all phone numbers associated with a given
+// WhatsApp Business Account (specified by waba_id).
+func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.ResponserRequest {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", waba_id, "phone_numbers"), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -1464,8 +1461,8 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.ResponserRequest {
 // GetInfoAllNumberInWA returns information about all the Whatsapp Business Account phone associated with the
 // WhatsApp Business API client. It returns a JSON response containing an array of phone
 // numbers and their associated information.
-func (c *ClientWA) GetOwnedWaba(idMeta string) response.ResponserRequest {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", idMeta, "owned_whatsapp_business_accounts"), c.Config, RequestWithVersion)
+func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.ResponserRequest {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", portafolio_id, "owned_whatsapp_business_accounts"), c.Config, RequestWithVersion)
 	if err != nil {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1665,6 +1662,7 @@ func (c *ClientWA) RegisterForUseApi() response.ResponserRequest {
 func (c *ClientWA) SetWaBusinessAccountId(waba_id string) {
 	c.Config.setWaBusinessAccountId(waba_id)
 }
+
 func (c *ClientWA) SetPhoneNumberId(phone_id string) {
 	c.Config.setWaPhoneNumberId(phone_id)
 }
@@ -1718,7 +1716,7 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.ResponserRequest {
 }
 
 func (c *ClientWA) GetBusinessInfo(business_id string) response.ResponserRequest {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithVersion, QueryData{"fields": "id,name,created_by, extended_updated_time"})
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQuery, QueryData{"fields": "id,name,created_by,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id"})
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err

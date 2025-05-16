@@ -11,34 +11,46 @@ type GeneralResponse struct {
 	KernelResponser
 	ResponseType string `json:"response_type,omitempty"`
 	*PhonesWA    `json:",omitempty"`
+	*Phone       `json:",omitempty"`
 	*Waba        `json:",omitempty"`
 	*Error       `json:",omitempty"`
 	*Success     `json:",omitempty"`
 	*MediaInfo   `json:",omitempty"`
+	*Business    `json:",omitempty"`
+}
+
+func NewGeneralResponse(config ResponserRequest) *GeneralResponse {
+	if v, ok := config.(*GeneralResponse); ok {
+		v.ResponseType = ResponseGeneralResponse
+		v.KernelResponser.parent = v
+		return v
+	}
+	return nil
 }
 
 func (a *GeneralResponse) GetResponseType() ResponserRequest {
 	switch {
 	case a.PhonesWA != nil:
-		// a.PhonesWA.Type = ResponsePhonesWA
 		a.ResponseType = ResponsePhonesWA
 		return NewPhonesWA(a.PhonesWA)
+	case a.Phone != nil:
+		a.ResponseType = ResponsePhone
+		return NewPhone(a.Phone)
 	case a.Waba != nil:
-		// a.Waba.Type = ResponseWABA
 		a.ResponseType = ResponseWABA
 		return NewWABA(a.Waba)
 	case a.Error != nil:
-		// a.Error.Type = ResponseError
 		a.ResponseType = ResponseError
 		return NewError(a.Error)
 	case a.Success != nil:
-		// a.Success.Type = ResponseSuccess
 		a.ResponseType = ResponseSuccess
 		return NewSuccess(a.Success)
 	case a.MediaInfo != nil:
-		// a.MediaInfo.Type = ResponseMediaInfo
 		a.ResponseType = ResponseMediaInfo
 		return NewMediaInfo(a.MediaInfo)
+	case a.Business != nil:
+		a.ResponseType = ResponseBusiness
+		return NewBusiness(a.Business)
 	}
 
 	return nil
