@@ -31,5 +31,5 @@ func NewBusiness(config ResponserRequest) *Business {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not *Business")
 }

@@ -17,7 +17,7 @@ func NewSuccess(config ResponserRequest) *Success {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not *Success")
 }
 
 func (s *Success) GetMediaInfo() *MediaInfo {

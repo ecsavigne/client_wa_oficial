@@ -12,5 +12,5 @@ func NewPhone(config ResponserRequest) *Phone {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not *Phone")
 }

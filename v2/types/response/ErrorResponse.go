@@ -22,7 +22,7 @@ func NewError(config ResponserRequest) *Error {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not *Error")
 }
 
 func (e *Error) Error() string {

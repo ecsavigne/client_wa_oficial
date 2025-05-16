@@ -18,7 +18,7 @@ func NewMediaInfo(config ResponserRequest) *MediaInfo {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not *MediaInfo")
 }
 
 func (m *MediaInfo) GetId() string {

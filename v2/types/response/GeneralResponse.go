@@ -25,7 +25,7 @@ func NewGeneralResponse(config ResponserRequest) *GeneralResponse {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not RespenserRequest")
 }
 
 func (a *GeneralResponse) GetResponseType() ResponserRequest {

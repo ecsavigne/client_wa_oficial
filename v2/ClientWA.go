@@ -1754,3 +1754,23 @@ func (c *ClientWA) GetBusinessInfo(business_id string) response.ResponserRequest
 
 	return response.JsonWrapperResponseRequest(b)
 }
+
+func getPhoneNumber(phone string) string {
+	return strings.NewReplacer("+", "", "-", "", " ", "").Replace(phone)
+}
+
+func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.ResponserRequest {
+	resp := c.GetInfoAllNumberInWaba(waba_id)
+
+	if nums := resp.GetResponsePhonesWA(); nums != nil {
+		for _, phoneInfo := range nums.Data {
+			if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phoneNumber {
+				return response.NewPhone(&response.Phone{
+					PhoneInfo: &phoneInfo,
+				})
+			}
+		}
+	}
+
+	return nil
+}

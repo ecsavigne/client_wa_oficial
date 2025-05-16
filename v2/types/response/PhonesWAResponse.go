@@ -46,5 +46,5 @@ func NewPhonesWA(config ResponserRequest) *PhonesWA {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not *PhonesWA")
 }

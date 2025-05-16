@@ -53,7 +53,7 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		}
 
 	// success
-	case wrapper["success"] != nil && wrapper["MessagingProduct"] != nil:
+	case wrapper["contacts"] != nil && wrapper["messaging_product"] != nil && wrapper["messages"] != nil:
 		successResponse := NewSuccess(&Success{})
 		json.Unmarshal(data, successResponse)
 		gralResponse.Success = successResponse

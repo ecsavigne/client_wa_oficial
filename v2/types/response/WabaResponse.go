@@ -22,5 +22,5 @@ func NewWABA(config ResponserRequest) *Waba {
 		v.KernelResponser.parent = v
 		return v
 	}
-	return nil
+	panic("type ResponserRequest is not *Waba")
 }
