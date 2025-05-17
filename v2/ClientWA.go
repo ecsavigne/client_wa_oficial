@@ -1772,5 +1772,9 @@ func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.Resp
 		}
 	}
 
-	return nil
+	return &response.Error{
+		Type:    response.ResponseError,
+		Code:    types.CodeErrorUnrecognized,
+		Message: fmt.Sprintf("Phone number: %s not found in waba-id: %s in Meta", phoneNumber, waba_id),
+	}
 }

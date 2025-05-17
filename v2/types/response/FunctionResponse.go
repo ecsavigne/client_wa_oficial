@@ -77,7 +77,7 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		gralResponse.Phone = phone
 
 	// waba
-	case wrapper["id"] != nil && wrapper["name"] != nil && wrapper["currency"] != nil && wrapper["message_template_namespace"] != nil && wrapper["timezone_id"] != nil:
+	case wrapper["id"] != nil && wrapper["name"] != nil /*&& wrapper["currency"] != nil*/ && wrapper["message_template_namespace"] != nil && wrapper["timezone_id"] != nil:
 		wabaInfo := WabaInfo{}
 		json.Unmarshal(data, &wabaInfo)
 		waba := NewWABA(&Waba{
