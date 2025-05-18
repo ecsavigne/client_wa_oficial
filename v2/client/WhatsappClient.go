@@ -26,19 +26,35 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type TypeClient = string
+
+const (
+	WhatsappClient TypeClient = "whatsapp_business_account"
+	FacebookClient TypeClient = "socket"
+)
+
 type clientHttp struct {
 	*http.Client
 	BaseUrl *url.URL `json:"base_url"`
 }
 
 type ClientWA struct {
-	*Config `json:"config"`
+	*Config    `json:"config"`
+	typeClient string
 }
 
 func codeWebHook(msgByte []byte) *event.Components {
 	msg := &event.Components{}
 	json.Unmarshal(msgByte, msg)
 	return msg
+}
+
+func (cl *ClientWA) messageIsForMe(component *event.Components) bool {
+	return component.Entry[0].Changes[0].Value.Metadata.PhoneNumberID == cl.Config.WaPhoneNumberId
+}
+
+func (cl ClientWA) GetType() string {
+	return cl.typeClient
 }
 
 func (cl *ClientWA) initWebHookSocket() {
@@ -117,6 +133,10 @@ func (cl *ClientWA) initWebHookSocket() {
 		}
 
 		msg := codeWebHook(message)
+		if !cl.messageIsForMe(msg) {
+			continue
+		}
+
 		switch {
 		case len(msg.Entry) != 0 &&
 			len(msg.Entry[0].Changes) != 0 &&
@@ -1716,7 +1736,7 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.ResponserRequest {
 }
 
 func (c *ClientWA) GetBusinessInfo(business_id string) response.ResponserRequest {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQuery, QueryData{"fields": "id,name,created_by,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id"})
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQuery, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time"})
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -1772,9 +1792,9 @@ func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.Resp
 		}
 	}
 
-	return &response.Error{
+	return response.NewError(&response.Error{
 		Type:    response.ResponseError,
 		Code:    types.CodeErrorUnrecognized,
 		Message: fmt.Sprintf("Phone number: %s not found in waba-id: %s in Meta", phoneNumber, waba_id),
-	}
+	})
 }
