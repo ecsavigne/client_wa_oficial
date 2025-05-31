@@ -51,9 +51,9 @@ func (a *GeneralResponse) GetResponseType() ResponserRequest {
 	case a.Business != nil:
 		a.ResponseType = ResponseBusiness
 		return NewBusiness(a.Business)
+	default:
+		return a
 	}
-
-	return nil
 }
 
 func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string) ResponserRequest {

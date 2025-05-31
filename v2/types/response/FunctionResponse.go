@@ -58,12 +58,6 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		json.Unmarshal(data, successResponse)
 		gralResponse.Success = successResponse
 
-	// media info
-	case wrapper["messaging_product"] != nil && wrapper["mime_type"].(record)["sha256"] != nil && wrapper["id"] != nil && wrapper["url"] != nil:
-		mediaInfo := NewMediaInfo(&MediaInfo{})
-		json.Unmarshal(data, mediaInfo)
-		gralResponse.MediaInfo = mediaInfo
-
 	// phonesWA
 	case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil && wrapper["data"].(array)[0] != nil && wrapper["data"].(array)[0].(record)["quality_rating"] != nil && wrapper["data"].(array)[0].(record)["throughput"] != nil && wrapper["data"].(array)[0].(record)["id"] != nil:
 		phonesWA := NewPhonesWA(&PhonesWA{})
@@ -96,6 +90,12 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		business := NewBusiness(&Business{})
 		json.Unmarshal(data, business)
 		gralResponse.Business = business
+
+	// media info
+	case (wrapper["messaging_product"] != nil && wrapper["mime_type"].(record)["sha256"] != nil && wrapper["id"] != nil && wrapper["url"] != nil) || wrapper["id"] != nil:
+		mediaInfo := NewMediaInfo(&MediaInfo{})
+		json.Unmarshal(data, mediaInfo)
+		gralResponse.MediaInfo = mediaInfo
 
 	// general response
 	default:
