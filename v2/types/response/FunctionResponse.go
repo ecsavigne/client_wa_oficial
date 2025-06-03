@@ -92,7 +92,7 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		gralResponse.Business = business
 
 	// media info
-	case (wrapper["messaging_product"] != nil && wrapper["mime_type"].(record)["sha256"] != nil && wrapper["id"] != nil && wrapper["url"] != nil) || wrapper["id"] != nil:
+	case (wrapper["messaging_product"] != nil && wrapper["mime_type"] != nil && wrapper["id"] != nil && wrapper["url"] != nil && wrapper["sha256"] != nil) || wrapper["id"] != nil:
 		mediaInfo := NewMediaInfo(&MediaInfo{})
 		json.Unmarshal(data, mediaInfo)
 		gralResponse.MediaInfo = mediaInfo
