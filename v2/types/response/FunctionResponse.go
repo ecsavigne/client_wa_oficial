@@ -80,7 +80,8 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		gralResponse.Waba = waba
 
 	// wabas
-	case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil && wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil && wrapper["data"].(array)[0].(record)["currency"] != nil:
+	// case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil && wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil && wrapper["data"].(array)[0].(record)["currency"] != nil:
+	case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil && wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil:
 		waba := NewWABA(&Waba{})
 		json.Unmarshal(data, waba)
 		gralResponse.Waba = waba

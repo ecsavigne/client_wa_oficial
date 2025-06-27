@@ -1695,6 +1695,22 @@ func (c ClientWA) GetPhoneNumberId() string {
 	return c.WaPhoneNumberId
 }
 
+// GetWabaInfo makes a GET call to the WhatsApp API to get info about
+// a WhatsApp Business Account by its ID.
+//
+// It returns a ResponserRequest with the response data in the Body
+// field, which is a JSON object with the following structure:
+//
+//	{
+//	    "id": "1234567890",
+//	    "name": "Example Inc",
+//	    "quality_rating": "GREEN",
+//	    "status": "ACTIVE",
+//	    "created_time": "1562344562",
+//	    "updated_time": "1562344562"
+//	}
+//
+// If the request fails, it returns a ResponserRequest with the error
 func (c *ClientWA) GetWabaInfo(waba_id string) response.ResponserRequest {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", waba_id), c.Config, RequestWithVersion, nil)
 	if err != nil {
@@ -1734,6 +1750,12 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.ResponserRequest {
 
 	return response.JsonWrapperResponseRequest(b)
 }
+
+// GetBusinessInfo retrieves detailed information about a business using its business ID.
+// It performs a GET request to fetch fields such as id, name, extended updated time,
+// link, two-factor type, is_hidden status, payment account ID, verification status,
+// updated time, and created time. If an error occurs during the request, a response
+// error is returned. The response is wrapped and returned as a ResponserRequest.
 
 func (c *ClientWA) GetBusinessInfo(business_id string) response.ResponserRequest {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQuery, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time"})
@@ -1779,6 +1801,10 @@ func getPhoneNumber(phone string) string {
 	return strings.NewReplacer("+", "", "-", "", " ", "").Replace(phone)
 }
 
+// GetInfoPhoneOfWaba returns info of a phone in a waba.
+//
+// Example:
+// resp := c.GetInfoPhoneOfWaba("+573123456789", "1234567890123")
 func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.ResponserRequest {
 	resp := c.GetInfoAllNumberInWaba(waba_id)
 
@@ -1797,4 +1823,66 @@ func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.Resp
 		Code:    types.CodeErrorUnrecognized,
 		Message: fmt.Sprintf("Phone number: %s not found in waba-id: %s in Meta", phoneNumber, waba_id),
 	})
+}
+
+type chanDataWaba struct {
+	WabaInfo    response.WabaInfo
+	PhoneInfo   *response.PhoneInfo
+	ExistNumber bool
+}
+
+func worker(cl *ClientWA, dIn <-chan chanDataWaba, dOut chan<- chanDataWaba, phone_number string) {
+	for data := range dIn {
+		resp := cl.GetInfoAllNumberInWaba(data.WabaInfo.ID)
+
+		if nums := resp.GetResponsePhonesWA(); nums != nil {
+			for _, phoneInfo := range nums.Data {
+				if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phone_number {
+					data.ExistNumber = true
+					data.PhoneInfo = &phoneInfo
+					dOut <- data
+					return
+				}
+			}
+		}
+		dOut <- data
+	}
+}
+
+// FindWabaId: Find the WabaId and PhoneInfo of a phone_number associated to a portafolio_id in Meta.
+// If not found, return nil, nil.
+func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.WabaInfo, *response.PhoneInfo) {
+	wabas := c.GetOwnedWaba(portafolio_id)
+	arrWabaInfo := wabas.GetResponseWaba().Data
+	cant := len(arrWabaInfo)
+
+	// create channel
+	dIn := make(chan chanDataWaba, cant)
+	dOut := make(chan chanDataWaba, cant)
+
+	// create workers
+	for range cant % 10 {
+		go worker(c, dIn, dOut, phone_number)
+	}
+
+	// send data to workers
+	for _, wabaInfo := range arrWabaInfo {
+		dIn <- chanDataWaba{
+			WabaInfo: wabaInfo,
+		}
+	}
+	// close channel
+	close(dIn)
+
+	for range cant {
+		data := <-dOut
+		if data.ExistNumber {
+			c.setWaBusinessAccountId(data.WabaInfo.ID)
+			fmt.Println("WaBusinessAccountId: ", data.WabaInfo.ID, " WaPhoneNumberId: ", data.PhoneInfo.ID)
+			return &data.WabaInfo, data.PhoneInfo
+		}
+	}
+
+	// set WaBusinessAccountId
+	return nil, nil
 }

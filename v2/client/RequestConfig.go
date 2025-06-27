@@ -52,13 +52,17 @@ func defaultHeader(c *Config, contentType ...string) {
 		cT = contentType[0]
 	}
 
-	c.request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
-	c.request.Header.Set("Content-Type", cT)
+	h := make(http.Header)
+	h.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	h.Set("Content-Type", cT)
+	c.request.Header = h
 }
 
 func multiparHeader(c *Config, contentType string) {
-	c.request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
-	c.request.Header.Set("Content-Type", contentType)
+	h := make(http.Header)
+	h.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	h.Set("Content-Type", contentType)
+	c.request.Header = h
 }
 
 func resetError(c *Config) {
