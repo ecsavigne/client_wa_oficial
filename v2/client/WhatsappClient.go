@@ -1831,22 +1831,42 @@ type chanDataWaba struct {
 	ExistNumber bool
 }
 
-func worker(cl *ClientWA, dIn <-chan chanDataWaba, dOut chan<- chanDataWaba, phone_number string) {
-	for data := range dIn {
-		resp := cl.GetInfoAllNumberInWaba(data.WabaInfo.ID)
+func worker(ctx context.Context, cl *ClientWA, dIn <-chan chanDataWaba, dOut chan<- chanDataWaba, phone_number string) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case data := <-dIn:
+			resp := cl.GetInfoAllNumberInWaba(data.WabaInfo.ID)
 
-		if nums := resp.GetResponsePhonesWA(); nums != nil {
-			for _, phoneInfo := range nums.Data {
-				if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phone_number {
-					data.ExistNumber = true
-					data.PhoneInfo = &phoneInfo
-					dOut <- data
-					return
+			if nums := resp.GetResponsePhonesWA(); nums != nil {
+				for _, phoneInfo := range nums.Data {
+					if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phone_number {
+						data.ExistNumber = true
+						data.PhoneInfo = &phoneInfo
+						dOut <- data
+						return
+					}
 				}
 			}
+			dOut <- data
 		}
-		dOut <- data
 	}
+	// for data := range dIn {
+	// 	resp := cl.GetInfoAllNumberInWaba(data.WabaInfo.ID)
+
+	// 	if nums := resp.GetResponsePhonesWA(); nums != nil {
+	// 		for _, phoneInfo := range nums.Data {
+	// 			if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phone_number {
+	// 				data.ExistNumber = true
+	// 				data.PhoneInfo = &phoneInfo
+	// 				dOut <- data
+	// 				return
+	// 			}
+	// 		}
+	// 	}
+	// 	dOut <- data
+	// }
 }
 
 // FindWabaId: Find the WabaId and PhoneInfo of a phone_number associated to a portafolio_id in Meta.
@@ -1855,6 +1875,7 @@ func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.Wab
 	wabas := c.GetOwnedWaba(portafolio_id)
 	arrWabaInfo := wabas.GetResponseWaba().Data
 	cant := len(arrWabaInfo)
+	arrFuncCancel := make([]context.CancelFunc, 0)
 
 	// create channel
 	dIn := make(chan chanDataWaba, cant)
@@ -1862,7 +1883,9 @@ func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.Wab
 
 	// create workers
 	for range cant % 10 {
-		go worker(c, dIn, dOut, phone_number)
+		ctx, fCancel := context.WithCancel(context.Background())
+		arrFuncCancel = append(arrFuncCancel, fCancel)
+		go worker(ctx, c, dIn, dOut, phone_number)
 	}
 
 	// send data to workers
@@ -1878,7 +1901,11 @@ func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.Wab
 		data := <-dOut
 		if data.ExistNumber {
 			c.setWaBusinessAccountId(data.WabaInfo.ID)
-			fmt.Println("WaBusinessAccountId: ", data.WabaInfo.ID, " WaPhoneNumberId: ", data.PhoneInfo.ID)
+			// Cancel context
+			for _, fCancel := range arrFuncCancel {
+				fCancel()
+			}
+			c.Config.Error = nil
 			return &data.WabaInfo, data.PhoneInfo
 		}
 	}
