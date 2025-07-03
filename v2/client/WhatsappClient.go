@@ -15,6 +15,7 @@ import (
 	"path"
 	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/event"
@@ -26,22 +27,42 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type TypeClient = string
-
 const (
 	WhatsappClient TypeClient = "whatsapp_business_account"
 	FacebookClient TypeClient = "socket"
 )
 
-type clientHttp struct {
-	*http.Client
-	BaseUrl *url.URL `json:"base_url"`
-}
+type (
+	TypeClient = string
 
-type ClientWA struct {
-	*Config    `json:"config"`
-	typeClient string
-}
+	clientHttp struct {
+		*http.Client
+		BaseUrl *url.URL `json:"base_url"`
+	}
+
+	ClientWA struct {
+		*Config    `json:"config"`
+		typeClient string
+	}
+
+	infoContact struct {
+		ContactPhone string
+		IsOnWhats    bool
+		IsError      bool
+		Error        error
+	}
+
+	chanDataWaba struct {
+		WabaInfo    response.WabaInfo
+		PhoneInfo   *response.PhoneInfo
+		ExistNumber bool
+	}
+)
+
+var (
+	mu          sync.Mutex
+	infoContacs map[string]chan infoContact
+)
 
 func codeWebHook(msgByte []byte) *event.Components {
 	msg := &event.Components{}
@@ -207,6 +228,28 @@ func (cl *ClientWA) initWebHookSocket() {
 			len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
 			evt = &event.StatusMessageEvent{
 				Components: msg,
+			}
+			number := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
+			mu.Lock()
+			ch, ok := infoContacs[number]
+			mu.Unlock()
+
+			if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
+				msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
+				if ok {
+					ch <- infoContact{
+						ContactPhone: number,
+						IsOnWhats:    false,
+					}
+				}
+
+			} else if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "delivered" {
+				if ok {
+					ch <- infoContact{
+						ContactPhone: number,
+						IsOnWhats:    true,
+					}
+				}
 			}
 		case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
 			len(msg.Entry[0].Changes[0].Value.Messages[0].Contacts) != 0:
@@ -1825,48 +1868,28 @@ func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.Resp
 	})
 }
 
-type chanDataWaba struct {
-	WabaInfo    response.WabaInfo
-	PhoneInfo   *response.PhoneInfo
-	ExistNumber bool
-}
+func workerFindWabaId(ctx context.Context, wg *sync.WaitGroup, cl *ClientWA, dIn <-chan chanDataWaba, dOut chan<- chanDataWaba, phone_number string) {
+	defer wg.Done()
 
-func worker(ctx context.Context, cl *ClientWA, dIn <-chan chanDataWaba, dOut chan<- chanDataWaba, phone_number string) {
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case data := <-dIn:
-			resp := cl.GetInfoAllNumberInWaba(data.WabaInfo.ID)
+	for data := range dIn {
+		resp := cl.GetInfoAllNumberInWaba(data.WabaInfo.ID)
+		if nums := resp.GetResponsePhonesWA(); nums != nil {
+			for _, phoneInfo := range nums.Data {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+				}
 
-			if nums := resp.GetResponsePhonesWA(); nums != nil {
-				for _, phoneInfo := range nums.Data {
-					if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phone_number {
-						data.ExistNumber = true
-						data.PhoneInfo = &phoneInfo
-						dOut <- data
-						return
-					}
+				if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phone_number {
+					data.ExistNumber = true
+					data.PhoneInfo = &phoneInfo
+					dOut <- data
+					return
 				}
 			}
-			dOut <- data
 		}
 	}
-	// for data := range dIn {
-	// 	resp := cl.GetInfoAllNumberInWaba(data.WabaInfo.ID)
-
-	// 	if nums := resp.GetResponsePhonesWA(); nums != nil {
-	// 		for _, phoneInfo := range nums.Data {
-	// 			if getPhoneNumber(phoneInfo.DisplayPhoneNumber) == phone_number {
-	// 				data.ExistNumber = true
-	// 				data.PhoneInfo = &phoneInfo
-	// 				dOut <- data
-	// 				return
-	// 			}
-	// 		}
-	// 	}
-	// 	dOut <- data
-	// }
 }
 
 // FindWabaId: Find the WabaId and PhoneInfo of a phone_number associated to a portafolio_id in Meta.
@@ -1876,40 +1899,164 @@ func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.Wab
 	arrWabaInfo := wabas.GetResponseWaba().Data
 	cant := len(arrWabaInfo)
 	arrFuncCancel := make([]context.CancelFunc, 0)
+	var wg sync.WaitGroup
 
 	// create channel
 	dIn := make(chan chanDataWaba, cant)
 	dOut := make(chan chanDataWaba, cant)
 
 	// create workers
-	for range cant % 10 {
+	cantWorker := cant / 5
+	if cant%5 != 0 {
+		cantWorker++
+	}
+
+	for range cantWorker {
 		ctx, fCancel := context.WithCancel(context.Background())
 		arrFuncCancel = append(arrFuncCancel, fCancel)
-		go worker(ctx, c, dIn, dOut, phone_number)
+
+		wg.Add(1)
+		go workerFindWabaId(ctx, &wg, c, dIn, dOut, phone_number)
 	}
 
 	// send data to workers
-	for _, wabaInfo := range arrWabaInfo {
-		dIn <- chanDataWaba{
-			WabaInfo: wabaInfo,
-		}
-	}
-	// close channel
-	close(dIn)
+	go func() {
+		// close channel
+		defer close(dIn)
 
-	for range cant {
-		data := <-dOut
+		for _, wabaInfo := range arrWabaInfo {
+			dIn <- chanDataWaba{
+				WabaInfo: wabaInfo,
+			}
+		}
+	}()
+
+	// close channel out
+	go func() {
+		wg.Wait()
+		close(dOut)
+	}()
+
+	for data := range dOut {
 		if data.ExistNumber {
+			// set WaBusinessAccountId
 			c.setWaBusinessAccountId(data.WabaInfo.ID)
+
 			// Cancel context
 			for _, fCancel := range arrFuncCancel {
 				fCancel()
 			}
 			c.Config.Error = nil
+
 			return &data.WabaInfo, data.PhoneInfo
 		}
 	}
 
-	// set WaBusinessAccountId
 	return nil, nil
+}
+
+func registerContact(contact string) chan infoContact {
+	ch := make(chan infoContact, 1)
+
+	mu.Lock()
+	infoContacs[contact] = ch
+	mu.Unlock()
+
+	return ch
+}
+
+func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, dOut chan<- infoContact) {
+	defer wg.Done()
+
+	for data := range numberIn {
+		ch := registerContact(data)
+
+		resp := cl.SendMessage(&message.MessageText{
+			MessagerKernel: message.MessagerKernel{
+				MessagingProduct: "whatsapp",
+				Type:             "text",
+				To:               data,
+			},
+			Text: message.Text{
+				Body: "Ping Contact",
+			},
+		})
+
+		if resp.GetResponseError() != nil {
+			// wait for channel
+			for {
+				select {
+				case <-time.After(5 * time.Second):
+					dOut <- infoContact{
+						ContactPhone: data,
+						IsOnWhats:    false,
+						IsError:      true,
+						Error:        fmt.Errorf("Error in workerIsOnWhats. Error is: timeout"),
+					}
+					return
+				case receive := <-ch:
+					dOut <- infoContact{
+						ContactPhone: receive.ContactPhone,
+						IsOnWhats:    receive.IsOnWhats,
+						IsError:      receive.IsError,
+						Error:        receive.Error,
+					}
+					return
+				default:
+					return
+				}
+			}
+		} else {
+			dOut <- infoContact{
+				ContactPhone: data,
+				IsOnWhats:    false,
+				IsError:      true,
+				Error:        resp.GetResponseError(),
+			}
+			return
+		}
+
+	}
+}
+
+func (c *ClientWA) IsOnWhats(contactPhone []string) []infoContact {
+	cant := len(contactPhone)
+	infoContacs = make(map[string]chan infoContact)
+	var wg sync.WaitGroup
+
+	// create channel
+	dIn := make(chan string, cant)
+	dOut := make(chan infoContact, cant)
+
+	// create workers
+	for range cant {
+		go workerIsOnWhats(c, &wg, dIn, dOut)
+	}
+
+	// Send data to workers
+	go func() {
+		// close channel
+		defer close(dIn)
+
+		for _, phone := range contactPhone {
+			wg.Add(1)
+			dIn <- phone
+		}
+	}()
+
+	// close channel in
+	go func() {
+		wg.Wait()
+
+		close(dOut)
+	}()
+
+	// receive info of Channel
+	infoContactsExit := make([]infoContact, 0)
+	for data := range dOut {
+		infoContactsExit = append(infoContactsExit, data)
+		// infoContacs[data.ContactPhone] <- data
+	}
+
+	return infoContactsExit
 }
