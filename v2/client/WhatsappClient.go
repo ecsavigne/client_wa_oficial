@@ -45,7 +45,7 @@ type (
 		typeClient string
 	}
 
-	infoContact struct {
+	InfoContact struct {
 		ContactPhone string
 		RecipientID  string
 		IsOnWhats    bool
@@ -62,7 +62,7 @@ type (
 
 	pair struct {
 		Phone   string
-		Channel chan infoContact
+		Channel chan InfoContact
 	}
 )
 
@@ -247,7 +247,7 @@ func (cl *ClientWA) initWebHookSocket() {
 			if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
 				msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
 				if ok {
-					pair.Channel <- infoContact{
+					pair.Channel <- InfoContact{
 						ContactPhone: pair.Phone,
 						RecipientID:  recipientId,
 						IsOnWhats:    false,
@@ -256,7 +256,7 @@ func (cl *ClientWA) initWebHookSocket() {
 
 			} else {
 				if ok {
-					pair.Channel <- infoContact{
+					pair.Channel <- InfoContact{
 						ContactPhone: pair.Phone,
 						RecipientID:  recipientId,
 						IsOnWhats:    true,
@@ -1971,8 +1971,8 @@ func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.Wab
 	return nil, nil
 }
 
-func registerContact(idMsg, phone string) chan infoContact {
-	ch := make(chan infoContact, 1)
+func registerContact(idMsg, phone string) chan InfoContact {
+	ch := make(chan InfoContact, 1)
 
 	p := pair{
 		Phone:   phone,
@@ -2010,7 +2010,7 @@ func getMsgPing(cl *ClientWA, num string) (msgID string) {
 	return msgID
 }
 
-func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, dOut chan<- infoContact) {
+func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, dOut chan<- InfoContact) {
 	defer wg.Done()
 
 	for number := range numberIn {
@@ -2021,7 +2021,7 @@ func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, d
 			for {
 				select {
 				case <-time.After(5 * time.Second):
-					dOut <- infoContact{
+					dOut <- InfoContact{
 						ContactPhone: number,
 						RecipientID:  number,
 						IsOnWhats:    false,
@@ -2031,7 +2031,7 @@ func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, d
 					}
 					return
 				case receive := <-ch:
-					dOut <- infoContact{
+					dOut <- InfoContact{
 						ContactPhone: receive.ContactPhone,
 						RecipientID:  receive.RecipientID,
 						IsOnWhats:    receive.IsOnWhats,
@@ -2042,7 +2042,7 @@ func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, d
 				}
 			}
 		} else {
-			dOut <- infoContact{
+			dOut <- InfoContact{
 				ContactPhone: number,
 				RecipientID:  number,
 				IsOnWhats:    false,
@@ -2055,14 +2055,14 @@ func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, d
 	}
 }
 
-func (c *ClientWA) IsOnWhats(contactPhone []string) []infoContact {
+func (c *ClientWA) IsOnWhats(contactPhone []string) []InfoContact {
 	cant := len(contactPhone)
 	infoContacts = make(map[string]pair, 0)
 	var wg sync.WaitGroup
 
 	// create channel
 	dIn := make(chan string, (cant/2)+1)
-	dOut := make(chan infoContact, (cant/2)+1)
+	dOut := make(chan InfoContact, (cant/2)+1)
 
 	// create workers
 	for range cant {
@@ -2088,7 +2088,7 @@ func (c *ClientWA) IsOnWhats(contactPhone []string) []infoContact {
 	}()
 
 	// receive info of Channel
-	infoContactsExit := make([]infoContact, 0)
+	infoContactsExit := make([]InfoContact, 0)
 	for data := range dOut {
 		infoContactsExit = append(infoContactsExit, data)
 	}
