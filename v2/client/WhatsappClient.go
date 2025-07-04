@@ -47,9 +47,11 @@ type (
 
 	infoContact struct {
 		ContactPhone string
+		RecipientID  string
 		IsOnWhats    bool
 		IsError      bool
 		Error        error
+		MsgError     string
 	}
 
 	chanDataWaba struct {
@@ -57,11 +59,15 @@ type (
 		PhoneInfo   *response.PhoneInfo
 		ExistNumber bool
 	}
+
+	pair struct {
+		Phone   string
+		Channel chan infoContact
+	}
 )
 
 var (
-	mu          sync.Mutex
-	infoContacs map[string]chan infoContact
+	infoContacts map[string]pair
 )
 
 func codeWebHook(msgByte []byte) *event.Components {
@@ -229,24 +235,30 @@ func (cl *ClientWA) initWebHookSocket() {
 			evt = &event.StatusMessageEvent{
 				Components: msg,
 			}
-			number := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
+
+			recipientId := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
+			id := msg.Entry[0].Changes[0].Value.Statuses[0].ID
+
+			mu := sync.Mutex{}
 			mu.Lock()
-			ch, ok := infoContacs[number]
+			pair, ok := infoContacts[id]
 			mu.Unlock()
 
 			if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
 				msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
 				if ok {
-					ch <- infoContact{
-						ContactPhone: number,
+					pair.Channel <- infoContact{
+						ContactPhone: pair.Phone,
+						RecipientID:  recipientId,
 						IsOnWhats:    false,
 					}
 				}
 
-			} else if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "delivered" {
+			} else {
 				if ok {
-					ch <- infoContact{
-						ContactPhone: number,
+					pair.Channel <- infoContact{
+						ContactPhone: pair.Phone,
+						RecipientID:  recipientId,
 						IsOnWhats:    true,
 					}
 				}
@@ -298,6 +310,19 @@ func NewClientWA(c ...Config) *ClientWA {
 	}
 
 	return cl
+}
+
+func createClientHttp2(timeOut int) *http.Client {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12},
+	}
+	http2.ConfigureTransport(tr)
+
+	return &http.Client{
+		Timeout:   time.Duration(timeOut) * time.Second,
+		Transport: tr,
+	}
 }
 
 func newConfig(c Config) *Config {
@@ -354,16 +379,7 @@ func newConfig(c Config) *Config {
 	}
 
 	if c.Client == nil {
-		tr := &http.Transport{
-			TLSClientConfig: &tls.Config{
-				MinVersion: tls.VersionTLS12},
-		}
-		http2.ConfigureTransport(tr)
-
-		c.Client = &http.Client{
-			Timeout:   30 * time.Second,
-			Transport: tr,
-		}
+		c.Client = createClientHttp2(30)
 	}
 
 	return &c
@@ -376,9 +392,10 @@ func (c *ClientWA) resetMessageInfo() {
 }
 
 func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
-	res, e := c.clientHttp.Do(req)
-	if e != nil {
-		log := fmt.Sprintf("Error in function doRequest when send HTTP request to server with Do. Error is: %s", e.Error())
+	c.clientHttp.Client = createClientHttp2(30)
+	res, err := c.clientHttp.Do(req)
+	if err != nil {
+		log := fmt.Sprintf("Error in function doRequest when send HTTP request to server with Do. Error is: %s", err.Error())
 		c.Config.Error = fmt.Errorf("%s", log)
 		return nil, c.Config.Error
 	}
@@ -437,6 +454,7 @@ func (c *ClientWA) doRequest(req *http.Request) (response.ResponserRequest, erro
 		})
 		return responser, c.Config.Error
 	}
+	defer res.Body.Close()
 
 	bodyResponse, e := io.ReadAll(res.Body)
 	if e != nil {
@@ -449,8 +467,6 @@ func (c *ClientWA) doRequest(req *http.Request) (response.ResponserRequest, erro
 		c.Config.Error = fmt.Errorf("%s", log)
 		return nil, c.Config.Error
 	}
-
-	defer res.Body.Close()
 
 	return response.JsonWrapperResponseRequest(bodyResponse), nil
 }
@@ -1955,63 +1971,83 @@ func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.Wab
 	return nil, nil
 }
 
-func registerContact(contact string) chan infoContact {
+func registerContact(idMsg, phone string) chan infoContact {
 	ch := make(chan infoContact, 1)
 
+	p := pair{
+		Phone:   phone,
+		Channel: ch,
+	}
+
+	mu := &sync.Mutex{}
 	mu.Lock()
-	infoContacs[contact] = ch
+	infoContacts[idMsg] = p
 	mu.Unlock()
 
 	return ch
 }
 
+func getMsgPing(cl *ClientWA, num string) (msgID string) {
+	msg := message.NewMessage(&message.MessageText{
+		MessagerKernel: message.MessagerKernel{
+			MessagingProduct: "whatsapp",
+			RecipientType:    "individual",
+			Type:             "text",
+			To:               num,
+		},
+		Text: message.Text{
+			PreviewUrl: false,
+			Body:       "Ping Contact",
+		},
+	})
+
+	resp := cl.SendMessage(msg)
+	if resp.GetResponseError() == nil {
+		msgID = resp.GetResponseSuccess().GetMessageId()
+		return msgID
+	}
+
+	return msgID
+}
+
 func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, dOut chan<- infoContact) {
 	defer wg.Done()
 
-	for data := range numberIn {
-		ch := registerContact(data)
-
-		resp := cl.SendMessage(&message.MessageText{
-			MessagerKernel: message.MessagerKernel{
-				MessagingProduct: "whatsapp",
-				Type:             "text",
-				To:               data,
-			},
-			Text: message.Text{
-				Body: "Ping Contact",
-			},
-		})
-
-		if resp.GetResponseError() != nil {
+	for number := range numberIn {
+		id := getMsgPing(cl, number)
+		if id != "" {
+			ch := registerContact(id, number)
 			// wait for channel
 			for {
 				select {
 				case <-time.After(5 * time.Second):
 					dOut <- infoContact{
-						ContactPhone: data,
+						ContactPhone: number,
+						RecipientID:  number,
 						IsOnWhats:    false,
 						IsError:      true,
 						Error:        fmt.Errorf("Error in workerIsOnWhats. Error is: timeout"),
+						MsgError:     "Error in workerIsOnWhats. Error is: timeout",
 					}
 					return
 				case receive := <-ch:
 					dOut <- infoContact{
 						ContactPhone: receive.ContactPhone,
+						RecipientID:  receive.RecipientID,
 						IsOnWhats:    receive.IsOnWhats,
 						IsError:      receive.IsError,
 						Error:        receive.Error,
 					}
 					return
-				default:
-					return
 				}
 			}
 		} else {
 			dOut <- infoContact{
-				ContactPhone: data,
+				ContactPhone: number,
+				RecipientID:  number,
 				IsOnWhats:    false,
 				IsError:      true,
-				Error:        resp.GetResponseError(),
+				Error:        fmt.Errorf("Error in workerIsOnWhats. msgID is empty"),
 			}
 			return
 		}
@@ -2021,15 +2057,16 @@ func workerIsOnWhats(cl *ClientWA, wg *sync.WaitGroup, numberIn <-chan string, d
 
 func (c *ClientWA) IsOnWhats(contactPhone []string) []infoContact {
 	cant := len(contactPhone)
-	infoContacs = make(map[string]chan infoContact)
+	infoContacts = make(map[string]pair, 0)
 	var wg sync.WaitGroup
 
 	// create channel
-	dIn := make(chan string, cant)
-	dOut := make(chan infoContact, cant)
+	dIn := make(chan string, (cant/2)+1)
+	dOut := make(chan infoContact, (cant/2)+1)
 
 	// create workers
 	for range cant {
+		wg.Add(1)
 		go workerIsOnWhats(c, &wg, dIn, dOut)
 	}
 
@@ -2039,7 +2076,6 @@ func (c *ClientWA) IsOnWhats(contactPhone []string) []infoContact {
 		defer close(dIn)
 
 		for _, phone := range contactPhone {
-			wg.Add(1)
 			dIn <- phone
 		}
 	}()
@@ -2055,7 +2091,6 @@ func (c *ClientWA) IsOnWhats(contactPhone []string) []infoContact {
 	infoContactsExit := make([]infoContact, 0)
 	for data := range dOut {
 		infoContactsExit = append(infoContactsExit, data)
-		// infoContacs[data.ContactPhone] <- data
 	}
 
 	return infoContactsExit
