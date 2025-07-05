@@ -1997,7 +1997,7 @@ func getMsgPing(cl *ClientWA, num string) (msgID string) {
 		},
 		Text: message.Text{
 			PreviewUrl: false,
-			Body:       "Ping Contact",
+			Body:       "",
 		},
 	})
 
