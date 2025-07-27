@@ -82,9 +82,9 @@ func main() {
 	// For handling the interruption of the application with Ctrl+C allows you to see the events handled by EventHandle
 	// r := my_client.GetAllTemplate() // id = 1111111, name = hello_world
 	// r := my_client.GetTemplateById("111111111111") // id = 1122206686609499, name = hello_world
-	r := my_client.GetTemplateByName("event_rsvp_reminder_2") // id = 1122206686622209499, name = hello_world
+	// r := my_client.GetTemplateByName("event_rsvp_reminder_2") // id = 1122206686622209499, name = hello_world
 
-	fmt.Println("Response: \n", r)
+	// fmt.Println("Response: \n", r)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
