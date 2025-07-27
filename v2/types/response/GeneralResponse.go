@@ -7,19 +7,25 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 )
 
+type OtherResponse = map[string]any
 type GeneralResponse struct {
 	KernelResponser
-	ResponseType string `json:"response_type,omitempty"`
-	*PhonesWA    `json:",omitempty"`
-	*Phone       `json:",omitempty"`
-	*Waba        `json:",omitempty"`
-	*Error       `json:",omitempty"`
-	*Success     `json:",omitempty"`
-	*MediaInfo   `json:",omitempty"`
-	*Business    `json:",omitempty"`
+	ResponseType             string `json:"response_type,omitempty"`
+	*PhonesWA                `json:",omitempty"`
+	*Phone                   `json:",omitempty"`
+	*Waba                    `json:",omitempty"`
+	*Error                   `json:",omitempty"`
+	*Success                 `json:",omitempty"`
+	*MediaInfo               `json:",omitempty"`
+	*Business                `json:",omitempty"`
+	OtherResponse            `json:",omitempty"`
+	*TemplateResponse        `json:",omitempty"`
+	*MockupTemplateResponse  `json:",omitempty"`
+	*UnknowResponse          `json:",omitempty"`
+	*WebHookTemplateResponse `json:",omitempty"`
 }
 
-func NewGeneralResponse(config ResponserRequest) *GeneralResponse {
+func NewGeneralResponse(config Responser) *GeneralResponse {
 	if v, ok := config.(*GeneralResponse); ok {
 		v.ResponseType = ResponseGeneralResponse
 		v.KernelResponser.parent = v
@@ -28,7 +34,7 @@ func NewGeneralResponse(config ResponserRequest) *GeneralResponse {
 	panic("type ResponserRequest is not RespenserRequest")
 }
 
-func (a *GeneralResponse) GetResponseType() ResponserRequest {
+func (a *GeneralResponse) GetResponseType() Responser {
 	switch {
 	case a.PhonesWA != nil:
 		a.ResponseType = ResponsePhonesWA
@@ -51,12 +57,22 @@ func (a *GeneralResponse) GetResponseType() ResponserRequest {
 	case a.Business != nil:
 		a.ResponseType = ResponseBusiness
 		return NewBusiness(a.Business)
+	case a.TemplateResponse != nil:
+		a.ResponseType = ResponseTemplate
+		return NewTemplateResponse(a.TemplateResponse)
+	case a.MockupTemplateResponse != nil:
+		a.ResponseType = ResponseTemplate
+		return NewMockupTemplateResponse(a.MockupTemplateResponse)
+	case a.WebHookTemplateResponse != nil:
+		a.ResponseType = ResponseTemplate
+		return NewWebHookTemplateResponse(a.WebHookTemplateResponse)
 	default:
+		a.ResponseType = ResponseOther
 		return a
 	}
 }
 
-func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string) ResponserRequest {
+func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string) Responser {
 	b, err := io.ReadAll(bodyResponse)
 	defer bodyResponse.Close()
 	if err != nil {

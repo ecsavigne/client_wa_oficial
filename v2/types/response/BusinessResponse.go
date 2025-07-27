@@ -25,7 +25,7 @@ type Business struct {
 	Message                                   string `json:"message,omitempty"`
 }
 
-func NewBusiness(config ResponserRequest) *Business {
+func NewBusiness(config Responser) *Business {
 	if v, ok := config.(*Business); ok {
 		v.ResponseType = ResponseBusiness
 		v.KernelResponser.parent = v

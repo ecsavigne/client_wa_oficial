@@ -11,9 +11,14 @@ const (
 	ResponsePhone           ResponseType = "response_phone"
 	ResponseWABA            ResponseType = "response_waba"
 	ResponseBusiness        ResponseType = "response_business"
+	ResponseTemplate        ResponseType = "response_template"
+	ResponseMockupTemplate  ResponseType = "response_mockup_template"
+	ResponseWebHookTemplate ResponseType = "response_webhook_template"
+	ResponseUnknow          ResponseType = "response_unknow"
+	ResponseOther           ResponseType = "response_other"
 )
 
-type ResponserRequest interface {
+type Responser interface {
 	GetType() string
 	String() string
 	GetResponseError() *Error
@@ -24,6 +29,10 @@ type ResponserRequest interface {
 	GetResponseWaba() *Waba
 	GetResponseBusiness() *Business
 	GetGeneralResponse() *GeneralResponse
+	GetTemplateResponse() *TemplateResponse
+	GetMockupTemplateResponse() *MockupTemplateResponse
+	GetWebHookTemplateResponse() *WebHookTemplateResponse
+	GetUnknowResponse() *UnknowResponse
 	IsType(ResponseType) bool
 }
 
@@ -38,7 +47,7 @@ type ContactResponse struct {
 }
 
 type KernelResponser struct {
-	parent ResponserRequest
+	parent Responser
 }
 
 // GetType returns the type of the ResponserRequest interface.
@@ -60,6 +69,14 @@ func (k *KernelResponser) GetType() string {
 	case *Waba:
 		return v.ResponseType
 	case *GeneralResponse:
+		return v.ResponseType
+	case *TemplateResponse:
+		return v.ResponseType
+	case *MockupTemplateResponse:
+		return v.ResponseType
+	case *WebHookTemplateResponse:
+		return v.ResponseType
+	case *UnknowResponse:
 		return v.ResponseType
 	default:
 		return ""
@@ -88,6 +105,14 @@ func (k *KernelResponser) String() string {
 	case *Business:
 		return Val(v)
 	case *GeneralResponse:
+		return Val(v)
+	case *TemplateResponse:
+		return Val(v)
+	case *MockupTemplateResponse:
+		return Val(v)
+	case *WebHookTemplateResponse:
+		return Val(v)
+	case *UnknowResponse:
 		return Val(v)
 	default:
 		return ""
@@ -157,6 +182,42 @@ func (k *KernelResponser) GetResponseBusiness() *Business {
 // If successful, it returns the *GeneralResponse instance; otherwise, it returns nil.
 func (k *KernelResponser) GetGeneralResponse() *GeneralResponse {
 	if v, ok := k.parent.(*GeneralResponse); ok {
+		return v
+	}
+	return nil
+}
+
+// GetGeneralResponse attempts to cast the KernelResponser to a *GeneralResponse type.
+// If successful, it returns the *GeneralResponse instance; otherwise, it returns nil.
+func (k *KernelResponser) GetTemplateResponse() *TemplateResponse {
+	if v, ok := k.parent.(*TemplateResponse); ok {
+		return v
+	}
+	return nil
+}
+
+// GetMockupTemplateResponse attempts to cast the KernelResponser to a *MockupTemplateResponse type.
+// If successful, it returns the *MockupTemplateResponse instance; otherwise, it returns nil.
+func (k *KernelResponser) GetMockupTemplateResponse() *MockupTemplateResponse {
+	if v, ok := k.parent.(*MockupTemplateResponse); ok {
+		return v
+	}
+	return nil
+}
+
+// GetWebHookTemplateResponse attempts to cast the KernelResponser to a *WebHookTemplateResponse type.
+// If successful, it returns the *WebHookTemplateResponse instance; otherwise, it returns nil.
+func (k *KernelResponser) GetWebHookTemplateResponse() *WebHookTemplateResponse {
+	if v, ok := k.parent.(*WebHookTemplateResponse); ok {
+		return v
+	}
+	return nil
+}
+
+// GetUnknowResponse attempts to cast the KernelResponser to a *UnknowResponse type.
+// If successful, it returns the *UnknowResponse instance; otherwise, it returns nil.
+func (k *KernelResponser) GetUnknowResponse() *UnknowResponse {
+	if v, ok := k.parent.(*UnknowResponse); ok {
 		return v
 	}
 	return nil

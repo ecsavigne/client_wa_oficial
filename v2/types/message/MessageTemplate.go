@@ -18,14 +18,14 @@ type DateTime struct {
 En las plantillas basadas en texto, los únicos tipos de parámetros admitidos son currency, date_time y text
 */
 type Parameter struct {
-	Type     string   `json:"type" validate:"required"` // Value:text, image, currency, date_time, video, document, payload (if type of component is button)
-	Image    Media    `json:"image,omitempty"`          // use obligatory with type=image
-	Video    Media    `json:"video,omitempty"`          // use obligatory with type=video
-	Document Media    `json:"document,omitempty"`       // use obligatory with type=document
-	Text     string   `json:"text,omitempty"`           // use obligatory with type=text
-	Currency Currency `json:"currency,omitempty"`       // use obligatory with type=currency
-	DateTime DateTime `json:"date_time,omitempty"`      // use obligatory with type=date_time
-	Payload  string   `json:"payload,omitempty"`        // use obligatory with type=payload
+	Type     string    `json:"type" validate:"required"` // Value:text, image, currency, date_time, video, document, payload (if type of component is button)
+	Image    *Media    `json:"image,omitempty"`          // use obligatory with type=image
+	Video    *Media    `json:"video,omitempty"`          // use obligatory with type=video
+	Document *Media    `json:"document,omitempty"`       // use obligatory with type=document
+	Text     string    `json:"text,omitempty"`           // use obligatory with type=text
+	Currency *Currency `json:"currency,omitempty"`       // use obligatory with type=currency
+	DateTime *DateTime `json:"date_time,omitempty"`      // use obligatory with type=date_time
+	Payload  string    `json:"payload,omitempty"`        // use obligatory with type=payload
 }
 
 type Component struct {

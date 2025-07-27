@@ -16,7 +16,7 @@ type WabaInfo struct {
 	MessageTemplateNamespace string `json:"message_template_namespace"`
 }
 
-func NewWABA(config ResponserRequest) *Waba {
+func NewWABA(config Responser) *Waba {
 	if v, ok := config.(*Waba); ok {
 		v.ResponseType = ResponseWABA
 		v.KernelResponser.parent = v

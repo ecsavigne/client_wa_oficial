@@ -12,7 +12,7 @@ type MediaInfo struct {
 	Url              string `json:"url,omitempty"`
 }
 
-func NewMediaInfo(config ResponserRequest) *MediaInfo {
+func NewMediaInfo(config Responser) *MediaInfo {
 	if v, ok := config.(*MediaInfo); ok {
 		v.ResponseType = ResponseMediaInfo
 		v.KernelResponser.parent = v

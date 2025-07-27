@@ -21,7 +21,7 @@ func Val(r any) string {
 // If it does, it returns a types.Error object with the error message and code 401.
 // Otherwise, it marshals the map back into json and unmarshals it into a types.GeneralResponse object.
 // Finally, return interface que represent of type of response.
-func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
+func JsonWrapperResponseRequest(dataBin []byte) Responser {
 	wrapper := record{}
 	gralResponse := NewGeneralResponse(&GeneralResponse{})
 
@@ -79,9 +79,24 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		})
 		gralResponse.Waba = waba
 
+	// template
+	// case wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil &&
+	// 	wrapper["data"].(array)[0].(record)["parameter_format"] != nil && wrapper["data"].(array)[0].(record)["language"] != nil &&
+	// 	wrapper["data"].(array)[0].(record)["category"] != nil && wrapper["data"].(array)[0].(record)["components"] != nil &&
+	// 	wrapper["data"].(array)[0].(record)["status"].(array) != nil:
+
+	// templates
+	case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil &&
+		wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil &&
+		wrapper["data"].(array)[0].(record)["parameter_format"] != nil && wrapper["data"].(array)[0].(record)["language"] != nil &&
+		wrapper["data"].(array)[0].(record)["category"] != nil && wrapper["data"].(array)[0].(record)["components"] != nil &&
+		wrapper["data"].(array)[0].(record)["status"] != nil:
+		templates := NewTemplateResponse(&TemplateResponse{})
+		json.Unmarshal(data, templates)
+		gralResponse.TemplateResponse = templates
 	// wabas
-	// case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil && wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil && wrapper["data"].(array)[0].(record)["currency"] != nil:
-	case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil && wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil:
+	case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil &&
+		wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil:
 		waba := NewWABA(&Waba{})
 		json.Unmarshal(data, waba)
 		gralResponse.Waba = waba
@@ -93,14 +108,17 @@ func JsonWrapperResponseRequest(dataBin []byte) ResponserRequest {
 		gralResponse.Business = business
 
 	// media info
-	case (wrapper["messaging_product"] != nil && wrapper["mime_type"] != nil && wrapper["id"] != nil && wrapper["url"] != nil && wrapper["sha256"] != nil) || wrapper["id"] != nil:
+	case (wrapper["messaging_product"] != nil && wrapper["mime_type"] != nil && wrapper["id"] != nil && wrapper["url"] != nil && wrapper["sha256"] != nil) || wrapper["id"] != nil && len(wrapper) <= 3:
 		mediaInfo := NewMediaInfo(&MediaInfo{})
 		json.Unmarshal(data, mediaInfo)
 		gralResponse.MediaInfo = mediaInfo
 
 	// general response
 	default:
-		json.Unmarshal(data, gralResponse)
+		if gralResponse.OtherResponse == nil {
+			gralResponse.OtherResponse = make(OtherResponse)
+		}
+		gralResponse.OtherResponse = wrapper
 	}
 
 	return gralResponse.GetResponseType()

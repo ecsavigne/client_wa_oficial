@@ -16,7 +16,7 @@ type Error struct {
 	FbtraceID string `json:"fbtrace_id,omitempty"`
 }
 
-func NewError(config ResponserRequest) *Error {
+func NewError(config Responser) *Error {
 	if v, ok := config.(*Error); ok {
 		v.ResponseType = ResponseError
 		v.KernelResponser.parent = v

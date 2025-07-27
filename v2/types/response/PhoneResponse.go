@@ -6,7 +6,7 @@ type Phone struct {
 	*PhoneInfo
 }
 
-func NewPhone(config ResponserRequest) *Phone {
+func NewPhone(config Responser) *Phone {
 	if v, ok := config.(*Phone); ok {
 		v.ResponseType = ResponsePhone
 		v.KernelResponser.parent = v

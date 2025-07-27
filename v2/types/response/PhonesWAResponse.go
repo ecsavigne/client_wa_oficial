@@ -40,7 +40,7 @@ type Cursors struct {
 	After  string `json:"after,omitempty"`
 }
 
-func NewPhonesWA(config ResponserRequest) *PhonesWA {
+func NewPhonesWA(config Responser) *PhonesWA {
 	if v, ok := config.(*PhonesWA); ok {
 		v.ResponseType = ResponsePhonesWA
 		v.KernelResponser.parent = v

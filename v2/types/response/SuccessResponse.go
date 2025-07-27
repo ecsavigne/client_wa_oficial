@@ -11,7 +11,7 @@ type Success struct {
 	MediaInfo        *MediaInfo        `json:"media_info,omitempty"`
 }
 
-func NewSuccess(config ResponserRequest) *Success {
+func NewSuccess(config Responser) *Success {
 	if v, ok := config.(*Success); ok {
 		v.ResponseType = ResponseSuccess
 		v.KernelResponser.parent = v

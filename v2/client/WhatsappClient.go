@@ -442,10 +442,10 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 	return res, nil
 }
 
-func (c *ClientWA) doRequest(req *http.Request) (response.ResponserRequest, error) {
+func (c *ClientWA) doRequest(req *http.Request) (response.Responser, error) {
 	res, e := doRequest(req, c)
 
-	var responser response.ResponserRequest
+	var responser response.Responser
 	if e != nil {
 		responser = response.NewError(&response.Error{
 			Type:    types.TypeErrorInRequest,
@@ -471,7 +471,7 @@ func (c *ClientWA) doRequest(req *http.Request) (response.ResponserRequest, erro
 	return response.JsonWrapperResponseRequest(bodyResponse), nil
 }
 
-func (c *ClientWA) makeRequest(methoth string, ePoint string, msg message.Messager) (response.ResponserRequest, error) {
+func (c *ClientWA) makeRequest(methoth string, ePoint string, msg message.Messager) (response.Responser, error) {
 	if msg.GetMessageLink() != "" || msg.GetFileHeader() != nil {
 		multipartRequest(methoth, ePoint, c.Config, msg)
 	} else {
@@ -485,7 +485,7 @@ func (c *ClientWA) makeRequest(methoth string, ePoint string, msg message.Messag
 	}
 
 	var (
-		responseReq response.ResponserRequest
+		responseReq response.Responser
 		e           error
 	)
 
@@ -508,7 +508,7 @@ func validTypeMsg(msg message.Messager, msgType string) bool {
 // SendTemplate sends a template message. It validates the message type to ensure it is a template.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendTemplate(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendTemplate(m message.Messager) response.Responser {
 
 	if !validTypeMsg(m, types.MessageTypeTemplate) {
 		return response.NewError(&response.Error{
@@ -537,7 +537,7 @@ func (c *ClientWA) sendTemplate(m message.Messager) response.ResponserRequest {
 // SendTextMessage sends a text message. It validates the message type to ensure it is a text.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendTextMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendTextMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeText) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -565,7 +565,7 @@ func (c *ClientWA) sendTextMessage(m message.Messager) response.ResponserRequest
 // SendReaction sends a reaction message. It validates the message type to ensure it is a reaction.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendReaction(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendReaction(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeReaction) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -593,7 +593,7 @@ func (c *ClientWA) sendReaction(m message.Messager) response.ResponserRequest {
 // SendInteractiveList sends an interactive list message. It validates the message type to ensure it is an interactive of type list.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendInteractiveList(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractiveList(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -637,7 +637,7 @@ func (c *ClientWA) sendInteractiveList(m message.Messager) response.ResponserReq
 // SendInteractiveButtonResponse sends an interactive button response message. It validates the message type to ensure it is an
 // interactive of type button response. If the message type is incorrect, it returns an error. Otherwise, it makes a request to
 // send the message. If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendInteractiveButtonResponse(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractiveButtonResponse(m message.Messager) response.Responser {
 	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -681,7 +681,7 @@ func (c *ClientWA) sendInteractiveButtonResponse(m message.Messager) response.Re
 // SendInteractiveButtonUrl sends an interactive button URL message. It validates the message type to ensure it is an
 // interactive of type button URL. If the message type is incorrect, it returns an error. Otherwise, it makes a request
 // to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendInteractiveButtonUrl(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractiveButtonUrl(m message.Messager) response.Responser {
 	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -725,7 +725,7 @@ func (c *ClientWA) sendInteractiveButtonUrl(m message.Messager) response.Respons
 // SendInteractiveMsgProcess sends an interactive process message. It validates the message type to ensure it is an
 // interactive of type process. If the message type is incorrect, it returns an error. Otherwise, it makes a request
 // to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendInteractiveMsgProcess(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractiveMsgProcess(m message.Messager) response.Responser {
 	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -769,7 +769,7 @@ func (c *ClientWA) sendInteractiveMsgProcess(m message.Messager) response.Respon
 // SendInteractiveOneProduct sends an interactive message of type product. It validates the message type to ensure it is an
 // interactive of type product. If the message type is incorrect, it returns an error. Otherwise, it makes a request
 // to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendInteractiveOneProduct(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractiveOneProduct(m message.Messager) response.Responser {
 	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -814,7 +814,7 @@ func (c *ClientWA) sendInteractiveOneProduct(m message.Messager) response.Respon
 // ensure it is an interactive of type multi product. If the message type is incorrect, it returns an error. Otherwise,
 // it makes a request to send the message. If the request is successful, the response is returned; otherwise, an error
 // is returned.
-func (c *ClientWA) sendInteractiveMultiProduct(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractiveMultiProduct(m message.Messager) response.Responser {
 	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -859,7 +859,7 @@ func (c *ClientWA) sendInteractiveMultiProduct(m message.Messager) response.Resp
 // to ensure it is an interactive of type catalog. If the message type is incorrect, it returns
 // an error. Otherwise, it makes a request to send the message. If the request is successful,
 // the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendInteractiveCatalog(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractiveCatalog(m message.Messager) response.Responser {
 	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -903,7 +903,7 @@ func (c *ClientWA) sendInteractiveCatalog(m message.Messager) response.Responser
 // SendResponseMsg sends a response message. It validates the message type to ensure it is a response
 // message. If the message type is incorrect, it returns an error. Otherwise, it makes a request to send
 // the message. If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendResponseMsg(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendResponseMsg(m message.Messager) response.Responser {
 	if !validTypeMsg(m, "response") {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -948,7 +948,7 @@ func (c *ClientWA) sendResponseMsg(m message.Messager) response.ResponserRequest
 	return resp
 }
 
-func (c *ClientWA) validLinAndId(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) validLinAndId(m message.Messager) response.Responser {
 	if m.GetMessageLink() != "" && m.GetMessageId() != "" {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -963,7 +963,7 @@ func (c *ClientWA) validLinAndId(m message.Messager) response.ResponserRequest {
 // SendAudioMessage sends an audio message. It validates the message type to ensure it is an audio.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendAudioMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendAudioMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeAudio) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1005,7 +1005,7 @@ func (c *ClientWA) sendAudioMessage(m message.Messager) response.ResponserReques
 // SendImageMessage sends an image message. It validates the message type to ensure it is an image.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendImageMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendImageMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeImage) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1047,7 +1047,7 @@ func (c *ClientWA) sendImageMessage(m message.Messager) response.ResponserReques
 // SendVideoMessage sends a video message. It validates the message type to ensure it is a video.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendVideoMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendVideoMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeVideo) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1089,7 +1089,7 @@ func (c *ClientWA) sendVideoMessage(m message.Messager) response.ResponserReques
 // SendDocumentMessage sends a document message. It validates the message type to ensure it is a document.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendDocumentMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendDocumentMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeDocument) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1131,7 +1131,7 @@ func (c *ClientWA) sendDocumentMessage(m message.Messager) response.ResponserReq
 // SendStickerMessage sends a sticker message. It validates the message type to ensure it is a sticker. If the message type is
 // incorrect, it returns an error. Otherwise, it makes a request to send the message. If the request is successful, the response
 // is returned; otherwise, an error is returned.
-func (c *ClientWA) sendStickerMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendStickerMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeSticker) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1174,7 +1174,7 @@ func (c *ClientWA) sendStickerMessage(m message.Messager) response.ResponserRequ
 // to ensure it is a location message. If the message type is incorrect, it
 // returns an error. Otherwise, it makes a request to send the message. If the
 // request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendLocationMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendLocationMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeLocation) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1202,7 +1202,7 @@ func (c *ClientWA) sendLocationMessage(m message.Messager) response.ResponserReq
 // SendContactMessage sends a contact message. It first validates the message type to ensure it is a contact message.
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) sendContactMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendContactMessage(m message.Messager) response.Responser {
 	if !validTypeMsg(m, types.MessageTypeContact) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1227,14 +1227,14 @@ func (c *ClientWA) sendContactMessage(m message.Messager) response.ResponserRequ
 	return resp
 }
 
-// func (c *ClientWA) sendTemplate(m message.Messager) response.ResponserRequest {
+// func (c *ClientWA) sendTemplate(m message.Messager) response.Responser {
 // 	return nil
 // 	// switch m.() {
 // 	// case types.MessageTypeTemplate:
 // 	// }
 // }
 
-func (c *ClientWA) sendInteractive(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) sendInteractive(m message.Messager) response.Responser {
 	interactive := m.GetInteractiveMessage()
 	if interactive != nil {
 		switch interactive.GetInteractiveProto().Type {
@@ -1261,7 +1261,7 @@ func (c *ClientWA) sendInteractive(m message.Messager) response.ResponserRequest
 	})
 }
 
-func (c *ClientWA) SendMessage(m message.Messager) response.ResponserRequest {
+func (c *ClientWA) SendMessage(m message.Messager) response.Responser {
 	switch m.GetType() {
 	case types.MessageTypeAudio:
 		return c.sendAudioMessage(m)
@@ -1299,7 +1299,7 @@ func (c *ClientWA) SendMessage(m message.Messager) response.ResponserRequest {
 // UploadFile uploads a file to the server. It validates the message type to ensure it is either a text, audio, image, video,
 // document, or sticker message. If the message type is incorrect, it returns an error. Otherwise, it makes a request to upload
 // the file. If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) UploadFile(m message.Messager, mt message.MediaType) response.ResponserRequest {
+func (c *ClientWA) UploadFile(m message.Messager, mt message.MediaType) response.Responser {
 	resp, e := c.makeRequest(http.MethodPost, "/media", m)
 	if e != nil {
 		msgError := fmt.Sprintln("Error in UploadFile request of ClientWA. error is: ", e.Error())
@@ -1389,12 +1389,12 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string, save ...bool) (*http.
 	return nil, nil, nil
 }
 
-func (c *ClientWA) getFileInfo(id string) (response.ResponserRequest, error) {
+func (c *ClientWA) getFileInfo(id string) (response.Responser, error) {
 	// Crear request
 	defaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config, RequestGetMessageInfo)
 
 	var (
-		responseReq response.ResponserRequest
+		responseReq response.Responser
 		e           error
 	)
 
@@ -1410,7 +1410,7 @@ func (c *ClientWA) getFileInfo(id string) (response.ResponserRequest, error) {
 	return responseReq, nil
 }
 
-func (c *ClientWA) DeleteFile(id string) response.ResponserRequest {
+func (c *ClientWA) DeleteFile(id string) response.Responser {
 	// Crear request
 	_, _, err := defaultRequest(http.MethodDelete, fmt.Sprintf("/%s", id), c.Config, RequestDeleteMedia)
 	if err != nil {
@@ -1451,13 +1451,13 @@ func (c *ClientWA) DeleteFile(id string) response.ResponserRequest {
 	return response.JsonWrapperResponseRequest(b)
 }
 
-func (c *ClientWA) DeleteMessage(id string) response.ResponserRequest {
+func (c *ClientWA) DeleteMessage(id string) response.Responser {
 	return nil
 }
 
 // GetInfoAllNumberInWaba retrieves information about all phone numbers associated with a given
 // WhatsApp Business Account (specified by waba_id).
-func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.ResponserRequest {
+func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.Responser {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", waba_id, "phone_numbers"), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
@@ -1497,7 +1497,7 @@ func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.ResponserRequ
 	return response.JsonWrapperResponseRequest(b)
 }
 
-func (c *ClientWA) GetNumberInfo(phone_id string) response.ResponserRequest {
+func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", phone_id), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
@@ -1540,7 +1540,7 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.ResponserRequest {
 // GetInfoAllNumberInWA returns information about all the Whatsapp Business Account phone associated with the
 // WhatsApp Business API client. It returns a JSON response containing an array of phone
 // numbers and their associated information.
-func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.ResponserRequest {
+func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.Responser {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", portafolio_id, "owned_whatsapp_business_accounts"), c.Config, RequestWithVersion)
 	if err != nil {
 		return response.NewError(&response.Error{
@@ -1574,7 +1574,7 @@ func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.ResponserRequest 
 	return response.JsonWrapperResponseRequest(b)
 }
 
-func validKeyInMapInFunc(data map[string]any, key []string, funcName string) response.ResponserRequest {
+func validKeyInMapInFunc(data map[string]any, key []string, funcName string) response.Responser {
 	if data == nil {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1605,7 +1605,7 @@ func validKeyInMapInFunc(data map[string]any, key []string, funcName string) res
 	return nil
 }
 
-func (c *ClientWA) RegisterNumberInWaba(data map[string]any) response.ResponserRequest {
+func (c *ClientWA) RegisterNumberInWaba(data map[string]any) response.Responser {
 	if err := validKeyInMapInFunc(data, []string{"cc", "phone_number", "verified_name"}, "RegisterNumberInWaba"); err != nil {
 		return err
 	}
@@ -1638,7 +1638,7 @@ func (c *ClientWA) RegisterNumberInWaba(data map[string]any) response.ResponserR
 	return response.GetResponseRequest(resp.Body, "RegisterNumberInWaba", "ClientWA")
 }
 
-func (c *ClientWA) GetVerificationCode(data map[string]any) response.ResponserRequest {
+func (c *ClientWA) GetVerificationCode(data map[string]any) response.Responser {
 	if err := validKeyInMapInFunc(data, []string{"code_method", "language"}, "GetverificationCode"); err != nil {
 		return err
 	}
@@ -1671,7 +1671,7 @@ func (c *ClientWA) GetVerificationCode(data map[string]any) response.ResponserRe
 	return response.GetResponseRequest(resp.Body, "GetverificationCode", "ClientWA")
 }
 
-func (c *ClientWA) VerifyCode(data map[string]any) response.ResponserRequest {
+func (c *ClientWA) VerifyCode(data map[string]any) response.Responser {
 	if err := validKeyInMapInFunc(data, []string{"code"}, "VerifyCode"); err != nil {
 		return err
 	}
@@ -1704,7 +1704,7 @@ func (c *ClientWA) VerifyCode(data map[string]any) response.ResponserRequest {
 	return response.GetResponseRequest(resp.Body, "VerifyCode", "ClientWA")
 }
 
-func (c *ClientWA) RegisterForUseApi() response.ResponserRequest {
+func (c *ClientWA) RegisterForUseApi() response.Responser {
 	data := map[string]any{
 		"messaging_product": "whatsapp",
 		"pin":               "123456",
@@ -1770,7 +1770,7 @@ func (c ClientWA) GetPhoneNumberId() string {
 //	}
 //
 // If the request fails, it returns a ResponserRequest with the error
-func (c *ClientWA) GetWabaInfo(waba_id string) response.ResponserRequest {
+func (c *ClientWA) GetWabaInfo(waba_id string) response.Responser {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", waba_id), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
@@ -1816,7 +1816,7 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.ResponserRequest {
 // updated time, and created time. If an error occurs during the request, a response
 // error is returned. The response is wrapped and returned as a ResponserRequest.
 
-func (c *ClientWA) GetBusinessInfo(business_id string) response.ResponserRequest {
+func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQuery, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time"})
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
@@ -1864,7 +1864,7 @@ func getPhoneNumber(phone string) string {
 //
 // Example:
 // resp := c.GetInfoPhoneOfWaba("+573123456789", "1234567890123")
-func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.ResponserRequest {
+func (c *ClientWA) GetInfoPhoneOfWaba(phoneNumber, waba_id string) response.Responser {
 	resp := c.GetInfoAllNumberInWaba(waba_id)
 
 	if nums := resp.GetResponsePhonesWA(); nums != nil {
@@ -2094,4 +2094,127 @@ func (c *ClientWA) IsOnWhats(contactPhone []string) []InfoContact {
 	}
 
 	return infoContactsExit
+}
+
+// GetAllTemplate associated to a waba
+func (c *ClientWA) GetAllTemplate() response.Responser {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", c.WaBusinessAccountId, "message_templates"), c.Config, RequestWithVersion, nil)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetAllTemplate request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetAllTemplate request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetAllTemplate request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b).GetTemplateResponse()
+}
+
+// GetTemplate by id
+func (c *ClientWA) GetTemplateById(id string) response.Responser {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config, RequestWithVersion, nil)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetTemplateById request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetTemplateById request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetTemplateById request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
+}
+
+// GetTemplate by name
+func (c *ClientWA) GetTemplateByName(name string) response.Responser {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", c.WaBusinessAccountId, "message_templates"), c.Config, RequestWithQuery, QueryData{"name": name})
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetTemplateName request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetTemplateName request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetTemplateName request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b)
 }
