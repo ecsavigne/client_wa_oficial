@@ -1,8 +1,30 @@
 package types
 
+type REJECTED_REASON = string
+
+const (
+	ABUSIVE_CONTENT      REJECTED_REASON = "ABUSIVE_CONTENT"
+	INVALID_FORMAT       REJECTED_REASON = "INVALID_FORMAT"
+	NONE                 REJECTED_REASON = "NONE"
+	PROMOTIONAL          REJECTED_REASON = "PROMOTIONAL"
+	TAG_CONTENT_MISMATCH REJECTED_REASON = "TAG_CONTENT_MISMATCH"
+	SCAM                 REJECTED_REASON = "SCAM"
+)
+
 type CATEGORY = string
-type PARAMETER_FORMAT = string
-type LANGUAGE = string
+
+const (
+	AUTHENTICATION CATEGORY = "AUTHENTICATION"
+	MARKETING      CATEGORY = "MARKETING"
+	UTILITY        CATEGORY = "UTILITY"
+)
+
+type SUB_CATEGORY = string
+
+const (
+	ORDER_DETAILS SUB_CATEGORY = "ORDER_DETAILS"
+	ORDER_STATUS  SUB_CATEGORY = "ORDER_STATUS"
+)
 
 const (
 	HEADER CATEGORY = "header"
@@ -10,16 +32,27 @@ const (
 	FOOTER CATEGORY = "footer"
 )
 
-const (
-	TEXT   PARAMETER_FORMAT = "text"
-	NUMBER PARAMETER_FORMAT = "number"
-	DATE   PARAMETER_FORMAT = "date"
-)
+type PARAMETER_FORMAT = string
 
 const (
-	ENGLISH    LANGUAGE = "en_US"
-	SPANISH    LANGUAGE = "es_ES"
-	PORTUGUESE LANGUAGE = "pt_BR"
+	NAMED      PARAMETER_FORMAT = "NAMED"
+	POSITIONAL PARAMETER_FORMAT = "POSITIONAL"
+)
+
+type STATUS = string
+
+const (
+	ACTIVE   STATUS = "ACTIVE"
+	INACTIVE STATUS = "INACTIVE"
+)
+
+type OTP_TYPE = string
+
+const (
+	COPY_CODE  OTP_TYPE = "COPY_CODE"
+	ONE_TAP    OTP_TYPE = "ONE_TAP"
+	ZERO_TAP   OTP_TYPE = "ZERO_TAP"
+	NO_BUTTONS OTP_TYPE = "NO_BUTTONS"
 )
 
 type ArrayButton = []Button
@@ -64,20 +97,53 @@ type MockupComponent struct {
 	*ArrayButton `json:"buttons,omitempty"`
 }
 
-type ResponseMT struct {
-	Status string `json:"status,omitempty"`
-	ID     string `json:"id,omitempty"`
+// Optional data during creation of a template from a library template. These are optional fields for the body component.
+type LibraryTemplateBodyInputs struct {
+	AddContactNumber          bool  `json:"add_contact_number,omitempty"`
+	AddLearnMoreLink          bool  `json:"add_learn_more_link,omitempty"`
+	AddSecurityRecommendation bool  `json:"add_security_recommendation,omitempty"`
+	AddTrackPackageLink       bool  `json:"add_track_package_link,omitempty"`
+	CodeExpirationMinutes     int64 `json:"code_expiration_minutes,omitempty"`
+}
+
+type URL_ struct {
+	BaseUrl          string `json:"base_url" validate:"required"`
+	UrlSuffixExample string `json:"url_suffix_example,omitempty"`
+}
+
+type SupportedApp struct {
+	PackageName   string `json:"package_name" validate:"required"`
+	SignatureHash string `json:"signature_hash" validate:"required"`
+}
+
+// Optional data during creation of a template from a library template. These are optional fields for the button component.
+type LibraryTemplateButtonInputs struct {
+	Type                 TYPE_BUTTON `json:"type" validate:"required"`
+	PhoneNumber          string      `json:"phone_number,omitempty"`
+	*URL_                `json:"url,omitempty"`
+	OtpType              OTP_TYPE `json:"otp_type,omitempty"`
+	ZeroTapTermsAccepted bool     `json:"zero_tap_terms_accepted,omitempty"`
+	*SupportedApp        `json:"supported_apps,omitempty"`
 }
 
 // All template have limit of one body component
 type MockupTemplate struct {
 	// less than 512 characters
-	Name             string            `json:"name" validate:"required"`
-	Category         CATEGORY          `json:"category" validate:"required"`
-	PreviousCategory string            `json:"previous_category,omitempty"`
-	SubCategory      string            `json:"sub_category,omitempty"`
-	ParameterFormat  PARAMETER_FORMAT  `json:"parameter_format,omitempty"`
-	Language         LANGUAGE          `json:"language" validate:"required"`
-	Components       []MockupComponent `json:"components,omitempty"`
-	*ResponseMT      `json:",omitempty"`
+	ID                           string           `json:"id,omitempty"`
+	Name                         string           `json:"name" validate:"required"`
+	Category                     CATEGORY         `json:"category" validate:"required"`
+	CorrectCategory              CATEGORY         `json:"correct_category,omitempty"`
+	PreviousCategory             CATEGORY         `json:"previous_category,omitempty"`
+	SubCategory                  SUB_CATEGORY     `json:"sub_category,omitempty"`
+	CtaUrlLinkTrackingOptedOut   bool             `json:"cta_url_link_tracking_opted_out,omitempty"`
+	ParameterFormat              PARAMETER_FORMAT `json:"parameter_format,omitempty"` // The parameter format, can be Named or Positional
+	RejectedReason               REJECTED_REASON  `json:"rejected_reason,omitempty"`
+	Status                       STATUS           `json:"status,omitempty"`
+	Language                     string           `json:"language" validate:"required"`
+	AllowCategoryChange          bool             `json:"allow_category_change,omitempty"`
+	*LibraryTemplateBodyInputs   `json:"library_template_body_inputs,omitempty"`
+	*LibraryTemplateButtonInputs `json:"library_template_button_inputs,omitempty"`
+	LibraryTemplateName          string            `json:"library_template_name,omitempty"`
+	MessageSendTtlSeconds        int64             `json:"message_send_ttl_seconds,omitempty"`
+	Components                   []MockupComponent `json:"components,omitempty"`
 }

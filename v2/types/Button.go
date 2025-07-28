@@ -1,5 +1,21 @@
 package types
 
+type TYPE_BUTTON = string
+
+const (
+	QUICK_REPLY          TYPE_BUTTON = "QUICK_REPLY"
+	URL                  TYPE_BUTTON = "URL"
+	PHONE_NUMBER         TYPE_BUTTON = "PHONE_NUMBER"
+	OTP                  TYPE_BUTTON = "OTP"
+	MPM                  TYPE_BUTTON = "MPM"
+	CATALOG              TYPE_BUTTON = "CATALOG"
+	FLOW                 TYPE_BUTTON = "FLOW"
+	VOICE_CALL           TYPE_BUTTON = "VOICE_CALL"
+	APP                  TYPE_BUTTON = "APP"
+	POSTBACK             TYPE_BUTTON = "POSTBACK"
+	BOOKING_CONFIRMATION TYPE_BUTTON = "BOOKING_CONFIRMATION"
+)
+
 type Url_Button struct {
 	// Admite one var max, ej: "https://www.luckyshrub.com/shop/", ej2: https://www.luckyshrub.com/shop?promo={{1}}. max size = 2.000 chars
 	Url string `json:"url" validate:"required"`
@@ -35,7 +51,7 @@ type Quick_Reply_Button struct {
 }
 
 type Button struct {
-	Type string `json:"type" validate:"required"`
+	Type TYPE_BUTTON `json:"type" validate:"required"`
 	// 25 characters maximum
 	Text string `json:"text" validate:"required"`
 	*Url_Button
