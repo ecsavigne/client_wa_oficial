@@ -328,6 +328,7 @@ func createClientHttp2(timeOut int) *http.Client {
 func newConfig(c Config) *Config {
 	c.Error = nil
 	if c.wA_BASE_URL == "" {
+		c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBaseUrlEmpty,
 			Code:    types.CodeErrorBadHandshake,
@@ -335,8 +336,10 @@ func newConfig(c Config) *Config {
 		})
 		return &c
 	}
+	c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
 
 	if c.cLOUD_API_VERSION == "" {
+		c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorApiVersionEmpty,
 			Code:    types.CodeErrorApiVersionEmpty,
@@ -344,8 +347,10 @@ func newConfig(c Config) *Config {
 		})
 		return &c
 	}
+	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 
 	if c.WaPhoneNumberId == "" {
+		c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorPhoneIdEmpty,
 			Code:    types.CodeErrorPhoneIdEmpty,
@@ -353,8 +358,10 @@ func newConfig(c Config) *Config {
 		})
 		return &c
 	}
+	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
 
 	if c.WaBusinessAccountId == "" {
+		c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBusinessIdEmpty,
 			Code:    types.CodeErrorBusinessIdEmpty,
@@ -362,12 +369,7 @@ func newConfig(c Config) *Config {
 		})
 		return &c
 	}
-
-	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
-	// c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
-	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
-
-	c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
+	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
 
 	if c.Token == "" && c.cLOUD_API_ACCESS_TOKEN == "" {
 		c.Error = response.NewError(&response.Error{
