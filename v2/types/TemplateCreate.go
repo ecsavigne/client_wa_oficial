@@ -1,58 +1,118 @@
 package types
 
+import (
+	"encoding/json"
+	"slices"
+	"strings"
+	str "strings"
+)
+
+type FORMAT_TYPE = string
+
+const (
+	FT_TEXT       FORMAT_TYPE = "TEXT"
+	FT_IMAGE      FORMAT_TYPE = "IMAGE"
+	FT_DOCUMENT   FORMAT_TYPE = "DOCUMENT"
+	FT_VIDEO      FORMAT_TYPE = "VIDEO"
+	FT_LOCATION   FORMAT_TYPE = "LOCATION"
+	FT_GIF        FORMAT_TYPE = "GIF"
+	FT_COLLECTION FORMAT_TYPE = "COLLECTION"
+	// FT_PRODUCT    FORMAT_TYPE = "PRODUCT"
+)
+
 type REJECTED_REASON = string
 
 const (
-	ABUSIVE_CONTENT      REJECTED_REASON = "ABUSIVE_CONTENT"
-	INVALID_FORMAT       REJECTED_REASON = "INVALID_FORMAT"
-	NONE                 REJECTED_REASON = "NONE"
-	PROMOTIONAL          REJECTED_REASON = "PROMOTIONAL"
-	TAG_CONTENT_MISMATCH REJECTED_REASON = "TAG_CONTENT_MISMATCH"
-	SCAM                 REJECTED_REASON = "SCAM"
+	RR_ABUSIVE_CONTENT      REJECTED_REASON = "ABUSIVE_CONTENT"
+	RR_INVALID_FORMAT       REJECTED_REASON = "INVALID_FORMAT"
+	RR_NONE                 REJECTED_REASON = "NONE"
+	RR_PROMOTIONAL          REJECTED_REASON = "PROMOTIONAL"
+	RR_TAG_CONTENT_MISMATCH REJECTED_REASON = "TAG_CONTENT_MISMATCH"
+	RR_SCAM                 REJECTED_REASON = "SCAM"
 )
 
 type CATEGORY = string
 
 const (
-	AUTHENTICATION CATEGORY = "AUTHENTICATION"
-	MARKETING      CATEGORY = "MARKETING"
-	UTILITY        CATEGORY = "UTILITY"
+	C_AUTHENTICATION          CATEGORY = "AUTHENTICATION"
+	C_MARKETING               CATEGORY = "MARKETING"
+	C_UTILITY                 CATEGORY = "UTILITY"
+	C_ACCOUNT_UPDATE          CATEGORY = "ACCOUNT_UPDATE"
+	C_PAYMENT_UPDATE          CATEGORY = "PAYMENT_UPDATE"
+	C_PERSONAL_FINANCE_UPDATE CATEGORY = "PERSONAL_FINANCE_UPDATE"
+	C_SHIPPING_UPDATE         CATEGORY = "SHIPPING_UPDATE"
+	C_RESERVATION_UPDATE      CATEGORY = "RESERVATION_UPDATE"
+	C_ISSUE_RESOLUTION        CATEGORY = "ISSUE_RESOLUTION"
+	C_APPOINTMENT_UPDATE      CATEGORY = "APPOINTMENT_UPDATE"
+	C_TRANSPORTATION_UPDATE   CATEGORY = "TRANSPORTATION_UPDATE"
+	C_TICKET_UPDATE           CATEGORY = "TICKET_UPDATE"
+	C_ALERT_UPDATE            CATEGORY = "ALERT_UPDATE"
+	C_AUTO_REPLY              CATEGORY = "AUTO_REPLY"
+	C_TRANSACTIONAL           CATEGORY = "TRANSACTIONAL"
+	C_OTP                     CATEGORY = "OTP"
 )
 
 type SUB_CATEGORY = string
 
 const (
-	ORDER_DETAILS SUB_CATEGORY = "ORDER_DETAILS"
-	ORDER_STATUS  SUB_CATEGORY = "ORDER_STATUS"
-)
-
-const (
-	HEADER CATEGORY = "header"
-	BODY   CATEGORY = "body"
-	FOOTER CATEGORY = "footer"
+	SC_ORDER_DETAILS SUB_CATEGORY = "ORDER_DETAILS"
+	SC_ORDER_STATUS  SUB_CATEGORY = "ORDER_STATUS"
 )
 
 type PARAMETER_FORMAT = string
 
 const (
-	NAMED      PARAMETER_FORMAT = "NAMED"
-	POSITIONAL PARAMETER_FORMAT = "POSITIONAL"
+	PF_NAMED      PARAMETER_FORMAT = "NAMED"
+	PF_POSITIONAL PARAMETER_FORMAT = "POSITIONAL"
 )
 
 type STATUS = string
 
 const (
-	ACTIVE   STATUS = "ACTIVE"
-	INACTIVE STATUS = "INACTIVE"
+	S_ACTIVE           STATUS = "ACTIVE"
+	S_INACTIVE         STATUS = "INACTIVE"
+	S_APPROVED         STATUS = "APPROVED"
+	S_IN_APPEAL        STATUS = "IN_APPEAL"
+	S_PENDING          STATUS = "PENDING"
+	S_REJECTED         STATUS = "REJECTED"
+	S_PENDING_DELETION STATUS = "PENDING_DELETION"
+	S_DELETED          STATUS = "DELETED"
+	S_DISABLED         STATUS = "DISABLED"
+	S_PAUSED           STATUS = "PAUSED"
+	S_LIMIT_EXCEEDED   STATUS = "LIMIT_EXCEEDED"
+	S_ARCHIVED         STATUS = "ARCHIVED"
 )
 
 type OTP_TYPE = string
 
 const (
-	COPY_CODE  OTP_TYPE = "COPY_CODE"
-	ONE_TAP    OTP_TYPE = "ONE_TAP"
-	ZERO_TAP   OTP_TYPE = "ZERO_TAP"
-	NO_BUTTONS OTP_TYPE = "NO_BUTTONS"
+	OT_COPY_CODE  OTP_TYPE = "COPY_CODE"
+	OT_ONE_TAP    OTP_TYPE = "ONE_TAP"
+	OT_ZERO_TAP   OTP_TYPE = "ZERO_TAP"
+	OT_NO_BUTTONS OTP_TYPE = "NO_BUTTONS"
+)
+
+type TYPE_COMPONENT = string
+
+const (
+	TC_FOOTER                                 TYPE_COMPONENT = "FOOTER"
+	TC_HEADER                                 TYPE_COMPONENT = "HEADER"
+	TC_BODY                                   TYPE_COMPONENT = "BODY"
+	TC_GREETING                               TYPE_COMPONENT = "GREETING"
+	TC_BUTTONS                                TYPE_COMPONENT = "BUTTONS"
+	TC_CAROUSEL                               TYPE_COMPONENT = "CAROUSEL"
+	TC_LIMITED_TIME_OFFER                     TYPE_COMPONENT = "LIMITED_TIME_OFFER"
+	TC_CALL_PERMISSION_REQUEST                TYPE_COMPONENT = "CALL_PERMISSION_REQUEST"
+	TC_TAP_TARGET_CONFIGURATIONTYPE_COMPONENT                = "TAP_TARGET_CONFIGURATION"
+)
+
+type QUALITYSCORE = string
+
+const (
+	QS_GREEN   QUALITYSCORE = "GREEN"
+	QS_YELLOW  QUALITYSCORE = "YELLOW"
+	QS_RED     QUALITYSCORE = "RED"
+	QS_UNKNOWN QUALITYSCORE = "UNKNOWN"
 )
 
 type ArrayButton = []Button
@@ -77,13 +137,19 @@ type Example struct {
 	*HeaderTextNamedParam `json:"header_text_named_params,omitempty"`
 }
 
-type Header struct {
-	// type of assets of media content. Configurable to "IMAGE", "VIDEO" o "DOCUMENT"
-	Format string `json:"format" validate:"required"`
+type LimitedTimeOffer struct {
+	Text string `json:"text" validate:"required"`
+	// Set in true for that offer expiration details appear in the message sent
+	// Offer details text. Maximum of 16 characters
+	HasExpiration bool `json:"has_expiration,omitempty"`
 }
 
+type Card = []MockupComponent
+
 type MockupComponent struct {
-	Type string `json:"type" validate:"required"`
+	Type TYPE_COMPONENT `json:"type" validate:"required"`
+	// type of assets of media content. Configurable to "IMAGE", "VIDEO" o "DOCUMENT"
+	Format FORMAT_TYPE `json:"format,omitempty"`
 	// accept parameters for programming ex:
 	// 		Posicional: se incluye una matriz de parámetros posicionales numerados que corresponden a posiciones numéricas en el texto del cuerpo con ejemplos.
 	// 		Por ejemplo: “Hello {{1}}, your account balance is {{2}}” | [ “John”, “$1,000” ]
@@ -91,10 +157,12 @@ type MockupComponent struct {
 	// Footer not accept parameters
 	// Por ejemplo: { "param_name": "order_id", "example": "335628"}
 	// less than 60 characters in header and footer, 1024 characters in body,
-	Text         string `json:"text,omitempty"`
-	*Example     `json:"example,omitempty"`
-	*Header      `json:",omitempty"`
-	*ArrayButton `json:"buttons,omitempty"`
+	// Required for components with type HEADER,BODY
+	Text              string `json:"text,omitempty"`
+	*ArrayButton      `json:"buttons,omitempty"`
+	*LimitedTimeOffer `json:"limited_time_offer,omitempty"`
+	*Card             `json:"cards,omitempty"`
+	*Example          `json:"example,omitempty"`
 }
 
 // Optional data during creation of a template from a library template. These are optional fields for the body component.
@@ -118,32 +186,246 @@ type SupportedApp struct {
 
 // Optional data during creation of a template from a library template. These are optional fields for the button component.
 type LibraryTemplateButtonInputs struct {
-	Type                 TYPE_BUTTON `json:"type" validate:"required"`
-	PhoneNumber          string      `json:"phone_number,omitempty"`
-	*URL_                `json:"url,omitempty"`
-	OtpType              OTP_TYPE `json:"otp_type,omitempty"`
-	ZeroTapTermsAccepted bool     `json:"zero_tap_terms_accepted,omitempty"`
-	*SupportedApp        `json:"supported_apps,omitempty"`
+	*URL_   `json:"url,omitempty"`
+	OtpType OTP_TYPE `json:"otp_type,omitempty"`
+	*Button `json:",omitempty"`
 }
+
+// Payload for MockupTemplate.LibraryTemplateButtonInput
+type LibraryTemplateButtonInputsPayload = []LibraryTemplateButtonInputs
+
+// Payload for MockupTemplate.LibraryTemplateBodyInput
+type LibraryTemplateBodyInputsPayload = []LibraryTemplateBodyInputs
 
 // All template have limit of one body component
 type MockupTemplate struct {
 	// less than 512 characters
-	ID                           string           `json:"id,omitempty"`
-	Name                         string           `json:"name" validate:"required"`
-	Category                     CATEGORY         `json:"category" validate:"required"`
-	CorrectCategory              CATEGORY         `json:"correct_category,omitempty"`
-	PreviousCategory             CATEGORY         `json:"previous_category,omitempty"`
-	SubCategory                  SUB_CATEGORY     `json:"sub_category,omitempty"`
-	CtaUrlLinkTrackingOptedOut   bool             `json:"cta_url_link_tracking_opted_out,omitempty"`
-	ParameterFormat              PARAMETER_FORMAT `json:"parameter_format,omitempty"` // The parameter format, can be Named or Positional
-	RejectedReason               REJECTED_REASON  `json:"rejected_reason,omitempty"`
-	Status                       STATUS           `json:"status,omitempty"`
-	Language                     string           `json:"language" validate:"required"`
-	AllowCategoryChange          bool             `json:"allow_category_change,omitempty"`
-	*LibraryTemplateBodyInputs   `json:"library_template_body_inputs,omitempty"`
-	*LibraryTemplateButtonInputs `json:"library_template_button_inputs,omitempty"`
-	LibraryTemplateName          string            `json:"library_template_name,omitempty"`
-	MessageSendTtlSeconds        int64             `json:"message_send_ttl_seconds,omitempty"`
-	Components                   []MockupComponent `json:"components,omitempty"`
+	ID                         string           `json:"id,omitempty"`
+	Name                       string           `json:"name" validate:"required"`
+	Category                   CATEGORY         `json:"category" validate:"required"`
+	Content                    string           `json:"content" validate:"required"`
+	CorrectCategory            CATEGORY         `json:"correct_category,omitempty"`
+	PreviousCategory           CATEGORY         `json:"previous_category,omitempty"`
+	SubCategory                SUB_CATEGORY     `json:"sub_category,omitempty"`
+	CtaUrlLinkTrackingOptedOut bool             `json:"cta_url_link_tracking_opted_out,omitempty"`
+	ParameterFormat            PARAMETER_FORMAT `json:"parameter_format,omitempty"` // The parameter format, can be Named or Positional
+	RejectedReason             REJECTED_REASON  `json:"rejected_reason,omitempty"`
+	Status                     STATUS           `json:"status,omitempty"`
+	Language                   string           `json:"language" validate:"required"`
+	AllowCategoryChange        bool             `json:"allow_category_change,omitempty"`
+	QualityScore               QUALITYSCORE     `json:"quality_score,omitempty"`
+	// The name exact of the library template
+	LibraryTemplateName string `json:"library_template_name,omitempty"`
+	// Time to live for message template sent. If users are offline for more than TTL
+	// duration after message template is sent, we will retry the delivery for a period
+	// of time known as a time-to-live, TTL, or the message validity period.
+	// TTL can be configured for certain message types. See Time-To-Live.
+	// The TTL can be customized in 1-second increments.
+	// Valid values for the message_send_ttl_seconds property:
+	// Authentication templates: 30 to 900 seconds (30 seconds to 15 minutes)
+	// Utility templates: 30 to 43,200 seconds (30 seconds to 12 hours)
+	// Marketing templates: 43,200 to 2,592,000 seconds (12 hours to 30 days)
+	// For authentication and utility templates, you can set the message_send_ttl_seconds property to -1, which will apply a custom TTL of 30 days.
+	LibraryTemplateBodyInput   *json.RawMessage  `json:"library_template_body_inputs,omitempty"`
+	LibraryTemplateButtonInput *json.RawMessage  `json:"library_template_button_inputs,omitempty"`
+	MessageSendTtlSeconds      int64             `json:"message_send_ttl_seconds,omitempty"`
+	Components                 []MockupComponent `json:"components,omitempty"`
+}
+
+type TYPE_TEMPLATE = string
+
+const (
+	TTPL_TEXT           TYPE_TEMPLATE = "text"
+	TTPL_MEDIA          TYPE_TEMPLATE = "media"
+	TTPL_INTERACTIVE    TYPE_TEMPLATE = "interactive"
+	TTPL_LOCATION       TYPE_TEMPLATE = "location"
+	TTPL_AUTH           TYPE_TEMPLATE = "authentication"
+	TTPL_MULTI_PRODUCTS TYPE_TEMPLATE = "multi_products"
+)
+
+func (tpl MockupTemplate) getHeader() *MockupComponent {
+	if len(tpl.Components) == 0 {
+		return nil
+	}
+
+	for _, component := range tpl.Components {
+		if strings.ToUpper(component.Type) == TC_HEADER {
+			c := component
+			return &c
+		}
+	}
+	return nil
+}
+
+func (tpl MockupTemplate) getBody() *MockupComponent {
+	if len(tpl.Components) == 0 {
+		return nil
+	}
+
+	for _, component := range tpl.Components {
+		if strings.ToUpper(component.Type) == TC_BODY {
+			c := component
+			return &c
+		}
+	}
+	return nil
+}
+
+func (tpl MockupTemplate) getFooter() *MockupComponent {
+	if len(tpl.Components) == 0 {
+		return nil
+	}
+
+	for _, component := range tpl.Components {
+		if strings.ToUpper(component.Type) == TC_FOOTER {
+			c := component
+			return &c
+		}
+	}
+	return nil
+}
+
+func (tpl MockupTemplate) getButtons() *MockupComponent {
+	for _, component := range tpl.Components {
+		if strings.ToUpper(component.Type) == TC_BUTTONS {
+			c := component
+			return &c
+		}
+	}
+	return nil
+}
+
+func (tpl MockupTemplate) getCarusel() *MockupComponent {
+	for _, component := range tpl.Components {
+		if strings.ToUpper(component.Type) == TC_CAROUSEL {
+			c := component
+			return &c
+		}
+	}
+	return nil
+}
+
+func (tpl MockupTemplate) getLimitedTimeOffer() *MockupComponent {
+	if len(tpl.Components) == 0 {
+		return nil
+	}
+
+	for _, component := range tpl.Components {
+		if str.ToUpper(component.Type) == TC_LIMITED_TIME_OFFER {
+			c := component
+			return &c
+		}
+	}
+	return nil
+}
+
+func (tpl MockupTemplate) getProductsButtons() bool {
+	if len(tpl.Components) == 0 {
+		return false
+	}
+
+	btns := tpl.getButtons()
+	if btns == nil {
+		return false
+	}
+
+	productBtn := []string{TB_CATALOG, TB_MPM, TB_SPM}
+	for _, btn := range *btns.ArrayButton {
+		if slices.Contains(productBtn, str.ToUpper(btn.Type)) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// isText
+func (tpl MockupTemplate) isText() bool {
+	h := tpl.getHeader()
+	b := tpl.getBody()
+	f := tpl.getFooter()
+
+	if len(tpl.Components) == 3 {
+		if h != nil && h.Format != FT_TEXT {
+			return false
+		}
+
+		if f == nil {
+			return false
+		}
+	} else {
+		if len(tpl.Components) == 2 {
+			if h != nil {
+				if h.Format != FT_TEXT {
+					return false
+				}
+			} else {
+				if f == nil {
+					return false
+				}
+			}
+		}
+	}
+
+	return b != nil
+}
+
+// isMedia
+func (tpl MockupTemplate) isMedia() bool {
+	typeMedia := []string{FT_DOCUMENT, FT_IMAGE, FT_VIDEO, FT_GIF}
+	return tpl.getHeader() != nil && slices.Contains(typeMedia, str.ToUpper(tpl.getHeader().Format))
+}
+
+// isButton
+func (tpl MockupTemplate) isButton() bool {
+	btns := tpl.getButtons()
+	if btns == nil {
+		return false
+	}
+
+	return true
+}
+
+// isInteractive
+func (tpl MockupTemplate) isInteractive() bool {
+	return tpl.isButton()
+}
+
+// isLocation
+func (tpl MockupTemplate) isLocation() bool {
+	return tpl.getHeader() != nil && str.ToUpper(tpl.getHeader().Format) == FT_LOCATION
+}
+
+// isAuth
+func (tpl MockupTemplate) isAuth() bool {
+	return str.ToUpper(tpl.Category) == C_AUTHENTICATION
+}
+
+// isProducts
+func (tpl MockupTemplate) isProducts() bool {
+	if tpl.getCarusel() != nil {
+		return true
+	}
+
+	return tpl.getProductsButtons()
+}
+
+// type MockupTemplate are (text, media, interactive msg, location, authentication and products various message )
+func (tpl MockupTemplate) GetTypeTpl() string {
+	switch {
+	case tpl.isText():
+		return TTPL_TEXT
+	case tpl.isMedia():
+		return TTPL_MEDIA
+	case tpl.isLocation():
+		return TTPL_LOCATION
+	case tpl.isAuth():
+		return TTPL_AUTH
+	case tpl.isProducts():
+		return TTPL_MULTI_PRODUCTS
+	case tpl.isInteractive():
+		return TTPL_INTERACTIVE
+	default:
+		return "Unknown"
+	}
 }

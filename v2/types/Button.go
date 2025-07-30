@@ -3,17 +3,18 @@ package types
 type TYPE_BUTTON = string
 
 const (
-	QUICK_REPLY          TYPE_BUTTON = "QUICK_REPLY"
-	URL                  TYPE_BUTTON = "URL"
-	PHONE_NUMBER         TYPE_BUTTON = "PHONE_NUMBER"
-	OTP                  TYPE_BUTTON = "OTP"
-	MPM                  TYPE_BUTTON = "MPM"
-	CATALOG              TYPE_BUTTON = "CATALOG"
-	FLOW                 TYPE_BUTTON = "FLOW"
-	VOICE_CALL           TYPE_BUTTON = "VOICE_CALL"
-	APP                  TYPE_BUTTON = "APP"
-	POSTBACK             TYPE_BUTTON = "POSTBACK"
-	BOOKING_CONFIRMATION TYPE_BUTTON = "BOOKING_CONFIRMATION"
+	TB_QUICK_REPLY          TYPE_BUTTON = "QUICK_REPLY"
+	TB_URL                  TYPE_BUTTON = "URL"
+	TB_PHONE_NUMBER         TYPE_BUTTON = "PHONE_NUMBER"
+	TB_OTP                  TYPE_BUTTON = "OTP"
+	TB_MPM                  TYPE_BUTTON = "MPM"
+	TB_SPM                  TYPE_BUTTON = "SPM"
+	TB_CATALOG              TYPE_BUTTON = "CATALOG"
+	TB_FLOW                 TYPE_BUTTON = "FLOW"
+	TB_VOICE_CALL           TYPE_BUTTON = "VOICE_CALL"
+	TB_APP                  TYPE_BUTTON = "APP"
+	TB_POSTBACK             TYPE_BUTTON = "POSTBACK"
+	TB_BOOKING_CONFIRMATION TYPE_BUTTON = "BOOKING_CONFIRMATION"
 )
 
 type Url_Button struct {
@@ -24,7 +25,7 @@ type Url_Button struct {
 }
 
 type Phone_Number_Button struct {
-	// less than 20 chars
+	// less than 20 chars. ej: "+13057652345"
 	PhoneNumber string `json:"phone_number" validate:"required"`
 }
 
@@ -32,6 +33,14 @@ type Copy_Code_Button struct {
 	// 15 chars maximum. String that will be copied in Clipboard
 	Example string `json:"example,omitempty"`
 }
+
+type ICON_TYPE = string
+
+const (
+	DOCUMENT_I  ICON_TYPE = "DOCUMENT"
+	PROMOTION_I ICON_TYPE = "PROMOTION"
+	REVIEW_I    ICON_TYPE = "REVIEW"
+)
 
 type Flow_Button struct {
 	FlowId uint64 `json:"flow_id" validate:"required"`
@@ -44,19 +53,19 @@ type Flow_Button struct {
 	// Optional only if <flow_action> is "navigate". The id of the first screen of process
 	NavigateScreen string `json:"navigate_screen,omitempty"`
 	//  Allowed values: "DOCUMENT", "PROMOTION", "REVIEW". Default "PROMOTION"
-	Icon string `json:"icon,omitempty"`
-}
-
-type Quick_Reply_Button struct {
+	Icon ICON_TYPE `json:"icon,omitempty"`
 }
 
 type Button struct {
 	Type TYPE_BUTTON `json:"type" validate:"required"`
 	// 25 characters maximum
-	Text string `json:"text" validate:"required"`
-	*Url_Button
-	*Phone_Number_Button
-	*Copy_Code_Button
-	*Flow_Button
-	*Quick_Reply_Button
+	Text                 string `json:"text" validate:"required"`
+	*Url_Button          `json:",omitempty"`
+	*Phone_Number_Button `json:",omitempty"`
+	*Copy_Code_Button    `json:",omitempty"`
+	*Flow_Button         `json:",omitempty"`
+	EndpointUri          string `json:"endpoint_uri,omitempty"`
+	ZeroTapTermsAccepted bool   `json:"zero_tap_terms_accepted,omitempty"`
+	TtlMinutes           int64  `json:"ttl_minutes,omitempty"`
+	*SupportedApp        `json:"supported_apps,omitempty"`
 }

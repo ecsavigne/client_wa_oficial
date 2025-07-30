@@ -351,23 +351,23 @@ func newConfig(c Config) *Config {
 
 	if c.WaPhoneNumberId == "" {
 		c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
-		c.Error = response.NewError(&response.Error{
-			Type:    types.TypeErrorPhoneIdEmpty,
-			Code:    types.CodeErrorPhoneIdEmpty,
-			Message: types.MsgErrorPhoneIdEmpty,
-		})
+		// c.Error = response.NewError(&response.Error{
+		// 	Type:    types.TypeErrorPhoneIdEmpty,
+		// 	Code:    types.CodeErrorPhoneIdEmpty,
+		// 	Message: types.MsgErrorPhoneIdEmpty,
+		// })
 		return &c
 	}
 	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
 
 	if c.WaBusinessAccountId == "" {
 		c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
-		c.Error = response.NewError(&response.Error{
-			Type:    types.TypeErrorBusinessIdEmpty,
-			Code:    types.CodeErrorBusinessIdEmpty,
-			Message: types.MsgErrorBusinessIdEmpty,
-		})
-		return &c
+		// c.Error = response.NewError(&response.Error{
+		// 	Type:    types.TypeErrorBusinessIdEmpty,
+		// 	Code:    types.CodeErrorBusinessIdEmpty,
+		// 	Message: types.MsgErrorBusinessIdEmpty,
+		// })
+		// return &c
 	}
 	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
 
@@ -2099,8 +2099,8 @@ func (c *ClientWA) IsOnWhats(contactPhone []string) []InfoContact {
 }
 
 // GetAllTemplate associated to a waba
-func (c *ClientWA) GetAllTemplate() response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", c.WaBusinessAccountId, "message_templates"), c.Config, RequestWithVersion, nil)
+func (c *ClientWA) GetAllTplFromWaba(waba_id string) response.Responser {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", waba_id, "message_templates"), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -2140,7 +2140,7 @@ func (c *ClientWA) GetAllTemplate() response.Responser {
 }
 
 // GetTemplate by id
-func (c *ClientWA) GetTemplateById(id string) response.Responser {
+func (c *ClientWA) GetTplById(id string) response.Responser {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", id), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
@@ -2181,7 +2181,7 @@ func (c *ClientWA) GetTemplateById(id string) response.Responser {
 }
 
 // GetTemplate by name
-func (c *ClientWA) GetTemplateByName(name string) response.Responser {
+func (c *ClientWA) GetTplByName(name string) response.Responser {
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", c.WaBusinessAccountId, "message_templates"), c.Config, RequestWithQuery, QueryData{"name": name})
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
