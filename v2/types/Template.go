@@ -7,6 +7,71 @@ import (
 	str "strings"
 )
 
+// type param template pre-approval
+type BODY_PARAM_TPL_LIBRARY_TYPE = string
+
+const (
+	PTLT_ADDRESS      BODY_PARAM_TPL_LIBRARY_TYPE = "ADDRESS"
+	PTLT_TEXT         BODY_PARAM_TPL_LIBRARY_TYPE = "TEXT"
+	PTLT_AMOUNT       BODY_PARAM_TPL_LIBRARY_TYPE = "AMOUNT"
+	PTLT_DATE         BODY_PARAM_TPL_LIBRARY_TYPE = "DATE"
+	PTLT_PHONE_NUMBER BODY_PARAM_TPL_LIBRARY_TYPE = "PHONE NUMBER"
+	PTLT_EMAIL        BODY_PARAM_TPL_LIBRARY_TYPE = "EMAIL"
+	PTLT_NUMBER       BODY_PARAM_TPL_LIBRARY_TYPE = "NUMBER"
+)
+
+// Industry
+type INDUSTRY_TYPE = string
+
+const (
+	IT_E_COMMERCE         INDUSTRY_TYPE = "E_COMMERCE"
+	IT_FINANCIAL_SERVICES INDUSTRY_TYPE = "FINANCIAL_SERVICES"
+)
+
+// Topic
+type TOPIC_TYPE = string
+
+const (
+	TT_ACOUNT_UPDATE TOPIC_TYPE = "ACCOUNT_UPDATE"
+
+	TT_CUSTOMER_FEEDBACK TOPIC_TYPE = "CUSTOMER_FEEDBACK"
+
+	TT_ORDER_MANAGEMENT TOPIC_TYPE = "ORDER_MANAGEMENT"
+
+	TT_PAYMENTS TOPIC_TYPE = "PAYMENTS"
+)
+
+// Use Case
+type USECASE_TYPE = string
+
+const (
+	UCT_ACCOUNT_CREATION_CONFIRMATION USECASE_TYPE = "ACCOUNT_CREATION_CONFIRMATION"
+	UCT_PAYMENT_DUE_REMINDER          USECASE_TYPE = "PAYMENT_DUE_REMINDER"
+	UCT_FEEDBACK_SURVEY               USECASE_TYPE = "FEEDBACK_SURVEY"
+	UCT_PAYMENT_ACTION_REQUIRED       USECASE_TYPE = "PAYMENT_ACTION_REQUIRED"
+	UCT_SHIPMENT_CONFIRMATION         USECASE_TYPE = "SHIPMENT_CONFIRMATION"
+	UCT_PAYMENT_OVERDUE               USECASE_TYPE = "PAYMENT_OVERDUE"
+	UCT_DELIVERY_UPDATE               USECASE_TYPE = "DELIVERY_UPDATE"
+	UCT_PAYMENT_CONFIRMATION          USECASE_TYPE = "PAYMENT_CONFIRMATION"
+	UCT_ORDER_DELAY                   USECASE_TYPE = "ORDER_DELAY"
+	UCT_FRAUD_ALERT                   USECASE_TYPE = "FRAUD_ALERT"
+	UCT_DELIVERY_FAILED               USECASE_TYPE = "DELIVERY_FAILED"
+	UCT_AUTO_PAY_REMINDER             USECASE_TYPE = "AUTO_PAY_REMINDER"
+	UCT_DELIVERY_CONFIRMATION         USECASE_TYPE = "DELIVERY_CONFIRMATION"
+	UCT_PAYMENT_SCHEDULED             USECASE_TYPE = "PAYMENT_SCHEDULED"
+	UCT_ORDER_PICK_UP                 USECASE_TYPE = "ORDER_PICK_UP"
+	UCT_PAYMENT_REJECT_FAIL           USECASE_TYPE = "PAYMENT_REJECT_FAIL"
+	UCT_ORDER_ACTION_NEEDED           USECASE_TYPE = "ORDER_ACTION_NEEDED"
+	UCT_STATEMENT_AVAILABLE           USECASE_TYPE = "STATEMENT_AVAILABLE"
+	UCT_ORDER_CONFIRMATION            USECASE_TYPE = "ORDER_CONFIRMATION"
+	UCT_LOW_BALANCE_WARNING           USECASE_TYPE = "LOW_BALANCE_WARNING"
+	UCT_ORDER_OR_TRANSACTION_CANCEL   USECASE_TYPE = "ORDER_OR_TRANSACTION_CANCEL"
+	UCT_RECEIPT_ATTACHMENT            USECASE_TYPE = "RECEIPT_ATTACHMENT"
+	UCT_RETURN_CONFIRMATION           USECASE_TYPE = "RETURN_CONFIRMATION"
+	UCT_STATEMENT_ATTACHMENT          USECASE_TYPE = "STATEMENT_ATTACHMENT"
+	UCT_TRANSACTION_ALERT             USECASE_TYPE = "TRANSACTION_ALERT"
+)
+
 type FORMAT_TYPE = string
 
 const (
@@ -83,13 +148,13 @@ const (
 	S_ARCHIVED         STATUS = "ARCHIVED"
 )
 
-type OTP_TYPE = string
+type ENUM_OTP_TYPE string
 
 const (
-	OT_COPY_CODE  OTP_TYPE = "COPY_CODE"
-	OT_ONE_TAP    OTP_TYPE = "ONE_TAP"
-	OT_ZERO_TAP   OTP_TYPE = "ZERO_TAP"
-	OT_NO_BUTTONS OTP_TYPE = "NO_BUTTONS"
+	OT_COPY_CODE  ENUM_OTP_TYPE = "COPY_CODE"
+	OT_ONE_TAP    ENUM_OTP_TYPE = "ONE_TAP"
+	OT_ZERO_TAP   ENUM_OTP_TYPE = "ZERO_TAP"
+	OT_NO_BUTTONS ENUM_OTP_TYPE = "NO_BUTTONS"
 )
 
 type TYPE_COMPONENT = string
@@ -148,7 +213,7 @@ type Card = []MockupComponent
 
 type MockupComponent struct {
 	Type TYPE_COMPONENT `json:"type" validate:"required"`
-	// type of assets of media content. Configurable to "IMAGE", "VIDEO" o "DOCUMENT"
+	// type of assets of media content. Configurable to "IMAGE",  "VIDEO" o "DOCUMENT"
 	Format FORMAT_TYPE `json:"format,omitempty"`
 	// accept parameters for programming ex:
 	// 		Posicional: se incluye una matriz de parámetros posicionales numerados que corresponden a posiciones numéricas en el texto del cuerpo con ejemplos.
@@ -166,7 +231,7 @@ type MockupComponent struct {
 }
 
 // Optional data during creation of a template from a library template. These are optional fields for the body component.
-type LibraryTemplateBodyInputs struct {
+type LibraryTemplateBodyInput struct {
 	AddContactNumber          bool  `json:"add_contact_number,omitempty"`
 	AddLearnMoreLink          bool  `json:"add_learn_more_link,omitempty"`
 	AddSecurityRecommendation bool  `json:"add_security_recommendation,omitempty"`
@@ -185,26 +250,39 @@ type SupportedApp struct {
 }
 
 // Optional data during creation of a template from a library template. These are optional fields for the button component.
-type LibraryTemplateButtonInputs struct {
+type LibraryTemplateButtonInput struct {
 	*URL_   `json:"url,omitempty"`
-	OtpType OTP_TYPE `json:"otp_type,omitempty"`
+	OtpType ENUM_OTP_TYPE `json:"otp_type,omitempty"`
 	*Button `json:",omitempty"`
+	SApp    []SupportedApp `json:"supported_apps,omitempty"`
 }
 
 // Payload for MockupTemplate.LibraryTemplateButtonInput
-type LibraryTemplateButtonInputsPayload = []LibraryTemplateButtonInputs
+type LibraryTemplateButtonInputPayload = []LibraryTemplateButtonInput
 
 // Payload for MockupTemplate.LibraryTemplateBodyInput
-type LibraryTemplateBodyInputsPayload = []LibraryTemplateBodyInputs
+type LibraryTemplateBodyInputPayload = LibraryTemplateBodyInput
+
+type TemplateLibrary struct {
+	*ArrayButton               `json:"buttons,omitempty"`
+	Body                       string                        `json:"body" validate:"required"`
+	BodyParam                  []string                      `json:"body_params,omitempty"`
+	BodyParamType              []BODY_PARAM_TPL_LIBRARY_TYPE `json:"body_param_types,omitempty"`
+	Header                     string                        `json:"header,omitempty"`
+	Topic                      TOPIC_TYPE                    `json:"topic,omitempty"`
+	Industry                   []INDUSTRY_TYPE               `json:"industry,omitempty"`
+	Usecase                    USECASE_TYPE                  `json:"usecase,omitempty"`
+	LibraryTemplateBodyInput   *json.RawMessage              `json:"library_template_body_inputs,omitempty"`
+	LibraryTemplateButtonInput *json.RawMessage              `json:"library_template_button_inputs,omitempty"`
+}
 
 // All template have limit of one body component
 type MockupTemplate struct {
-	// less than 512 characters
 	ID                         string           `json:"id,omitempty"`
-	Name                       string           `json:"name" validate:"required"`
+	Name                       string           `json:"name" validate:"required"` // Maximum of 512 characters
 	Category                   CATEGORY         `json:"category" validate:"required"`
-	Content                    string           `json:"content" validate:"required"`
 	CorrectCategory            CATEGORY         `json:"correct_category,omitempty"`
+	Content                    string           `json:"content,omitempty"`
 	PreviousCategory           CATEGORY         `json:"previous_category,omitempty"`
 	SubCategory                SUB_CATEGORY     `json:"sub_category,omitempty"`
 	CtaUrlLinkTrackingOptedOut bool             `json:"cta_url_link_tracking_opted_out,omitempty"`
@@ -226,10 +304,9 @@ type MockupTemplate struct {
 	// Utility templates: 30 to 43,200 seconds (30 seconds to 12 hours)
 	// Marketing templates: 43,200 to 2,592,000 seconds (12 hours to 30 days)
 	// For authentication and utility templates, you can set the message_send_ttl_seconds property to -1, which will apply a custom TTL of 30 days.
-	LibraryTemplateBodyInput   *json.RawMessage  `json:"library_template_body_inputs,omitempty"`
-	LibraryTemplateButtonInput *json.RawMessage  `json:"library_template_button_inputs,omitempty"`
-	MessageSendTtlSeconds      int64             `json:"message_send_ttl_seconds,omitempty"`
-	Components                 []MockupComponent `json:"components,omitempty"`
+	MessageSendTtlSeconds int64             `json:"message_send_ttl_seconds,omitempty"`
+	Components            []MockupComponent `json:"components,omitempty"`
+	*TemplateLibrary      `json:",omitempty"`
 }
 
 type TYPE_TEMPLATE = string
@@ -339,11 +416,24 @@ func (tpl MockupTemplate) getProductsButtons() bool {
 	return false
 }
 
+func (tpl MockupTemplate) hasComponents() bool {
+	return len(tpl.Components) != 0
+
+}
+
 // isText
 func (tpl MockupTemplate) isText() bool {
 	h := tpl.getHeader()
 	b := tpl.getBody()
 	f := tpl.getFooter()
+
+	if !tpl.hasComponents() {
+		if tpl.TemplateLibrary != nil && tpl.TemplateLibrary.ArrayButton == nil {
+			return true
+		}
+
+		return false
+	}
 
 	if len(tpl.Components) == 3 {
 		if h != nil && h.Format != FT_TEXT {
@@ -388,6 +478,14 @@ func (tpl MockupTemplate) isButton() bool {
 
 // isInteractive
 func (tpl MockupTemplate) isInteractive() bool {
+	if !tpl.hasComponents() {
+		if tpl.TemplateLibrary != nil && tpl.TemplateLibrary.ArrayButton != nil {
+			return true
+		}
+
+		return false
+	}
+
 	return tpl.isButton()
 }
 
@@ -428,4 +526,19 @@ func (tpl MockupTemplate) GetTypeTpl() string {
 	default:
 		return "Unknown"
 	}
+}
+
+const (
+	LOCATE_LIBERARY_TEMPLATE = "library_template"
+	LOCATE_WABA_TEMPLATE     = "waba_template"
+)
+
+func (tpl MockupTemplate) GetLocatedTpl() string {
+	if tpl.Components != nil {
+		if len(tpl.Components) == 1 {
+			return LOCATE_WABA_TEMPLATE
+		}
+	}
+
+	return LOCATE_LIBERARY_TEMPLATE
 }

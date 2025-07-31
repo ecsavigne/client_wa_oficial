@@ -54,7 +54,7 @@ func EventHandler(data any) {
 func main() {
 	// Create one Client of WhatsApp Official
 	my_client := clientoficial.NewClientWA(clientoficial.Config{
-		// EnvFilePath:   "../../config_env",
+		// EnvFilePath: "../../config_env", // para debug
 		EnvFilePath:   "../config_env",
 		WebhookSocket: "wss://webhooks.savcoe-services.com/wa_official/ws",
 		EventHandle:   EventHandler,
@@ -81,12 +81,13 @@ func main() {
 
 	// fmt.Println(my_client.GetInfoAllNumberInWA())
 	// For handling the interruption of the application with Ctrl+C allows you to see the events handled by EventHandle
-	r := my_client.GetAllTplFromWaba("111_waba_id") // id = 1111111, name = hello_world
-	tplArr := r.GetTemplateResponse()
+	// r := my_client.GetAllTplFromWaba("111_waba_id") // id = 1111111, name = hello_world
+	// r := my_client.GetAllTplFromLibrary(clientoficial.QueryData{"language": str.Join([]string{"pt_BR"}, ",")}) // id = 1111111, name = hello_world
+	// tplArr := r.GetTemplateResponse()
 	// fmt.Println("Response: \n", tplArr)
-	for _, v := range tplArr.Data {
-		fmt.Printf("Response: %s, Type: %s\n", v.Name, v.GetTypeTpl())
-	}
+	// for _, v := range tplArr.Data {
+	// 	fmt.Printf("Template Name: %s, Type: %s, LocateTemplate: %s\n", v.Name, v.GetTypeTpl(), v.GetLocatedTpl())
+	// }
 	// r := my_client.GetTemplateById("111111111111") // id = 1122206686609499, name = hello_world
 	// r := my_client.GetTemplateByName("event_rsvp_reminder_2") // id = 1122206686622209499, name = hello_world
 

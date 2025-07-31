@@ -91,6 +91,13 @@ func JsonWrapperResponseRequest(dataBin []byte) Responser {
 		wrapper["data"].(array)[0].(record)["parameter_format"] != nil && wrapper["data"].(array)[0].(record)["language"] != nil &&
 		wrapper["data"].(array)[0].(record)["category"] != nil && wrapper["data"].(array)[0].(record)["components"] != nil &&
 		wrapper["data"].(array)[0].(record)["status"] != nil:
+		fallthrough
+		// templates library
+	case wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil &&
+		wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil &&
+		wrapper["data"].(array)[0].(record)["topic"] != nil && wrapper["data"].(array)[0].(record)["language"] != nil &&
+		wrapper["data"].(array)[0].(record)["category"] != nil && wrapper["data"].(array)[0].(record)["usecase"] != nil &&
+		wrapper["data"].(array)[0].(record)["industry"] != nil:
 		templates := NewTemplateResponse(&TemplateResponse{})
 		json.Unmarshal(data, templates)
 		gralResponse.TemplateResponse = templates

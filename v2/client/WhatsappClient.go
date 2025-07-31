@@ -14,7 +14,7 @@ import (
 	"os"
 	"path"
 	"slices"
-	"strings"
+	str "strings"
 	"sync"
 	"time"
 
@@ -27,22 +27,25 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+func (c CLIENT_TYPE) String() string {
+	return string(c)
+}
+
 const (
-	WhatsappClient TypeClient = "whatsapp_business_account"
-	FacebookClient TypeClient = "socket"
+	CLIENT_WHATSAPP CLIENT_TYPE = "whatsapp"
+	CLIENT_FACEBOOK CLIENT_TYPE = "facebook"
 )
 
 type (
-	TypeClient = string
-
-	clientHttp struct {
+	CLIENT_TYPE string
+	clientHttp  struct {
 		*http.Client
 		BaseUrl *url.URL `json:"base_url"`
 	}
 
 	ClientWA struct {
 		*Config    `json:"config"`
-		typeClient string
+		typeClient CLIENT_TYPE
 	}
 
 	InfoContact struct {
@@ -81,7 +84,7 @@ func (cl *ClientWA) messageIsForMe(component *event.Components) bool {
 }
 
 func (cl ClientWA) GetType() string {
-	return cl.typeClient
+	return cl.typeClient.String()
 }
 
 func (cl *ClientWA) initWebHookSocket() {
@@ -106,7 +109,7 @@ func (cl *ClientWA) initWebHookSocket() {
 					Message: types.MsgErrorUnexpectedClose,
 				}),
 			}
-		case strings.Contains(err.Error(), "tls: internal error"):
+		case str.Contains(err.Error(), "tls: internal error"):
 			evt = &event.ErrorSocketConnectEvent{
 				Error: response.NewError(&response.Error{
 					Type:    types.TypeErrorTlsInternal,
@@ -114,7 +117,7 @@ func (cl *ClientWA) initWebHookSocket() {
 					Message: types.MsgErrorTlsInternal,
 				}),
 			}
-		case strings.Contains(err.Error(), "bad handshake"):
+		case str.Contains(err.Error(), "bad handshake"):
 			evt = &event.ErrorSocketConnectEvent{
 				Error: response.NewError(&response.Error{
 					Type:    types.TypeErrorBadHandshake,
@@ -122,7 +125,7 @@ func (cl *ClientWA) initWebHookSocket() {
 					Message: types.MsgErrorBadHandshake,
 				}),
 			}
-		case strings.Contains(err.Error(), "dial tcp: lookup ws"):
+		case str.Contains(err.Error(), "dial tcp: lookup ws"):
 			evt = &event.ErrorSocketConnectEvent{
 				Error: response.NewError(&response.Error{
 					Type:    types.TypeErrorDialTcp,
@@ -287,7 +290,8 @@ func NewClientWA(c ...Config) *ClientWA {
 	}
 
 	cl := &ClientWA{
-		Config: &c[0],
+		typeClient: CLIENT_WHATSAPP,
+		Config:     &c[0],
 	}
 
 	if c[0].Error != nil {
@@ -1361,7 +1365,7 @@ func (c *ClientWA) DownloadFile(id, path, nameFile string, save ...bool) (*http.
 		} else {
 			// Save binaryFile in path
 			res, e := doRequest(c.request, c)
-			ext := strings.Split(res.Header.Get("Content-Disposition"), ".")
+			ext := str.Split(res.Header.Get("Content-Disposition"), ".")
 			if e != nil {
 				return nil, nil, e
 			} else {
@@ -1859,7 +1863,7 @@ func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
 }
 
 func getPhoneNumber(phone string) string {
-	return strings.NewReplacer("+", "", "-", "", " ", "").Replace(phone)
+	return str.NewReplacer("+", "", "-", "", " ", "").Replace(phone)
 }
 
 // GetInfoPhoneOfWaba returns info of a phone in a waba.
@@ -2133,6 +2137,52 @@ func (c *ClientWA) GetAllTplFromWaba(waba_id string) response.Responser {
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintln("Error in GetAllTemplate request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b).GetTemplateResponse()
+}
+
+// GetAllTemplate pre approval from library, lands is a list of land codes ej: ["AR", "CO", "mx", "fr"] not sensitive to case
+func (c *ClientWA) GetAllTplFromLibrary(q ...QueryData) response.Responser {
+	if len(q) == 0 {
+		q = append(q, QueryData{})
+	}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "message_template_library"),
+		c.Config, RequestWithQuery, q[0])
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetAllTplFromLibrary request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetAllTplFromLibrary request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetAllTplFromLibrary request of ClientWA. error is: ", err.Error()),
 		})
 	}
 

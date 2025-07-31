@@ -19,14 +19,14 @@ const (
 
 type Url_Button struct {
 	// Admite one var max, ej: "https://www.luckyshrub.com/shop/", ej2: https://www.luckyshrub.com/shop?promo={{1}}. max size = 2.000 chars
-	Url string `json:"url" validate:"required"`
+	Url string `json:"url,omitempty"`
 	// Required if <URL> contains a variable
 	Example []string `json:"example,omitempty"`
 }
 
 type Phone_Number_Button struct {
 	// less than 20 chars. ej: "+13057652345"
-	PhoneNumber string `json:"phone_number" validate:"required"`
+	PhoneNumber string `json:"phone_number"`
 }
 
 type Copy_Code_Button struct {
@@ -59,7 +59,7 @@ type Flow_Button struct {
 type Button struct {
 	Type TYPE_BUTTON `json:"type" validate:"required"`
 	// 25 characters maximum
-	Text                 string `json:"text" validate:"required"`
+	Text                 string `json:"text,omitempty"`
 	*Url_Button          `json:",omitempty"`
 	*Phone_Number_Button `json:",omitempty"`
 	*Copy_Code_Button    `json:",omitempty"`
@@ -67,5 +67,4 @@ type Button struct {
 	EndpointUri          string `json:"endpoint_uri,omitempty"`
 	ZeroTapTermsAccepted bool   `json:"zero_tap_terms_accepted,omitempty"`
 	TtlMinutes           int64  `json:"ttl_minutes,omitempty"`
-	*SupportedApp        `json:"supported_apps,omitempty"`
 }
