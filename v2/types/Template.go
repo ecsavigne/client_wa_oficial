@@ -524,7 +524,7 @@ func (tpl MockupTemplate) GetTypeTpl() string {
 	case tpl.isInteractive():
 		return TTPL_INTERACTIVE
 	default:
-		return "Unknown"
+		return "UNKNOWN"
 	}
 }
 
@@ -535,9 +535,7 @@ const (
 
 func (tpl MockupTemplate) GetLocatedTpl() string {
 	if tpl.Components != nil {
-		if len(tpl.Components) == 1 {
-			return LOCATE_WABA_TEMPLATE
-		}
+		return LOCATE_WABA_TEMPLATE
 	}
 
 	return LOCATE_LIBERARY_TEMPLATE
