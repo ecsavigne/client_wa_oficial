@@ -312,12 +312,12 @@ type MockupTemplate struct {
 type TYPE_TEMPLATE = string
 
 const (
-	TTPL_TEXT           TYPE_TEMPLATE = "text"
-	TTPL_MEDIA          TYPE_TEMPLATE = "media"
-	TTPL_INTERACTIVE    TYPE_TEMPLATE = "interactive"
-	TTPL_LOCATION       TYPE_TEMPLATE = "location"
-	TTPL_AUTH           TYPE_TEMPLATE = "authentication"
-	TTPL_MULTI_PRODUCTS TYPE_TEMPLATE = "multi_products"
+	TTPL_TEXT           TYPE_TEMPLATE = "TEXT"
+	TTPL_MEDIA          TYPE_TEMPLATE = "MEDIA"
+	TTPL_INTERACTIVE    TYPE_TEMPLATE = "INTERACTIVE"
+	TTPL_LOCATION       TYPE_TEMPLATE = "LOCATION"
+	TTPL_AUTH           TYPE_TEMPLATE = "AUTHENTICATION"
+	TTPL_MULTI_PRODUCTS TYPE_TEMPLATE = "MULTI_PRODUCTS"
 )
 
 func (tpl MockupTemplate) getHeader() *MockupComponent {
@@ -529,8 +529,8 @@ func (tpl MockupTemplate) GetTypeTpl() string {
 }
 
 const (
-	LOCATE_LIBERARY_TEMPLATE = "library_template"
-	LOCATE_WABA_TEMPLATE     = "waba_template"
+	LOCATE_LIBERARY_TEMPLATE = "LIBRARY_TEMPLATE"
+	LOCATE_WABA_TEMPLATE     = "WABA_TEMPLATE"
 )
 
 func (tpl MockupTemplate) GetLocatedTpl() string {
