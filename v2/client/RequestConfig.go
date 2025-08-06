@@ -50,8 +50,8 @@ func (q QueryData) String() string {
 	return query
 }
 
-func (q QueryData) SetValue(key string, value any) {
-	q[key] = value
+func (q *QueryData) SetValue(key string, value any) {
+	(*q)[key] = value
 }
 
 func (q QueryData) GetValue(key string) any {
