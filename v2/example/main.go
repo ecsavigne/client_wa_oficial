@@ -54,8 +54,8 @@ func EventHandler(data any) {
 func main() {
 	// Create one Client of WhatsApp Official
 	my_client := clientoficial.NewClientWA(clientoficial.Config{
-		// EnvFilePath: "../../config_env", // para debug
-		EnvFilePath:   "../config_env",
+		EnvFilePath: "../../config_env", // para debug
+		// EnvFilePath:   "../config_env",
 		WebhookSocket: "wss://webhooks.savcoe-services.com/wa_official/ws",
 		EventHandle:   EventHandler,
 	})
@@ -84,7 +84,7 @@ func main() {
 	// r := my_client.GetAllTplFromWaba("111_waba_id") // id = 1111111, name = hello_world
 	// r := my_client.GetAllTplFromLibrary(clientoficial.QueryData{"language": str.Join([]string{"pt_BR"}, ",")}) // id = 1111111, name = hello_world
 	// tplArr := r.GetTemplateResponse()
-	// fmt.Println("Response: \n", tplArr)
+	// fmt.Println("Response: \n", len(tplArr.Data))
 	// for _, v := range tplArr.Data {
 	// 	fmt.Printf("Template Name: %s, Type: %s, LocateTemplate: %s\n", v.Name, v.GetTypeTpl(), v.GetLocatedTpl())
 	// }
