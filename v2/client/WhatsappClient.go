@@ -2144,7 +2144,7 @@ func (c *ClientWA) GetAllTplFromWaba(waba_id string) response.Responser {
 }
 
 // GetAllTemplate pre approval from library, lands is a list of land codes ej: ["AR", "CO", "mx", "fr"] not sensitive to case
-func (c *ClientWA) GetAllTplFromLibrary(q ...QueryData) response.Responser {
+func (c *ClientWA) getAllTplFromLibrary(q ...QueryData) response.Responser {
 	if len(q) == 0 {
 		q = append(q, QueryData{})
 	}
@@ -2187,6 +2187,40 @@ func (c *ClientWA) GetAllTplFromLibrary(q ...QueryData) response.Responser {
 	}
 
 	return response.JsonWrapperResponseRequest(b).GetTemplateResponse()
+}
+
+// GetAllTemplate pre approval from library, lands is a list of land codes ej: ["AR", "CO", "mx", "fr"] not sensitive to case
+func (c *ClientWA) GetAllTplFromLibrary(q ...QueryData) response.Responser {
+	res := c.getAllTplFromLibrary(q...)
+
+	if res.GetResponseError() == nil {
+		t := res.GetTemplateResponse()
+		pag := t.Paging
+		afterValue := pag.Cursors.After
+
+		for {
+			// q[0]["after"] = afterValue
+			q[0].SetValue("after", afterValue)
+
+			if pag.Next == "" {
+				break
+			}
+
+			temp := c.getAllTplFromLibrary(q...)
+			if temp.GetResponseError() != nil {
+				break
+			}
+
+			t_ := temp.GetTemplateResponse()
+			pag = t_.Paging
+			afterValue = pag.Cursors.After
+			t.Data = append(t.Data, t_.Data...)
+		}
+
+		return t
+	}
+
+	return res
 }
 
 // GetTemplate by id

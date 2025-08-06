@@ -37,6 +37,10 @@ const (
 
 type QueryData map[string]any
 
+func NewQueryData() QueryData {
+	return make(map[string]any)
+}
+
 func (q QueryData) String() string {
 	query := ""
 	for k, v := range q {
@@ -44,6 +48,14 @@ func (q QueryData) String() string {
 	}
 	query = strings.TrimSuffix(query, "&")
 	return query
+}
+
+func (q QueryData) SetValue(key string, value any) {
+	q[key] = value
+}
+
+func (q QueryData) GetValue(key string) any {
+	return q[key]
 }
 
 func defaultHeader(c *Config, contentType ...string) {

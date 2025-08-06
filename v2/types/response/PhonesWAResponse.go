@@ -32,7 +32,9 @@ type WebhookConfiguration struct {
 }
 
 type Paging struct {
-	Cursors *Cursors `json:"cursors,omitempty"`
+	Cursors  *Cursors `json:"cursors,omitempty"`
+	Next     string   `json:"next,omitempty"`
+	Previous string   `json:"previous,omitempty"`
 }
 
 type Cursors struct {
