@@ -453,7 +453,7 @@ func (tpl MockupTemplate) hasComponents() bool {
 
 }
 
-// isText
+// isText.
 func (tpl MockupTemplate) isText() bool {
 	if tpl.isAuth() {
 		return false
