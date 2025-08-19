@@ -455,6 +455,10 @@ func (tpl MockupTemplate) hasComponents() bool {
 
 // isText
 func (tpl MockupTemplate) isText() bool {
+	if tpl.isAuth() {
+		return false
+	}
+
 	h := tpl.getHeader()
 	b := tpl.getBody()
 	f := tpl.getFooter()
