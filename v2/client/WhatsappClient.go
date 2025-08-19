@@ -2199,7 +2199,6 @@ func (c *ClientWA) GetAllTplFromLibrary(q ...QueryData) response.Responser {
 		afterValue := pag.Cursors.After
 
 		for {
-			// q[0]["after"] = afterValue
 			q[0].SetValue("after", afterValue)
 
 			if pag.Next == "" {
@@ -2207,7 +2206,7 @@ func (c *ClientWA) GetAllTplFromLibrary(q ...QueryData) response.Responser {
 			}
 
 			temp := c.getAllTplFromLibrary(q...)
-			if temp.GetResponseError() != nil {
+			if temp == nil || temp.GetResponseError() != nil {
 				break
 			}
 
