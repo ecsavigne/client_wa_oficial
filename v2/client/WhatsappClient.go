@@ -2206,7 +2206,11 @@ func (c *ClientWA) GetAllTplFromLibrary(q ...QueryData) response.Responser {
 			}
 
 			temp := c.getAllTplFromLibrary(q...)
-			if temp == nil || temp.GetResponseError() != nil {
+			if v, ok := temp.(*response.TemplateResponse); v == nil && ok {
+				break
+			}
+
+			if temp.GetResponseError() != nil {
 				break
 			}
 
