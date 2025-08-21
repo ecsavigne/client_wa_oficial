@@ -597,7 +597,7 @@ var getParamName = func(np NamedParam, arrParam *[]map[string]any) {
 	})
 }
 
-var getParamButtons = func(cmp MockupComponent, arrParam *[]map[string]any) {
+var getParamButtons = func(cmp MockupComponent, arrBtnWithParam *[]map[string]any) {
 	getParamType := func(b Button) (parmIndex int, paramName string) {
 		if b.Type != TB_URL {
 			return 0, ""
@@ -649,7 +649,7 @@ var getParamButtons = func(cmp MockupComponent, arrParam *[]map[string]any) {
 
 		tempParam[fmt.Sprintf("btn%d", index)] = temp
 
-		*arrParam = append(*arrParam, tempParam)
+		*arrBtnWithParam = append(*arrBtnWithParam, tempParam)
 	}
 }
 
