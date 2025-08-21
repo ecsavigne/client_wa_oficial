@@ -2,7 +2,10 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
+	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	str "strings"
 )
@@ -575,4 +578,114 @@ func (tpl MockupTemplate) GetLocatedTpl() string {
 	}
 
 	return LOCATE_LIBERARY_TEMPLATE
+}
+
+var getParamPositional = func(pp PositionalParams, arrParam *[]map[string]any) {
+	for _, p := range pp {
+		*arrParam = append(*arrParam, map[string]any{
+			"type": "text",
+			"text": p,
+		})
+	}
+}
+
+var getParamName = func(np NamedParam, arrParam *[]map[string]any) {
+	*arrParam = append(*arrParam, map[string]any{
+		"type":           "text",
+		"parameter_name": np.ParamName,
+		"text":           np.Example,
+	})
+}
+
+var getParamButtons = func(cmp MockupComponent, arrParam *[]map[string]any) {
+	getParamType := func(b Button) (parmIndex int, paramName string) {
+		if b.Type != TB_URL {
+			return 0, ""
+		}
+
+		re := regexp.MustCompile(`\{\{([a-zA-Z0-9_]+)\}\}`)
+		if re.MatchString(b.Url) {
+			matches := re.FindStringSubmatch(b.Url)
+			if len(matches) <= 1 {
+				return 0, ""
+			}
+
+			matchStr := matches[1]
+			isNumber := regexp.MustCompile(`[0-9]`)
+			if len(matchStr) == 1 && isNumber.MatchString(matchStr) {
+				val, _ := strconv.Atoi(matchStr)
+				return val, ""
+			} else {
+				return 0, matches[1]
+			}
+		}
+
+		return 0, ""
+	}
+
+	for index, b := range *cmp.ArrayButton {
+		// search if has params {{name}} or {{#}}
+		pos, name := getParamType(b)
+		if pos == 0 && name == "" {
+			continue
+		}
+
+		var tempParam, temp map[string]any = make(map[string]any, 0), make(map[string]any, 0)
+
+		if pos != 0 {
+			temp = map[string]any{
+				"type": "text",
+				"text": pos,
+			}
+		}
+
+		if name != "" {
+			temp = map[string]any{
+				"type":           "text",
+				"text":           "",
+				"parameter_name": name,
+			}
+		}
+
+		tempParam[fmt.Sprintf("btn%d", index)] = temp
+
+		*arrParam = append(*arrParam, tempParam)
+	}
+}
+
+func (cmp MockupComponent) GetParams() (param []map[string]any) {
+	param = make([]map[string]any, 0)
+
+	switch cmp.Type {
+	case TC_HEADER:
+		fallthrough
+	case TC_BODY:
+		switch {
+		case cmp.Example != nil && (cmp.BodyText != nil || cmp.HeaderText != nil):
+			if cmp.BodyText != nil {
+				for _, v := range *cmp.BodyText {
+					getParamPositional(v, &param)
+				}
+			} else {
+				for _, v := range *cmp.HeaderText {
+					getParamPositional(v, &param)
+				}
+			}
+
+		case cmp.Example != nil && (cmp.BodyTextNamedParam != nil || cmp.HeaderTextNamedParam != nil):
+			if cmp.BodyTextNamedParam != nil {
+				for _, v := range *cmp.BodyTextNamedParam {
+					getParamName(v, &param)
+				}
+			} else {
+				for _, v := range *cmp.HeaderTextNamedParam {
+					getParamName(v, &param)
+				}
+			}
+		}
+	case TC_BUTTONS:
+		getParamButtons(cmp, &param)
+	}
+
+	return param
 }
