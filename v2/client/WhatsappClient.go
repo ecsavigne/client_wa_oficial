@@ -2307,3 +2307,38 @@ func (c *ClientWA) GetTplByName(name string) response.Responser {
 
 	return response.JsonWrapperResponseRequest(b)
 }
+
+func (c *ClientWA) SendReadNotification(messageID string) response.Responser {
+	data := map[string]any{
+		"messaging_product": "whatsapp",
+		"status":            "read",
+		"message_id":        messageID,
+	}
+
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s", "messages"), c.Config, data)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in SendReadNotification request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in SendReadNotification request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.GetResponseRequest(resp.Body, "SendReadNotification", "ClientWA")
+}

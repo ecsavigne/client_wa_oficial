@@ -150,7 +150,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 				c.request, e = http.NewRequestWithContext(ctx, methoth, urlAlternative, nil)
 			}
 		}
-	} else {
+	} else { // len(params) > 1
 		if len(params) > 2 {
 			c.Error = response.NewError(&response.Error{
 				Type:    types.TypeErrorUnrecognized,

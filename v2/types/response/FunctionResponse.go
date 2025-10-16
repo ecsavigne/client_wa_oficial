@@ -49,7 +49,6 @@ func JsonWrapperResponseRequest(dataBin []byte) Responser {
 			errorResponse := NewError(&Error{})
 			json.Unmarshal(data, errorResponse)
 			gralResponse.Error = errorResponse
-			// return gralResponse.GetResponseType()
 		}
 
 	// success
@@ -125,7 +124,7 @@ func JsonWrapperResponseRequest(dataBin []byte) Responser {
 		if gralResponse.OtherResponse == nil {
 			gralResponse.OtherResponse = make(OtherResponse)
 		}
-		gralResponse.OtherResponse = wrapper
+		gralResponse.OtherResponse = OtherResponse(wrapper)
 	}
 
 	return gralResponse.GetResponseType()
