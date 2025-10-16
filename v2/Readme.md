@@ -1,6 +1,5 @@
-client_wa_oficial
-	[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/ecsavigne/client_wa_oficial/v2)
-	[![go report](https://goreportcard.com/badge/ecsavigne/client_wa_oficial/v2)](https://goreportcard.com/report/github.com/ecsavigne/client_wa_oficial/v2)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square)](https://pkg.go.dev/github.com/ecsavigne/client_wa_oficial/v2)
+[![go report](https://goreportcard.com/badge/ecsavigne/client_wa_oficial/v2)](https://goreportcard.com/report/github.com/ecsavigne/client_wa_oficial/v2)
     
 # Al crear un cliente la propiedad 'Config.EnvFilePath' debe ser igual al path del archivo .env. Mas detalles en ayuda de propiedad
 ## Ejemplo de archivo .env
