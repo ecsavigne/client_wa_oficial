@@ -24,7 +24,7 @@ const (
 	MsgErrorInRequestMeta            MessageError = "In Request Meta"
 	MsgErrorInRequest                MessageError = "In Request"
 	MsgErrorTokenEmpty               MessageError = "Token is empty. Not can connect to Whatsapp"
-	MsgErrorConectionClosedWebSocket              = "Conection Closed WebSocket"
+	MsgErrorConectionClosedWebSocket              = "Connection Closed WebSocket"
 )
 
 // CodeErrors

@@ -281,7 +281,7 @@ func (cl *ClientWA) initWebHookSocket() {
 
 // Create one Client of WhatsApp Official return *ClientWA :
 // - If the EnvFilePath or Path in Config.EnvFilePath not found. ClientWA.Error = &response.Error{Type: types.TypeErrorConfig, Code: types.CodeErrorEnvNotFound, Message: types.MsgErrorEnvNotFound}
-// - If occurred error in conection with WebHook Socket emit one event type: event.ErrorSocketConnectEvent
+// - If occurred error in connection with WebHook Socket emit one event type: event.ErrorSocketConnectEvent
 func NewClientWA(c ...Config) *ClientWA {
 	if len(c) == 0 {
 		c = append(c, Config{

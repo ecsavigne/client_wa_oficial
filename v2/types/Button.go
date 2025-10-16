@@ -44,7 +44,7 @@ const (
 
 type Flow_Button struct {
 	FlowId uint64 `json:"flow_id" validate:"required"`
-	// name of proccess only allowed on Cloud Api
+	// name of process only allowed on Cloud Api
 	FlowName string `json:"flow_name,omitempty" validate:"required"`
 	//  string in format json ex: "{\"version\": \"3.1\", \"screens\": [...]}"
 	FlowJson string `json:"flow_json" validate:"required"`
