@@ -14,7 +14,7 @@ type Config struct {
 	// Path del archivo .env incluyendo el nombre del archivo sin la extensión ej: file: /.../../config_env.env -> EnvFilePath: /.../../config_env
 	EnvFilePath string `json:"env_file_path"`
 	Error       error
-	// Url del servidor WebHook con ruta /ws para conectar con el servidor WebSocket ej: wss://webhooks.savcoe-services.com/ws
+	// Url del servidor WebHook con ruta /ws para conectar con el servidor WebSocket ej: wss://path.com/ws if not set send data to client.Broadcast(data)
 	WebhookSocket string    `json:"webhook_socket"`
 	EventHandle   func(any) // Funcion para manejar los eventos del servidor WebHook WebSocket
 	path          string    // URL, ej: https://graph.facebook.com/v15.0/PHONE_NUMBER_ID
@@ -37,6 +37,46 @@ type Config struct {
 	mAX_RETRIES_AFTER_WAIT     string
 	rEQUEST_TIMEOUT            string
 	// tOKEN                      string
+}
+
+type Options func(*Config)
+
+func WithToken(token string) Options {
+	return func(c *Config) {
+		c.Token = token
+	}
+}
+
+func WithWaBusinessAccountId(wa_business_account_id string) Options {
+	return func(c *Config) {
+		c.WaBusinessAccountId = wa_business_account_id
+		c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
+	}
+}
+
+func WithWaPhoneNumberId(wa_phone_number_id string) Options {
+	return func(c *Config) {
+		c.WaPhoneNumberId = wa_phone_number_id
+		c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
+	}
+}
+
+func WithEnvFilePath(env_file_path string) Options {
+	return func(c *Config) {
+		c.EnvFilePath = env_file_path
+	}
+}
+
+func WithWebhookSocket(webhook_socket string) Options {
+	return func(c *Config) {
+		c.WebhookSocket = webhook_socket
+	}
+}
+
+func WithEventHandle(event_handle func(any)) Options {
+	return func(c *Config) {
+		c.EventHandle = event_handle
+	}
 }
 
 func (c *Config) setWaBaseUrl(wa_base_url string) {

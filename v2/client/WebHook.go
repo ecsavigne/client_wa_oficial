@@ -7,7 +7,7 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/event"
 )
 
-func (cl *ClientWA) ReceiveFromWebHook(data map[string]any) {
+func (cl *ClientWA) Broadcast(data map[string]any) {
 	defer func() {
 		if r := recover(); r != nil {
 			return

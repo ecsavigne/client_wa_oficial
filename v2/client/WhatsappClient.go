@@ -5,7 +5,6 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -282,34 +281,63 @@ func (cl *ClientWA) initWebHookSocket() {
 // Create one Client of WhatsApp Official return *ClientWA :
 // - If the EnvFilePath or Path in Config.EnvFilePath not found. ClientWA.Error = &response.Error{Type: types.TypeErrorConfig, Code: types.CodeErrorEnvNotFound, Message: types.MsgErrorEnvNotFound}
 // - If occurred error in connection with WebHook Socket emit one event type: event.ErrorSocketConnectEvent
-func NewClientWA(c ...Config) *ClientWA {
-	if len(c) == 0 {
-		c = append(c, Config{
-			Error: errors.New("config is required"),
-		})
-	}
+// func NewClientWA(c ...Config) *ClientWA {
+// 	if len(c) == 0 {
+// 		c = append(c, Config{
+// 			Error: errors.New("config is required"),
+// 		})
+// 	}
+
+// 	cl := &ClientWA{
+// 		typeClient: CLIENT_WHATSAPP,
+// 		Config:     &c[0],
+// 	}
+
+// 	if c[0].Error != nil {
+// 		return cl
+// 	}
+
+// 	err := setEnv(&c[0])
+// 	if err != nil {
+// 		cl.Error = err
+// 		return cl
+// 	}
+
+// 	cl.Config = newConfig(c[0])
+// 	if cl.Error != nil {
+// 		return cl
+// 	}
+
+// 	if c[0].WebhookSocket != "" && c[0].EventHandle != nil {
+// 		go cl.initWebHookSocket()
+// 	}
+
+//		return cl
+//	}
+func NewClientWA(opts ...Options) *ClientWA {
+	c := Config{}
 
 	cl := &ClientWA{
 		typeClient: CLIENT_WHATSAPP,
-		Config:     &c[0],
+		Config:     &c,
 	}
 
-	if c[0].Error != nil {
-		return cl
+	for _, opt := range opts {
+		opt(&c)
 	}
 
-	err := setEnv(&c[0])
+	err := setEnv(&c)
 	if err != nil {
 		cl.Error = err
 		return cl
 	}
 
-	cl.Config = newConfig(c[0])
+	cl.Config = newConfig(c)
 	if cl.Error != nil {
 		return cl
 	}
 
-	if c[0].WebhookSocket != "" && c[0].EventHandle != nil {
+	if c.WebhookSocket != "" && c.EventHandle != nil {
 		go cl.initWebHookSocket()
 	}
 
