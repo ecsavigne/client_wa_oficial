@@ -280,8 +280,10 @@ func (cl *ClientWA) initWebHookSocket() {
 
 func defaultConfig() *Config {
 	return &Config{
-		WebhookSocket: "",
-		EventHandle:   nil,
+		WebhookSocket:       "",
+		EventHandle:         nil,
+		WaBusinessAccountId: "",
+		WaPhoneNumberId:     "",
 	}
 }
 

@@ -31,6 +31,7 @@ type Media struct {
 	*/
 	Provider   string                `json:"provider,omitempty"`
 	FileHeader *multipart.FileHeader `json:",omitempty"`
+	Voice      bool                  `json:"voice,omitempty"`
 }
 
 type MediaType = string

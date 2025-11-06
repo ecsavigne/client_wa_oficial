@@ -52,13 +52,12 @@ func EventHandler(data any) {
 }
 
 func main() {
-	// Create one Client of WhatsApp Official q
-	my_client := clientoficial.NewClientWA(clientoficial.Config{
-		EnvFilePath: "../../config_env", // para debug
-		// EnvFilePath:   "../config_env",
-		WebhookSocket: "wss://webhooks.savcoe-services.com/wa_official/ws",
-		EventHandle:   EventHandler,
-	})
+	// Create one Client of WhatsApp Official
+	my_client := clientoficial.NewClientWA(
+		clientoficial.WithEnvFilePath("../../config_env"),
+		clientoficial.WithWebhookSocket("wss://webhooks.savcoe-services.com/wa_official/ws"),
+		clientoficial.WithEventHandle(EventHandler),
+	)
 
 	if my_client.Error != nil {
 		v, ok := my_client.Error.(*response.Error)
