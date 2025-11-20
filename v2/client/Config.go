@@ -8,18 +8,20 @@ import (
 )
 
 type Config struct {
-	Token               string `json:"token"`
-	WaBusinessAccountId string `json:"wa_business_account_id"`
-	WaPhoneNumberId     string `json:"wa_phone_number_id"`
+	Token      string `json:"token"`
+	wabaID     string `json:"wa_business_account_id"`
+	phoneID    string `json:"wa_phone_number_id"`
+	businessID string `json:"business_id"`
 	// Path del archivo .env incluyendo el nombre del archivo sin la extensión ej: file: /.../../config_env.env -> EnvFilePath: /.../../config_env
 	EnvFilePath string `json:"env_file_path"`
 	Error       error
 	// Url del servidor WebHook con ruta /ws para conectar con el servidor WebSocket ej: wss://path.com/ws if not set send data to client.Broadcast(data)
 	WebhookSocket string    `json:"webhook_socket"`
 	EventHandle   func(any) // Funcion para manejar los eventos del servidor WebHook WebSocket
-	path          string    // URL, ej: https://graph.facebook.com/v15.0/PHONE_NUMBER_ID
 	pathVersion   string    // URL, ej: https://graph.facebook.com/v15.0
+	pathPhone     string    // URL, ej: https://graph.facebook.com/v15.0/PHONE_NUMBER_ID
 	pathBusiness  string    // URL, ej: https://graph.facebook.com/v15.0/BUSINESS_ACCOUNT_ID
+	pathWaba      string    // URL, ej: https://graph.facebook.com/v15.0/WABA_ID
 	clientHttp
 	request        *http.Request
 	MediaInfo      *response.MediaInfo
@@ -47,17 +49,24 @@ func WithToken(token string) Options {
 	}
 }
 
-func WithWaBusinessAccountId(wa_business_account_id string) Options {
+func WithWabaID(waba_id string) Options {
 	return func(c *Config) {
-		c.WaBusinessAccountId = wa_business_account_id
-		c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
+		c.wabaID = waba_id
+		// c.pathWaba = path.Join(c.cLOUD_API_VERSION, c.wabaID)
 	}
 }
 
-func WithWaPhoneNumberId(wa_phone_number_id string) Options {
+func WithBusinessID(business_id string) Options {
 	return func(c *Config) {
-		c.WaPhoneNumberId = wa_phone_number_id
-		c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
+		c.businessID = business_id
+		// c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.businessID)
+	}
+}
+
+func WithPhoneID(phone_id string) Options {
+	return func(c *Config) {
+		c.phoneID = phone_id
+		// c.pathPhone = path.Join(c.cLOUD_API_VERSION, c.phoneID)
 	}
 }
 
@@ -79,7 +88,8 @@ func WithEventHandle(event_handle func(any)) Options {
 	}
 }
 
-func (c *Config) setWaBaseUrl(wa_base_url string) {
+// setter
+func (c *Config) setBaseUrl(wa_base_url string) {
 	c.wA_BASE_URL = wa_base_url
 }
 
@@ -91,14 +101,19 @@ func (c *Config) setM4DAppSecret(m4d_app_secret string) {
 	c.m4D_APP_SECRET = m4d_app_secret
 }
 
-func (c *Config) setWaPhoneNumberId(wa_phone_number_id string) {
-	c.WaPhoneNumberId = wa_phone_number_id
-	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
+func (c *Config) setPhoneID(phone_id string) {
+	c.phoneID = phone_id
+	c.pathPhone = path.Join(c.getVersion(), c.phoneID)
 }
 
-func (c *Config) setWaBusinessAccountId(wa_business_account_id string) {
-	c.WaBusinessAccountId = wa_business_account_id
-	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
+func (c *Config) setWabaID(waba_id string) {
+	c.wabaID = waba_id
+	c.pathWaba = path.Join(c.getVersion(), c.wabaID)
+}
+
+func (c *Config) setBusinessID(business_id string) {
+	c.businessID = business_id
+	c.pathBusiness = path.Join(c.getVersion(), c.businessID)
 }
 
 func (c *Config) setCloudApiAccessToken(cloud_api_access_token string) {
@@ -107,9 +122,10 @@ func (c *Config) setCloudApiAccessToken(cloud_api_access_token string) {
 
 func (c *Config) setCloudApiVersion(cloud_api_version string) {
 	c.cLOUD_API_VERSION = cloud_api_version
-	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
-	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
-	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
+	// c.pathVersion = path.Join(c.cLOUD_API_VERSION)
+	// c.pathPhone = path.Join(c.cLOUD_API_VERSION, c.phoneID)
+	// c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.businessID)
+	// c.pathWaba = path.Join(c.cLOUD_API_VERSION, c.wabaID)
 }
 
 func (c *Config) setWebhookEndpoint(webhook_endpoint string) {
@@ -137,3 +153,22 @@ func (c *Config) setRequestTimeout(request_timeout string) {
 }
 
 // getter
+func (c Config) getWabaID() string {
+	return c.wabaID
+}
+
+func (c Config) getBusinessID() string {
+	return c.businessID
+}
+
+func (c Config) getphoneID() string {
+	return c.phoneID
+}
+
+func (c Config) getBaseUrl() string {
+	return c.wA_BASE_URL
+}
+
+func (c Config) getVersion() string {
+	return c.cLOUD_API_VERSION
+}

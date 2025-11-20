@@ -25,6 +25,7 @@ const (
 	MsgErrorInRequest                MessageError = "In Request"
 	MsgErrorTokenEmpty               MessageError = "Token is empty. Not can connect to Whatsapp"
 	MsgErrorConectionClosedWebSocket              = "Connection Closed WebSocket"
+	MsgErrorParsingJson              MessageError = "Error in parsing json data"
 )
 
 // CodeErrors
@@ -44,6 +45,7 @@ const (
 	CodeErrorInRequest                CodeError = 13
 	CodeErrorTokenEmpty               CodeError = 14
 	CodeErrorConectionClosedWebSocket CodeError = 15
+	CodeErrorParsingJson              CodeError = 16
 	CodeErrorBadRequest               CodeError = 400
 	CodeErrorUnauthorized             CodeError = 401
 	CodeErrorUrlNotFound              CodeError = 404
@@ -69,4 +71,5 @@ const (
 	TypeErrorInRequestMeta            TypeError = "in_request_meta"
 	TypeErrorInRequest                TypeError = "in_request"
 	TypeErrorTokenEmpty               TypeError = "token_empty"
+	TypeErrorParsingJson              TypeError = "parsing_json"
 )

@@ -54,9 +54,12 @@ func EventHandler(data any) {
 func main() {
 	// Create one Client of WhatsApp Official
 	my_client := clientoficial.NewClientWA(
+		// clientoficial.WithEnvFilePath("../config_env"),
 		clientoficial.WithEnvFilePath("../../config_env"),
-		clientoficial.WithWebhookSocket("wss://webhooks.savcoe-services.com/wa_official/ws"),
+		// clientoficial.WithWebhookSocket("wss://webhooks.savcoe-services.com/wa_official/ws"),
 		clientoficial.WithEventHandle(EventHandler),
+		clientoficial.WithWabaID(""),
+		clientoficial.WithToken(""),
 	)
 
 	if my_client.Error != nil {
@@ -93,9 +96,43 @@ func main() {
 	// fmt.Println("Response: \n", r)
 
 	// rr := my_client.SendReadNotification("wamid.")
+	// tpl := &types.MockupTemplate{
+	// 	Name:     "seguir_suporte_test_create",
+	// 	Language: "pt_BR",
+	// 	Category: "UTILITY",
+	// 	Components: []types.MockupComponent{
+	// 		// header
+	// 		// {},
+	// 		// body
+	// 		{
+	// 			Type: types.TC_BODY,
+	// 			Text: "Olá {{1}}, estamos aguardando sua resposta sobre o caso de suporte {{2}}. Caso já tenha resolvido, por favor nos avise.",
+	// 			Example: &types.Example{
+	// 				BodyText: &[]types.PositionalParams{
+	// 					{"Carlos", "SUP-9812"},
+	// 				},
+	// 			},
+	// 		},
+	// 		// bootons
+	// 		{
+	// 			Type: types.TC_BUTTONS,
+	// 			ArrayButton: &types.ArrayButton{
+	// 				{
+	// 					Type: "QUICK_REPLY",
+	// 					Text: "Caso resolvido",
+	// 				},
+	// 				{
+	// 					Type: "QUICK_REPLY",
+	// 					Text: "Ainda preciso de ajuda",
+	// 				},
+	// 			},
+	// 		},
+	// 	},
+	// }
+	// rr := my_client.CreateTemplate(tpl)
+	// fmt.Println("Response: \n", rr)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	<-c
-
 }

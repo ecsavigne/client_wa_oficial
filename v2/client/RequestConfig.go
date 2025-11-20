@@ -29,10 +29,13 @@ const (
 	RequestGetMessageInfo    TypeRequest = "RequestGetMessageInfo"
 	RequestDeleteMedia       TypeRequest = "RequestDeleteMedia"
 	RequestChangeUrlFull     TypeRequest = "RequestChangeUrlFull"
-	RequestWithQueryPhone    TypeRequest = "RequestWithQueryPhone"
-	RequestWithQuery         TypeRequest = "RequestWithQuery"
-	RequestWithQueryBusiness TypeRequest = "RequestWithQueryBusiness"
 	RequestWithVersion       TypeRequest = "RequestWithVersion"
+	RequestWithQueryPhone    TypeRequest = "RequestWithQueryPhone"
+	RequestWithQueryBusiness TypeRequest = "RequestWithQueryBusiness"
+	RequestWithBusiness      TypeRequest = "RequestWithBusiness"
+	RequestWithQueryWaba     TypeRequest = "RequestWithQueryWaba"
+	RequestWithWaba          TypeRequest = "RequestWithWaba"
+	RequestWithQueryVersion  TypeRequest = "RequestWithQueryVersion"
 )
 
 type QueryData map[string]any
@@ -119,7 +122,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		return nil, nil, c.Error
 	}
 
-	urlPath, _ = url.Parse(c.path + ePoint)
+	urlPath, _ = url.Parse(c.pathPhone + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
 
 	if len(params) > 0 && len(params) == 1 {
@@ -171,9 +174,11 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 			case RequestWithQueryBusiness:
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathBusiness, ePoint, queryData))
 			case RequestWithQueryPhone:
-				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.path, ePoint, queryData))
-			case RequestWithQuery:
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathPhone, ePoint, queryData))
+			case RequestWithQueryVersion:
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathVersion, ePoint, queryData))
+			case RequestWithQueryWaba:
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathWaba, ePoint, queryData))
 			case RequestWithVersion:
 				b, err := json.Marshal(params[1])
 				if err != nil {
@@ -185,6 +190,17 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 				}
 				formData = bytes.NewBuffer(b)
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", c.pathVersion, ePoint))
+			case RequestWithWaba:
+				b, err := json.Marshal(params[1])
+				if err != nil {
+					return nil, nil, response.NewError(&response.Error{
+						Type:    types.TypeErrorUnrecognized,
+						Code:    types.CodeErrorUnrecognized,
+						Message: err.Error(),
+					})
+				}
+				formData = bytes.NewBuffer(b)
+				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", c.pathWaba, ePoint))
 			}
 		}
 
@@ -317,7 +333,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 		}
 	}
 
-	urlPath, _ = url.Parse(c.path + ePoint)
+	urlPath, _ = url.Parse(c.pathPhone + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
 	c.request, e = http.NewRequest(methoth, urlPath.String(), payload)
 	if e != nil {

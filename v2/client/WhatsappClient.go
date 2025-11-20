@@ -79,7 +79,7 @@ func codeWebHook(msgByte []byte) *event.Components {
 }
 
 func (cl *ClientWA) messageIsForMe(component *event.Components) bool {
-	return component.Entry[0].Changes[0].Value.Metadata.PhoneNumberID == cl.Config.WaPhoneNumberId
+	return component.Entry[0].Changes[0].Value.Metadata.PhoneNumberID == cl.Config.getphoneID()
 }
 
 func (cl ClientWA) GetType() string {
@@ -280,10 +280,12 @@ func (cl *ClientWA) initWebHookSocket() {
 
 func defaultConfig() *Config {
 	return &Config{
-		WebhookSocket:       "",
-		EventHandle:         nil,
-		WaBusinessAccountId: "",
-		WaPhoneNumberId:     "",
+		WebhookSocket:     "",
+		EventHandle:       nil,
+		wabaID:            "",
+		businessID:        "",
+		phoneID:           "",
+		cLOUD_API_VERSION: "v24.0",
 	}
 }
 
@@ -333,48 +335,62 @@ func createClientHttp2(timeOut int) *http.Client {
 func newConfig(c Config) *Config {
 	c.Error = nil
 	if c.wA_BASE_URL == "" {
-		c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBaseUrlEmpty,
 			Code:    types.CodeErrorBadHandshake,
 			Message: types.MsgErrorBaseUrlEmpty,
 		})
 		return &c
+	} else {
+		c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
 	}
-	c.BaseUrl, _ = url.Parse(c.wA_BASE_URL)
 
 	if c.cLOUD_API_VERSION == "" {
-		c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 		c.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorApiVersionEmpty,
 			Code:    types.CodeErrorApiVersionEmpty,
 			Message: types.MsgErrorApiVersionEmpty,
 		})
 		return &c
+	} else {
+		c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 	}
-	c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 
-	if c.WaPhoneNumberId == "" {
-		c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
-		// c.Error = response.NewError(&response.Error{
-		// 	Type:    types.TypeErrorPhoneIdEmpty,
-		// 	Code:    types.CodeErrorPhoneIdEmpty,
-		// 	Message: types.MsgErrorPhoneIdEmpty,
-		// })
-		return &c
-	}
-	c.path = path.Join(c.cLOUD_API_VERSION, c.WaPhoneNumberId)
+	// if c.getphoneID() == "" {
+	// 	c.pathPhone = path.Join(c.pathVersion, c.phoneID)
+	// c.Error = response.NewError(&response.Error{
+	// 	Type:    types.TypeErrorPhoneIdEmpty,
+	// 	Code:    types.CodeErrorPhoneIdEmpty,
+	// 	Message: types.MsgErrorPhoneIdEmpty,
+	// })
+	// return &c
+	// } else {
+	c.pathPhone = path.Join(c.getVersion(), c.phoneID)
+	// }
 
-	if c.WaBusinessAccountId == "" {
-		c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
-		// c.Error = response.NewError(&response.Error{
-		// 	Type:    types.TypeErrorBusinessIdEmpty,
-		// 	Code:    types.CodeErrorBusinessIdEmpty,
-		// 	Message: types.MsgErrorBusinessIdEmpty,
-		// })
-		// return &c
-	}
-	c.pathBusiness = path.Join(c.cLOUD_API_VERSION, c.WaBusinessAccountId)
+	// if c.getWabaID() == "" {
+	// 	c.pathWaba = path.Join(c.pathVersion, c.wabaID)
+	// c.Error = response.NewError(&response.Error{
+	// 	Type:    types.TypeErrorBusinessIdEmpty,
+	// 	Code:    types.CodeErrorBusinessIdEmpty,
+	// 	Message: types.MsgErrorBusinessIdEmpty,
+	// })
+	// return &c
+	// } else {
+	c.pathWaba = path.Join(c.getVersion(), c.wabaID)
+	// }
+
+	// if c.getBusinessID() == "" {
+	// 	c.pathBusiness = path.Join(c.pathVersion, c.businessID)
+	// c.Error = response.NewError(&response.Error{
+	// 	Type:    types.TypeErrorBusinessIdEmpty,
+	// 	Code:    types.CodeErrorBusinessIdEmpty,
+	// 	Message: types.MsgErrorBusinessIdEmpty,
+	// })
+	// return &c
+	// } else {
+	c.pathBusiness = path.Join(c.getVersion(), c.businessID)
+	// }
 
 	if c.Token == "" && c.cLOUD_API_ACCESS_TOKEN == "" {
 		c.Error = response.NewError(&response.Error{
@@ -1745,20 +1761,20 @@ func (c *ClientWA) RegisterForUseApi() response.Responser {
 	return response.GetResponseRequest(resp.Body, "RegisterForUseApi", "ClientWA")
 }
 
-func (c *ClientWA) SetWaBusinessAccountId(waba_id string) {
-	c.Config.setWaBusinessAccountId(waba_id)
+func (c *ClientWA) setWabaID(waba_id string) {
+	c.Config.setWabaID(waba_id)
 }
 
-func (c *ClientWA) SetPhoneNumberId(phone_id string) {
-	c.Config.setWaPhoneNumberId(phone_id)
+func (c *ClientWA) SetPhoneId(phone_id string) {
+	c.Config.setPhoneID(phone_id)
 }
 
 func (c ClientWA) GetWabaId() string {
-	return c.WaBusinessAccountId
+	return c.getWabaID()
 }
 
-func (c ClientWA) GetPhoneNumberId() string {
-	return c.WaPhoneNumberId
+func (c ClientWA) GetPhoneId() string {
+	return c.getphoneID()
 }
 
 // GetWabaInfo makes a GET call to the WhatsApp API to get info about
@@ -1824,7 +1840,7 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.Responser {
 // error is returned. The response is wrapped and returned as a ResponserRequest.
 
 func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQuery, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time"})
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQueryVersion, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time"})
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -1963,7 +1979,7 @@ func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.Wab
 	for data := range dOut {
 		if data.ExistNumber {
 			// set WaBusinessAccountId
-			c.setWaBusinessAccountId(data.WabaInfo.ID)
+			c.setWabaID(data.WabaInfo.ID)
 
 			// Cancel context
 			for _, fCancel := range arrFuncCancel {
@@ -2151,7 +2167,7 @@ func (c *ClientWA) getAllTplFromLibrary(q ...QueryData) response.Responser {
 	}
 
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "message_template_library"),
-		c.Config, RequestWithQuery, q[0])
+		c.Config, RequestWithQueryVersion, q[0])
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -2270,7 +2286,7 @@ func (c *ClientWA) GetTplById(id string) response.Responser {
 
 // GetTemplate by name
 func (c *ClientWA) GetTplByName(name string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", c.WaBusinessAccountId, "message_templates"), c.Config, RequestWithQuery, QueryData{"name": name})
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", c.getWabaID(), "message_templates"), c.Config, RequestWithQueryVersion, QueryData{"name": name})
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -2342,4 +2358,62 @@ func (c *ClientWA) SendReadNotification(messageID string) response.Responser {
 	}
 
 	return response.GetResponseRequest(resp.Body, "SendReadNotification", "ClientWA")
+}
+
+func (c *ClientWA) CreateTemplate(tpl *types.MockupTemplate) response.Responser {
+	data := make(map[string]any)
+
+	if tpl == nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorUnrecognized, "Template is nil"),
+		})
+	}
+
+	byt, err_ := json.Marshal(tpl)
+	if err_ != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorParsingJson,
+			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorParsingJson, err_.Error()),
+		})
+	}
+
+	json.Unmarshal(byt, &data)
+
+	if c.getWabaID() == "" {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorUnrecognized, "WabaID is empty"),
+		})
+	}
+
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s", "message_templates"), c.Config, RequestWithWaba, data)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorInRequest,
+			Message: fmt.Sprintf("Error type: (%s) in function CreateTemplate of ClientWA. error is: %s", types.MsgErrorInRequest, err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorInRequestMeta,
+			Message: fmt.Sprintf("Error type: (%s) in function CreateTemplate of ClientWA. error is: %s", types.MsgErrorInRequestMeta, err.Error()),
+		})
+	}
+
+	return response.GetResponseRequest(resp.Body, "CreateTemplate", "ClientWA")
 }
