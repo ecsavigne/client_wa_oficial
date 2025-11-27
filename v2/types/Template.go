@@ -300,7 +300,7 @@ type LibraryTemplateBodyInputPayload = LibraryTemplateBodyInput
 
 type TemplateLibrary struct {
 	*ArrayButton               `json:"buttons,omitempty"`
-	Body                       string                        `json:"body" validate:"required"`
+	Body                       string                        `json:"body,omitempty"`
 	BodyParam                  []string                      `json:"body_params,omitempty"`
 	BodyParamType              []BODY_PARAM_TPL_LIBRARY_TYPE `json:"body_param_types,omitempty"`
 	Header                     string                        `json:"header,omitempty"`
