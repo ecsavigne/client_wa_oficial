@@ -26,7 +26,7 @@ type Url_Button struct {
 
 type Phone_Number_Button struct {
 	// less than 20 chars. ej: "+13057652345"
-	PhoneNumber string `json:"phone_number"`
+	PhoneNumber string `json:"phone_number,omitempty"`
 }
 
 type Copy_Code_Button struct {
@@ -43,11 +43,11 @@ const (
 )
 
 type Flow_Button struct {
-	FlowId uint64 `json:"flow_id" validate:"required"`
+	FlowId uint64 `json:"flow_id,omitempty"`
 	// name of process only allowed on Cloud Api
-	FlowName string `json:"flow_name,omitempty" validate:"required"`
+	FlowName string `json:"flow_name,omitempty"`
 	//  string in format json ex: "{\"version\": \"3.1\", \"screens\": [...]}"
-	FlowJson string `json:"flow_json" validate:"required"`
+	FlowJson string `json:"flow_json,omitempty"`
 	// Allowed values: "navigate", "data_exchange". Use "navigate" for define first screen with part of template message.
 	FlowAction string `json:"flow_action,omitempty"`
 	// Optional only if <flow_action> is "navigate". The id of the first screen of process
