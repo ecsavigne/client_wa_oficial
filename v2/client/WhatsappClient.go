@@ -2386,6 +2386,12 @@ func (c *ClientWA) createUpdateTemplate(tpl *types.MockupTemplate, isUpdate bool
 	}
 
 	json.Unmarshal(byt, &data)
+	if isUpdate {
+		delete(data, "id")
+		delete(data, "sub_category")
+		delete(data, "parameter_format")
+		delete(data, "status")
+	}
 
 	if c.getWabaID() == "" {
 		return response.NewError(&response.Error{
