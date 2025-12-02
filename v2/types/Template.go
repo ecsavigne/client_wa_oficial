@@ -217,7 +217,7 @@ const (
 
 type ArrayButton = []Button
 
-type PositionalParams = []string
+type PositionalParams = any // []string or string
 type NamedParam struct {
 	ParamName string `json:"param_name" validate:"required"`
 	Example   string `json:"example" validate:"required"`
@@ -581,7 +581,7 @@ func (tpl MockupTemplate) GetLocatedTpl() string {
 }
 
 var getParamPositional = func(pp PositionalParams, arrParam *[]map[string]any) {
-	for _, p := range pp {
+	for _, p := range pp.([]string) {
 		*arrParam = append(*arrParam, map[string]any{
 			"type": "text",
 			"text": p,

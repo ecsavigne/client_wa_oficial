@@ -2360,14 +2360,19 @@ func (c *ClientWA) SendReadNotification(messageID string) response.Responser {
 	return response.GetResponseRequest(resp.Body, "SendReadNotification", "ClientWA")
 }
 
-func (c *ClientWA) CreateTemplate(tpl *types.MockupTemplate) response.Responser {
+func (c *ClientWA) createUpdateTemplate(tpl *types.MockupTemplate, isUpdate bool) response.Responser {
 	data := make(map[string]any)
+
+	funcName := "CreateTemplate"
+	if isUpdate {
+		funcName = "UpdateTemplate"
+	}
 
 	if tpl == nil {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorUnrecognized, "Template is nil"),
+			Message: fmt.Sprintf("Error type: (%s) in %s function of ClientWA. error is: %s", types.MsgErrorUnrecognized, funcName, "Template is nil"),
 		})
 	}
 
@@ -2376,7 +2381,7 @@ func (c *ClientWA) CreateTemplate(tpl *types.MockupTemplate) response.Responser 
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorParsingJson,
-			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorParsingJson, err_.Error()),
+			Message: fmt.Sprintf("Error type: (%s) in %s function of ClientWA. error is: %s", types.MsgErrorParsingJson, funcName, err_.Error()),
 		})
 	}
 
@@ -2386,11 +2391,91 @@ func (c *ClientWA) CreateTemplate(tpl *types.MockupTemplate) response.Responser 
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorUnrecognized, "WabaID is empty"),
+			Message: fmt.Sprintf("Error type: (%s) in %s function of ClientWA. error is: %s", types.MsgErrorUnrecognized, funcName, "WabaID is empty"),
 		})
 	}
 
 	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s", "message_templates"), c.Config, RequestWithWaba, data)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorInRequest,
+			Message: fmt.Sprintf("Error type: (%s) in function %s of ClientWA. error is: %s", types.MsgErrorInRequest, funcName, err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorInRequestMeta,
+			Message: fmt.Sprintf("Error type: (%s) in function %s of ClientWA. error is: %s", types.MsgErrorInRequestMeta, funcName, err.Error()),
+		})
+	}
+
+	return response.GetResponseRequest(resp.Body, fmt.Sprintf("%s", funcName), "ClientWA")
+}
+
+func (c *ClientWA) CreateTemplate(tpl *types.MockupTemplate) response.Responser {
+	return c.createUpdateTemplate(tpl, false)
+}
+
+// UpdateTemplate updates a template by ID.
+// If the Waba ID is empty, it returns an error.
+// If the request is successful, the response is returned; otherwise, an error is returned.
+func (c *ClientWA) UpdateTemplate(tpl *types.MockupTemplate) response.Responser {
+	return c.createUpdateTemplate(tpl, true)
+}
+
+type ParamDelete struct {
+	ID, Name string
+}
+
+// DeleteTemplate deletes a template by ID or Name.
+// If the Waba ID in client is empty, it returns an error.
+// If the request is successful, the response is returned; otherwise, an error is returned.
+// The ParamDelete struct should have the following fields:
+// - ID: template id (Delete by id)
+// - Name: template name (Delete by name)
+// if both ID and Name are empty, it returns an error
+func (c *ClientWA) DeleteTemplate(p ParamDelete) response.Responser {
+	if c.getWabaID() == "" {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorUnrecognized, "WabaID is empty"),
+		})
+	}
+
+	if p.ID == "" && p.Name == "" {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintf("Error type: (%s) in CreateTemplate function of ClientWA. error is: %s", types.MsgErrorUnrecognized, "ID and Name are empty"),
+		})
+	}
+
+	data := map[string]any{
+		"hsm_id": p.ID,
+		"name":   p.Name,
+	}
+
+	if p.ID == "" {
+		delete(data, "hsm_id")
+	}
+
+	if p.Name == "" {
+		delete(data, "name")
+	}
+
+	_, _, err := defaultRequest(http.MethodDelete, fmt.Sprintf("/%s", "message_templates"), c.Config, RequestWithQueryWaba, (QueryData)(data))
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err

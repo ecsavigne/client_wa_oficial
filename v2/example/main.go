@@ -56,7 +56,7 @@ func main() {
 	my_client := clientoficial.NewClientWA(
 		// clientoficial.WithEnvFilePath("../config_env"),
 		clientoficial.WithEnvFilePath("../../config_env"),
-		// clientoficial.WithWebhookSocket("wss://webhooks.savcoe-services.com/wa_official/ws"),
+		// clientoficial.WithWebhookSocket("wss://webhooks.xxx.com/wa_official/ws"),
 		clientoficial.WithEventHandle(EventHandler),
 		clientoficial.WithWabaID(""),
 		clientoficial.WithToken(""),
@@ -129,8 +129,21 @@ func main() {
 	// 		},
 	// 	},
 	// }
-	// rr := my_client.CreateTemplate(tpl)
-	// fmt.Println("Response: \n", rr)
+	// rr := my_client.DeleteTemplate(clientoficial.ParamDelete{
+	// 	Name: "my_template_name_complete",
+	// })
+	// rr := my_client.UpdateTemplate(&types.MockupTemplate{
+	// 	Name:     "my_template_header_footer_body",
+	// 	Language: "en_US",
+	// 	Category: "MARKETING",
+	// 	Components: []types.MockupComponent{
+	// 		{
+	// 			Type: types.TC_BODY,
+	// 			Text: "Olá TTT, estamos aguardando sua resposta sobre o caso de suporte PP. Caso já tenha resolvido, por favor nos avise.",
+	// 		},
+	// 	},
+	// })
+	// fmt.Printf("Response: %+v\n", rr)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
