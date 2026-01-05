@@ -12,13 +12,13 @@ const (
 
 var type_NOTIFICATION_WEBHOOK = map[string]TYPE_NOTIFICATION_WEBHOOK{
 	"unknown":                        WEBHOOK_NOTIFICATION_UNKNOWN,
-	"message":                        WEBHOOK_NOTIFICATION_MESSAGE,
+	"messages":                       WEBHOOK_NOTIFICATION_MESSAGE,
 	"template_category_update":       WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_CATEGORY,
 	"message_template_status_update": WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_STATUS,
 }
 
 func (t TYPE_NOTIFICATION_WEBHOOK) Enum() string {
-	return []string{"unknown", "message", "template_category_update", "message_template_status_update"}[t]
+	return []string{"unknown", "messages", "template_category_update", "message_template_status_update"}[t]
 }
 
 func (t TYPE_NOTIFICATION_WEBHOOK) String() string {

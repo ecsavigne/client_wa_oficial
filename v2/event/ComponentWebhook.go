@@ -215,13 +215,73 @@ type Statuse struct {
 	Errors                []Error       `json:"errors,omitempty"`
 }
 
+type MessageTemplateButton struct {
+	MessageTemplateButtonType        string `json:"message_template_button_type,omitempty"`
+	MessageTemplateButtonText        string `json:"message_template_button_text,omitempty"`
+	MessageTemplateButtonUrl         string `json:"message_template_button_url,omitempty"`
+	MessageTemplateButtonPhoneNumber string `json:"message_template_button_phone_number,omitempty"`
+}
+
+type MessageTemplateComponentsUpdate struct {
+	MessageTemplateId      string                  `json:"message_template_id,omitempty"`
+	MessageTemplateName    string                  `json:"message_template_name,omitempty"`
+	MessageTemplateBody    string                  `json:"message_template_element,omitempty"`
+	MessageTemplateTitle   string                  `json:"message_template_title,omitempty"`
+	MessageTemplateFooter  string                  `json:"message_template_footer,omitempty"`
+	MessageTemplateButtons []MessageTemplateButton `json:"message_template_buttons,omitempty"`
+}
+
+type MessageTemplateQualityUpdate struct {
+	PreviousQualityScore    string `json:"previous_quality_score,omitempty"`
+	NewQualityScore         string `json:"new_quality_score,omitempty"`
+	MessageTemplateLanguage string `json:"message_template_language,omitempty"`
+}
+
+type DisableInfo struct {
+	DisableDate uint64 `json:"disable_date,omitempty"`
+}
+
+type OtherInfo struct {
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+type RejectionInfo struct {
+	Reason         string `json:"reason,omitempty"`
+	Recommendation string `json:"recommendation,omitempty"`
+}
+
+type MessageTemplateStatusUpdate struct {
+	Event                   string `json:"event,omitempty"`
+	Reason                  string `json:"reason,omitempty"`
+	MessageTemplateCategory string `json:"message_template_category,omitempty"`
+	*DisableInfo            `json:"disable_info,omitempty"`
+	*OtherInfo              `json:"other_info,omitempty"`
+	*RejectionInfo          `json:"rejection_info,omitempty"`
+}
+
+type TemplateCategoryUpdate struct {
+	CorrectCategory         string `json:"correct_category,omitempty"`
+	PreviousCategory        string `json:"previous_category,omitempty"`
+	NewCategory             string `json:"new_category,omitempty"`
+	CategoryUpdateTimestamp uint64 `json:"category_update_timestamp,omitempty"`
+}
+
+type MessageTemplateWebhook struct {
+	*MessageTemplateComponentsUpdate `json:",omitempty"`
+	*MessageTemplateQualityUpdate    `json:",omitempty"`
+	*MessageTemplateStatusUpdate     `json:",omitempty"`
+	*TemplateCategoryUpdate          `json:",omitempty"`
+}
+
 type Value struct {
-	MessagingProduct string    `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
-	Metadata         *Metadata `json:"metadata,omitempty"`
-	Contacts         []Contact `json:"contacts,omitempty"`
-	Messages         []Message `json:"messages,omitempty"`
-	Statuses         []Statuse `json:"statuses,omitempty"`
-	Errors           []Error   `json:"errors,omitempty"`
+	MessagingProduct        string    `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
+	Metadata                *Metadata `json:"metadata,omitempty"`
+	Contacts                []Contact `json:"contacts,omitempty"`
+	Messages                []Message `json:"messages,omitempty"`
+	Statuses                []Statuse `json:"statuses,omitempty"`
+	Errors                  []Error   `json:"errors,omitempty"`
+	*MessageTemplateWebhook `json:",omitempty"`
 }
 
 type Change struct {
@@ -231,6 +291,7 @@ type Change struct {
 
 type Entry struct {
 	ID      string   `json:"id,omitempty"`
+	Time    uint64   `json:"time,omitempty"`
 	Changes []Change `json:"changes,omitempty"`
 }
 

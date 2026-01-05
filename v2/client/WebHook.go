@@ -27,10 +27,13 @@ func getSatusMessage(msg *event.Components) (status string) {
 	return msg.Entry[0].Changes[0].Value.Statuses[0].Status
 }
 
+// sent, delivered, read, failed, deleted, warning
 func isVailidStatusMessage(status string) bool {
-	if status == "read" || status == "delivered" || status == "sent" || status == "failed" {
+	if status == "read" || status == "delivered" || status == "sent" || status == "failed" ||
+		status == "deleted" || status == "warning" {
 		return true
 	}
+
 	return false
 }
 
