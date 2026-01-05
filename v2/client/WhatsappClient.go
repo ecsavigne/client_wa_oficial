@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/event"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/message"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
@@ -78,8 +79,27 @@ func codeWebHook(msgByte []byte) *event.Components {
 	return msg
 }
 
-func (cl *ClientWA) messageIsForMe(component *event.Components) bool {
-	return component.Entry[0].Changes[0].Value.Metadata.PhoneNumberID == cl.Config.getphoneID()
+// messageIsForMe && Field
+// field = template_category_update, message_template_status_update, messages
+func (cl *ClientWA) messageIsForMe(component *event.Components) (isForme bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
+	field := component.Entry[0].Changes[0].Field
+	phoneNumberID := ""
+	if component.Entry[0].Changes[0].Value.Metadata != nil {
+		phoneNumberID = component.Entry[0].Changes[0].Value.Metadata.PhoneNumberID
+	}
+	wabaID := component.Entry[0].ID
+
+	if phoneNumberID == cl.Config.getphoneID() && field == "messages" {
+		isForme = true
+
+		return isForme, evt_types.ParseTypeNotificationWebhook(field)
+	}
+
+	if wabaID == cl.Config.getWabaID() && (field == "template_category_update" || field == "message_template_status_update") {
+		isForme = true
+	}
+
+	return isForme, evt_types.ParseTypeNotificationWebhook(field)
 }
 
 func (cl ClientWA) GetType() string {
@@ -91,13 +111,12 @@ func (cl *ClientWA) initWebHookSocket() {
 	// Conectar al servidor WebSocket
 	defer func() {
 		if r := recover(); r != nil {
-
 		}
 	}()
 
-	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
-
 	var evt event.EventInterface
+
+	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
 	if err != nil {
 		switch {
 		case websocket.IsUnexpectedCloseError(err):
@@ -162,7 +181,8 @@ func (cl *ClientWA) initWebHookSocket() {
 		}
 
 		msg := codeWebHook(message)
-		if !cl.messageIsForMe(msg) {
+		isForme, _ := cl.messageIsForMe(msg)
+		if !isForme {
 			continue
 		}
 

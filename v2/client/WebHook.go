@@ -2,10 +2,37 @@ package clientoficial
 
 import (
 	"encoding/json"
-	"sync"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/event"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/event/types"
 )
+
+func getTypeMessage(msg *event.Components) (typ string) {
+	defer func() {
+		if r := recover(); r != nil {
+			typ = ""
+		}
+	}()
+
+	return msg.Entry[0].Changes[0].Value.Messages[0].Type
+}
+
+func getSatusMessage(msg *event.Components) (status string) {
+	defer func() {
+		if r := recover(); r != nil {
+			status = ""
+		}
+	}()
+
+	return msg.Entry[0].Changes[0].Value.Statuses[0].Status
+}
+
+func isVailidStatusMessage(status string) bool {
+	if status == "read" || status == "delivered" || status == "sent" || status == "failed" {
+		return true
+	}
+	return false
+}
 
 func (cl *ClientWA) Broadcast(data map[string]any) {
 	defer func() {
@@ -23,16 +50,19 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 	}
 
 	msg := codeWebHook(message)
-	if !cl.messageIsForMe(msg) {
+	isForme, typeNotification := cl.messageIsForMe(msg)
+	if !isForme {
 		return
 	}
 
-	switch {
-	case len(msg.Entry) != 0 &&
-		len(msg.Entry[0].Changes) != 0 &&
-		len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-		msg.Entry[0].Changes[0].Value.Messages[0].Type != "":
-		switch msg.Entry[0].Changes[0].Value.Messages[0].Type {
+	switch typeNotification {
+	// case len(msg.Entry) != 0 &&
+	// 	len(msg.Entry[0].Changes) != 0 &&
+	// 	len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+	// 	msg.Entry[0].Changes[0].Value.Messages[0].Type != ""
+	// :
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
+		switch getTypeMessage(msg) {
 		case "audio":
 			evt = &event.MessageAudioEvent{
 				Components: msg,
@@ -90,49 +120,67 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 				Components: msg,
 			}
 		default:
-			cl.Config.EventHandle(message)
-		}
-	case len(msg.Entry) != 0 &&
-		len(msg.Entry[0].Changes) != 0 &&
-		len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
-		evt = &event.StatusMessageEvent{
-			Components: msg,
-		}
+			// can be status message or another notification about message
+			status := getSatusMessage(msg)
 
-		recipientId := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
-		id := msg.Entry[0].Changes[0].Value.Statuses[0].ID
-
-		mu := sync.Mutex{}
-		mu.Lock()
-		pair, ok := infoContacts[id]
-		mu.Unlock()
-
-		if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
-			msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
-			if ok {
-				pair.Channel <- InfoContact{
-					ContactPhone: pair.Phone,
-					RecipientID:  recipientId,
-					IsOnWhats:    false,
+			switch {
+			case status != "":
+				if isVailidStatusMessage(status) {
+					evt = &event.StatusMessageEvent{
+						Components: msg,
+					}
 				}
-			}
-
-		} else {
-			if ok {
-				pair.Channel <- InfoContact{
-					ContactPhone: pair.Phone,
-					RecipientID:  recipientId,
-					IsOnWhats:    true,
-				}
+			default:
+				cl.Config.EventHandle(message)
 			}
 		}
-	case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-		len(msg.Entry[0].Changes[0].Value.Messages[0].Contacts) != 0:
-		evt = &event.MessageContactEvent{
+	// case len(msg.Entry) != 0 &&
+	// 	len(msg.Entry[0].Changes) != 0 &&
+	// 	len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
+	// 	evt = &event.StatusMessageEvent{
+	// 		Components: msg,
+	// 	}
+
+	// 	recipientId := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
+	// 	id := msg.Entry[0].Changes[0].Value.Statuses[0].ID
+
+	// 	mu := sync.Mutex{}
+	// 	mu.Lock()
+	// 	pair, ok := infoContacts[id]
+	// 	mu.Unlock()
+
+	// 	if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
+	// 		msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
+	// 		if ok {
+	// 			pair.Channel <- InfoContact{
+	// 				ContactPhone: pair.Phone,
+	// 				RecipientID:  recipientId,
+	// 				IsOnWhats:    false,
+	// 			}
+	// 		}
+
+	// 	} else {
+	// 		if ok {
+	// 			pair.Channel <- InfoContact{
+	// 				ContactPhone: pair.Phone,
+	// 				RecipientID:  recipientId,
+	// 				IsOnWhats:    true,
+	// 			}
+	// 		}
+	// 	}
+	// case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+	// 	len(msg.Entry[0].Changes[0].Value.Messages[0].Contacts) != 0:
+	// 	evt = &event.MessageContactEvent{
+	// 		Components: msg,
+	// 	}
+	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_CATEGORY,
+		evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_STATUS:
+		evt = &event.MessageTemplateEvent{
 			Components: msg,
 		}
 	default:
 		cl.Config.EventHandle(message)
+		return
 	}
 
 	cl.Config.EventHandle(evt)

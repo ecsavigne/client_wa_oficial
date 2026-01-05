@@ -51,4 +51,5 @@ const (
 	EventTypeMessageLocation    EventType = "EventTypeMessageLocation"
 	EventTypeMessage            EventType = "EventTypeMessage"
 	EventTypeStatusMessage      EventType = "EventTypeStatusMessage"
+	EventTypeTemplateMessage    EventType = "EventTypeTemplateMessage"
 )

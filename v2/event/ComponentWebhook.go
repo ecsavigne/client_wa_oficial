@@ -207,7 +207,7 @@ type Conversation struct {
 type Statuse struct {
 	ID                    string        `json:"id,omitempty"`
 	BizOpaqueCallbackData string        `json:"biz_opaque_callback_data,omitempty"`
-	Status                string        `json:"status,omitempty"` //delivered, read, sent
+	Status                string        `json:"status,omitempty"` //delivered, read, sent, failed
 	Timestamp             string        `json:"timestamp,omitempty"`
 	RecipientID           string        `json:"recipient_id,omitempty"`
 	Conversation          *Conversation `json:"conversation,omitempty"`

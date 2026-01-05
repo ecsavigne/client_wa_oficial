@@ -117,3 +117,10 @@ type MessageLocationEvent struct {
 
 func (*MessageLocationEvent) GetType() types.EventType { return types.EventTypeMessageLocation }
 func (m *MessageLocationEvent) String() string         { return response.Val(m) }
+
+type MessageTemplateEvent struct {
+	*Components
+}
+
+func (*MessageTemplateEvent) GetType() types.EventType { return types.EventTypeTemplateMessage }
+func (m *MessageTemplateEvent) String() string         { return response.Val(m) }
