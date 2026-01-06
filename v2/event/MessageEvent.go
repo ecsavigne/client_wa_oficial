@@ -1,6 +1,7 @@
 package event
 
 import (
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
 )
@@ -123,4 +124,7 @@ type MessageTemplateEvent struct {
 }
 
 func (*MessageTemplateEvent) GetType() types.EventType { return types.EventTypeTemplateMessage }
-func (m *MessageTemplateEvent) String() string         { return response.Val(m) }
+func (t *MessageTemplateEvent) String() string         { return response.Val(t) }
+func (t *MessageTemplateEvent) GetTypeNotifications() evt_types.TYPE_NOTIFICATION_WEBHOOK {
+	return evt_types.ParseTypeNotificationWebhook(t.Entry[0].Changes[0].Field)
+}
