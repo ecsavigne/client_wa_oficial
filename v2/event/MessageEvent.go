@@ -128,3 +128,26 @@ func (t *MessageTemplateEvent) String() string         { return response.Val(t) 
 func (t *MessageTemplateEvent) GetTypeNotifications() evt_types.TYPE_NOTIFICATION_WEBHOOK {
 	return evt_types.ParseTypeNotificationWebhook(t.Entry[0].Changes[0].Field)
 }
+
+func (t *MessageTemplateEvent) GetStatus() (status string) {
+	defer func() {
+		if r := recover(); r != nil {
+			status = ""
+		}
+	}()
+
+	status = t.Entry[0].Changes[0].Value.Event
+
+	return status
+}
+
+func (t *MessageTemplateEvent) GetCategory() (cat string) {
+	defer func() {
+		if r := recover(); r != nil {
+			cat = ""
+		}
+	}()
+
+	cat = t.Entry[0].Changes[0].Value.NewCategory
+	return cat
+}
