@@ -1,7 +1,6 @@
 package event
 
 import (
-	evt_types "github.com/ecsavigne/client_wa_oficial/v2/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
 )
@@ -118,36 +117,3 @@ type MessageLocationEvent struct {
 
 func (*MessageLocationEvent) GetType() types.EventType { return types.EventTypeMessageLocation }
 func (m *MessageLocationEvent) String() string         { return response.Val(m) }
-
-type MessageTemplateEvent struct {
-	*Components
-}
-
-func (*MessageTemplateEvent) GetType() types.EventType { return types.EventTypeTemplateMessage }
-func (t *MessageTemplateEvent) String() string         { return response.Val(t) }
-func (t *MessageTemplateEvent) GetTypeNotifications() evt_types.TYPE_NOTIFICATION_WEBHOOK {
-	return evt_types.ParseTypeNotificationWebhook(t.Entry[0].Changes[0].Field)
-}
-
-func (t *MessageTemplateEvent) GetStatus() (status string) {
-	defer func() {
-		if r := recover(); r != nil {
-			status = ""
-		}
-	}()
-
-	status = t.Entry[0].Changes[0].Value.Event
-
-	return status
-}
-
-func (t *MessageTemplateEvent) GetCategory() (cat string) {
-	defer func() {
-		if r := recover(); r != nil {
-			cat = ""
-		}
-	}()
-
-	cat = t.Entry[0].Changes[0].Value.NewCategory
-	return cat
-}
