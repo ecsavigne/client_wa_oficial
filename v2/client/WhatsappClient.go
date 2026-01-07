@@ -2139,9 +2139,13 @@ func (c *ClientWA) IsOnWhats(contactPhone []string) []InfoContact {
 	return infoContactsExit
 }
 
-// GetAllTemplate associated to a waba
-func (c *ClientWA) GetAllTplFromWaba(waba_id string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", waba_id, "message_templates"), c.Config, RequestWithVersion, nil)
+func (c *ClientWA) getAllTplFromWaba(waba_id string, q ...QueryData) response.Responser {
+	if len(q) == 0 {
+		q = append(q, QueryData{})
+	}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", waba_id, "message_templates"),
+		c.Config, RequestWithQueryVersion, q[0])
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -2178,6 +2182,44 @@ func (c *ClientWA) GetAllTplFromWaba(waba_id string) response.Responser {
 	}
 
 	return response.JsonWrapperResponseRequest(b).GetTemplateResponse()
+}
+
+// getAllTemplate associated to a waba
+func (c *ClientWA) GetAllTplFromWaba(waba_id string) response.Responser {
+	res := c.getAllTplFromWaba(waba_id)
+
+	q := append([]QueryData{}, QueryData{})
+	if res.GetResponseError() == nil {
+		t := res.GetTemplateResponse()
+		pag := t.Paging
+		afterValue := pag.Cursors.After
+
+		for {
+			q[0].SetValue("after", afterValue)
+
+			if pag.Next == "" {
+				break
+			}
+
+			temp := c.getAllTplFromWaba(waba_id, q...)
+			if v, ok := temp.(*response.TemplateResponse); v == nil && ok {
+				break
+			}
+
+			if temp.GetResponseError() != nil {
+				break
+			}
+
+			t_ := temp.GetTemplateResponse()
+			pag = t_.Paging
+			afterValue = pag.Cursors.After
+			t.Data = append(t.Data, t_.Data...)
+		}
+
+		return t
+	}
+
+	return res
 }
 
 // GetAllTemplate pre approval from library, lands is a list of land codes ej: ["AR", "CO", "mx", "fr"] not sensitive to case
