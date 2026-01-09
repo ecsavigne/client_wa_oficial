@@ -17,11 +17,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/event"
-	evt_types "github.com/ecsavigne/client_wa_oficial/v2/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/message"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response/event"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/response/event/types"
 	"golang.org/x/net/http2"
 
 	"github.com/gorilla/websocket"

@@ -6,8 +6,8 @@ import (
 	"os/signal"
 
 	clientoficial "github.com/ecsavigne/client_wa_oficial/v2/client"
-	"github.com/ecsavigne/client_wa_oficial/v2/event"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response/event"
 )
 
 // EventHandler is a function that handles events

@@ -3,8 +3,8 @@ package clientoficial
 import (
 	"encoding/json"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/event"
-	evt_types "github.com/ecsavigne/client_wa_oficial/v2/event/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/response/event"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/response/event/types"
 )
 
 func getTypeMessage(msg *event.Components) (typ string) {
