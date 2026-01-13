@@ -15,16 +15,6 @@ type MessageButtonEvent struct {
 func (*MessageButtonEvent) GetType() types.EventType { return types.EventTypeMessageButton }
 func (m *MessageButtonEvent) String() string         { return response.Val(m) }
 
-/*
- * GetContactPhone() string
- * GetPhoneID() string
- * GetContactName() string
- * GetTimestamp() int64
- * GetMessageID() string
- * GetResponseMessageID() string
- * GetButtonText() string
- * GetContextMessage()
- */
 func (bEvt *MessageButtonEvent) GetContactPhone() string {
 	return internal.FirstNotEmpty(bEvt.Entry[0].Changes[0].Value.Contacts[0].WaId,
 		bEvt.Entry[0].Changes[0].Value.Messages[0].From)
@@ -52,7 +42,7 @@ func (bEvt *MessageButtonEvent) GetMessageID() string {
 }
 
 func (bEvt *MessageButtonEvent) GetResponseMessageID() string {
-	ctx := bEvt.GetContextMessage()
+	ctx := bEvt.GetContext()
 	if ctx != nil {
 		return ctx.ID
 	}
@@ -66,6 +56,6 @@ func (bEvt *MessageButtonEvent) GetButtonText() string {
 	)
 }
 
-func (bEvt *MessageButtonEvent) GetContextMessage() *Context {
+func (bEvt *MessageButtonEvent) GetContext() *Context {
 	return bEvt.Entry[0].Changes[0].Value.Messages[0].Context
 }
