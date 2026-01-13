@@ -383,7 +383,7 @@ func (tpl MockupTemplate) GetBody() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) getFooter() *MockupComponent {
+func (tpl MockupTemplate) GetFooter() *MockupComponent {
 	if len(tpl.Components) == 0 {
 		return nil
 	}
@@ -464,7 +464,7 @@ func (tpl MockupTemplate) isText() bool {
 
 	h := tpl.GetHeader()
 	b := tpl.GetBody()
-	f := tpl.getFooter()
+	f := tpl.GetFooter()
 
 	if !tpl.hasComponents() {
 		if tpl.TemplateLibrary != nil && tpl.TemplateLibrary.ArrayButton == nil {
