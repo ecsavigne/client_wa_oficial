@@ -355,7 +355,7 @@ const (
 	TTPL_MULTI_PRODUCTS TYPE_TEMPLATE = "MULTI_PRODUCTS"
 )
 
-func (tpl MockupTemplate) getHeader() *MockupComponent {
+func (tpl MockupTemplate) GetHeader() *MockupComponent {
 	if len(tpl.Components) == 0 {
 		return nil
 	}
@@ -369,7 +369,7 @@ func (tpl MockupTemplate) getHeader() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) getBody() *MockupComponent {
+func (tpl MockupTemplate) GetBody() *MockupComponent {
 	if len(tpl.Components) == 0 {
 		return nil
 	}
@@ -462,8 +462,8 @@ func (tpl MockupTemplate) isText() bool {
 		return false
 	}
 
-	h := tpl.getHeader()
-	b := tpl.getBody()
+	h := tpl.GetHeader()
+	b := tpl.GetBody()
 	f := tpl.getFooter()
 
 	if !tpl.hasComponents() {
@@ -502,7 +502,7 @@ func (tpl MockupTemplate) isText() bool {
 // isMedia
 func (tpl MockupTemplate) isMedia() bool {
 	typeMedia := []string{FT_DOCUMENT, FT_IMAGE, FT_VIDEO, FT_GIF}
-	return tpl.getHeader() != nil && slices.Contains(typeMedia, str.ToUpper(tpl.getHeader().Format))
+	return tpl.GetHeader() != nil && slices.Contains(typeMedia, str.ToUpper(tpl.GetHeader().Format))
 }
 
 // isButton
@@ -530,7 +530,7 @@ func (tpl MockupTemplate) isInteractive() bool {
 
 // isLocation
 func (tpl MockupTemplate) isLocation() bool {
-	return tpl.getHeader() != nil && str.ToUpper(tpl.getHeader().Format) == FT_LOCATION
+	return tpl.GetHeader() != nil && str.ToUpper(tpl.GetHeader().Format) == FT_LOCATION
 }
 
 // isAuth
