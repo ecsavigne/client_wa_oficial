@@ -1,6 +1,7 @@
 package event
 
 import (
+	"github.com/ecsavigne/client_wa_oficial/v2/types/internal"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/message"
 )
 
@@ -104,6 +105,10 @@ func (ctx Context) GetID() string {
 
 func (ctx Context) GetReferredProduct() ReferredProduct {
 	return ctx.ReferredProduct
+}
+
+func (ctx Context) String() string {
+	return internal.ConvertStr(&ctx)
 }
 
 type Button struct {
