@@ -27,13 +27,6 @@ type MessageAudioEvent struct {
 func (*MessageAudioEvent) GetType() types.EventType { return types.EventTypeMessageAudio }
 func (m *MessageAudioEvent) String() string         { return response.Val(m) }
 
-type MessageButtonEvent struct {
-	*Components
-}
-
-func (*MessageButtonEvent) GetType() types.EventType { return types.EventTypeMessageButton }
-func (m *MessageButtonEvent) String() string         { return response.Val(m) }
-
 type MessageDocumentEvent struct {
 	*Components
 }

@@ -86,6 +86,26 @@ type Context struct {
 	ReferredProduct     ReferredProduct `json:"referred_product"`
 }
 
+func (ctx Context) GetForwarded() bool {
+	return ctx.Forwarded
+}
+
+func (ctx Context) GetFrequentlyForwarded() bool {
+	return ctx.FrequentlyForwarded
+}
+
+func (ctx Context) GetFrom() string {
+	return ctx.From
+}
+
+func (ctx Context) GetID() string {
+	return ctx.ID
+}
+
+func (ctx Context) GetReferredProduct() ReferredProduct {
+	return ctx.ReferredProduct
+}
+
 type Button struct {
 	Text    string `json:"text,omitempty"`
 	Payload string `json:"payload,omitempty"`
