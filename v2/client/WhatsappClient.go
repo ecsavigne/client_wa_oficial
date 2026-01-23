@@ -340,14 +340,16 @@ func NewClientWA(opts ...Options) *ClientWA {
 }
 
 func createClientHttp2(timeOut int) *http.Client {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			MinVersion: tls.VersionTLS12},
+	tr := http.DefaultTransport.(*http.Transport).Clone()
+
+	tr.TLSClientConfig = &tls.Config{
+		MinVersion: tls.VersionTLS13,
 	}
 	http2.ConfigureTransport(tr)
 
+	d := time.Duration(timeOut)
 	return &http.Client{
-		Timeout:   time.Duration(timeOut) * time.Second,
+		Timeout:   d * time.Second,
 		Transport: tr,
 	}
 }
@@ -376,41 +378,11 @@ func newConfig(c Config) *Config {
 		c.pathVersion = path.Join(c.cLOUD_API_VERSION)
 	}
 
-	// if c.getphoneID() == "" {
-	// 	c.pathPhone = path.Join(c.pathVersion, c.phoneID)
-	// c.Error = response.NewError(&response.Error{
-	// 	Type:    types.TypeErrorPhoneIdEmpty,
-	// 	Code:    types.CodeErrorPhoneIdEmpty,
-	// 	Message: types.MsgErrorPhoneIdEmpty,
-	// })
-	// return &c
-	// } else {
 	c.pathPhone = path.Join(c.getVersion(), c.phoneID)
-	// }
 
-	// if c.getWabaID() == "" {
-	// 	c.pathWaba = path.Join(c.pathVersion, c.wabaID)
-	// c.Error = response.NewError(&response.Error{
-	// 	Type:    types.TypeErrorBusinessIdEmpty,
-	// 	Code:    types.CodeErrorBusinessIdEmpty,
-	// 	Message: types.MsgErrorBusinessIdEmpty,
-	// })
-	// return &c
-	// } else {
 	c.pathWaba = path.Join(c.getVersion(), c.wabaID)
-	// }
 
-	// if c.getBusinessID() == "" {
-	// 	c.pathBusiness = path.Join(c.pathVersion, c.businessID)
-	// c.Error = response.NewError(&response.Error{
-	// 	Type:    types.TypeErrorBusinessIdEmpty,
-	// 	Code:    types.CodeErrorBusinessIdEmpty,
-	// 	Message: types.MsgErrorBusinessIdEmpty,
-	// })
-	// return &c
-	// } else {
 	c.pathBusiness = path.Join(c.getVersion(), c.businessID)
-	// }
 
 	if c.Token == "" && c.cLOUD_API_ACCESS_TOKEN == "" {
 		c.Error = response.NewError(&response.Error{
@@ -445,7 +417,7 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 
 	switch res.StatusCode {
 	case 400:
-		if e, ok := response.GetResponseRequest(res.Body, "doRequest", "400").(*response.Error); ok {
+		if e := response.GetResponseRequest(res.Body, "doRequest", "400").GetResponseError(); e != nil {
 			c.Config.Error = e
 			return nil, e
 		}
@@ -457,7 +429,7 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 		})
 		return nil, c.Config.Error
 	case 401:
-		if e, ok := response.GetResponseRequest(res.Body, "doRequest", "401").(*response.Error); ok {
+		if e := response.GetResponseRequest(res.Body, "doRequest", "401").GetResponseError(); e != nil {
 			c.Config.Error = e
 			return nil, e
 		}
@@ -469,7 +441,7 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 		})
 		return nil, c.Config.Error
 	case 404:
-		if e, ok := response.GetResponseRequest(res.Body, "doRequest", "404").(*response.Error); ok {
+		if e := response.GetResponseRequest(res.Body, "doRequest", "404").GetResponseError(); e != nil {
 			c.Config.Error = e
 			return nil, e
 		}

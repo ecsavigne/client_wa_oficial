@@ -4,7 +4,7 @@ package clientoficial
 import (
 	"bytes"
 	"context"
-	"crypto/tls"
+
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,7 +20,6 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/message"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
-	"golang.org/x/net/http2"
 )
 
 type TypeRequest = string
@@ -221,20 +220,16 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 
 func multipartRequest(methoth string, ePoint string, c *Config, msg message.Messager) (*http.Request, error) {
 	resetError(c)
-	var e error
-	var urlPath *url.URL
+	var (
+		e       error
+		urlPath *url.URL
+	)
 	if !strings.HasPrefix(ePoint, "/") {
-		var log = "Error in multipartRequest, file: RequestConfig.go.Error is: EndPoint is not start with /"
-		c.Error = fmt.Errorf("%s", log)
+		c.Error = fmt.Errorf("Error in multipartRequest, file: RequestConfig.go.Error is: EndPoint is not start with /")
 		panic(c.Error)
 	}
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			MinVersion: tls.VersionTLS12},
-	}
-	http2.ConfigureTransport(tr)
-	client := &http.Client{Transport: tr}
+	client := createClientHttp2(60)
 
 	var resp *http.Response
 	filename, ext, contentType := "", "", ""
@@ -249,6 +244,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 			c.Error = fmt.Errorf("Error in multiparRequest getting file. Error is: %s", e.Error())
 			return nil, c.Error
 		}
+
 		defer fileTemp.Close()
 	} else {
 		resp, e = client.Get(msg.GetMessageLink())
@@ -306,7 +302,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 		return nil, c.Error
 	}
 
-	if err := writer.WriteField("type", contentType); err != nil {
+	if err := writer.WriteField("type", "video/mp4"); err != nil {
 		c.Error = fmt.Errorf("Error in multiparRequest when write type. Error is: %s", err.Error())
 		return nil, c.Error
 	}
@@ -320,12 +316,14 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 		return nil, nil
 	}
 
+	// copy bin
 	if msg.GetFileHeader() != nil {
 		if _, err = io.Copy(part, fileTemp); err != nil {
 			c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())
 			return nil, c.Error
 		}
-		msg.ResetFileHeader()
+
+		defer msg.ResetFileHeader()
 	} else {
 		if _, err = io.Copy(part, resp.Body); err != nil {
 			c.Error = fmt.Errorf("Error in multiparRequest when copy file to form. Error is: %s", err.Error())
@@ -333,8 +331,14 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 		}
 	}
 
+	if e := writer.Close(); e != nil {
+		c.Error = fmt.Errorf("Error closing multipart writer: %s", err.Error())
+		return nil, c.Error
+	}
+
 	urlPath, _ = url.Parse(c.pathPhone + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
+
 	c.request, e = http.NewRequest(methoth, urlPath.String(), payload)
 	if e != nil {
 		c.Error = fmt.Errorf("Error in multipartRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
