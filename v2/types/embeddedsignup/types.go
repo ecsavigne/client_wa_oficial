@@ -5,8 +5,11 @@ type EVENT_TYPE string
 type FLOW_FINISH_TYPE EVENT_TYPE
 
 const (
-	FINISH                                  FLOW_FINISH_TYPE = "FINISH"
-	FINISH_ONLY_WABA                        FLOW_FINISH_TYPE = "FINISH_ONLY_WABA"
+	//  indica que se completó correctamente el proceso de la API de la nube.
+	FINISH FLOW_FINISH_TYPE = "FINISH"
+	//  indica que el usuario completó el proceso sin un número de teléfono.
+	FINISH_ONLY_WABA FLOW_FINISH_TYPE = "FINISH_ONLY_WABA"
+	// indica que el usuario completó el proceso con un número de la app de WhatsApp Business.
 	FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING FLOW_FINISH_TYPE = "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING"
 	CANCEL                                  EVENT_TYPE       = "CANCEL"
 )
