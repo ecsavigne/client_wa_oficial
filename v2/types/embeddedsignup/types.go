@@ -2,7 +2,7 @@ package embeddedsignup
 
 // TypesEvents embedded signup
 type EVENT_TYPE string
-type FLOW_FINISH_TYPE EVENT_TYPE
+type FLOW_FINISH_TYPE = EVENT_TYPE
 
 const (
 	//  indica que se completó correctamente el proceso de la API de la nube.
@@ -12,18 +12,17 @@ const (
 	// indica que el usuario completó el proceso con un número de la app de WhatsApp Business.
 	FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING FLOW_FINISH_TYPE = "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING"
 	CANCEL                                  EVENT_TYPE       = "CANCEL"
+	ERROR                                   EVENT_TYPE       = "ERROR"
 )
 
 func (e EVENT_TYPE) String() string {
 	if val, ok := map[EVENT_TYPE]string{
-		CANCEL: "CANCEL",
-	}[e]; ok {
-		return val
-	} else if val, ok := map[FLOW_FINISH_TYPE]string{
+		CANCEL:                                  "CANCEL",
+		ERROR:                                   "ERROR",
 		FINISH:                                  "FINISH",
 		FINISH_ONLY_WABA:                        "FINISH_ONLY_WABA",
 		FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING",
-	}[FLOW_FINISH_TYPE(e)]; ok {
+	}[e]; ok {
 		return val
 	}
 
