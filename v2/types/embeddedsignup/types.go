@@ -36,15 +36,17 @@ type RegisterSessionEvent struct {
 }
 
 type WAEmbeddedSignupData struct {
-	PhoneNumberID string   `json:"phone_number_id,omitempty" form:"phone_number_id"`
-	WabaID        string   `json:"waba_id,omitempty" form:"waba_id"`
-	BusinessID    string   `json:"business_id,omitempty" form:"business_id"`
-	AdAccountIDs  []string `json:"ad_account_ids,omitempty" form:"ad_account_ids"`
-	PageIDs       []string `json:"page_ids,omitempty" form:"page_ids"`
-	DatasetIDs    []string `json:"dataset_ids,omitempty" form:"dataset_ids"`
-	CurrentStep   string   `json:"current_step,omitempty" form:"current_step"`
-	ErrorMessage  string   `json:"error_message,omitempty" form:"error_message"`
-	ErrorId       string   `json:"error_id,omitempty" form:"error_id"`
-	SessionId     string   `json:"session_id,omitempty" form:"session_id"`
-	Timestamp     string   `json:"timestamp,omitempty" form:"timestamp"`
+	PhoneNumberID       string   `json:"phone_number_id,omitempty" form:"phone_number_id"`
+	WabaID              string   `json:"waba_id,omitempty" form:"waba_id"`
+	BusinessID          string   `json:"business_id,omitempty" form:"business_id"`
+	AdAccountIDs        []string `json:"ad_account_ids,omitempty" form:"ad_account_ids"`
+	PageIDs             []string `json:"page_ids,omitempty" form:"page_ids"`
+	DatasetIDs          []string `json:"dataset_ids,omitempty" form:"dataset_ids"`
+	CatalogIds          []string `json:"catalog_ids,omitempty" form:"catalog_ids"`
+	InstagramAccountIds []string `json:"instagram_account_ids,omitempty" form:"instagram_account_ids"`
+	CurrentStep         string   `json:"current_step,omitempty" form:"current_step"`
+	ErrorMessage        string   `json:"error_message,omitempty" form:"error_message"`
+	ErrorId             string   `json:"error_id,omitempty" form:"error_id"`
+	SessionId           string   `json:"session_id,omitempty" form:"session_id"`
+	Timestamp           string   `json:"timestamp,omitempty" form:"timestamp"`
 }
