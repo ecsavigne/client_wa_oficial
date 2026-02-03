@@ -7,6 +7,15 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 )
 
+type END_POINT string
+
+const (
+	// END_POINT_MEDIA_INFO    END_POINT = "media_info"
+	END_POINT_BUSINESS_INFO END_POINT = "business_info"
+	END_POINT_WABA_INFO     END_POINT = "waba_info"
+	END_POINT_PHONE_INFO    END_POINT = "phone_info"
+)
+
 type record = map[string]any
 type array = []any
 
@@ -86,9 +95,11 @@ func isWabas(wrapper record) bool {
 }
 
 func isBusiness(wrapper record) bool {
-	if wrapper["name"] != nil && wrapper["two_factor_type"] != nil && wrapper["payment_account_id"] != nil && wrapper["is_hidden"] != nil {
+	if wrapper["name"] != nil && wrapper["two_factor_type"] != nil && wrapper["payment_account_id"] != nil && wrapper["is_hidden"] != nil ||
+		wrapper["name"] != nil && wrapper["link"] != nil && wrapper["payment_account_id"] != nil && wrapper["is_hidden"] != nil {
 		return true
 	}
+
 	return false
 }
 
@@ -105,7 +116,11 @@ func isMediaInfo(wrapper record) bool {
 // If it does, it returns a types.Error object with the error message and code 401.
 // Otherwise, it marshals the map back into json and unmarshals it into a types.GeneralResponse object.
 // Finally, return interface que represent of type of response.
-func JsonWrapperResponseRequest(dataBin []byte) Responser {
+func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser {
+	end_point := END_POINT("")
+	if len(endPoint) > 0 {
+		end_point = endPoint[0]
+	}
 	wrapper := record{}
 	gralResponse := NewGeneralResponse(&GeneralResponse{})
 
@@ -150,13 +165,15 @@ func JsonWrapperResponseRequest(dataBin []byte) Responser {
 		gralResponse.PhonesWA = phonesWA
 
 	// Phone
-	case isPhone(wrapper):
+	// case isPhone(wrapper):
+	case end_point == END_POINT_PHONE_INFO:
 		phone := NewPhone(&Phone{})
 		json.Unmarshal(data, phone)
 		gralResponse.Phone = phone
 
 	// waba
-	case isWaba(wrapper):
+	// case isWaba(wrapper):
+	case end_point == END_POINT_WABA_INFO:
 		wabaInfo := WabaInfo{}
 		json.Unmarshal(data, &wabaInfo)
 		waba := NewWABA(&Waba{
@@ -182,7 +199,8 @@ func JsonWrapperResponseRequest(dataBin []byte) Responser {
 		gralResponse.Waba = waba
 
 	// business
-	case isBusiness(wrapper):
+	// case isBusiness(wrapper):
+	case end_point == END_POINT_BUSINESS_INFO:
 		business := NewBusiness(&Business{})
 		json.Unmarshal(data, business)
 		gralResponse.Business = business

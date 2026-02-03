@@ -1549,7 +1549,7 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b)
+	return response.JsonWrapperResponseRequest(b, response.END_POINT_PHONE_INFO)
 }
 
 // GetInfoAllNumberInWA returns information about all the Whatsapp Business Account phone associated with the
@@ -1822,7 +1822,7 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b)
+	return response.JsonWrapperResponseRequest(b, response.END_POINT_WABA_INFO)
 }
 
 // GetBusinessInfo retrieves detailed information about a business using its business ID.
@@ -1868,7 +1868,7 @@ func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b)
+	return response.JsonWrapperResponseRequest(b, response.END_POINT_BUSINESS_INFO)
 }
 
 func getPhoneNumber(phone string) string {
