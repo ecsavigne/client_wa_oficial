@@ -10,10 +10,12 @@ import (
 type END_POINT string
 
 const (
-	// END_POINT_MEDIA_INFO    END_POINT = "media_info"
+	END_POINT_OTHER_INFO    END_POINT = "other_info"
 	END_POINT_BUSINESS_INFO END_POINT = "business_info"
 	END_POINT_WABA_INFO     END_POINT = "waba_info"
+	END_POINT_WABA          END_POINT = "waba"
 	END_POINT_PHONE_INFO    END_POINT = "phone_info"
+	END_POINT_SUCCESS       END_POINT = "success"
 )
 
 type record = map[string]any
@@ -71,13 +73,15 @@ func isTemplate(wrapper record) (bool, isOnly bool) {
 
 	data := wrapper["data"]
 	if v, ok := data.(array); ok {
-		if tpl, ok := v[0].(record); ok {
-			_, fCategory = tpl["category"]
-			_, fName = tpl["name"]
-			_, fLang = tpl["language"]
-			// array template
-			if fCategory && fName && fLang {
-				return true, false
+		if len(v) > 0 {
+			if tpl, ok := v[0].(record); ok {
+				_, fCategory = tpl["category"]
+				_, fName = tpl["name"]
+				_, fLang = tpl["language"]
+				// array template
+				if fCategory && fName && fLang {
+					return true, false
+				}
 			}
 		}
 	}
@@ -153,7 +157,8 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 		}
 
 	// success
-	case isSuccess(wrapper):
+	case isSuccess(wrapper) || end_point == END_POINT_SUCCESS:
+		fmt.Printf("Data: %v\n", string(data))
 		successResponse := NewSuccess(&Success{})
 		json.Unmarshal(data, successResponse)
 		gralResponse.Success = successResponse
@@ -171,7 +176,7 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 		json.Unmarshal(data, phone)
 		gralResponse.Phone = phone
 
-	// waba
+	// waba from wabaInfo
 	// case isWaba(wrapper):
 	case end_point == END_POINT_WABA_INFO:
 		wabaInfo := WabaInfo{}
@@ -180,6 +185,13 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 			Data: []WabaInfo{wabaInfo},
 		})
 		gralResponse.Waba = waba
+
+	// waba from waba
+	case end_point == END_POINT_WABA:
+		waba := Waba{}
+		json.Unmarshal(data, &waba)
+
+		gralResponse.Waba = NewWABA(&waba)
 
 	// template
 	case isTpl:

@@ -1719,13 +1719,14 @@ func (c *ClientWA) VerifyCode(data map[string]any) response.Responser {
 	return response.GetResponseRequest(resp.Body, "VerifyCode", "ClientWA")
 }
 
-func (c *ClientWA) RegisterForUseApi() response.Responser {
+// Register a number for use api
+func (c *ClientWA) RegisterForUseApi(phone_id string) response.Responser {
 	data := map[string]any{
 		"messaging_product": "whatsapp",
 		"pin":               "123456",
 	}
 
-	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s", "register"), c.Config, data)
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s/%s", phone_id, "register"), c.Config, RequestWithVersion, data)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -1750,7 +1751,117 @@ func (c *ClientWA) RegisterForUseApi() response.Responser {
 		})
 	}
 
-	return response.GetResponseRequest(resp.Body, "RegisterForUseApi", "ClientWA")
+	return response.GetResponseRequest(resp.Body, "RegisterForUseApi", "ClientWA", response.END_POINT_SUCCESS)
+}
+
+// Subscribed waba in apps for receive messages webhook
+func (c *ClientWA) SubscribedWabaInApps(waba_id string) response.Responser {
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s/%s", waba_id, "subscribed_apps"), c.Config, RequestWithVersion)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in SubscribedWabaInApps request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in SubscribedWabaInApps request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.GetResponseRequest(resp.Body, "SubscribedWabaInApps", "ClientWA", response.END_POINT_SUCCESS)
+}
+
+// GetInfoSubscribedWaba retrieves information about the applications that
+// are subscribed to receive messages from a WhatsApp Business Account.
+//   if subscribed waba
+//   {
+// 	"data": [
+// 		{
+// 			"whatsapp_business_api_data": {
+// 				"link": "https://oficial.crmsocialhub.com.br/",
+// 				"name": "socialhub",
+// 				"id": "765398235585526"
+// 			}
+// 		}
+// 	]
+// }
+
+// else subscribed waba
+
+// 	{
+// 		"data": []''
+// 	}
+
+// If the request fails, it returns a ResponserRequest with the error
+func (c *ClientWA) GetInfoSubscribedWaba(waba_id string) response.Responser {
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", waba_id, "subscribed_apps"), c.Config, RequestWithVersion)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetInfoSubscribedWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetInfoSubscribedWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.GetResponseRequest(resp.Body, "GetInfoSubscribedWaba", "ClientWA", response.END_POINT_WABA)
+}
+
+func (c *ClientWA) UnSubscribedWaba(waba_id string) response.Responser {
+	_, _, err := defaultRequest(http.MethodDelete, fmt.Sprintf("/%s/%s", waba_id, "subscribed_apps"), c.Config, RequestWithVersion)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in UnSubscribedWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in UnSubscribedWaba request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.GetResponseRequest(resp.Body, "UnSubscribedWaba", "ClientWA", response.END_POINT_SUCCESS)
 }
 
 func (c *ClientWA) setWabaID(waba_id string) {

@@ -72,7 +72,7 @@ func (a *GeneralResponse) GetResponseType() Responser {
 	}
 }
 
-func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string) Responser {
+func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string, end_point ...END_POINT) Responser {
 	b, err := io.ReadAll(bodyResponse)
 	defer bodyResponse.Close()
 	if err != nil {
@@ -83,5 +83,5 @@ func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string) Respon
 		})
 	}
 
-	return JsonWrapperResponseRequest(b)
+	return JsonWrapperResponseRequest(b, end_point...)
 }

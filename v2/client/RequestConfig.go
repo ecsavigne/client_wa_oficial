@@ -179,14 +179,19 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 			case RequestWithQueryWaba:
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s?%s", c.pathWaba, ePoint, queryData))
 			case RequestWithVersion:
-				b, err := json.Marshal(params[1])
-				if err != nil {
-					return nil, nil, response.NewError(&response.Error{
-						Type:    types.TypeErrorUnrecognized,
-						Code:    types.CodeErrorUnrecognized,
-						Message: err.Error(),
-					})
+				b := []byte{}
+				var err error
+				if len(params) > 1 && params[1] != nil {
+					b, err = json.Marshal(params[1])
+					if err != nil {
+						return nil, nil, response.NewError(&response.Error{
+							Type:    types.TypeErrorUnrecognized,
+							Code:    types.CodeErrorUnrecognized,
+							Message: err.Error(),
+						})
+					}
 				}
+
 				formData = bytes.NewBuffer(b)
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", c.pathVersion, ePoint))
 			case RequestWithWaba:
