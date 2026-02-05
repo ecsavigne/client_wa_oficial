@@ -143,7 +143,12 @@ func main() {
 	// 		},
 	// 	},
 	// })
-	// fmt.Printf("Response: %+v\n", rr)
+
+	// rr := my_client.SubscribedWabaInApps("1415160156667406")
+	// rr := my_client.GetInfoSubscribedWaba("1415160156667406")
+	rr := my_client.UnSubscribedWaba("1415160156667406")
+	// rr := my_client.RegisterForUseApi("984286011433245")
+	fmt.Printf("Response: %+v\n", rr)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
