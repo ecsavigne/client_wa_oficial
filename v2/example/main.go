@@ -57,9 +57,9 @@ func main() {
 		// clientoficial.WithEnvFilePath("../config_env"),
 		clientoficial.WithEnvFilePath("../../config_env"),
 		// clientoficial.WithWebhookSocket("wss://webhooks.xxx.com/wa_official/ws"),
-		clientoficial.WithEventHandle(EventHandler),
-		clientoficial.WithWabaID(""),
-		clientoficial.WithToken(""),
+		// clientoficial.WithEventHandle(EventHandler),
+		// clientoficial.WithWabaID(""),
+		// clientoficial.WithToken(""),
 	)
 
 	if my_client.Error != nil {
@@ -146,9 +146,15 @@ func main() {
 
 	// rr := my_client.SubscribedWabaInApps("1415160156667406")
 	// rr := my_client.GetInfoSubscribedWaba("1415160156667406")
-	rr := my_client.UnSubscribedWaba("1415160156667406")
+	// rr := my_client.UnSubscribedWaba("1415160156667406")
 	// rr := my_client.RegisterForUseApi("984286011433245")
-	fmt.Printf("Response: %+v\n", rr)
+	// token := ""
+	// rr := my_client.DebugToken(token)
+	// rr := my_client.GetLimiteMsg(143390)
+	// rr := my_client.GetLimiteMsg(143390)
+	rr := my_client.UnregisterNumber(94571)
+
+	fmt.Printf("Response: %s\n", rr)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
