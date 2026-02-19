@@ -10,12 +10,14 @@ const (
 	ResponsePhonesWA        ResponseType = "response_phones_wa"
 	ResponsePhone           ResponseType = "response_phone"
 	ResponseWABA            ResponseType = "response_waba"
+	ResponseWabaInfo        ResponseType = "response_waba_info"
 	ResponseBusiness        ResponseType = "response_business"
 	ResponseTemplate        ResponseType = "response_template"
 	ResponseMockupTemplate  ResponseType = "response_mockup_template"
 	ResponseWebHookTemplate ResponseType = "response_webhook_template"
 	ResponseUnknow          ResponseType = "response_unknow"
 	ResponseOther           ResponseType = "response_other"
+	ResponseDebugToken      ResponseType = "response_debug_token"
 )
 
 type Responser interface {
@@ -33,6 +35,8 @@ type Responser interface {
 	GetMockupTemplateResponse() *MockupTemplateResponse
 	GetWebHookTemplateResponse() *WebHookTemplateResponse
 	GetUnknowResponse() *UnknowResponse
+	GetOtherResponse() *OtherResponse
+	GetDebugTokenResponse() *DebugTokenResponse
 	IsType(ResponseType) bool
 }
 
@@ -113,6 +117,10 @@ func (k *KernelResponser) String() string {
 	case *WebHookTemplateResponse:
 		return Val(v)
 	case *UnknowResponse:
+		return Val(v)
+	case *OtherResponse:
+		return Val(v)
+	case *DebugTokenResponse:
 		return Val(v)
 	default:
 		return ""
@@ -218,6 +226,24 @@ func (k *KernelResponser) GetWebHookTemplateResponse() *WebHookTemplateResponse 
 // If successful, it returns the *UnknowResponse instance; otherwise, it returns nil.
 func (k *KernelResponser) GetUnknowResponse() *UnknowResponse {
 	if v, ok := k.parent.(*UnknowResponse); ok {
+		return v
+	}
+	return nil
+}
+
+// GetOtherResponse attempts to cast the KernelResponser to an *OtherResponse type.
+// If successful, it returns the *OtherResponse instance; otherwise, it returns nil.
+func (k *KernelResponser) GetOtherResponse() *OtherResponse {
+	if v, ok := k.parent.(*OtherResponse); ok {
+		return v
+	}
+	return nil
+}
+
+// GetDebugTokenResponse attempts to cast the KernelResponser to a *DebugTokenResponse type.
+// If successful, it returns the *DebugTokenResponse instance; otherwise, it returns nil.
+func (k *KernelResponser) GetDebugTokenResponse() *DebugTokenResponse {
+	if v, ok := k.parent.(*DebugTokenResponse); ok {
 		return v
 	}
 	return nil

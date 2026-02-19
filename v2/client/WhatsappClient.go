@@ -1549,7 +1549,7 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b, response.END_POINT_PHONE_INFO)
+	return response.JsonWrapperResponseRequest(b, response.ResponsePhone)
 }
 
 // GetInfoAllNumberInWA returns information about all the Whatsapp Business Account phone associated with the
@@ -1751,7 +1751,7 @@ func (c *ClientWA) RegisterForUseApi(phone_id string) response.Responser {
 		})
 	}
 
-	return response.GetResponseRequest(resp.Body, "RegisterForUseApi", "ClientWA", response.END_POINT_SUCCESS)
+	return response.GetResponseRequest(resp.Body, "RegisterForUseApi", "ClientWA", response.ResponseSuccess)
 }
 
 // Subscribed waba in apps for receive messages webhook
@@ -1781,7 +1781,7 @@ func (c *ClientWA) SubscribedWabaInApps(waba_id string) response.Responser {
 		})
 	}
 
-	return response.GetResponseRequest(resp.Body, "SubscribedWabaInApps", "ClientWA", response.END_POINT_SUCCESS)
+	return response.GetResponseRequest(resp.Body, "SubscribedWabaInApps", "ClientWA", response.ResponseSuccess)
 }
 
 // GetInfoSubscribedWaba retrieves information about the applications that
@@ -1832,7 +1832,7 @@ func (c *ClientWA) GetInfoSubscribedWaba(waba_id string) response.Responser {
 		})
 	}
 
-	return response.GetResponseRequest(resp.Body, "GetInfoSubscribedWaba", "ClientWA", response.END_POINT_WABA)
+	return response.GetResponseRequest(resp.Body, "GetInfoSubscribedWaba", "ClientWA", response.ResponseWABA)
 }
 
 func (c *ClientWA) UnSubscribedWaba(waba_id string) response.Responser {
@@ -1861,7 +1861,7 @@ func (c *ClientWA) UnSubscribedWaba(waba_id string) response.Responser {
 		})
 	}
 
-	return response.GetResponseRequest(resp.Body, "UnSubscribedWaba", "ClientWA", response.END_POINT_SUCCESS)
+	return response.GetResponseRequest(resp.Body, "UnSubscribedWaba", "ClientWA", response.ResponseSuccess)
 }
 
 func (c *ClientWA) setWabaID(waba_id string) {
@@ -1933,7 +1933,7 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b, response.END_POINT_WABA_INFO)
+	return response.JsonWrapperResponseRequest(b, response.ResponseWabaInfo)
 }
 
 // GetBusinessInfo retrieves detailed information about a business using its business ID.
@@ -1979,7 +1979,7 @@ func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b, response.END_POINT_BUSINESS_INFO)
+	return response.JsonWrapperResponseRequest(b, response.ResponseBusiness)
 }
 
 func getPhoneNumber(phone string) string {
@@ -2652,4 +2652,170 @@ func (c *ClientWA) DeleteTemplate(p ParamDelete) response.Responser {
 	}
 
 	return response.GetResponseRequest(resp.Body, "CreateTemplate", "ClientWA")
+}
+
+// Get permissions of a token.
+func (c *ClientWA) DebugToken(token string) response.Responser {
+	if token == "" {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: Token is empty"),
+		})
+	}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "debug_token"), c.Config, RequestWithQueryVersion, QueryData{"input_token": token})
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b, response.ResponseDebugToken)
+}
+
+// GetLimiteMsg makes a GET call to the WhatsApp API to get the
+// limit of messages that can be sent from a WhatsApp Business
+// Account. It returns a ResponserRequest with the response data in
+// the Body field, which is a JSON object with the following structure:
+//
+//	{
+//	    "whatsapp_business_manager_messaging_limit": TIER_2K,
+//		"id": "129324348517543531"
+//	}
+//
+// If the request fails, it returns a ResponserRequest with the error
+func (c *ClientWA) GetLimiteMsg(business_id uint) response.Responser {
+	if business_id == 0 {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetLimiteMsg request of ClientWA. error is: business_id is empty"),
+		})
+	}
+	c.setBusinessID(fmt.Sprint(business_id))
+
+	_, _, err := defaultRequest(http.MethodGet, "/", c.Config, RequestWithQueryBusiness, QueryData{"fields": "whatsapp_business_manager_messaging_limit"})
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetLimiteMsg request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetLimiteMsg request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in GetLimiteMsg request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b, response.ResponseOther)
+}
+
+// UnregisterNumber removes a phone number from the WhatsApp Business Account.
+// It returns a ResponserRequest with the response data in the Body field, which is a JSON object with the following structure:
+//
+//	{
+//	    "success": true,
+//	}
+//
+// If the request fails, it returns a ResponserRequest with the error
+func (c *ClientWA) UnregisterNumber(phone_id uint) response.Responser {
+	if phone_id == 0 {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in UnregisterNumber request of ClientWA. error is: phone_id is empty"),
+		})
+	}
+	c.setPhoneID(fmt.Sprint(phone_id))
+
+	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%d/%s", phone_id, "deregister"), c.Config, RequestWithVersion, nil)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in UnregisterNumber request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return err
+		}
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in UnregisterNumber request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("Error in UnregisterNumber request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	return response.JsonWrapperResponseRequest(b, response.ResponseSuccess)
 }

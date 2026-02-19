@@ -7,7 +7,6 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 )
 
-type OtherResponse = map[string]any
 type GeneralResponse struct {
 	KernelResponser
 	ResponseType             string `json:"response_type,omitempty"`
@@ -18,11 +17,12 @@ type GeneralResponse struct {
 	*Success                 `json:",omitempty"`
 	*MediaInfo               `json:",omitempty"`
 	*Business                `json:",omitempty"`
-	OtherResponse            `json:",omitempty"`
+	*OtherResponse           `json:",omitempty"`
 	*TemplateResponse        `json:",omitempty"`
 	*MockupTemplateResponse  `json:",omitempty"`
 	*UnknowResponse          `json:",omitempty"`
 	*WebHookTemplateResponse `json:",omitempty"`
+	*DebugTokenResponse      `json:",omitempty"`
 }
 
 func NewGeneralResponse(config Responser) *GeneralResponse {
@@ -31,48 +31,54 @@ func NewGeneralResponse(config Responser) *GeneralResponse {
 		v.KernelResponser.parent = v
 		return v
 	}
-	panic("type ResponserRequest is not RespenserRequest")
+	panic("type ResponserRequest is not GeneralRespenserRequest")
 }
 
 func (a *GeneralResponse) GetResponseType() Responser {
 	switch {
 	case a.PhonesWA != nil:
-		a.ResponseType = ResponsePhonesWA
+		// a.ResponseType = ResponsePhonesWA
 		return NewPhonesWA(a.PhonesWA)
 	case a.Phone != nil:
-		a.ResponseType = ResponsePhone
+		// a.ResponseType = ResponsePhone
 		return NewPhone(a.Phone)
 	case a.Waba != nil:
-		a.ResponseType = ResponseWABA
+		// a.ResponseType = ResponseWABA
 		return NewWABA(a.Waba)
 	case a.Error != nil:
-		a.ResponseType = ResponseError
+		// a.ResponseType = ResponseError
 		return NewError(a.Error)
 	case a.Success != nil:
-		a.ResponseType = ResponseSuccess
+		// a.ResponseType = ResponseSuccess
 		return NewSuccess(a.Success)
 	case a.MediaInfo != nil:
-		a.ResponseType = ResponseMediaInfo
+		// a.ResponseType = ResponseMediaInfo
 		return NewMediaInfo(a.MediaInfo)
 	case a.Business != nil:
-		a.ResponseType = ResponseBusiness
+		// a.ResponseType = ResponseBusiness
 		return NewBusiness(a.Business)
 	case a.TemplateResponse != nil:
-		a.ResponseType = ResponseTemplate
+		// a.ResponseType = ResponseTemplate
 		return NewTemplateResponse(a.TemplateResponse)
 	case a.MockupTemplateResponse != nil:
-		a.ResponseType = ResponseTemplate
+		// a.ResponseType = ResponseTemplate
 		return NewMockupTemplateResponse(a.MockupTemplateResponse)
 	case a.WebHookTemplateResponse != nil:
-		a.ResponseType = ResponseTemplate
+		// a.ResponseType = ResponseTemplate
 		return NewWebHookTemplateResponse(a.WebHookTemplateResponse)
+	case a.OtherResponse != nil:
+		// a.ResponseType = ResponseOther
+		return NewOtherResponse(a.OtherResponse)
+	case a.DebugTokenResponse != nil:
+		// a.ResponseType = ResponseDebugToken
+		return NewDebugTokenResponse(a.DebugTokenResponse)
 	default:
-		a.ResponseType = ResponseOther
-		return a
+		// a.ResponseType = ResponseUnknow
+		return NewUnknowResponse(a.UnknowResponse)
 	}
 }
 
-func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string, end_point ...END_POINT) Responser {
+func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string, end_point ...ResponseType) Responser {
 	b, err := io.ReadAll(bodyResponse)
 	defer bodyResponse.Close()
 	if err != nil {

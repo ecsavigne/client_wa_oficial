@@ -7,22 +7,11 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 )
 
-type END_POINT string
-
-const (
-	END_POINT_OTHER_INFO    END_POINT = "other_info"
-	END_POINT_BUSINESS_INFO END_POINT = "business_info"
-	END_POINT_WABA_INFO     END_POINT = "waba_info"
-	END_POINT_WABA          END_POINT = "waba"
-	END_POINT_PHONE_INFO    END_POINT = "phone_info"
-	END_POINT_SUCCESS       END_POINT = "success"
-)
-
 type record = map[string]any
 type array = []any
 
 func Val(r any) string {
-	by, msg_e := json.MarshalIndent(r, "", "  ")
+	by, msg_e := json.Marshal(r)
 	if msg_e != nil {
 		panic(fmt.Sprintf("Error occurred in MarshalIndent. Error is: %s", msg_e))
 	}
@@ -120,8 +109,8 @@ func isMediaInfo(wrapper record) bool {
 // If it does, it returns a types.Error object with the error message and code 401.
 // Otherwise, it marshals the map back into json and unmarshals it into a types.GeneralResponse object.
 // Finally, return interface que represent of type of response.
-func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser {
-	end_point := END_POINT("")
+func JsonWrapperResponseRequest(dataBin []byte, endPoint ...ResponseType) Responser {
+	end_point := ""
 	if len(endPoint) > 0 {
 		end_point = endPoint[0]
 	}
@@ -156,8 +145,18 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 			gralResponse.Error = errorResponse
 		}
 
+	case end_point == ResponseDebugToken:
+		debugTokenResponse := NewDebugTokenResponse(&DebugTokenResponse{})
+		json.Unmarshal(data, debugTokenResponse)
+		gralResponse.DebugTokenResponse = debugTokenResponse
+
+	case end_point == ResponseOther:
+		other := NewOtherResponse(&OtherResponse{})
+		json.Unmarshal(data, &other.Other)
+		gralResponse.OtherResponse = other
+
 	// success
-	case isSuccess(wrapper) || end_point == END_POINT_SUCCESS:
+	case isSuccess(wrapper) || end_point == ResponseSuccess:
 		fmt.Printf("Data: %v\n", string(data))
 		successResponse := NewSuccess(&Success{})
 		json.Unmarshal(data, successResponse)
@@ -171,14 +170,14 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 
 	// Phone
 	// case isPhone(wrapper):
-	case end_point == END_POINT_PHONE_INFO:
+	case end_point == ResponsePhone:
 		phone := NewPhone(&Phone{})
 		json.Unmarshal(data, phone)
 		gralResponse.Phone = phone
 
 	// waba from wabaInfo
 	// case isWaba(wrapper):
-	case end_point == END_POINT_WABA_INFO:
+	case end_point == ResponseWabaInfo:
 		wabaInfo := WabaInfo{}
 		json.Unmarshal(data, &wabaInfo)
 		waba := NewWABA(&Waba{
@@ -187,7 +186,7 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 		gralResponse.Waba = waba
 
 	// waba from waba
-	case end_point == END_POINT_WABA:
+	case end_point == ResponseWABA:
 		waba := Waba{}
 		json.Unmarshal(data, &waba)
 
@@ -212,7 +211,7 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 
 	// business
 	// case isBusiness(wrapper):
-	case end_point == END_POINT_BUSINESS_INFO:
+	case end_point == ResponseBusiness:
 		business := NewBusiness(&Business{})
 		json.Unmarshal(data, business)
 		gralResponse.Business = business
@@ -225,10 +224,9 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...END_POINT) Responser
 
 	// general response
 	default:
-		if gralResponse.OtherResponse == nil {
-			gralResponse.OtherResponse = make(OtherResponse)
-		}
-		gralResponse.OtherResponse = OtherResponse(wrapper)
+		unknown := NewUnknowResponse(&UnknowResponse{})
+		unknown.Unknow = wrapper
+		gralResponse.UnknowResponse = unknown
 	}
 
 	return gralResponse.GetResponseType()

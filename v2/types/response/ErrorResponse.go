@@ -28,3 +28,7 @@ func NewError(config Responser) *Error {
 func (e *Error) Error() string {
 	return fmt.Sprintf("Error is: %s, type: %s, code: %d, ErrorSubcode: %d, FbtraceID: %s", e.Message, e.Type, e.Code, e.ErrorSubcode, e.FbtraceID)
 }
+
+// func (e *Error) UnknowResponse() string {
+// 	return fmt.Sprintf("Error is: %s, type: %s, code: %d, ErrorSubcode: %d, FbtraceID: %s", e.Message, e.Type, e.Code, e.ErrorSubcode, e.FbtraceID)
+// }

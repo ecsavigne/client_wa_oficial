@@ -15,5 +15,5 @@ func NewMockupTemplateResponse(config Responser) *MockupTemplateResponse {
 		v.KernelResponser.parent = v
 		return v
 	}
-	panic("type Responser is not *TemplateResponse")
+	panic("type Responser is not *MockupTemplateResponse")
 }
