@@ -152,9 +152,10 @@ func main() {
 	// rr := my_client.DebugToken(token)
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.GetLimiteMsg(143390)
-	rr := my_client.UnregisterNumber(94571)
+	// rr := my_client.UnregisterNumber(94571)
 
-	fmt.Printf("Response: %s\n", rr)
+	// fmt.Printf("Response: %s\n", rr)
+	// fmt.Println("Permitions: ", types.GetPermission().Get("whatsapp_business_management", "Label"), "description: ", types.GetPermission().Get("whatsapp_business_management", "Description"))
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
