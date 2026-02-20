@@ -214,6 +214,10 @@ var permissions PERMISSION_TYPE = PERMISSION_TYPE{
 		"Label":       "Mensagens de Utilidade de Página",
 		"Description": "Permite acessar e enviar modelos de mensagens de utilidade de uma página pelo Messenger.",
 	},
+	"private_computation_access": {
+		"Label":       "Acesso à Computação Privada",
+		"Description": "Permite acessar ambientes de computação privada do Meta para realizar processamento seguro de dados e medições com proteção de privacidade.",
+	},
 	"public_profile": {
 		"Label":       "Perfil Público",
 		"Description": "Permite ler os campos do perfil público padrão para autenticar usuários e oferecer experiências personalizadas.",
@@ -326,7 +330,7 @@ var permissions PERMISSION_TYPE = PERMISSION_TYPE{
 		"Label":       "Gerenciador WhatsApp Business",
 		"Description": "Permite gerenciar ativos do WhatsApp Business e exibir análises da conta no portal do cliente.",
 	},
-	"whatsapp_business_manage_event": {
+	"whatsapp_business_manage_events": {
 		"Label":       "Gerenciador de Eventos WhatsApp Business",
 		"Description": "Permite registrar eventos em contas do WhatsApp Business e enviar dados de atividade ao Meta para segmentação, otimização e relatórios de anúncios.",
 	},
