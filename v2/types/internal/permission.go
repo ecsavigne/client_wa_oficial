@@ -234,6 +234,10 @@ var permissions PERMISSION_TYPE = PERMISSION_TYPE{
 		"Label":       "Ler Insights",
 		"Description": "Permite ler dados de estatísticas de páginas, apps e domínios web para integrar com ferramentas de análise próprias.",
 	},
+	"read_page_mailboxes": {
+		"Label":       "Leitura de Caixas de Entrada da Página",
+		"Description": "Permite ler mensagens e conversas recebidas na caixa de entrada de Páginas do Facebook para exibição e gerenciamento no sistema.",
+	},
 	"threads_basic": {
 		"Label":       "Threads Básico",
 		"Description": "Permite obter informações do perfil de Threads de um usuário e o conteúdo de mídia e texto postado em Threads.",
