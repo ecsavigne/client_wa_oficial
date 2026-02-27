@@ -5,9 +5,9 @@ import (
 	"os"
 	"os/signal"
 
-	clientoficial "github.com/ecsavigne/client_wa_oficial/v2/client"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response/event"
+	clientoficial "github.com/ecsavigne/client_wa_oficial/v2/client/wpp"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event"
 )
 
 // EventHandler is a function that handles events
@@ -145,7 +145,7 @@ func main() {
 	// })
 
 	// rr := my_client.SubscribedWabaInApps("1415160156667406")
-	// rr := my_client.GetInfoSubscribedWaba("1415160156667406")
+	rr := my_client.GetInfoSubscribedWaba("1415160156667406")
 	// rr := my_client.UnSubscribedWaba("1415160156667406")
 	// rr := my_client.RegisterForUseApi("984286011433245")
 	// token := ""
@@ -154,7 +154,7 @@ func main() {
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.UnregisterNumber(94571)
 
-	// fmt.Printf("Response: %s\n", rr)
+	fmt.Printf("Response: %s\n", rr)
 	// fmt.Println("Permitions: ", types.GetPermission().Get("whatsapp_business_management", "Label"), "description: ", types.GetPermission().Get("whatsapp_business_management", "Description"))
 
 	c := make(chan os.Signal, 1)

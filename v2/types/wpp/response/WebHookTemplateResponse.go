@@ -3,7 +3,7 @@ Permission in WebHook for received notifications about changes in templates comp
 */
 package response
 
-import "github.com/ecsavigne/client_wa_oficial/v2/types"
+import "github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 
 type WebHookTemplateResponse struct {
 	KernelResponser
@@ -21,7 +21,7 @@ type WebHookTemplateResponse struct {
 	// New footer of the template before update, stay empty if user don't input footer
 	MessageTemplateFooter string `json:"message_template_footer,omitempty"`
 	// New buttons of the template before update, stay empty if user don't input
-	MessageTemplateButtons []types.Button `json:"message_template_buttons,omitempty"`
+	MessageTemplateButtons []wpp.Button `json:"message_template_buttons,omitempty"`
 }
 
 func NewWebHookTemplateResponse(config Responser) *WebHookTemplateResponse {

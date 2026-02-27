@@ -1,4 +1,4 @@
-package types
+package wpp
 
 type TYPE_BUTTON = string
 

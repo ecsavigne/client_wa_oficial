@@ -1,12 +1,12 @@
 //lint:file-ignore ST1005 Ignore capitalized strings error
-package clientoficial
+package wpp
 
 import (
 	"fmt"
 	"path"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
 	"github.com/spf13/viper"
 )
 

@@ -1,4 +1,4 @@
-package types
+package wpp
 
 type (
 	MessageType     = string

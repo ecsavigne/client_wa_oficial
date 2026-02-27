@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	codeerror "github.com/ecsavigne/client_wa_oficial/v2/types"
 )
 
 type GeneralResponse struct {
@@ -84,7 +84,7 @@ func GetResponseRequest(bodyResponse io.ReadCloser, funcName, who string, end_po
 	if err != nil {
 		return NewError(&Error{
 			Type:    ResponseError,
-			Code:    types.CodeErrorUnrecognized,
+			Code:    codeerror.CodeErrorUnrecognized,
 			Message: fmt.Sprintf("Error reading in %s the data of request of %s. error is: %v", funcName, who, err),
 		})
 	}

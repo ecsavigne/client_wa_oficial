@@ -1,12 +1,12 @@
 package response
 
-import "github.com/ecsavigne/client_wa_oficial/v2/types"
+import "github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 
 type TemplateResponse struct {
 	KernelResponser
-	ResponseType string                 `json:"response_type,omitempty"`
-	Data         []types.MockupTemplate `json:"data"`
-	Paging       *Paging                `json:"paging,omitempty"`
+	ResponseType string               `json:"response_type,omitempty"`
+	Data         []wpp.MockupTemplate `json:"data"`
+	Paging       *Paging              `json:"paging,omitempty"`
 }
 
 func NewTemplateResponse(config Responser) *TemplateResponse {

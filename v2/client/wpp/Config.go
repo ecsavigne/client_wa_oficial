@@ -1,10 +1,10 @@
-package clientoficial
+package wpp
 
 import (
 	"net/http"
 	"path"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
+	response "github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
 )
 
 type Config struct {

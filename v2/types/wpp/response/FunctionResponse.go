@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	types "github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 )
 
 type record = map[string]any
@@ -50,33 +50,33 @@ func isWaba(wrapper record) bool {
 	return false
 }
 
-func isTemplate(wrapper record) (bool, isOnly bool) {
-	_, fCategory := wrapper["category"]
-	_, fName := wrapper["name"]
-	_, fLang := wrapper["language"]
+// func isTemplate(wrapper record) (bool, isOnly bool) {
+// 	_, fCategory := wrapper["category"]
+// 	_, fName := wrapper["name"]
+// 	_, fLang := wrapper["language"]
 
-	// only template
-	if fCategory && fName && fLang {
-		return true, true
-	}
+// 	// only template
+// 	if fCategory && fName && fLang {
+// 		return true, true
+// 	}
 
-	data := wrapper["data"]
-	if v, ok := data.(array); ok {
-		if len(v) > 0 {
-			if tpl, ok := v[0].(record); ok {
-				_, fCategory = tpl["category"]
-				_, fName = tpl["name"]
-				_, fLang = tpl["language"]
-				// array template
-				if fCategory && fName && fLang {
-					return true, false
-				}
-			}
-		}
-	}
+// 	data := wrapper["data"]
+// 	if v, ok := data.(array); ok {
+// 		if len(v) > 0 {
+// 			if tpl, ok := v[0].(record); ok {
+// 				_, fCategory = tpl["category"]
+// 				_, fName = tpl["name"]
+// 				_, fLang = tpl["language"]
+// 				// array template
+// 				if fCategory && fName && fLang {
+// 					return true, false
+// 				}
+// 			}
+// 		}
+// 	}
 
-	return false, false
-}
+// 	return false, false
+// }
 
 func isWabas(wrapper record) bool {
 	if wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil &&
@@ -127,7 +127,7 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...ResponseType) Respon
 
 	//  generate response
 	data, _ := json.Marshal(wrapper)
-	isTpl, isOnly := isTemplate(wrapper)
+	// isTpl, isOnly := isTemplate(wrapper)
 
 	switch {
 	// error
@@ -193,9 +193,9 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...ResponseType) Respon
 		gralResponse.Waba = NewWABA(&waba)
 
 	// template
-	case isTpl:
+	case end_point == ResponseTemplate:
 		templates := NewTemplateResponse(&TemplateResponse{})
-		if isOnly {
+		if _, ok := wrapper["data"]; !ok {
 			mt := types.MockupTemplate{}
 			json.Unmarshal(data, &mt)
 			templates.Data = []types.MockupTemplate{mt}
@@ -203,6 +203,7 @@ func JsonWrapperResponseRequest(dataBin []byte, endPoint ...ResponseType) Respon
 			json.Unmarshal(data, templates)
 		}
 		gralResponse.TemplateResponse = templates
+
 	// wabas
 	case isWabas(wrapper):
 		waba := NewWABA(&Waba{})

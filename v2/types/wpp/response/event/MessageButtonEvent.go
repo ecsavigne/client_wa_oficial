@@ -3,17 +3,17 @@ package event
 import (
 	"strconv"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/internal"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
 )
 
 type MessageButtonEvent struct {
 	*Components
 }
 
-func (*MessageButtonEvent) GetType() types.EventType { return types.EventTypeMessageButton }
-func (m *MessageButtonEvent) String() string         { return response.Val(m) }
+func (*MessageButtonEvent) GetType() wpp.EventType { return wpp.EventTypeMessageButton }
+func (m *MessageButtonEvent) String() string       { return response.Val(m) }
 
 func (bEvt *MessageButtonEvent) GetContactPhone() string {
 	return internal.FirstNotEmpty(bEvt.Entry[0].Changes[0].Value.Contacts[0].WaId,

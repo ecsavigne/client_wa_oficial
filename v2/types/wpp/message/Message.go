@@ -6,7 +6,7 @@ import (
 	"mime/multipart"
 	"strings"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 )
 
 type Messager interface {
@@ -83,29 +83,29 @@ func NewMessage(config Messager) Messager {
 func (m *MessagerKernel) GetType() string {
 	switch m.parent.(type) {
 	case *MessageImage:
-		return types.MessageTypeImage
+		return wpp.MessageTypeImage
 	case *MessageAudio:
-		return types.MessageTypeAudio
+		return wpp.MessageTypeAudio
 	case *MessageVideo:
-		return types.MessageTypeVideo
+		return wpp.MessageTypeVideo
 	case *MessageDocument:
-		return types.MessageTypeDocument
+		return wpp.MessageTypeDocument
 	case *MessageSticker:
-		return types.MessageTypeSticker
+		return wpp.MessageTypeSticker
 	case *MessageResponse:
-		return types.MessageTypeResponse
+		return wpp.MessageTypeResponse
 	case *MessageLocation:
-		return types.MessageTypeLocation
+		return wpp.MessageTypeLocation
 	case *MessageContact:
-		return types.MessageTypeContact
+		return wpp.MessageTypeContact
 	case *MessageText:
-		return types.MessageTypeText
+		return wpp.MessageTypeText
 	case *MessageTemplate:
-		return types.MessageTypeTemplate
+		return wpp.MessageTypeTemplate
 	case *MessageReaction:
-		return types.MessageTypeReaction
+		return wpp.MessageTypeReaction
 	case *MessageInteractive:
-		return types.MessageTypeInteractive
+		return wpp.MessageTypeInteractive
 	}
 	panic("Invalid protocol type")
 }
@@ -160,7 +160,7 @@ func (m *MessagerKernel) IsTypeResponse() bool {
 func toJonReader(m Messager) *strings.Reader {
 	databytes, e := json.Marshal(m)
 	if e != nil {
-		log := fmt.Sprintf("Error in function [types.Message.go -> toJonReader] creating json reader. Error is: %s", e.Error())
+		log := fmt.Sprintf("Error in function [wpp.Message.go -> toJonReader] creating json reader. Error is: %s", e.Error())
 		panic(log)
 	}
 	return strings.NewReader(string(databytes))

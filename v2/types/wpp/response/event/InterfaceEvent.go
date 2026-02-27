@@ -1,9 +1,9 @@
 package event
 
-import "github.com/ecsavigne/client_wa_oficial/v2/types"
+import "github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 
 type EventInterface interface {
-	GetType() types.EventType
+	GetType() wpp.EventType
 	String() string
 
 	/*

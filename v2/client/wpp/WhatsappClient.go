@@ -1,5 +1,5 @@
 //lint:file-ignore ST1005 Ignore capitalized strings error
-package clientoficial
+package wpp
 
 import (
 	"context"
@@ -18,13 +18,12 @@ import (
 	"time"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/message"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response/event"
-	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/response/event/types"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/message"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event/types"
 	"golang.org/x/net/http2"
-
-	"github.com/gorilla/websocket"
 )
 
 func (c CLIENT_TYPE) String() string {
@@ -106,197 +105,312 @@ func (cl ClientWA) GetType() string {
 	return cl.typeClient.String()
 }
 
-func (cl *ClientWA) initWebHookSocket() {
-	// url = "wss://webhooks.savcoe-services.com/ws"
-	// Conectar al servidor WebSocket
+func (cl *ClientWA) Broadcast(data map[string]any) {
 	defer func() {
 		if r := recover(); r != nil {
+			return
 		}
 	}()
 
 	var evt event.EventInterface
 
-	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
+	// Listener message of the server way WebHook
+	message, err := json.Marshal(data)
 	if err != nil {
-		switch {
-		case websocket.IsUnexpectedCloseError(err):
-			evt = &event.ErrorSocketConnectEvent{
-				Error: response.NewError(&response.Error{
-					Type:    types.TypeErrorUnexpectedClose,
-					Code:    types.CodeErrorUnexpectedClose,
-					Message: types.MsgErrorUnexpectedClose,
-				}),
-			}
-		case str.Contains(err.Error(), "tls: internal error"):
-			evt = &event.ErrorSocketConnectEvent{
-				Error: response.NewError(&response.Error{
-					Type:    types.TypeErrorTlsInternal,
-					Code:    types.CodeErrorTlsInternal,
-					Message: types.MsgErrorTlsInternal,
-				}),
-			}
-		case str.Contains(err.Error(), "bad handshake"):
-			evt = &event.ErrorSocketConnectEvent{
-				Error: response.NewError(&response.Error{
-					Type:    types.TypeErrorBadHandshake,
-					Code:    types.CodeErrorBadHandshake,
-					Message: types.MsgErrorBadHandshake,
-				}),
-			}
-		case str.Contains(err.Error(), "dial tcp: lookup ws"):
-			evt = &event.ErrorSocketConnectEvent{
-				Error: response.NewError(&response.Error{
-					Type:    types.TypeErrorDialTcp,
-					Code:    types.CodeErrorDialTcp,
-					Message: types.MsgErrorDialTcp,
-				}),
-			}
-		default:
-			evt = &event.ErrorSocketConnectEvent{
-				Error: response.NewError(&response.Error{
-					Type:    types.TypeErrorUnrecognizedWebSocket,
-					Code:    types.CodeErrorUnrecognizedWebSocket,
-					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorUnrecognizedWebSocket, err.Error()),
-				}),
-			}
-		}
-		cl.EventHandle(evt)
 		return
 	}
-	defer conn.Close()
 
-	// Listener message of the server way socket
-	for {
-		_, message, err := conn.ReadMessage()
-		if err != nil {
-			evt = &event.ErrorSocketConnectEvent{
-				Error: response.NewError(&response.Error{
-					Type:    types.TypeErrorConectionClosedWebSocket,
-					Code:    types.CodeErrorUnrecognizedWebSocket,
-					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorConectionClosedWebSocket, err.Error()),
-				}),
+	msg := codeWebHook(message)
+	isForme, typeNotification := cl.messageIsForMe(msg)
+	if !isForme {
+		return
+	}
+
+	switch typeNotification {
+	// case len(msg.Entry) != 0 &&
+	// 	len(msg.Entry[0].Changes) != 0 &&
+	// 	len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+	// 	msg.Entry[0].Changes[0].Value.Messages[0].Type != ""
+	// :
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
+		switch getTypeMessage(msg) {
+		case "audio":
+			evt = &event.MessageAudioEvent{
+				Components: msg,
 			}
-			cl.EventHandle(evt)
-			break
-		}
+		case "button":
+			evt = &event.MessageButtonEvent{
+				Components: msg,
+			}
+		case "document":
+			evt = &event.MessageDocumentEvent{
+				Components: msg,
+			}
+		case "text":
+			evt = &event.MessageTextEvent{
+				Components: msg,
+			}
+		case "image":
+			evt = &event.MessageImageEvent{
+				Components: msg,
+			}
+		case "interactive":
+			evt = &event.MessageInteractiveEvent{
+				Components: msg,
+			}
+		case "order":
+			evt = &event.MessageOrderEvent{
+				Components: msg,
+			}
+		case "sticker":
+			evt = &event.MessageStickerEvent{
+				Components: msg,
+			}
+		case "system":
+			evt = &event.MessageSystemEvent{
+				Components: msg,
+			}
+		case "video":
+			evt = &event.MessageVideoEvent{
+				Components: msg,
+			}
+		case "reaction":
+			evt = &event.MessageReactionEvent{
+				Components: msg,
+			}
+		case "location":
+			evt = &event.MessageLocationEvent{
+				Components: msg,
+			}
+		case "contacts":
+			evt = &event.MessageContactEvent{
+				Components: msg,
+			}
+		case "unknown":
+			evt = &event.MessageUnknownEvent{
+				Components: msg,
+			}
+		default:
+			// can be status message or another notification about message
+			status := getSatusMessage(msg)
 
-		msg := codeWebHook(message)
-		isForme, _ := cl.messageIsForMe(msg)
-		if !isForme {
-			continue
-		}
-
-		switch {
-		case len(msg.Entry) != 0 &&
-			len(msg.Entry[0].Changes) != 0 &&
-			len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-			msg.Entry[0].Changes[0].Value.Messages[0].Type != "":
-			switch msg.Entry[0].Changes[0].Value.Messages[0].Type {
-			case "audio":
-				evt = &event.MessageAudioEvent{
-					Components: msg,
-				}
-			case "button":
-				evt = &event.MessageButtonEvent{
-					Components: msg,
-				}
-			case "document":
-				evt = &event.MessageDocumentEvent{
-					Components: msg,
-				}
-			case "text":
-				evt = &event.MessageTextEvent{
-					Components: msg,
-				}
-			case "image":
-				evt = &event.MessageImageEvent{
-					Components: msg,
-				}
-			case "interactive":
-				evt = &event.MessageInteractiveEvent{
-					Components: msg,
-				}
-			case "order":
-				evt = &event.MessageOrderEvent{
-					Components: msg,
-				}
-			case "sticker":
-				evt = &event.MessageStickerEvent{
-					Components: msg,
-				}
-			case "system":
-				evt = &event.MessageSystemEvent{
-					Components: msg,
-				}
-			case "video":
-				evt = &event.MessageVideoEvent{
-					Components: msg,
-				}
-			case "reaction":
-				evt = &event.MessageReactionEvent{
-					Components: msg,
-				}
-			case "location":
-				evt = &event.MessageLocationEvent{
-					Components: msg,
-				}
-			case "contacts":
-				evt = &event.MessageContactEvent{
-					Components: msg,
-				}
-			case "unknown":
-				evt = &event.MessageUnknownEvent{
-					Components: msg,
+			switch {
+			case status != "":
+				if isVailidStatusMessage(status) {
+					evt = &event.StatusMessageEvent{
+						Components: msg,
+					}
 				}
 			default:
 				cl.Config.EventHandle(message)
 			}
-		case len(msg.Entry) != 0 &&
-			len(msg.Entry[0].Changes) != 0 &&
-			len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
-			evt = &event.StatusMessageEvent{
-				Components: msg,
-			}
-
-			recipientId := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
-			id := msg.Entry[0].Changes[0].Value.Statuses[0].ID
-
-			mu := sync.Mutex{}
-			mu.Lock()
-			pair, ok := infoContacts[id]
-			mu.Unlock()
-
-			if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
-				msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
-				if ok {
-					pair.Channel <- InfoContact{
-						ContactPhone: pair.Phone,
-						RecipientID:  recipientId,
-						IsOnWhats:    false,
-					}
-				}
-
-			} else {
-				if ok {
-					pair.Channel <- InfoContact{
-						ContactPhone: pair.Phone,
-						RecipientID:  recipientId,
-						IsOnWhats:    true,
-					}
-				}
-			}
-		case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-			len(msg.Entry[0].Changes[0].Value.Messages[0].Contacts) != 0:
-			evt = &event.MessageContactEvent{
-				Components: msg,
-			}
-		default:
-			cl.Config.EventHandle(message)
 		}
 
-		cl.Config.EventHandle(evt)
+	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_CATEGORY,
+		evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_STATUS:
+		evt = &event.MessageTemplateEvent{
+			Components: msg,
+		}
+	default:
+		cl.Config.EventHandle(message)
+		return
 	}
+
+	cl.Config.EventHandle(evt)
+
 }
+
+// func (cl *ClientWA) initWebHookSocket() {
+// 	// url = "wss://webhooks.savcoe-services.com/ws"
+// 	// Conectar al servidor WebSocket
+// 	defer func() {
+// 		if r := recover(); r != nil {
+// 		}
+// 	}()
+
+// 	var evt event.EventInterface
+
+// 	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
+// 	if err != nil {
+// 		switch {
+// 		case websocket.IsUnexpectedCloseError(err):
+// 			evt = &event.ErrorSocketConnectEvent{
+// 				Error: response.NewError(&response.Error{
+// 					Type:    types.TypeErrorUnexpectedClose,
+// 					Code:    types.CodeErrorUnexpectedClose,
+// 					Message: types.MsgErrorUnexpectedClose,
+// 				}),
+// 			}
+// 		case str.Contains(err.Error(), "tls: internal error"):
+// 			evt = &event.ErrorSocketConnectEvent{
+// 				Error: response.NewError(&response.Error{
+// 					Type:    types.TypeErrorTlsInternal,
+// 					Code:    types.CodeErrorTlsInternal,
+// 					Message: types.MsgErrorTlsInternal,
+// 				}),
+// 			}
+// 		case str.Contains(err.Error(), "bad handshake"):
+// 			evt = &event.ErrorSocketConnectEvent{
+// 				Error: response.NewError(&response.Error{
+// 					Type:    types.TypeErrorBadHandshake,
+// 					Code:    types.CodeErrorBadHandshake,
+// 					Message: types.MsgErrorBadHandshake,
+// 				}),
+// 			}
+// 		case str.Contains(err.Error(), "dial tcp: lookup ws"):
+// 			evt = &event.ErrorSocketConnectEvent{
+// 				Error: response.NewError(&response.Error{
+// 					Type:    types.TypeErrorDialTcp,
+// 					Code:    types.CodeErrorDialTcp,
+// 					Message: types.MsgErrorDialTcp,
+// 				}),
+// 			}
+// 		default:
+// 			evt = &event.ErrorSocketConnectEvent{
+// 				Error: response.NewError(&response.Error{
+// 					Type:    types.TypeErrorUnrecognizedWebSocket,
+// 					Code:    types.CodeErrorUnrecognizedWebSocket,
+// 					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorUnrecognizedWebSocket, err.Error()),
+// 				}),
+// 			}
+// 		}
+// 		cl.EventHandle(evt)
+// 		return
+// 	}
+// 	defer conn.Close()
+
+// 	// Listener message of the server way socket
+// 	for {
+// 		_, message, err := conn.ReadMessage()
+// 		if err != nil {
+// 			evt = &event.ErrorSocketConnectEvent{
+// 				Error: response.NewError(&response.Error{
+// 					Type:    types.TypeErrorConectionClosedWebSocket,
+// 					Code:    types.CodeErrorUnrecognizedWebSocket,
+// 					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorConectionClosedWebSocket, err.Error()),
+// 				}),
+// 			}
+// 			cl.EventHandle(evt)
+// 			break
+// 		}
+
+// 		msg := codeWebHook(message)
+// 		isForme, _ := cl.messageIsForMe(msg)
+// 		if !isForme {
+// 			continue
+// 		}
+
+// 		switch {
+// 		case len(msg.Entry) != 0 &&
+// 			len(msg.Entry[0].Changes) != 0 &&
+// 			len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+// 			msg.Entry[0].Changes[0].Value.Messages[0].Type != "":
+// 			switch msg.Entry[0].Changes[0].Value.Messages[0].Type {
+// 			case "audio":
+// 				evt = &event.MessageAudioEvent{
+// 					Components: msg,
+// 				}
+// 			case "button":
+// 				evt = &event.MessageButtonEvent{
+// 					Components: msg,
+// 				}
+// 			case "document":
+// 				evt = &event.MessageDocumentEvent{
+// 					Components: msg,
+// 				}
+// 			case "text":
+// 				evt = &event.MessageTextEvent{
+// 					Components: msg,
+// 				}
+// 			case "image":
+// 				evt = &event.MessageImageEvent{
+// 					Components: msg,
+// 				}
+// 			case "interactive":
+// 				evt = &event.MessageInteractiveEvent{
+// 					Components: msg,
+// 				}
+// 			case "order":
+// 				evt = &event.MessageOrderEvent{
+// 					Components: msg,
+// 				}
+// 			case "sticker":
+// 				evt = &event.MessageStickerEvent{
+// 					Components: msg,
+// 				}
+// 			case "system":
+// 				evt = &event.MessageSystemEvent{
+// 					Components: msg,
+// 				}
+// 			case "video":
+// 				evt = &event.MessageVideoEvent{
+// 					Components: msg,
+// 				}
+// 			case "reaction":
+// 				evt = &event.MessageReactionEvent{
+// 					Components: msg,
+// 				}
+// 			case "location":
+// 				evt = &event.MessageLocationEvent{
+// 					Components: msg,
+// 				}
+// 			case "contacts":
+// 				evt = &event.MessageContactEvent{
+// 					Components: msg,
+// 				}
+// 			case "unknown":
+// 				evt = &event.MessageUnknownEvent{
+// 					Components: msg,
+// 				}
+// 			default:
+// 				cl.Config.EventHandle(message)
+// 			}
+// 		case len(msg.Entry) != 0 &&
+// 			len(msg.Entry[0].Changes) != 0 &&
+// 			len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
+// 			evt = &event.StatusMessageEvent{
+// 				Components: msg,
+// 			}
+
+// 			recipientId := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
+// 			id := msg.Entry[0].Changes[0].Value.Statuses[0].ID
+
+// 			mu := sync.Mutex{}
+// 			mu.Lock()
+// 			pair, ok := infoContacts[id]
+// 			mu.Unlock()
+
+// 			if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
+// 				msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
+// 				if ok {
+// 					pair.Channel <- InfoContact{
+// 						ContactPhone: pair.Phone,
+// 						RecipientID:  recipientId,
+// 						IsOnWhats:    false,
+// 					}
+// 				}
+
+// 			} else {
+// 				if ok {
+// 					pair.Channel <- InfoContact{
+// 						ContactPhone: pair.Phone,
+// 						RecipientID:  recipientId,
+// 						IsOnWhats:    true,
+// 					}
+// 				}
+// 			}
+// 		case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+// 			len(msg.Entry[0].Changes[0].Value.Messages[0].Contacts) != 0:
+// 			evt = &event.MessageContactEvent{
+// 				Components: msg,
+// 			}
+// 		default:
+// 			cl.Config.EventHandle(message)
+// 		}
+
+// 		cl.Config.EventHandle(evt)
+// 	}
+// }
 
 func defaultConfig() *Config {
 	return &Config{
@@ -332,9 +446,9 @@ func NewClientWA(opts ...Options) *ClientWA {
 		return cl
 	}
 
-	if c.WebhookSocket != "" && c.EventHandle != nil {
-		go cl.initWebHookSocket()
-	}
+	// if c.WebhookSocket != "" && c.EventHandle != nil {
+	// 	go cl.initWebHookSocket()
+	// }
 
 	return cl
 }
@@ -525,11 +639,11 @@ func validTypeMsg(msg message.Messager, msgType string) bool {
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendTemplate(m message.Messager) response.Responser {
 
-	if !validTypeMsg(m, types.MessageTypeTemplate) {
+	if !validTypeMsg(m, wpp.MessageTypeTemplate) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeTemplate, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeTemplate, m.GetType()),
 		})
 	}
 
@@ -553,11 +667,11 @@ func (c *ClientWA) sendTemplate(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendTextMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeText) {
+	if !validTypeMsg(m, wpp.MessageTypeText) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeText, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeText, m.GetType()),
 		})
 	}
 
@@ -581,11 +695,11 @@ func (c *ClientWA) sendTextMessage(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendReaction(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeReaction) {
+	if !validTypeMsg(m, wpp.MessageTypeReaction) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeReaction, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeReaction, m.GetType()),
 		})
 	}
 
@@ -609,11 +723,11 @@ func (c *ClientWA) sendReaction(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendInteractiveList(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeInteractive) {
+	if !validTypeMsg(m, wpp.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+			Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 		})
 	} else {
 		interactive, ok := m.(*message.MessageInteractive)
@@ -621,14 +735,14 @@ func (c *ClientWA) sendInteractiveList(m message.Messager) response.Responser {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+				Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 			})
 		}
-		if !interactive.IsType(types.InteractiveTypeList) {
+		if !interactive.IsType(wpp.InteractiveTypeList) {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", types.InteractiveTypeList),
+				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", wpp.InteractiveTypeList),
 			})
 		}
 	}
@@ -653,11 +767,11 @@ func (c *ClientWA) sendInteractiveList(m message.Messager) response.Responser {
 // interactive of type button response. If the message type is incorrect, it returns an error. Otherwise, it makes a request to
 // send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendInteractiveButtonResponse(m message.Messager) response.Responser {
-	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
+	if !validTypeMsg(m.(*message.MessageInteractive), wpp.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+			Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 		})
 	} else {
 		interactive, ok := m.(*message.MessageInteractive)
@@ -665,14 +779,14 @@ func (c *ClientWA) sendInteractiveButtonResponse(m message.Messager) response.Re
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+				Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 			})
 		}
-		if !interactive.IsType(types.InteractiveTypeButtonResponse) {
+		if !interactive.IsType(wpp.InteractiveTypeButtonResponse) {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", types.InteractiveTypeButtonResponse),
+				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", wpp.InteractiveTypeButtonResponse),
 			})
 		}
 	}
@@ -697,11 +811,11 @@ func (c *ClientWA) sendInteractiveButtonResponse(m message.Messager) response.Re
 // interactive of type button URL. If the message type is incorrect, it returns an error. Otherwise, it makes a request
 // to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendInteractiveButtonUrl(m message.Messager) response.Responser {
-	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
+	if !validTypeMsg(m.(*message.MessageInteractive), wpp.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+			Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 		})
 	} else {
 		interactive, ok := m.(*message.MessageInteractive)
@@ -709,14 +823,14 @@ func (c *ClientWA) sendInteractiveButtonUrl(m message.Messager) response.Respons
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+				Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 			})
 		}
-		if !interactive.IsType(types.InteractiveTypeButtonUrl) {
+		if !interactive.IsType(wpp.InteractiveTypeButtonUrl) {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", types.InteractiveTypeButtonUrl),
+				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", wpp.InteractiveTypeButtonUrl),
 			})
 		}
 	}
@@ -741,11 +855,11 @@ func (c *ClientWA) sendInteractiveButtonUrl(m message.Messager) response.Respons
 // interactive of type process. If the message type is incorrect, it returns an error. Otherwise, it makes a request
 // to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendInteractiveMsgProcess(m message.Messager) response.Responser {
-	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
+	if !validTypeMsg(m.(*message.MessageInteractive), wpp.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+			Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 		})
 	} else {
 		interactive, ok := m.(*message.MessageInteractive)
@@ -753,14 +867,14 @@ func (c *ClientWA) sendInteractiveMsgProcess(m message.Messager) response.Respon
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+				Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 			})
 		}
-		if !interactive.IsType(types.InteractiveTypeProcess) {
+		if !interactive.IsType(wpp.InteractiveTypeProcess) {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", types.InteractiveTypeProcess),
+				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", wpp.InteractiveTypeProcess),
 			})
 		}
 	}
@@ -785,11 +899,11 @@ func (c *ClientWA) sendInteractiveMsgProcess(m message.Messager) response.Respon
 // interactive of type product. If the message type is incorrect, it returns an error. Otherwise, it makes a request
 // to send the message. If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendInteractiveOneProduct(m message.Messager) response.Responser {
-	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
+	if !validTypeMsg(m.(*message.MessageInteractive), wpp.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+			Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 		})
 	} else {
 		interactive, ok := m.(*message.MessageInteractive)
@@ -797,14 +911,14 @@ func (c *ClientWA) sendInteractiveOneProduct(m message.Messager) response.Respon
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+				Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 			})
 		}
-		if !interactive.IsType(types.InteractiveTypeProduct) {
+		if !interactive.IsType(wpp.InteractiveTypeProduct) {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", types.InteractiveTypeProduct),
+				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", wpp.InteractiveTypeProduct),
 			})
 		}
 	}
@@ -830,11 +944,11 @@ func (c *ClientWA) sendInteractiveOneProduct(m message.Messager) response.Respon
 // it makes a request to send the message. If the request is successful, the response is returned; otherwise, an error
 // is returned.
 func (c *ClientWA) sendInteractiveMultiProduct(m message.Messager) response.Responser {
-	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
+	if !validTypeMsg(m.(*message.MessageInteractive), wpp.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+			Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 		})
 	} else {
 		interactive, ok := m.(*message.MessageInteractive)
@@ -842,14 +956,14 @@ func (c *ClientWA) sendInteractiveMultiProduct(m message.Messager) response.Resp
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+				Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 			})
 		}
-		if !interactive.IsType(types.InteractiveTypeMultiProduct) {
+		if !interactive.IsType(wpp.InteractiveTypeMultiProduct) {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", types.InteractiveTypeMultiProduct),
+				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", wpp.InteractiveTypeMultiProduct),
 			})
 		}
 	}
@@ -875,11 +989,11 @@ func (c *ClientWA) sendInteractiveMultiProduct(m message.Messager) response.Resp
 // an error. Otherwise, it makes a request to send the message. If the request is successful,
 // the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendInteractiveCatalog(m message.Messager) response.Responser {
-	if !validTypeMsg(m.(*message.MessageInteractive), types.MessageTypeInteractive) {
+	if !validTypeMsg(m.(*message.MessageInteractive), wpp.MessageTypeInteractive) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+			Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 		})
 	} else {
 		interactive, ok := m.(*message.MessageInteractive)
@@ -887,14 +1001,14 @@ func (c *ClientWA) sendInteractiveCatalog(m message.Messager) response.Responser
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("Message expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+				Message: fmt.Sprintf("Message expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 			})
 		}
-		if !interactive.IsType(types.InteractiveTypeCatalog) {
+		if !interactive.IsType(wpp.InteractiveTypeCatalog) {
 			return response.NewError(&response.Error{
 				Type:    response.ResponseError,
 				Code:    401,
-				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", types.InteractiveTypeCatalog),
+				Message: fmt.Sprintf("InteractiveProto.type must be '%s'", wpp.InteractiveTypeCatalog),
 			})
 		}
 	}
@@ -979,11 +1093,11 @@ func (c *ClientWA) validLinAndId(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendAudioMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeAudio) {
+	if !validTypeMsg(m, wpp.MessageTypeAudio) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeAudio, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeAudio, m.GetType()),
 		})
 	} else if r := c.validLinAndId(m); r != nil {
 		return r
@@ -1021,11 +1135,11 @@ func (c *ClientWA) sendAudioMessage(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendImageMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeImage) {
+	if !validTypeMsg(m, wpp.MessageTypeImage) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeImage, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeImage, m.GetType()),
 		})
 	} else if r := c.validLinAndId(m); r != nil {
 		return r
@@ -1063,11 +1177,11 @@ func (c *ClientWA) sendImageMessage(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendVideoMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeVideo) {
+	if !validTypeMsg(m, wpp.MessageTypeVideo) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeVideo, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeVideo, m.GetType()),
 		})
 	} else if r := c.validLinAndId(m); r != nil {
 		return r
@@ -1105,11 +1219,11 @@ func (c *ClientWA) sendVideoMessage(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendDocumentMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeDocument) {
+	if !validTypeMsg(m, wpp.MessageTypeDocument) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeDocument, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeDocument, m.GetType()),
 		})
 	} else if r := c.validLinAndId(m); r != nil {
 		return r
@@ -1147,11 +1261,11 @@ func (c *ClientWA) sendDocumentMessage(m message.Messager) response.Responser {
 // incorrect, it returns an error. Otherwise, it makes a request to send the message. If the request is successful, the response
 // is returned; otherwise, an error is returned.
 func (c *ClientWA) sendStickerMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeSticker) {
+	if !validTypeMsg(m, wpp.MessageTypeSticker) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeSticker, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeSticker, m.GetType()),
 		})
 	} else if r := c.validLinAndId(m); r != nil {
 		return r
@@ -1190,11 +1304,11 @@ func (c *ClientWA) sendStickerMessage(m message.Messager) response.Responser {
 // returns an error. Otherwise, it makes a request to send the message. If the
 // request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendLocationMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeLocation) {
+	if !validTypeMsg(m, wpp.MessageTypeLocation) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeLocation, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeLocation, m.GetType()),
 		})
 	}
 
@@ -1218,11 +1332,11 @@ func (c *ClientWA) sendLocationMessage(m message.Messager) response.Responser {
 // If the message type is incorrect, it returns an error. Otherwise, it makes a request to send the message.
 // If the request is successful, the response is returned; otherwise, an error is returned.
 func (c *ClientWA) sendContactMessage(m message.Messager) response.Responser {
-	if !validTypeMsg(m, types.MessageTypeContact) {
+	if !validTypeMsg(m, wpp.MessageTypeContact) {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    401,
-			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeContact, m.GetType()),
+			Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeContact, m.GetType()),
 		})
 	}
 
@@ -1245,7 +1359,7 @@ func (c *ClientWA) sendContactMessage(m message.Messager) response.Responser {
 // func (c *ClientWA) sendTemplate(m message.Messager) response.Responser {
 // 	return nil
 // 	// switch m.() {
-// 	// case types.MessageTypeTemplate:
+// 	// case wpp.MessageTypeTemplate:
 // 	// }
 // }
 
@@ -1253,54 +1367,54 @@ func (c *ClientWA) sendInteractive(m message.Messager) response.Responser {
 	interactive := m.GetInteractiveMessage()
 	if interactive != nil {
 		switch interactive.GetInteractiveProto().Type {
-		case types.InteractiveTypeList:
+		case wpp.InteractiveTypeList:
 			return c.sendInteractiveList(m)
-		case types.InteractiveTypeButtonResponse:
+		case wpp.InteractiveTypeButtonResponse:
 			return c.sendInteractiveButtonResponse(m)
-		case types.InteractiveTypeProduct:
+		case wpp.InteractiveTypeProduct:
 			c.sendInteractiveOneProduct(m)
-		case types.InteractiveTypeMultiProduct:
+		case wpp.InteractiveTypeMultiProduct:
 			return c.sendInteractiveMultiProduct(m)
-		case types.InteractiveTypeProcess:
+		case wpp.InteractiveTypeProcess:
 			return c.sendInteractiveMsgProcess(m)
-		case types.InteractiveTypeCatalog:
+		case wpp.InteractiveTypeCatalog:
 			return c.sendInteractiveCatalog(m)
-		case types.InteractiveTypeButtonUrl:
+		case wpp.InteractiveTypeButtonUrl:
 			return c.sendInteractiveButtonUrl(m)
 		}
 	}
 	return response.NewError(&response.Error{
 		Type:    response.ResponseError,
 		Code:    401,
-		Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", types.MessageTypeInteractive, m.GetType()),
+		Message: fmt.Sprintf("Message.type expect '%s', but get '%s'", wpp.MessageTypeInteractive, m.GetType()),
 	})
 }
 
 func (c *ClientWA) SendMessage(m message.Messager) response.Responser {
 	switch m.GetType() {
-	case types.MessageTypeAudio:
+	case wpp.MessageTypeAudio:
 		return c.sendAudioMessage(m)
-	case types.MessageTypeContact:
+	case wpp.MessageTypeContact:
 		return c.sendContactMessage(m)
-	case types.MessageTypeDocument:
+	case wpp.MessageTypeDocument:
 		return c.sendDocumentMessage(m)
-	case types.MessageTypeImage:
+	case wpp.MessageTypeImage:
 		return c.sendImageMessage(m)
-	case types.MessageTypeInteractive:
+	case wpp.MessageTypeInteractive:
 		return c.sendInteractive(m)
-	case types.MessageTypeLocation:
+	case wpp.MessageTypeLocation:
 		return c.sendLocationMessage(m)
-	case types.MessageTypeReaction:
+	case wpp.MessageTypeReaction:
 		return c.sendReaction(m)
-	case types.MessageTypeResponse:
+	case wpp.MessageTypeResponse:
 		return c.sendResponseMsg(m)
-	case types.MessageTypeSticker:
+	case wpp.MessageTypeSticker:
 		return c.sendStickerMessage(m)
-	case types.MessageTypeTemplate:
+	case wpp.MessageTypeTemplate:
 		return c.sendTemplate(m)
-	case types.MessageTypeText:
+	case wpp.MessageTypeText:
 		return c.sendTextMessage(m)
-	case types.MessageTypeVideo:
+	case wpp.MessageTypeVideo:
 		return c.sendVideoMessage(m)
 	default:
 		return response.NewError(&response.Error{
@@ -2426,7 +2540,7 @@ func (c *ClientWA) GetTplById(id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b)
+	return response.JsonWrapperResponseRequest(b, response.ResponseTemplate)
 }
 
 // GetTemplate by name
@@ -2505,7 +2619,7 @@ func (c *ClientWA) SendReadNotification(messageID string) response.Responser {
 	return response.GetResponseRequest(resp.Body, "SendReadNotification", "ClientWA")
 }
 
-func (c *ClientWA) createUpdateTemplate(tpl *types.MockupTemplate, isUpdate bool) response.Responser {
+func (c *ClientWA) createUpdateTemplate(tpl *wpp.MockupTemplate, isUpdate bool) response.Responser {
 	data := make(map[string]any)
 
 	funcName := "CreateTemplate"
@@ -2571,17 +2685,17 @@ func (c *ClientWA) createUpdateTemplate(tpl *types.MockupTemplate, isUpdate bool
 		})
 	}
 
-	return response.GetResponseRequest(resp.Body, fmt.Sprintf("%s", funcName), "ClientWA")
+	return response.GetResponseRequest(resp.Body, fmt.Sprintf("%s", funcName), "ClientWA", response.ResponseTemplate)
 }
 
-func (c *ClientWA) CreateTemplate(tpl *types.MockupTemplate) response.Responser {
+func (c *ClientWA) CreateTemplate(tpl *wpp.MockupTemplate) response.Responser {
 	return c.createUpdateTemplate(tpl, false)
 }
 
 // UpdateTemplate updates a template by ID.
 // If the Waba ID is empty, it returns an error.
 // If the request is successful, the response is returned; otherwise, an error is returned.
-func (c *ClientWA) UpdateTemplate(tpl *types.MockupTemplate) response.Responser {
+func (c *ClientWA) UpdateTemplate(tpl *wpp.MockupTemplate) response.Responser {
 	return c.createUpdateTemplate(tpl, true)
 }
 

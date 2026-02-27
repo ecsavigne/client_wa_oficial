@@ -3,7 +3,7 @@ package message
 import (
 	"encoding/json"
 
-	"github.com/ecsavigne/client_wa_oficial/v2/types/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
 )
 
 type MessageResponse struct {
