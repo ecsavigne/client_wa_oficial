@@ -1,0 +1,10 @@
+package client
+
+type TYPE_CONFIG string
+
+const (
+	TYPE_CONFIG_WPP TYPE_CONFIG = "wpp"
+	TYPE_CONFIG_IG  TYPE_CONFIG = "ig"
+	TYPE_CONFIG_FB  TYPE_CONFIG = "fb"
+	TYPE_CONFIG_MSG TYPE_CONFIG = "msg"
+)

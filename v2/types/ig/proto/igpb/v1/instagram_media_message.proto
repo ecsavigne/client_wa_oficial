@@ -1,0 +1,49 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "generalpb/v1/general_file_descriptor.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// AttachmentPayload contains the URL or attachment ID of the attachment
+message AttachmentPayload {
+  // The URL of the attachment (image, video, audio, like_heart(sticker))
+  string url = 1 [(buf.validate.field).string = {
+    min_len: 1
+    uri: true
+  }];
+  // The attachment ID of the pre-uploaded attachment (image, video, audio, like_heart(sticker))
+  string attachment_id = 2 [(buf.validate.field).string = {min_len: 1}];
+}
+
+// Attachment represents media content (image, video, audio, like_heart(sticker), etc.)
+message Attachment {
+  // The type of attachment (e.g., image, video, audio, like_heart(sticker))
+  string type = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^(image|video|audio|like_heart)$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The payload containing the attachment data
+  AttachmentPayload payload = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+// MediaMessage contains media attachment to be sent
+message MediaMessage {
+  // The attachment/media content to be sent
+  Attachment attachment = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramMediaMessage is the main message structure for sending media messages via Instagram
+message InstagramMediaMessage {
+  // The recipient who will receive the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The message content with attachment
+  MediaMessage message = 2 [(google.api.field_behavior) = REQUIRED];
+  // Raw file data for direct upload (replaces pre-uploaded URL/attachment_id flow)
+  generalpb.v1.FileDescriptor file_descriptor = 3;
+}

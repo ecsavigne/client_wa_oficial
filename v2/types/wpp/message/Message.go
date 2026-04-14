@@ -38,7 +38,7 @@ type MessagerKernel struct {
 	*Context              `json:"context,omitempty"`
 }
 
-func NewMessage(config Messager) Messager {
+func NewMessageWpp(config Messager) Messager {
 	switch v := config.(type) {
 	case *MessageAudio:
 		v.MessagerKernel.parent = v

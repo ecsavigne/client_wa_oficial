@@ -307,11 +307,6 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 		return nil, c.Error
 	}
 
-	if err := writer.WriteField("type", "video/mp4"); err != nil {
-		c.Error = fmt.Errorf("Error in multiparRequest when write type. Error is: %s", err.Error())
-		return nil, c.Error
-	}
-
 	h := make(textproto.MIMEHeader)
 	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "file", filename))
 	h.Set("Content-Type", contentType)
@@ -344,7 +339,7 @@ func multipartRequest(methoth string, ePoint string, c *Config, msg message.Mess
 	urlPath, _ = url.Parse(c.pathPhone + ePoint)
 	urlPath = c.BaseUrl.ResolveReference(urlPath)
 
-	c.request, e = http.NewRequest(methoth, urlPath.String(), payload)
+	c.request, e = http.NewRequestWithContext(context.Background(), methoth, urlPath.String(), payload)
 	if e != nil {
 		c.Error = fmt.Errorf("Error in multipartRequest, NewRequest: %s. Error is: %s", c.BaseUrl, e.Error())
 		return nil, c.Error

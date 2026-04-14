@@ -1,0 +1,29 @@
+edition = "2023";
+
+package generalpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "messengerpb/v1/messenger_flow.proto";
+
+// Cursors represents pagination cursors for navigating through results
+message Cursors {
+  // The cursor to fetch the previous page of results
+  string before = 1 [(buf.validate.field).string = {min_len: 1}];
+  // The cursor to fetch the next page of results
+  string after = 2 [(buf.validate.field).string = {min_len: 1}];
+}
+
+// Paging contains pagination information for the response
+message Paging {
+  // The cursors for navigating through pages
+  Cursors cursors = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// MessengerFlowsResponse represents the response containing a list of messenger flows
+message MessengerFlowsResponse {
+  // Array of messenger flows
+  repeated messengerpb.v1.MessengerFlow data = 1 [(google.api.field_behavior) = REQUIRED];
+  // Pagination information for navigating through multiple pages
+  Paging paging = 2 [(google.api.field_behavior) = REQUIRED];
+}

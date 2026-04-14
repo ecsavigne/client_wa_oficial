@@ -1,0 +1,35 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// HumanAgentMessage contains the text content to be sent with human agent tag
+message HumanAgentMessage {
+  // The text message to be sent to the recipient
+  string text = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 4096
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// InstagramHumanAgentMessage is the main message structure for sending messages tagged with HUMAN_AGENT
+message InstagramHumanAgentMessage {
+  // The recipient who will receive the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The message content
+  HumanAgentMessage message = 2 [(google.api.field_behavior) = REQUIRED];
+  // The message tag indicating this is from a human agent
+  string tag = 3 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^HUMAN_AGENT$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

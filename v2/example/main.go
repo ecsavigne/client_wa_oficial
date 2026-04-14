@@ -5,8 +5,10 @@ import (
 	"os"
 	"os/signal"
 
-	clientoficial "github.com/ecsavigne/client_wa_oficial/v2/client/wpp"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
+	clientpack "github.com/ecsavigne/client_wa_oficial/v2/client"
+	"github.com/ecsavigne/client_wa_oficial/v2/client/ig"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
+	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event"
 )
 
@@ -51,24 +53,57 @@ func EventHandler(data any) {
 	}
 }
 
-func main() {
-	// Create one Client of WhatsApp Official
-	my_client := clientoficial.NewClientWA(
-		// clientoficial.WithEnvFilePath("../config_env"),
-		clientoficial.WithEnvFilePath("../../config_env"),
-		// clientoficial.WithWebhookSocket("wss://webhooks.xxx.com/wa_official/ws"),
-		// clientoficial.WithEventHandle(EventHandler),
-		// clientoficial.WithWabaID(""),
-		// clientoficial.WithToken(""),
-	)
+func sendMessageText(cl clientpack.Client, userId, msg string) response.Responser {
+	msgIGText := new(igpbv1.InstagramTextMessage)
+	recipient := new(igpbv1.Recipient)
+	recipient.SetId(userId)
+	// recipient.SetId("2014023525994448")
+	text := new(igpbv1.TextMessage)
+	text.SetText(msg)
+	msgIGText.SetRecipient(recipient)
+	msgIGText.SetMessage(text)
 
-	if my_client.Error != nil {
-		v, ok := my_client.Error.(*response.Error)
-		if ok {
-			fmt.Println("Errrr: \n", v)
-		}
-		return
-	}
+	return cl.SendMessage(msgIGText)
+}
+
+func sendMessageMedia(cl clientpack.Client, userId, url, attacment_id string) response.Responser {
+	msgIGMedia := new(igpbv1.InstagramMediaMessage)
+	recipient := new(igpbv1.Recipient)
+	recipient.SetId(userId)
+
+	msg := new(igpbv1.MediaMessage)
+	attachment := new(igpbv1.Attachment)
+	payload := new(igpbv1.AttachmentPayload)
+	payload.SetUrl(url)
+	payload.SetAttachmentId(attacment_id)
+	attachment.SetPayload(payload)
+	attachment.SetType("image")
+	msg.SetAttachment(attachment)
+	msgIGMedia.SetRecipient(recipient)
+	msgIGMedia.SetMessage(msg)
+
+	return cl.SendMessage(msgIGMedia)
+}
+
+func main() {
+	var client clientpack.Client
+	// Create one Client of WhatsApp Official
+	// my_client := wpp.NewClientWA(
+	// 	// wpp.WithEnvFilePath("../config_env"),
+	// 	wpp.WithEnvFilePath("../../config_env"),
+	// 	// wpp.WithWebhookSocket("wss://webhooks.xxx.com/wa_official/ws"),
+	// 	// wpp.WithEventHandle(EventHandler),
+	// 	// wpp.WithWabaID(""),
+	// 	// wpp.WithToken(""),
+	// )
+
+	// if my_client.Error != nil {
+	// 	// v, ok := my_client.Error.(*response.Error)
+	// 	// if ok {
+	// 	// 	fmt.Println("Errrr: \n", v)
+	// 	// }
+	// 	return
+	// }
 
 	// var m message.Messager = &message.MessageResponse{
 	// 	MessagerKernel: message.MessagerKernel{
@@ -84,7 +119,7 @@ func main() {
 	// fmt.Println(my_client.GetInfoAllNumberInWA())
 	// For handling the interruption of the application with Ctrl+C allows you to see the events handled by EventHandle
 	// r := my_client.GetAllTplFromWaba("111_waba_id") // id = 1111111, name = hello_world
-	// r := my_client.GetAllTplFromLibrary(clientoficial.QueryData{"language": str.Join([]string{"pt_BR"}, ",")}) // id = 1111111, name = hello_world
+	// r := my_client.GetAllTplFromLibrary(wpp.QueryData{"language": str.Join([]string{"pt_BR"}, ",")}) // id = 1111111, name = hello_world
 	// tplArr := r.GetTemplateResponse()
 	// fmt.Println("Response: \n", len(tplArr.Data))
 	// for _, v := range tplArr.Data {
@@ -129,7 +164,7 @@ func main() {
 	// 		},
 	// 	},
 	// }
-	// rr := my_client.DeleteTemplate(clientoficial.ParamDelete{
+	// rr := my_client.DeleteTemplate(wpp.ParamDelete{
 	// 	Name: "my_template_name_complete",
 	// })
 	// rr := my_client.UpdateTemplate(&types.MockupTemplate{
@@ -145,7 +180,7 @@ func main() {
 	// })
 
 	// rr := my_client.SubscribedWabaInApps("1415160156667406")
-	rr := my_client.GetInfoSubscribedWaba("1415160156667406")
+	// rr := my_client.GetInfoSubscribedWaba("1415160156667406")
 	// rr := my_client.UnSubscribedWaba("1415160156667406")
 	// rr := my_client.RegisterForUseApi("984286011433245")
 	// token := ""
@@ -154,9 +189,27 @@ func main() {
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.UnregisterNumber(94571)
 
-	fmt.Printf("Response: %s\n", rr)
+	// fmt.Printf("Response: %s\n", rr)
 	// fmt.Println("Permitions: ", types.GetPermission().Get("whatsapp_business_management", "Label"), "description: ", types.GetPermission().Get("whatsapp_business_management", "Description"))
 
+	fmt.Println("test Client IG")
+	var e error
+
+	client, e = ig.NewClientIG(
+		// ig.WithEnvFilePath("../../config_env"),
+		ig.WithEnvFilePath("../config_env"),
+	)
+
+	if e != nil {
+		fmt.Printf("Error creating client IG: %s\n", e)
+		return
+	}
+	// fmt.Printf("Response Client IG: %s\n", client)
+	// rr := sendMessageText(client, "2014023525994448", "Habla test")
+	rr := sendMessageMedia(client, "2014023525994448", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&s", "1212702750665906")
+	fmt.Printf("Response: %s\n", rr)
+
+	fmt.Println("Press Ctrl+C to exit...")
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	<-c

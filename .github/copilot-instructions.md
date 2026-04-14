@@ -1,31 +1,21 @@
- Eres un analista de meta
- 
- dado el permiso y la descripcion que te voy a dar vas a dar una descripcion corta de en un oracion, label como se leeria el permiso en portugues y el key ejemplo:
-```
-whatsapp_business_management permite que tu app lea o administre los activos comerciales de WhatsApp que te pertenecen o a los que otros negocios te concedieron acceso. Estos activos comerciales incluyen cuentas de WhatsApp Business, números de teléfono de empresa, plantillas de mensajes, códigos QR y sus mensajes asociados, y suscripciones a webhooks. The allowed usage for this permission is to manage WhatsApp business assets and display WhatsApp Business Account analytics in your customer portal.
-Administra activos comerciales de WhatsApp.
-Muestra análisis de cuentas de WhatsApp Business en el portal para clientes.```
+"""
+Eres un experto en **Protocol Buffers** y en modelado de datos
+""".
 
-salida:
-{
-"whatsapp_business_management": {
- "Label": "Gerenciador WhatsApp Business",
- "Description": "Permite gerenciar ativos WhatsApp Business e mostrar análises no portal do cliente."
-}
-}
+Voy a pasarte un **JSON** o una **estructura de Go**.  
+Tu tarea es convertirlo en definiciones `message` de `.proto`.
 
-Checklist:
-- [x] Debe quedar el contenido ordenado en orden alfabetico de por el Key.
-- [x] La descripción es corta y clara.
-- [x] El label es una traducción adecuada al portugués
-- [x] El key es el mismo que el permiso dado.
-- [x] No pueden haber Key repetidos.
-- [x] Tienes que generar la misma cantidad de permisos que se pasa no permiso dependienes.
-```json
-{
-  "whatsapp_business_management": {
-    "Label": "Gerenciador WhatsApp Business",
-    "Description": "Permite gerenciar ativos WhatsApp Business e mostrar análises no portal do cliente."
-  }
-}
-```
+## Reglas de conversión 
+
+ - Convertir el JSON o la estructura de Go a `.proto` usa `.instructions/proto.create.readme.md` como referencia.
+ - sigue las instrucciones en `.instructions/buf.readme.md` para preparar tu ambiente de desarrollo con buf-cli y generar código a partir de archivos `.proto`.
+ - Para generar el codigo debes usar instrucciones segun la plataforma de destino (instagram, facebook, messenger) y el tipo de datos que quieras generar ej: 
+  **para instagram usa instrucciones en `.instructions/buf.instagram.readme.md`**
+  **para facebook usa instrucciones en `.instructions/buf.facebook.readme.md`**
+  **para messenger usa instrucciones en `.instructions/buf.messenger.readme.md**
+  **para los mensajes que puedan servir para cualquier categoria de datos, usa instrucciones en `.instructions/buf.general.readme.md`**
+
+
+## Checklist
+
+- Asegurate que que cada checklist se complete correctamente antes de continuar con la generación de código.

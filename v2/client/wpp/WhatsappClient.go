@@ -17,6 +17,9 @@ import (
 	"sync"
 	"time"
 
+	// "github.com/docker/docker-credential-helpers/client"
+
+	"github.com/ecsavigne/client_wa_oficial/v2/client"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/message"
@@ -26,25 +29,15 @@ import (
 	"golang.org/x/net/http2"
 )
 
-func (c CLIENT_TYPE) String() string {
-	return string(c)
-}
-
-const (
-	CLIENT_WHATSAPP CLIENT_TYPE = "whatsapp"
-	CLIENT_FACEBOOK CLIENT_TYPE = "facebook"
-)
-
 type (
-	CLIENT_TYPE string
-	clientHttp  struct {
+	clientHttp struct {
 		*http.Client
 		BaseUrl *url.URL `json:"base_url"`
 	}
 
 	ClientWA struct {
 		*Config    `json:"config"`
-		typeClient CLIENT_TYPE
+		typeClient client.CLIENT_TYPE
 	}
 
 	InfoContact struct {
@@ -427,7 +420,7 @@ func NewClientWA(opts ...Options) *ClientWA {
 	c := *defaultConfig()
 
 	cl := &ClientWA{
-		typeClient: CLIENT_WHATSAPP,
+		typeClient: client.CLIENT_WHATSAPP,
 		Config:     &c,
 	}
 
@@ -1356,13 +1349,6 @@ func (c *ClientWA) sendContactMessage(m message.Messager) response.Responser {
 	return resp
 }
 
-// func (c *ClientWA) sendTemplate(m message.Messager) response.Responser {
-// 	return nil
-// 	// switch m.() {
-// 	// case wpp.MessageTypeTemplate:
-// 	// }
-// }
-
 func (c *ClientWA) sendInteractive(m message.Messager) response.Responser {
 	interactive := m.GetInteractiveMessage()
 	if interactive != nil {
@@ -2228,7 +2214,7 @@ func registerContact(idMsg, phone string) chan InfoContact {
 }
 
 func getMsgPing(cl *ClientWA, num string) (msgID string) {
-	msg := message.NewMessage(&message.MessageText{
+	msg := message.NewMessageWpp(&message.MessageText{
 		MessagerKernel: message.MessagerKernel{
 			MessagingProduct: "whatsapp",
 			RecipientType:    "individual",

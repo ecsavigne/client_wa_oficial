@@ -1,0 +1,35 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// CommentRecipient represents a comment recipient for private replies
+message CommentRecipient {
+  // The comment ID to reply to
+  string comment_id = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// PrivateReplyMessage contains the text to be sent as a private reply
+message PrivateReplyMessage {
+  // The text of the private reply
+  string text = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 4096
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// InstagramPrivateReplyMessage is the main message structure for sending private replies to comments
+message InstagramPrivateReplyMessage {
+  // The comment recipient for the private reply
+  CommentRecipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The private reply message content
+  PrivateReplyMessage message = 2 [(google.api.field_behavior) = REQUIRED];
+}

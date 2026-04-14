@@ -1,0 +1,12 @@
+edition = "2023";
+
+package generalpb.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/struct.proto";
+
+// UnknownResponse represents a response with unknown or dynamic structure
+message UnknownResponse {
+  // Dynamic key-value data with arbitrary value types
+  map<string, google.protobuf.Value> data = 1 [(google.api.field_behavior) = OPTIONAL];
+}

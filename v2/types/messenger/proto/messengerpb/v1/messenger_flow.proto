@@ -1,0 +1,109 @@
+edition = "2023";
+
+package messengerpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// MessengerFlow represents a single messenger flow configuration
+message MessengerFlow {
+  // The name of the flow
+  string name = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Array of platforms where this flow is eligible to be used
+  repeated string eligible_platforms = 2 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The welcome message flow as a JSON serialized string
+  string welcome_message_flow = 3 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The timestamp of the last update to this flow (ISO 8601 format)
+  string last_update_time = 4 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Indicates if this flow is used in any advertisement
+  bool is_used_in_ad = 5 [(google.api.field_behavior) = REQUIRED];
+  // The unique identifier of the flow
+  string id = 6 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// FlowQuickReply represents a quick reply button option in a flow message
+message FlowQuickReply {
+  // The content type of the quick reply button (e.g., "text")
+  string content_type = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The display title of the quick reply button (max 20 chars)
+  string title = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 20
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The payload returned when the user taps this button
+  string payload = 3 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// FlowMessageContent represents the message content inside a flow step
+message FlowMessageContent {
+  // The text of the message
+  string text = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Optional quick reply buttons attached to the message
+  repeated FlowQuickReply quick_replies = 2;
+}
+
+// FlowStep represents a single step in the welcome_message_flow array
+message FlowStep {
+  // The message content for this step
+  FlowMessageContent message = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// NewFlow represents the request body to create a new messenger flow
+message NewFlow {
+  // The name of the flow (max 255 chars)
+  string name = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The ordered steps of the welcome message flow
+  repeated FlowStep welcome_message_flow = 2 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Platforms where this flow is eligible (e.g., "instagram", "messenger")
+  repeated string eligible_platforms = 3 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// FlowMutationResponse represents the response after creating or updating a flow
+message FlowMutationResponse {
+  // The unique identifier of the created/updated flow (optional)
+  string flow_id = 1 [features.field_presence = EXPLICIT];
+  // Whether the operation was successful (optional)
+  bool success = 2 [features.field_presence = EXPLICIT];
+}

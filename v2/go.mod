@@ -3,9 +3,11 @@ module github.com/ecsavigne/client_wa_oficial/v2
 go 1.24.3
 
 require (
-	github.com/gorilla/websocket v1.5.3
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260209202127-80ab13bee0bf.1
 	github.com/spf13/viper v1.19.0
 	golang.org/x/net v0.23.0
+	google.golang.org/genproto/googleapis/api v0.0.0-20240311132316-a219d84964c2
+	google.golang.org/protobuf v1.36.11
 )
 
 require (

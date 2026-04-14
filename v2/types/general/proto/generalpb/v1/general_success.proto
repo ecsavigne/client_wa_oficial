@@ -1,0 +1,11 @@
+edition = "2023";
+
+package generalpb.v1;
+
+import "google/api/field_behavior.proto";
+
+// SuccessResponse represents a generic success response
+message SuccessResponse {
+  // Whether the operation was successful
+  bool success = 1 [(google.api.field_behavior) = REQUIRED];
+}

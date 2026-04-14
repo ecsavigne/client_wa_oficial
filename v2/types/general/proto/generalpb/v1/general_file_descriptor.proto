@@ -1,0 +1,27 @@
+edition = "2023";
+
+package generalpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// FileDescriptor holds raw file data for direct upload to any platform
+message FileDescriptor {
+  // The filename (e.g. "photo.jpg")
+  string filename = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The MIME type of the file (e.g. "image/jpeg")
+  string mime_type = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The size of the file in bytes
+  int64 size = 3 [(google.api.field_behavior) = REQUIRED];
+  // The raw file bytes
+  bytes content = 4 [
+    (buf.validate.field).bytes = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

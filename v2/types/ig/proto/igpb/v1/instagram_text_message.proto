@@ -1,0 +1,27 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// TextMessage contains the text content to be sent
+message TextMessage {
+  // The text of the message to be sent to the recipient
+  string text = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 4096
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// InstagramTextMessage is the main message structure for sending text messages via Instagram
+message InstagramTextMessage {
+  // The recipient who will receive the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The message content
+  TextMessage message = 2 [(google.api.field_behavior) = REQUIRED];
+}

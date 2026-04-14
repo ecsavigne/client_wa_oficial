@@ -1,0 +1,32 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// SubscribedApp represents a single app subscription entry with its subscribed fields
+message SubscribedApp {
+  // The unique identifier of the subscribed app
+  string id = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^[0-9]+$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The list of webhook fields the app is subscribed to (e.g., "messages")
+  repeated string subscribed_fields = 2 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// SubscribedAppsResponse represents the API response for subscribed apps
+message SubscribedAppsResponse {
+  // The list of subscribed app entries
+  repeated SubscribedApp data = 1 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

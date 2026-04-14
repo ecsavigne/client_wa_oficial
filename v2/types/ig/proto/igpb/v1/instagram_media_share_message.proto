@@ -1,0 +1,47 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "generalpb/v1/general_file_header.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// MediaSharePayload contains the ID of the media post being shared
+message MediaSharePayload {
+  // The unique identifier of the media post being shared
+  string id = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// MediaShareAttachment represents a shared media post from Instagram
+message MediaShareAttachment {
+  // The type of attachment (MEDIA_SHARE for shared posts)
+  string type = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^MEDIA_SHARE$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The payload containing the media post ID
+  MediaSharePayload payload = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+// MediaShareMessage contains a shared media post attachment
+message MediaShareMessage {
+  // The media share attachment
+  MediaShareAttachment attachment = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramMediaShareMessage is the main message structure for sending messages with published posts
+message InstagramMediaShareMessage {
+  // The recipient who will receive the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The message content with the shared media post
+  MediaShareMessage message = 2 [(google.api.field_behavior) = REQUIRED];
+  // Optional file header metadata for the uploaded media file
+  generalpb.v1.FileHeader file_header = 3;
+}

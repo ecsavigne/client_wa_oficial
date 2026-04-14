@@ -1,0 +1,38 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_quick_replies_message.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// QuickRepliesResponseMessage contains text and quick replies for a response message
+message QuickRepliesResponseMessage {
+  // The text to be sent in the response
+  string text = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 4096
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Array of quick reply options available to the user
+  repeated QuickReply quick_replies = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramQuickRepliesResponseMessage is the message structure for sending response messages with quick replies
+message InstagramQuickRepliesResponseMessage {
+  // The recipient who will receive the response
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The messaging type (e.g., RESPONSE)
+  string messaging_type = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^(RESPONSE)$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The message content with text and quick replies
+  QuickRepliesResponseMessage message = 3 [(google.api.field_behavior) = REQUIRED];
+}

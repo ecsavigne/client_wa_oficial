@@ -1,0 +1,14 @@
+version: v2
+modules:
+  - path: v2/types/ig/proto
+  - path: v2/types/messenger/proto
+  - path: v2/types/general/proto
+deps:
+  - buf.build/bufbuild/protovalidate
+  - buf.build/googleapis/googleapis
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE

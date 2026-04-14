@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	str "strings"
+
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // type param template pre-approval
@@ -195,15 +197,15 @@ const (
 type TYPE_COMPONENT = string
 
 const (
-	TC_FOOTER                                 TYPE_COMPONENT = "FOOTER"
-	TC_HEADER                                 TYPE_COMPONENT = "HEADER"
-	TC_BODY                                   TYPE_COMPONENT = "BODY"
-	TC_GREETING                               TYPE_COMPONENT = "GREETING"
-	TC_BUTTONS                                TYPE_COMPONENT = "BUTTONS"
-	TC_CAROUSEL                               TYPE_COMPONENT = "CAROUSEL"
-	TC_LIMITED_TIME_OFFER                     TYPE_COMPONENT = "LIMITED_TIME_OFFER"
-	TC_CALL_PERMISSION_REQUEST                TYPE_COMPONENT = "CALL_PERMISSION_REQUEST"
-	TC_TAP_TARGET_CONFIGURATIONTYPE_COMPONENT                = "TAP_TARGET_CONFIGURATION"
+	TC_FOOTER                   TYPE_COMPONENT = "FOOTER"
+	TC_HEADER                   TYPE_COMPONENT = "HEADER"
+	TC_BODY                     TYPE_COMPONENT = "BODY"
+	TC_GREETING                 TYPE_COMPONENT = "GREETING"
+	TC_BUTTONS                  TYPE_COMPONENT = "BUTTONS"
+	TC_CAROUSEL                 TYPE_COMPONENT = "CAROUSEL"
+	TC_LIMITED_TIME_OFFER       TYPE_COMPONENT = "LIMITED_TIME_OFFER"
+	TC_CALL_PERMISSION_REQUEST  TYPE_COMPONENT = "CALL_PERMISSION_REQUEST"
+	TC_TAP_TARGET_CONFIGURATION TYPE_COMPONENT = "TAP_TARGET_CONFIGURATION"
 )
 
 type QUALITYSCORE = string
@@ -230,11 +232,28 @@ type BodyTextNamedParam = []NamedParam
 type BodyText = []PositionalParams
 
 type Example struct {
-	*HeaderHandle         `json:"header_handle,omitempty"`
-	*HeaderText           `json:"header_text,omitempty"`
-	*BodyText             `json:"body_text,omitempty"`
-	*BodyTextNamedParam   `json:"body_text_named_params,omitempty"`
-	*HeaderTextNamedParam `json:"header_text_named_params,omitempty"`
+	HeaderHandle          []string           `json:"header_handle,omitempty"`
+	HeaderText            []PositionalParams `json:"header_text,omitempty"`
+	BodyText              []PositionalParams `json:"body_text,omitempty"`
+	BodyTextNamedParams   []NamedParam       `json:"body_text_named_params,omitempty"`
+	HeaderTextNamedParams []NamedParam       `json:"header_text_named_params,omitempty"`
+}
+
+/*
+	func ListValueToSlice(lv *structpb.ListValue) []any {
+		res := make([]any, 0)
+
+		res = lv.AsSlice()
+
+		return res
+	}
+*/
+func (e *Example) GetPositionalParams(lv *structpb.ListValue) []PositionalParams {
+	res := make([]any, 0)
+
+	res = lv.AsSlice()
+
+	return res
 }
 
 type LimitedTimeOffer struct {
@@ -663,22 +682,22 @@ func (cmp MockupComponent) GetParams() (param []map[string]any) {
 		switch {
 		case cmp.Example != nil && (cmp.BodyText != nil || cmp.HeaderText != nil):
 			if cmp.BodyText != nil {
-				for _, v := range *cmp.BodyText {
+				for _, v := range cmp.BodyText {
 					getParamPositional(v, &param)
 				}
 			} else {
-				for _, v := range *cmp.HeaderText {
+				for _, v := range cmp.HeaderText {
 					getParamPositional(v, &param)
 				}
 			}
 
-		case cmp.Example != nil && (cmp.BodyTextNamedParam != nil || cmp.HeaderTextNamedParam != nil):
-			if cmp.BodyTextNamedParam != nil {
-				for _, v := range *cmp.BodyTextNamedParam {
+		case cmp.Example != nil && (cmp.BodyTextNamedParams != nil || cmp.HeaderTextNamedParams != nil):
+			if cmp.BodyTextNamedParams != nil {
+				for _, v := range cmp.BodyTextNamedParams {
 					getParamName(v, &param)
 				}
 			} else {
-				for _, v := range *cmp.HeaderTextNamedParam {
+				for _, v := range cmp.HeaderTextNamedParams {
 					getParamName(v, &param)
 				}
 			}

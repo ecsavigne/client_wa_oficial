@@ -1,0 +1,18 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// Recipient represents the Instagram user who will receive the message
+message Recipient {
+  // Instagram chat ID of the recipient (scoped ID)
+  string id = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^[0-9]+$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

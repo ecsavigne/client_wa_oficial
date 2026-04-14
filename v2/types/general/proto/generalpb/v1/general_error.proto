@@ -1,0 +1,25 @@
+edition = "2023";
+
+package generalpb.v1;
+
+import "google/api/field_behavior.proto";
+
+// ResponseError represents a generic error response
+message ResponseError {
+  // The error type identifier (e.g. "url_not_found", "bad_request")
+  string type = 1 [(google.api.field_behavior) = OPTIONAL];
+  // The numeric error code (e.g. 404, 400, 401)
+  int64 code = 2 [(google.api.field_behavior) = OPTIONAL];
+  // Human-readable error message
+  string message = 3 [(google.api.field_behavior) = OPTIONAL];
+  // Secondary error subcode for more granular classification
+  int64 error_subcode = 4 [(google.api.field_behavior) = OPTIONAL];
+  // Whether the error is transient and the request can be retried
+  bool is_transient = 5 [(google.api.field_behavior) = OPTIONAL];
+  // Short title shown to the end user
+  string error_user_title = 6 [(google.api.field_behavior) = OPTIONAL];
+  // Detailed message shown to the end user
+  string error_user_msg = 7 [(google.api.field_behavior) = OPTIONAL];
+  // Facebook trace ID for debugging
+  string fbtrace_id = 8 [(google.api.field_behavior) = OPTIONAL];
+}

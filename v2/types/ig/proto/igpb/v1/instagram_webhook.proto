@@ -1,0 +1,79 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// User represents a user (sender or recipient) in a messaging context
+message User {
+  // The Instagram-scoped user ID
+  string id = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// QuickReplyPayload contains the selected quick reply information
+message QuickReplyPayload {
+  // The payload for the specific quick reply that was selected
+  string payload = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// WebhookMessage represents the message data in a webhook event
+message WebhookMessage {
+  // The selected quick reply information
+  QuickReplyPayload quick_reply = 1 [(google.api.field_behavior) = REQUIRED];
+  // The unique message ID
+  string mid = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The text, email, or phone number of the selected quick reply
+  string text = 3 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// MessagingItem represents a single messaging event in the webhook
+message MessagingItem {
+  // The user who sent the message
+  User sender = 1 [(google.api.field_behavior) = REQUIRED];
+  // The user who is receiving the message (Instagram Professional account)
+  User recipient = 2 [(google.api.field_behavior) = REQUIRED];
+  // Unix timestamp when the message was sent
+  int64 timestamp = 3 [(google.api.field_behavior) = REQUIRED];
+  // The message content
+  WebhookMessage message = 4 [(google.api.field_behavior) = REQUIRED];
+}
+
+// Entry represents an entry in the webhook payload
+message Entry {
+  // The ID for the Instagram Professional account that owns the quick replies
+  string id = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The time the notification was sent (Unix timestamp in milliseconds)
+  int64 time = 2 [(google.api.field_behavior) = REQUIRED];
+  // Array of messaging items in this entry
+  repeated MessagingItem messaging = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramWebhookEvent represents the complete webhook event payload received from Instagram
+message InstagramWebhookEvent {
+  // The object type (always "instagram" for Instagram webhooks)
+  string object = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^instagram$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Array of entries containing the webhook data
+  repeated Entry entry = 2 [(google.api.field_behavior) = REQUIRED];
+}

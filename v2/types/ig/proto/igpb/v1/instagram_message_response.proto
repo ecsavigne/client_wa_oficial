@@ -1,0 +1,22 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// InstagramMessageResponse is the response after sending any message via Instagram
+message InstagramMessageResponse {
+  // The ID of the chat where the message was sent
+  string recipient_id = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The unique ID of the sent message
+  string message_id = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The ID of the media file stored on Meta servers (only present when a media message was sent)
+  string media_id = 3;
+}

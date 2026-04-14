@@ -1,0 +1,52 @@
+edition = "2023";
+
+package messengerpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// IceBreakerCallToAction represents a single ice breaker question with its payload
+message IceBreakerCallToAction {
+  // The question displayed to the user
+  string question = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The payload returned when the user selects this question
+  string payload = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// IceBreakerItem represents a set of ice breaker questions for a specific locale
+message IceBreakerItem {
+  // The list of ice breaker questions shown to the user
+  repeated IceBreakerCallToAction call_to_actions = 1 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The locale for this ice breaker set (e.g., "default")
+  string locale = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// IceBreakersResponse represents the API response for an ice breakers request
+message IceBreakersResponse {
+  // The list of ice breaker items grouped by locale
+  repeated IceBreakerItem data = 1 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// IceBreakersResultResponse represents a simple result response for ice breaker mutations
+message IceBreakersResultResponse {
+  // The result of the operation (e.g., "success")
+  string result = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

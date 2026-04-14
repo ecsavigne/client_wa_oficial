@@ -1,0 +1,38 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// UserProfileInfo represents the public profile information of an Instagram user
+message UserProfileInfo {
+  // The display name of the user
+  string name = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The Instagram username (handle)
+  string username = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The URL of the user's profile picture
+  string profile_picture_url = 3 [
+    (buf.validate.field).string = {uri: true},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The number of followers the user has
+  int64 followers_count = 4 [
+    (buf.validate.field).int64 = {gte: 0},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The unique identifier of the Instagram user
+  string id = 5 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^[0-9]+$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

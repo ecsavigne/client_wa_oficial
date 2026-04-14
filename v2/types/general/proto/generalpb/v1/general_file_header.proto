@@ -1,0 +1,30 @@
+edition = "2023";
+
+package generalpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// FileHeader describes a file to be uploaded
+message FileHeader {
+  // The raw file bytes
+  bytes content = 1 [
+    (buf.validate.field).bytes = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The name of the file (without extension)
+  string name = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The file extension (e.g. "png", "pdf")
+  string ext = 3 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The MIME type of the file (e.g. "image/png")
+  string mime_type = 4 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

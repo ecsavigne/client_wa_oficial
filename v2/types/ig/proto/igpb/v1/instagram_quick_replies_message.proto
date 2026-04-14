@@ -1,0 +1,54 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// QuickReply represents a single quick reply button option
+message QuickReply {
+  // The content type of the quick reply (text, user_phone_number, user_email)
+  string content_type = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^(text|user_phone_number|user_email)$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The title text displayed on the quick reply button
+  string title = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 1000
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The payload content to be received in webhook notification when quick reply is clicked
+  string payload = 3 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// QuickRepliesMessage contains text prompt and array of quick reply options
+message QuickRepliesMessage {
+  // The text that prompts a person to click a quick reply
+  string text = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 4096
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Array of quick reply options available to the user
+  repeated QuickReply quick_replies = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramQuickRepliesMessage is the main message structure for sending quick replies via Instagram
+message InstagramQuickRepliesMessage {
+  // The recipient who will receive the quick replies
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The message content with quick reply options
+  QuickRepliesMessage message = 2 [(google.api.field_behavior) = REQUIRED];
+}

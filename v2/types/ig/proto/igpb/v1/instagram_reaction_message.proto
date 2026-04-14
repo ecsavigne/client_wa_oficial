@@ -1,0 +1,40 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// ReactionPayload contains the reaction details for a message
+message ReactionPayload {
+  // The ID of the message to react to
+  string message_id = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The type of reaction to be sent (e.g., love, like, haha, wow, sad, angry)
+  string reaction = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^(love|like|haha|wow|sad|angry)$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// InstagramReactionMessage is the main message structure for reacting to or unreacting from messages
+message InstagramReactionMessage {
+  // The recipient of the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+  // The sender action (react or unreact)
+  string sender_action = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^(react|unreact)$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The reaction payload containing message_id and reaction type
+  ReactionPayload payload = 3 [(google.api.field_behavior) = REQUIRED];
+}

@@ -50,34 +50,6 @@ func isWaba(wrapper record) bool {
 	return false
 }
 
-// func isTemplate(wrapper record) (bool, isOnly bool) {
-// 	_, fCategory := wrapper["category"]
-// 	_, fName := wrapper["name"]
-// 	_, fLang := wrapper["language"]
-
-// 	// only template
-// 	if fCategory && fName && fLang {
-// 		return true, true
-// 	}
-
-// 	data := wrapper["data"]
-// 	if v, ok := data.(array); ok {
-// 		if len(v) > 0 {
-// 			if tpl, ok := v[0].(record); ok {
-// 				_, fCategory = tpl["category"]
-// 				_, fName = tpl["name"]
-// 				_, fLang = tpl["language"]
-// 				// array template
-// 				if fCategory && fName && fLang {
-// 					return true, false
-// 				}
-// 			}
-// 		}
-// 	}
-
-// 	return false, false
-// }
-
 func isWabas(wrapper record) bool {
 	if wrapper["data"] != nil && wrapper["paging"] != nil && wrapper["data"].(array) != nil &&
 		wrapper["data"].(array)[0].(record)["id"] != nil && wrapper["data"].(array)[0].(record)["name"] != nil {

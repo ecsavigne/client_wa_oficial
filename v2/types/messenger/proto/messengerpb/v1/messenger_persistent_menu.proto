@@ -1,0 +1,71 @@
+edition = "2023";
+
+package messengerpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// CallToAction represents a single action button in a persistent menu item
+message CallToAction {
+  // The type of the action: "postback" or "web_url"
+  string type = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      in: [
+        "postback",
+        "web_url"
+      ]
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The display title of the button (max 20 chars)
+  string title = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 20
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The payload returned when the user taps a "postback" button (optional)
+  string payload = 3 [features.field_presence = EXPLICIT];
+  // The URL to open when the user taps a "web_url" button (optional)
+  string url = 4 [
+    (buf.validate.field).string = {uri: true},
+    features.field_presence = EXPLICIT
+  ];
+}
+
+// PersistentMenuItem represents a menu configuration for a specific locale
+message PersistentMenuItem {
+  // The locale for this menu (e.g., "default")
+  string locale = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // The list of action buttons shown in the menu (max 3 items)
+  repeated CallToAction call_to_actions = 2 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 3
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// PersistentMenuEntry represents a single entry in the data array containing a persistent menu
+message PersistentMenuEntry {
+  // The list of persistent menu configurations (one per locale)
+  repeated PersistentMenuItem persistent_menu = 1 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// PersistentMenuResponse represents the API response for a persistent menu request
+message PersistentMenuResponse {
+  // The list of persistent menu entries
+  repeated PersistentMenuEntry data = 1 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
