@@ -1,0 +1,40 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_persistent_menu_message.proto";
+
+// IceBreakersItem represents ice breakers configuration for a specific locale
+message IceBreakersItem {
+  // The locale for the ice breakers (e.g., default, zh_CN)
+  string locale = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The call to action questions (array of ice breaker items, maximum 3)
+  repeated CallToAction call_to_actions = 2 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 3
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// InstagramIceBreakersMessage represents ice breakers configuration for Instagram
+message InstagramIceBreakersMessage {
+  // The platform identifier
+  string platform = 1 [
+    (buf.validate.field).string = {pattern: "^instagram$"},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The ice breakers array (configuration per locale)
+  repeated IceBreakersItem ice_breakers = 2 [
+    (buf.validate.field).repeated = {min_items: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

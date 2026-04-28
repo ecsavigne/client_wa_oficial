@@ -7,13 +7,14 @@
 package igpbv1
 
 import (
+	reflect "reflect"
+	unsafe "unsafe"
+
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	v1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
+	v1 "github.com/ecsavigne/client_oficial/v2/types/ig/gen/generalpb/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	reflect "reflect"
-	unsafe "unsafe"
 )
 
 const (
@@ -28,6 +29,7 @@ type AttachmentPayload struct {
 	state                   protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Url          *string                `protobuf:"bytes,1,opt,name=url"`
 	xxx_hidden_AttachmentId *string                `protobuf:"bytes,2,opt,name=attachment_id,json=attachmentId"`
+	xxx_hidden_IsReusable   bool                   `protobuf:"varint,3,opt,name=is_reusable,json=isReusable"`
 	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
 	XXX_presence            [1]uint32
 	unknownFields           protoimpl.UnknownFields
@@ -79,14 +81,26 @@ func (x *AttachmentPayload) GetAttachmentId() string {
 	return ""
 }
 
+func (x *AttachmentPayload) GetIsReusable() bool {
+	if x != nil {
+		return x.xxx_hidden_IsReusable
+	}
+	return false
+}
+
 func (x *AttachmentPayload) SetUrl(v string) {
 	x.xxx_hidden_Url = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *AttachmentPayload) SetAttachmentId(v string) {
 	x.xxx_hidden_AttachmentId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *AttachmentPayload) SetIsReusable(v bool) {
+	x.xxx_hidden_IsReusable = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *AttachmentPayload) HasUrl() bool {
@@ -103,6 +117,13 @@ func (x *AttachmentPayload) HasAttachmentId() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
+func (x *AttachmentPayload) HasIsReusable() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
 func (x *AttachmentPayload) ClearUrl() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Url = nil
@@ -113,6 +134,11 @@ func (x *AttachmentPayload) ClearAttachmentId() {
 	x.xxx_hidden_AttachmentId = nil
 }
 
+func (x *AttachmentPayload) ClearIsReusable() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_IsReusable = false
+}
+
 type AttachmentPayload_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -120,6 +146,8 @@ type AttachmentPayload_builder struct {
 	Url *string
 	// The attachment ID of the pre-uploaded attachment (image, video, audio, like_heart(sticker))
 	AttachmentId *string
+	// Whether the attachment can be reused after sending
+	IsReusable *bool
 }
 
 func (b0 AttachmentPayload_builder) Build() *AttachmentPayload {
@@ -127,12 +155,16 @@ func (b0 AttachmentPayload_builder) Build() *AttachmentPayload {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Url != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
 		x.xxx_hidden_Url = b.Url
 	}
 	if b.AttachmentId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
 		x.xxx_hidden_AttachmentId = b.AttachmentId
+	}
+	if b.IsReusable != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_IsReusable = *b.IsReusable
 	}
 	return m0
 }
@@ -243,12 +275,13 @@ func (b0 Attachment_builder) Build() *Attachment {
 	return m0
 }
 
-// MediaMessage contains media attachment to be sent
+// MediaMessage contains media attachments to be sent
 type MediaMessage struct {
-	state                 protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Attachment *Attachment            `protobuf:"bytes,1,opt,name=attachment"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Attachment  *Attachment            `protobuf:"bytes,1,opt,name=attachment"`
+	xxx_hidden_Attachments *[]*Attachment         `protobuf:"bytes,2,rep,name=attachments"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *MediaMessage) Reset() {
@@ -283,8 +316,21 @@ func (x *MediaMessage) GetAttachment() *Attachment {
 	return nil
 }
 
+func (x *MediaMessage) GetAttachments() []*Attachment {
+	if x != nil {
+		if x.xxx_hidden_Attachments != nil {
+			return *x.xxx_hidden_Attachments
+		}
+	}
+	return nil
+}
+
 func (x *MediaMessage) SetAttachment(v *Attachment) {
 	x.xxx_hidden_Attachment = v
+}
+
+func (x *MediaMessage) SetAttachments(v []*Attachment) {
+	x.xxx_hidden_Attachments = &v
 }
 
 func (x *MediaMessage) HasAttachment() bool {
@@ -301,8 +347,10 @@ func (x *MediaMessage) ClearAttachment() {
 type MediaMessage_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	// The attachment/media content to be sent
+	// Single attachment for audio, video, or file types
 	Attachment *Attachment
+	// Multiple attachments for image types (collection)
+	Attachments []*Attachment
 }
 
 func (b0 MediaMessage_builder) Build() *MediaMessage {
@@ -310,6 +358,7 @@ func (b0 MediaMessage_builder) Build() *MediaMessage {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Attachment = b.Attachment
+	x.xxx_hidden_Attachments = &b.Attachments
 	return m0
 }
 
@@ -439,19 +488,22 @@ var File_igpb_v1_instagram_media_message_proto protoreflect.FileDescriptor
 
 const file_igpb_v1_instagram_media_message_proto_rawDesc = "" +
 	"\n" +
-	"%igpb/v1/instagram_media_message.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a*generalpb/v1/general_file_descriptor.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a!igpb/v1/instagram_recipient.proto\"_\n" +
+	"%igpb/v1/instagram_media_message.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a*generalpb/v1/general_file_descriptor.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a!igpb/v1/instagram_recipient.proto\"\x80\x01\n" +
 	"\x11AttachmentPayload\x12\x1c\n" +
 	"\x03url\x18\x01 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x01\x88\x01\x01R\x03url\x12,\n" +
-	"\rattachment_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fattachmentId\"\x89\x01\n" +
+	"\rattachment_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fattachmentId\x12\x1f\n" +
+	"\vis_reusable\x18\x03 \x01(\bR\n" +
+	"isReusable\"\x89\x01\n" +
 	"\n" +
 	"Attachment\x12@\n" +
 	"\x04type\x18\x01 \x01(\tB,\xe0A\x02\xbaH&r$\x10\x012 ^(image|video|audio|like_heart)$R\x04type\x129\n" +
-	"\apayload\x18\x02 \x01(\v2\x1a.igpb.v1.AttachmentPayloadB\x03\xe0A\x02R\apayload\"H\n" +
-	"\fMediaMessage\x128\n" +
+	"\apayload\x18\x02 \x01(\v2\x1a.igpb.v1.AttachmentPayloadB\x03\xe0A\x02R\apayload\"z\n" +
+	"\fMediaMessage\x123\n" +
 	"\n" +
-	"attachment\x18\x01 \x01(\v2\x13.igpb.v1.AttachmentB\x03\xe0A\x02R\n" +
-	"attachment\"\xcb\x01\n" +
+	"attachment\x18\x01 \x01(\v2\x13.igpb.v1.AttachmentR\n" +
+	"attachment\x125\n" +
+	"\vattachments\x18\x02 \x03(\v2\x13.igpb.v1.AttachmentR\vattachments\"\xcb\x01\n" +
 	"\x15InstagramMediaMessage\x125\n" +
 	"\trecipient\x18\x01 \x01(\v2\x12.igpb.v1.RecipientB\x03\xe0A\x02R\trecipient\x124\n" +
 	"\amessage\x18\x02 \x01(\v2\x15.igpb.v1.MediaMessageB\x03\xe0A\x02R\amessage\x12E\n" +
@@ -470,14 +522,15 @@ var file_igpb_v1_instagram_media_message_proto_goTypes = []any{
 var file_igpb_v1_instagram_media_message_proto_depIdxs = []int32{
 	0, // 0: igpb.v1.Attachment.payload:type_name -> igpb.v1.AttachmentPayload
 	1, // 1: igpb.v1.MediaMessage.attachment:type_name -> igpb.v1.Attachment
-	4, // 2: igpb.v1.InstagramMediaMessage.recipient:type_name -> igpb.v1.Recipient
-	2, // 3: igpb.v1.InstagramMediaMessage.message:type_name -> igpb.v1.MediaMessage
-	5, // 4: igpb.v1.InstagramMediaMessage.file_descriptor:type_name -> generalpb.v1.FileDescriptor
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	1, // 2: igpb.v1.MediaMessage.attachments:type_name -> igpb.v1.Attachment
+	4, // 3: igpb.v1.InstagramMediaMessage.recipient:type_name -> igpb.v1.Recipient
+	2, // 4: igpb.v1.InstagramMediaMessage.message:type_name -> igpb.v1.MediaMessage
+	5, // 5: igpb.v1.InstagramMediaMessage.file_descriptor:type_name -> generalpb.v1.FileDescriptor
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_igpb_v1_instagram_media_message_proto_init() }

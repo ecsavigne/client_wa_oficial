@@ -1,0 +1,130 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// ButtonType represents the type of button action
+enum ButtonType {
+  BUTTON_TYPE_UNSPECIFIED = 0;
+  BUTTON_TYPE_WEB_URL = 1;
+  BUTTON_TYPE_POSTBACK = 2;
+}
+
+// DefaultAction represents the default action executed when the template is tapped
+message DefaultAction {
+  // The type of action (must be web_url for generic templates)
+  ButtonType type = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The URL to open when the template is tapped
+  string url = 2 [
+    (buf.validate.field).string = {uri: true},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// TemplateButton represents a button in template messages
+message TemplateButton {
+  // The type of button (web_url or postback)
+  ButtonType type = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The title text displayed on the button (max 20 characters)
+  string title = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 20
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The URL to open for web_url buttons
+  string url = 3 [(buf.validate.field).string = {uri: true}];
+
+  // The payload string sent as postback for postback buttons
+  string payload = 4;
+}
+
+// Element represents an element in the generic template carousel
+message Element {
+  // The title to display in the template (80 character limit)
+  string title = 1 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 80
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The subtitle to display in the template (80 character limit)
+  string subtitle = 2 [(buf.validate.field).string = {max_len: 80}];
+
+  // The URL of the image to display in the template
+  string image_url = 3 [(buf.validate.field).string = {uri: true}];
+
+  // The default action executed when the template is tapped
+  DefaultAction default_action = 4;
+
+  // An array of buttons to append to the template (maximum of 3 buttons per element)
+  repeated TemplateButton buttons = 5 [(buf.validate.field).repeated = {max_items: 3}];
+}
+
+// GenericTemplatePayload represents the payload of a generic template
+message GenericTemplatePayload {
+  // Must be "generic"
+  string template_type = 1 [
+    (buf.validate.field).string = {const: "generic"},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // An array of element objects (maximum of 10 elements per message)
+  repeated Element elements = 2 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 10
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// ButtonTemplatePayload represents the payload of a button template
+message ButtonTemplatePayload {
+  // Must be "button"
+  string template_type = 1 [
+    (buf.validate.field).string = {const: "button"},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The text message to display before the buttons
+  string text = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 1000
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // An array of buttons to display (maximum of 3 buttons)
+  repeated TemplateButton buttons = 3 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 3
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// TemplateAttachment represents a message attachment with a template
+// The payload can be one of several template types using oneof
+message TemplateAttachment {
+  // Must be "template"
+  string type = 1 [(buf.validate.field).string = {const: "template"}];
+
+  // The payload can be one of these template types
+  oneof payload {
+    // Generic template with carousel elements
+    GenericTemplatePayload generic = 2;
+    // Button template with text and action buttons
+    ButtonTemplatePayload button = 3;
+  }
+}

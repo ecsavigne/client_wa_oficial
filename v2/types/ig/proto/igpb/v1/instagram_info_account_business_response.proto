@@ -1,0 +1,70 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// AccountType represents the type of Instagram account
+enum AccountType {
+  ACCOUNT_TYPE_UNSPECIFIED = 0;
+  ACCOUNT_TYPE_BUSINESS = 1;
+  ACCOUNT_TYPE_MEDIA_CREATOR = 2;
+}
+
+// InstagramInfoAccountBusinessResponse contains detailed information about an Instagram business account
+message InstagramInfoAccountBusinessResponse {
+  // The app user's app-scoped ID
+  string id = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The Instagram professional account ID (IG_ID)
+  string user_id = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^[0-9]+$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The app user's Instagram username
+  string username = 3 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The app user's name
+  string name = 4 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The app user's account type (Business or Media_Creator)
+  AccountType account_type = 5 [(google.api.field_behavior) = REQUIRED];
+
+  // The URL for the app user's profile picture
+  string profile_picture_url = 6 [
+    (buf.validate.field).string = {uri: true},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The number of followers of the app user's Instagram professional account
+  int64 followers_count = 7 [
+    (buf.validate.field).int64 = {gte: 0},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The number of Instagram accounts the app user's Instagram professional account follows
+  int64 follows_count = 8 [
+    (buf.validate.field).int64 = {gte: 0},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The number of Media objects on the User
+  int64 media_count = 9 [
+    (buf.validate.field).int64 = {gte: 0},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

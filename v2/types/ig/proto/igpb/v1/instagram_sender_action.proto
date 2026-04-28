@@ -1,0 +1,19 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+
+// InstagramSenderAction represents a sender action message (typing indicator)
+message InstagramSenderAction {
+  // The recipient of the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The sender action (typing_on or typing_off)
+  string sender_action = 2 [
+    (buf.validate.field).string = {pattern: "^(typing_on|typing_off)$"},
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

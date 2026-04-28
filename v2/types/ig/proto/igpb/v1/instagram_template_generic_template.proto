@@ -1,0 +1,23 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+import "igpb/v1/instagram_template_common.proto";
+
+// Message represents the message content with attachment
+message Message {
+  // The template attachment object
+  TemplateAttachment attachment = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramTemplateGenericTemplate represents a generic template message for Instagram
+message InstagramTemplateGenericTemplate {
+  // The recipient of the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The message content with the generic template attachment
+  Message message = 2 [(google.api.field_behavior) = REQUIRED];
+}

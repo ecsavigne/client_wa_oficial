@@ -1,0 +1,63 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_quick_replies_message.proto";
+
+// WelcomeMessageFlowItem represents a single welcome message flow item
+message WelcomeMessageFlowItem {
+  // Message contains the text and quick reply options for the welcome message
+  message Message {
+    // The welcome message text
+    string text = 1 [
+      (buf.validate.field).string = {
+        min_len: 1
+        max_len: 4096
+      },
+      (google.api.field_behavior) = REQUIRED
+    ];
+
+    // Array of quick reply options for the welcome message (maximum 10)
+    repeated QuickReply quick_replies = 2 [
+      (buf.validate.field).repeated = {
+        min_items: 1
+        max_items: 10
+      },
+      (google.api.field_behavior) = REQUIRED
+    ];
+  }
+
+  // The message with text and quick reply options
+  Message message = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramWelcomeMessageFlows represents the welcome message flows configuration for Instagram
+message InstagramWelcomeMessageFlows {
+  // The eligible platforms for this welcome message flow
+  repeated string eligible_platforms = 1 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      items: {
+        string: {pattern: "^instagram$"}
+      }
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The name of the welcome message flow
+  string name = 2 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // Array of welcome message flow items (typically contains 1 item)
+  repeated WelcomeMessageFlowItem welcome_message_flow = 3 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 1
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

@@ -1,0 +1,23 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+import "igpb/v1/instagram_recipient.proto";
+import "igpb/v1/instagram_template_common.proto";
+
+// ButtonMessage represents the message content with button template attachment
+message ButtonMessage {
+  // The template attachment object (same structure as generic templates)
+  TemplateAttachment attachment = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// InstagramTemplateButtonTemplate represents a button template message for Instagram
+message InstagramTemplateButtonTemplate {
+  // The recipient of the message
+  Recipient recipient = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The message content with the button template attachment
+  ButtonMessage message = 2 [(google.api.field_behavior) = REQUIRED];
+}

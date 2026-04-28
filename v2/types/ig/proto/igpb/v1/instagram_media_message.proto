@@ -16,6 +16,8 @@ message AttachmentPayload {
   }];
   // The attachment ID of the pre-uploaded attachment (image, video, audio, like_heart(sticker))
   string attachment_id = 2 [(buf.validate.field).string = {min_len: 1}];
+  // Whether the attachment can be reused after sending
+  bool is_reusable = 3;
 }
 
 // Attachment represents media content (image, video, audio, like_heart(sticker), etc.)
@@ -32,10 +34,12 @@ message Attachment {
   AttachmentPayload payload = 2 [(google.api.field_behavior) = REQUIRED];
 }
 
-// MediaMessage contains media attachment to be sent
+// MediaMessage contains media attachments to be sent
 message MediaMessage {
-  // The attachment/media content to be sent
-  Attachment attachment = 1 [(google.api.field_behavior) = REQUIRED];
+  // Single attachment for audio, video, or file types
+  Attachment attachment = 1;
+  // Multiple attachments for image types (collection)
+  repeated Attachment attachments = 2;
 }
 
 // InstagramMediaMessage is the main message structure for sending media messages via Instagram

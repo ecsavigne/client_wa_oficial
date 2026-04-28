@@ -1,0 +1,86 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// WebviewHeightRatio represents the height of the webview for web_url buttons
+enum WebviewHeightRatio {
+  WEBVIEW_HEIGHT_RATIO_UNSPECIFIED = 0;
+  // Full height webview
+  WEBVIEW_HEIGHT_RATIO_FULL = 1;
+  // Tall height webview
+  WEBVIEW_HEIGHT_RATIO_TALL = 2;
+  // Compact height webview
+  WEBVIEW_HEIGHT_RATIO_COMPACT = 3;
+}
+
+// CallToAction represents a menu item action in the persistent menu or ice breakers
+message CallToAction {
+  // The type of button (postback or web_url) - used in persistent menu context
+  string type = 1 [
+    (buf.validate.field).string = {pattern: "^(postback|web_url)$"},
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // The title text displayed on the button - used in persistent menu context
+  string title = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 30
+    },
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // The payload string sent as postback for postback buttons or ice breakers
+  string payload = 3 [
+    (buf.validate.field).string = {max_len: 2000},
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // The URL to open for web_url buttons - used in persistent menu context
+  string url = 4 [
+    (buf.validate.field).string = {uri: true},
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // The height ratio for web_url button webviews (full, tall, or compact) - used in persistent menu context
+  string webview_height_ratio = 5 [
+    (buf.validate.field).string = {pattern: "^(full|tall|compact)$"},
+    (google.api.field_behavior) = OPTIONAL
+  ];
+
+  // The question text for ice breakers - used in ice breakers context only
+  string question = 6 [(google.api.field_behavior) = OPTIONAL];
+}
+
+// PersistentMenuItem represents a menu section in the persistent menu
+message PersistentMenuItem {
+  // The locale for the menu (default or specific locale)
+  string locale = 1 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The call to action buttons (array of menu items, maximum 3)
+  repeated CallToAction call_to_actions = 2 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 3
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+// InstagramPersistentMenuMessage represents a persistent menu configuration for Instagram
+message InstagramPersistentMenuMessage {
+  // The persistent menu array (maximum 1 menu per locale, typically only 1 default menu)
+  repeated PersistentMenuItem persistent_menu = 1 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 1
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

@@ -9,13 +9,15 @@ import (
 
 	"github.com/ecsavigne/client_wa_oficial/v2/client"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	generalpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
 	gralpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
 	gralrequest "github.com/ecsavigne/client_wa_oficial/v2/types/general/request"
 	gralresponse "github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/ig"
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
-	igrsponse "github.com/ecsavigne/client_wa_oficial/v2/types/ig/response"
 	"github.com/spf13/viper"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type Config struct {
@@ -207,16 +209,16 @@ func NewClientIG(opts ...OptionsClientIG) (*ClientIG, error) {
 	return cl, nil
 }
 
-func (self *ClientIG) createUrl() {
-	// return self.typeClient.String()
-}
+// func (self *ClientIG) createUrl() {
+// 	// return self.typeClient.String()
+// }
 
 func (self *ClientIG) GetType() string                { return self.typeClient.String() }
 func (self *ClientIG) GetConfig() client.ConfigClient { return self.config }
 
 // func getPossivelResponse() gralresponse.ResponseType{}
 
-func (self *ClientIG) executeRequest(methoth string, ePoint string, data any, resp_ ...gralresponse.ResponseType) gralresponse.Responser {
+func (self *ClientIG) executeRequest(method string, ePoint string, data any, isID bool, resp_ ...gralresponse.ResponseType) gralresponse.Responser {
 	respType := gralresponse.ResponseUnknow
 	if len(resp_) > 0 {
 		respType = resp_[0]
@@ -225,7 +227,7 @@ func (self *ClientIG) executeRequest(methoth string, ePoint string, data any, re
 	// if msg.GetMessageLink() != "" || msg.GetFileHeader() != nil {
 	// 	multipartRequest(methoth, ePoint, c.Config, msg)
 	// } else {
-	req, err := gralrequest.DefaultRequest(self.GetConfig(), methoth, ePoint, data)
+	req, err := gralrequest.DefaultRequest(self.GetConfig(), method, ePoint, data, isID)
 	if err != nil {
 		log := fmt.Sprintf("Error in function executeRequest creting request of ClientIG. error is: %s", err.Error())
 		errorMsg := &gralpbv1.ResponseError{}
@@ -239,14 +241,18 @@ func (self *ClientIG) executeRequest(methoth string, ePoint string, data any, re
 	return gralrequest.Do(self, req, respType)
 }
 
-func (self *ClientIG) SendTextMessage(msg *igpbv1.InstagramTextMessage) gralresponse.Responser {
-	return self.executeRequest(http.MethodPost, "/messages", msg, igrsponse.ResponseSentMessage)
+func (self *ClientIG) sendTextMessage(msg *igpbv1.InstagramTextMessage) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
+}
+
+func (self *ClientIG) sendReactionMessage(msg *igpbv1.InstagramReactionMessage) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 }
 
 // upload media to Meta servers and get media_id if msg.GetFileHeader() exist, upload media to Meta servers and get media_id, then send media message with media_id
 // if msg.GetFileHeader() == nil and exist msg.GetMessageLink() or msg.GetMessage().GetId() != "" then send media message with message link or media id
 // if msg.GetFileHeader() == nil and msg.GetFileHeader() == nil and not exist msg.GetMessageLink() and msg.GetMessage().GetId() == "" then return error response with message "Media file is required for media message"() == "" and msg.GetMessage().GetId() == "" then return error response with message "Media file not found. Please provide a media file or a media link or a media id"
-func (self *ClientIG) SendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralresponse.Responser {
+func (self *ClientIG) sendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralresponse.Responser {
 	// if msg.GEtMessage().GetId()
 	if msg.GetMessage().GetAttachment().GetPayload().GetUrl() == "" &&
 		msg.GetMessage().GetAttachment().GetPayload().GetAttachmentId() == "" &&
@@ -261,14 +267,18 @@ func (self *ClientIG) SendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralre
 	if msg.GetMessage().GetAttachment().GetPayload().GetUrl() != "" {
 		msg.SetFileDescriptor(nil)
 		msg.GetMessage().GetAttachment().GetPayload().SetAttachmentId("")
-		return self.executeRequest(http.MethodPost, "/messages", msg, igrsponse.ResponseSentMessage)
+		return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 	}
 
 	// if send media id media message
 	if msg.GetMessage().GetAttachment().GetPayload().GetAttachmentId() != "" {
 		msg.SetFileDescriptor(nil)
 		msg.GetMessage().GetAttachment().GetPayload().SetUrl("")
-		return self.executeRequest(http.MethodPost, "/messages", msg, igrsponse.ResponseSentMessage)
+		return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
+	}
+
+	if msg.GetMessage().GetAttachment().GetType() == ig.IG_MEDIA_MESSAGE_TYPE_LIKE_HEART || msg.GetMessage().GetAttachments() != nil {
+		return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 	}
 
 	// if msg.GetFileHeader() != nil {
@@ -276,57 +286,272 @@ func (self *ClientIG) SendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralre
 	return nil
 }
 
-func (self *ClientIG) SendMediaShareMessage(msg *igpbv1.InstagramMediaShareMessage) gralresponse.Responser {
+func (self *ClientIG) sendMediaShareMessage(msg *igpbv1.InstagramMediaShareMessage) gralresponse.Responser {
 	return nil
 }
 
-// func (c *ClientIG) SendMessage(m message.Messager) response.Responser {
-// 	switch m.GetType() {
-// 	case wpp.MessageTypeAudio:
-// 		return c.sendAudioMessage(m)
-// 	case wpp.MessageTypeContact:
-// 		return c.sendContactMessage(m)
-// 	case wpp.MessageTypeDocument:
-// 		return c.sendDocumentMessage(m)
-// 	case wpp.MessageTypeImage:
-// 		return c.sendImageMessage(m)
-// 	case wpp.MessageTypeInteractive:
-// 		return c.sendInteractive(m)
-// 	case wpp.MessageTypeLocation:
-// 		return c.sendLocationMessage(m)
-// 	case wpp.MessageTypeReaction:
-// 		return c.sendReaction(m)
-// 	case wpp.MessageTypeResponse:
-// 		return c.sendResponseMsg(m)
-// 	case wpp.MessageTypeSticker:
-// 		return c.sendStickerMessage(m)
-// 	case wpp.MessageTypeTemplate:
-// 		return c.sendTemplate(m)
-// 	case wpp.MessageTypeText:
-// 		return c.sendTextMessage(m)
-// 	case wpp.MessageTypeVideo:
-// 		return c.sendVideoMessage(m)
-// 	default:
-// 		return response.NewError(&response.Error{
-// 			Type:    response.ResponseError,
-// 			Code:    401,
-// 			Message: fmt.Sprintf("Message not recognized. Message.type expect '%v'", []string{"text", "audio", "image", "video", "document", "sticker", "location", "contact", "template", "interactive", "reaction"}),
-// 		})
-// 	}
-// }
+/**
+* @name: sendInstagramQuickRepliesMessage
+* @description: Send Instagram Quick Replies message to Instagram
+* @param {proto.Message} msg e.g: *igpbv1.InstagramQuickRepliesMessage
+* @return gralresponse.Responser
+ */
+func (self *ClientIG) sendInstagramQuickRepliesMessage(msg *igpbv1.InstagramQuickRepliesMessage) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
+}
 
+func (self *ClientIG) sendInstagramPersistentMenu(msg *igpbv1.InstagramPersistentMenuMessage) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, "/messenger_profile", msg, true)
+}
+
+/**
+* @name: SendAction
+* @description: Send action to instagram
+* @param {string} scope_id the id of the user to send the action to
+* @param {string} action the action to send. Can be "typing_on" or "typing_off"
+* @return gralresponse.Responser
+ */
+func (self *ClientIG) sendAction(scope_id, action string) gralresponse.Responser {
+	if action != "typing_on" && action != "typing_off" {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Action not recognized. Action expect 'typing_on' or 'typing_off'")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	msg := new(igpbv1.InstagramSenderAction)
+	recipient := new(igpbv1.Recipient)
+	recipient.SetId(scope_id)
+	msg.SetRecipient(recipient)
+
+	msg.SetSenderAction(action)
+
+	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
+
+	// return self.executeRequest(http.MethodGet, "/", types.QueryData{
+	// 	"fields": "id,user_id,media_count,name,username,followers_count,follows_count,profile_picture_url",
+	// }, gralresponse.ResponseInfoAccountBusiness)
+}
+
+func (self *ClientIG) SendPresence(recipient_id, action string) gralresponse.Responser {
+	return self.sendAction(recipient_id, action)
+}
+
+func (self *ClientIG) sendInstagramIceBreakersMessage(msg *igpbv1.InstagramIceBreakersMessage) gralresponse.Responser {
+	resp := self.getInfoAccountBusiness().GetResponse()
+	infoAccount, ok := resp.(*igpbv1.InstagramInfoAccountBusinessResponse)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Error getting info account business. Response type is not InstagramInfoAccountBusinessResponse")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s/%s", infoAccount.GetId(), "messenger_profile"), msg, false)
+}
+func (self *ClientIG) createInstagramWelcomeMessageFlows(msg *igpbv1.InstagramWelcomeMessageFlows) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s/%s", "me", "welcome_message_flows"), msg, false)
+}
+
+/**
+* @name: SendMessage
+* @description: Send message to instagram
+* @param {proto.Message} msg e.g: *igpbv1.InstagramTextMessage, *igpbv1.InstagramMediaMessage, *igpbv1.InstagramMediaShareMessage
+* @return gralresponse.Responser
+ */
 func (self *ClientIG) SendMessage(msg proto.Message) gralresponse.Responser {
 	switch v := msg.(type) {
 	case *igpbv1.InstagramTextMessage:
-		return self.SendTextMessage(v)
+		return self.sendTextMessage(v)
+	case *igpbv1.InstagramReactionMessage:
+		return self.sendReactionMessage(v)
 	case *igpbv1.InstagramMediaMessage:
-		return self.SendMediaMessage(v)
+		return self.sendMediaMessage(v)
 	case *igpbv1.InstagramMediaShareMessage:
-		return self.SendMediaShareMessage(v)
+		return self.sendMediaShareMessage(v)
+	case *igpbv1.InstagramQuickRepliesMessage:
+		return self.sendInstagramQuickRepliesMessage(v)
+	case *igpbv1.InstagramPersistentMenuMessage:
+		return self.sendInstagramPersistentMenu(v)
+	case *igpbv1.InstagramIceBreakersMessage:
+		return self.sendInstagramIceBreakersMessage(v)
+	case *igpbv1.InstagramWelcomeMessageFlows:
+		return self.createInstagramWelcomeMessageFlows(v)
 	default:
+		fmt.Printf("Error in SendMessage, file: IGClient.go. Message type not recognized. Type of message is: %T\n", v)
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
 		errorResponse.SetMessage("Message not recognized. Message.type expect 'text', 'audio', 'image', 'video', 'document', 'sticker', 'location', 'contact', 'template', 'interactive', 'reaction'")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+}
+
+// Gets
+func (self *ClientIG) getInfoAccountBusiness() gralresponse.Responser {
+	return self.executeRequest(http.MethodGet, "/", types.QueryData{
+		"fields": "id,user_id,media_count,name,username,followers_count,follows_count,profile_picture_url",
+	}, true, gralresponse.InfoAccountBusinessResponse)
+}
+
+func (self *ClientIG) getInstagramPersistentMenu() gralresponse.Responser {
+	return self.executeRequest(http.MethodGet, "/messenger_profile", types.QueryData{
+		"fields": "persistent_menu",
+	}, true)
+}
+
+func (self *ClientIG) getInstagramIceBreakers() gralresponse.Responser {
+	return self.executeRequest(http.MethodGet, "/messenger_profile", types.QueryData{
+		"fields": "ice_breakers",
+	}, true)
+}
+
+func (self *ClientIG) getInstagramLink() gralresponse.Responser {
+	resp := self.getInfoAccountBusiness().GetResponse()
+	infoAccount, ok := resp.(*igpbv1.InstagramInfoAccountBusinessResponse)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Error getting info account business. Response type is not InstagramInfoAccountBusinessResponse")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	link := fmt.Sprintf("https://ig.me/%s", infoAccount.GetUsername())
+
+	unknow := &generalpbv1.UnknownResponse{}
+	unknow.SetData(map[string]*structpb.Value{
+		"link": structpb.NewStringValue(link),
+	})
+
+	return gralresponse.NewResponse(unknow, gralresponse.ResponseUnknow)
+}
+
+func (self *ClientIG) getWelcomeMessageFlowsADS() gralresponse.Responser {
+	return self.executeRequest(http.MethodGet, "/me/welcome_message_flows", types.QueryData{}, false)
+}
+
+func (self *ClientIG) Get(type_info string) gralresponse.Responser {
+	switch type_info {
+	case ig.IG_GET_INFO_ACCOUNT_BUSINESS:
+		return self.getInfoAccountBusiness()
+	case ig.IG_GET_INFO_PERSISTENT_MENU:
+		return self.getInstagramPersistentMenu()
+	case ig.IG_GET_INFO_ICE_BREAKERS:
+		return self.getInstagramIceBreakers()
+	case ig.IG_GET_INFO_LINK:
+		return self.getInstagramLink()
+	case ig.IG_GET_INFO_WELCOME_MESSAGE_FLOWS:
+		return self.getWelcomeMessageFlowsADS()
+	default:
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("type_info not recognized. type_info expect 'account_business', 'persistent_menu', 'ice_breakers', 'link', 'welcome_message_flows'")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+}
+
+// Deletes
+func (self *ClientIG) deletePersistentMenu() gralresponse.Responser {
+	return self.executeRequest(http.MethodDelete, "/messenger_profile", types.QueryData{
+		"fields": []string{"persistent_menu"},
+	}, true)
+}
+
+func (self *ClientIG) deleteIceBreakers() gralresponse.Responser {
+	return self.executeRequest(http.MethodDelete, "/messenger_profile", types.QueryData{
+		"fields": []string{"ice_breakers"},
+	}, true)
+}
+
+func (self *ClientIG) deleteWelcomeMessageFlowsADS(data types.QueryData) gralresponse.Responser {
+	if id, ok := data["flow_id"]; ok && id != "" {
+		id = fmt.Sprintf("%c%s", '?', data.String())
+		return self.executeRequest(http.MethodDelete, fmt.Sprintf("/me/welcome_message_flows%s", id), types.QueryData{}, false)
+	}
+
+	errorResponse := &gralpbv1.ResponseError{}
+	errorResponse.SetCode(401)
+	errorResponse.SetMessage("flow_id is required to delete welcome message flow. Please provide flow_id in data with key 'flow_id'")
+	return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+}
+
+func (self *ClientIG) Delete(typeDelete string, data ...map[string]any) gralresponse.Responser {
+	dataParam := make(map[string]any)
+	if len(data) > 0 {
+		dataParam = data[0]
+	}
+
+	switch typeDelete {
+	case ig.IG_DELETE_PERSISTENT_MENU:
+		return self.deletePersistentMenu()
+	case ig.IG_DELETE_ICE_BREAKERS:
+		return self.deleteIceBreakers()
+	case ig.IG_DELETE_WELCOME_MESSAGE_FLOWS:
+		return self.deleteWelcomeMessageFlowsADS(dataParam)
+	default:
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("typeDelete not recognized. typeDelete expect 'persistent_menu', 'ice_breakers', 'welcome_message_flows'")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+}
+
+// Updates
+func (self *ClientIG) updateWelcomeMessageFlowsADS(data types.QueryData) gralresponse.Responser {
+	if len(data) == 0 {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to update welcome message flow. Please provide data with at least one of the following keys: 'flow_id', 'name', 'welcome_message', 'platforms'")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	if _, ok := data["flow_id"]; !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("flow_id is required to update welcome message flow. Please provide flow_id in data with key 'flow_id'")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	if id, ok := data["flow_id"]; ok && id != "" {
+		id = fmt.Sprintf("%cflow_id=%s", '?', id)
+		var msg *igpbv1.InstagramWelcomeMessageFlows
+		if msg_, ok := data["msg"]; ok {
+			msg, ok = msg_.(*igpbv1.InstagramWelcomeMessageFlows)
+			if !ok {
+				errorResponse := &gralpbv1.ResponseError{}
+				errorResponse.SetCode(401)
+				errorResponse.SetMessage("msg is not of type InstagramWelcomeMessageFlows. Please provide msg in data with key 'msg' and of type InstagramWelcomeMessageFlows")
+				return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+			}
+
+			return self.executeRequest(http.MethodPost, fmt.Sprintf("/me/welcome_message_flows%s", id), msg, false)
+		} else {
+			errorResponse := &gralpbv1.ResponseError{}
+			errorResponse.SetCode(401)
+			errorResponse.SetMessage("msg is required to update welcome message flow. Please provide msg in data with key 'msg'")
+			return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+		}
+	}
+
+	errorResponse := &gralpbv1.ResponseError{}
+	errorResponse.SetCode(401)
+	errorResponse.SetMessage("flow_id is required to update welcome message flow. Please provide flow_id in data with key 'flow_id'")
+	return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+}
+
+func (self *ClientIG) Update(typeUpdate string, data ...map[string]any) gralresponse.Responser {
+	dataParam := make(map[string]any)
+
+	if len(data) > 0 {
+		dataParam = data[0]
+	}
+
+	switch typeUpdate {
+	case ig.IG_UPDATE_WELCOME_MESSAGE_FLOWS:
+		return self.updateWelcomeMessageFlowsADS(dataParam)
+	default:
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("typeUpdate not recognized. typeUpdate expect 'welcome_message_flows'")
 		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 	}
 }

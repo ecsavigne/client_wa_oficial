@@ -8,41 +8,20 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
 	clientoficial "github.com/ecsavigne/client_wa_oficial/v2/client"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	generalpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
-	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
-	responseig "github.com/ecsavigne/client_wa_oficial/v2/types/ig/response"
+	generalresponse "github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/internal"
+
 	"golang.org/x/net/http2"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
-
-type QueryData map[string]any
-
-func NewQueryData() QueryData {
-	return make(map[string]any)
-}
-
-func (q QueryData) String() string {
-	query := ""
-	for k, v := range q {
-		query += fmt.Sprintf("%s=%v&", k, v)
-	}
-	query = strings.TrimSuffix(query, "&")
-	return query
-}
-
-func (q *QueryData) SetValue(key string, value any) {
-	(*q)[key] = value
-}
-
-func (q QueryData) GetValue(key string) any {
-	return q[key]
-}
 
 // defaultHeader sets the Authorization and Content-Type headers of the given http.Request.
 // It uses the configClient to get the token, and the first contentType if provided.
@@ -66,37 +45,68 @@ func multiparHeader(c clientoficial.ConfigClient, request *http.Request, content
 	request.Header = h
 }
 
-func DefaultRequest(config clientoficial.ConfigClient, method string, ePoint string, data any) (*http.Request, error) {
+func DefaultRequest(config clientoficial.ConfigClient, method string, ePoint string, data any, isID ...bool) (*http.Request, error) {
 	var (
 		req    *http.Request
 		err    error
 		buff   = &bytes.Buffer{}
 		byt    = make([]byte, 0)
 		urlStr = ""
+		_isID  = true
 	)
+
+	if len(isID) > 0 {
+		_isID = isID[0]
+	}
 
 	switch config.GetType() {
 	case clientoficial.TYPE_CONFIG_IG:
 		ePoint = strings.TrimPrefix(ePoint, "/")
-		urlStr = fmt.Sprintf("%s/%s/%s/%s", config.GetBaseUrl(), config.GetVersion(), config.GetUserID(), ePoint)
-	// case clientoficial.TYPE_CONFIG_WPP:
-	// 	urlStr = fmt.Sprintf("%s/%s", urlStr, ePoint)
+		if !_isID {
+			urlStr, err = url.JoinPath(config.GetBaseUrl(), config.GetVersion(), ePoint)
+		} else {
+			urlStr, err = url.JoinPath(config.GetBaseUrl(), config.GetVersion(), config.GetUserID(), ePoint)
+		}
+		if err != nil {
+			return nil, fmt.Errorf("failed to join URL path: %v", err)
+		}
+		// case clientoficial.TYPE_CONFIG_WPP:
 	default:
 		return nil, fmt.Errorf("unsupported config type: %s", config.GetType())
 	}
 
 	switch method {
-	case http.MethodGet, http.MethodDelete:
-		if queryData, ok := data.(QueryData); ok {
-			ePoint = fmt.Sprintf("%s?%s", urlStr, queryData.String())
+	case http.MethodGet:
+		if queryData, ok := data.(types.QueryData); ok {
+			if len(queryData) > 0 {
+				urlStr = fmt.Sprintf("%s?%s", urlStr, queryData.String())
+			} else {
+				urlStr = fmt.Sprintf("%s", urlStr)
+			}
+
+		}
+	case http.MethodDelete:
+		byt, err = json.Marshal(data)
+		if err == nil {
+			switch data.(type) {
+			case types.QueryData, map[string]any:
+				if len(byt) > 0 {
+					buff.Write(byt)
+				} else {
+					buff.Write(nil)
+				}
+			default:
+				return nil, fmt.Errorf("unsupported data type for DELETE method: %T", data)
+			}
 		}
 	case http.MethodPost, http.MethodPut, http.MethodPatch:
 		switch v := data.(type) {
 		case proto.Message:
-			byt, err = protojson.Marshal(v)
+			byt, err = protojson.MarshalOptions{UseProtoNames: true}.Marshal(v)
 			if err != nil {
 				return nil, fmt.Errorf("failed to marshal proto message: %v", err)
 			}
+			byt = internal.CleanDataEmpty(byt)
 			buff.Write(byt)
 		case map[string]any:
 			byt, err = json.Marshal(v)
@@ -110,6 +120,9 @@ func DefaultRequest(config clientoficial.ConfigClient, method string, ePoint str
 	default:
 		return nil, fmt.Errorf("unsupported HTTP method: %s", method)
 	}
+
+	urlStr = strings.ReplaceAll(urlStr, "%3F", "?")
+	fmt.Println("EndPoint URL:\n", method, "  ", urlStr, " Data:\n", buff.String())
 
 	req, err = http.NewRequestWithContext(context.Background(), method, urlStr, buff)
 	defaultHeader(config, req)
@@ -169,7 +182,7 @@ func createClientHttp2(timeOut ...int) *http.Client {
 // 	}
 // }
 
-func Do(cl clientoficial.Client, req *http.Request, responseType response.ResponseType) response.Responser {
+func Do(cl clientoficial.Client, req *http.Request, responseType generalresponse.ResponseType) generalresponse.Responser {
 	clientHttp := createClientHttp2()
 	errorMsg := &generalpbv1.ResponseError{}
 
@@ -179,7 +192,7 @@ func Do(cl clientoficial.Client, req *http.Request, responseType response.Respon
 		errorMsg.SetType(types.TypeErrorInRequest)
 		errorMsg.SetCode(types.CodeErrorInRequest)
 		errorMsg.SetMessage(fmt.Sprintf("Type: %s. Error is: %s", types.MsgErrorInRequest, err.Error()))
-		return response.NewResponse(errorMsg, response.ResponseError)
+		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	}
 
 	b, err := io.ReadAll(res.Body)
@@ -194,25 +207,25 @@ func Do(cl clientoficial.Client, req *http.Request, responseType response.Respon
 		errorMsg.SetType(types.TypeErrorBadRequest)
 		errorMsg.SetCode(types.CodeErrorBadRequest)
 		errorMsg.SetMessage(log)
-		return response.NewResponse(errorMsg, response.ResponseError)
+		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	case 401:
 		log := fmt.Sprintf("Error in function Do. Code: %d, Message: %s, MetaError: %s, BodyError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"), string(b))
 		errorMsg.SetType(types.TypeErrorUnauthorized)
 		errorMsg.SetCode(types.CodeErrorUnauthorized)
 		errorMsg.SetMessage(log)
-		return response.NewResponse(errorMsg, response.ResponseError)
+		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	case 404:
 		log := fmt.Sprintf("Error in function Do. Code: %d, Message: %s, MetaError: %s, BodyError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"), string(b))
 		errorMsg.SetType(types.TypeErrorUrlNotFound)
 		errorMsg.SetCode(types.CodeErrorUrlNotFound)
 		errorMsg.SetMessage(log)
-		return response.NewResponse(errorMsg, response.ResponseError)
+		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	case 200:
 		switch cl.GetType() {
 		case clientoficial.CLIENT_IG.String():
-			return responseig.WrapperResponseRequest(b, responseType)
+			return generalresponse.WrapperResponseRequest(b, generalresponse.WRAPPER_RESPONSE_IG, responseType)
 		// case clientoficial.CLIENT_WHATSAPP.String():
-		// 	return response.JsonWrapperResponseRequest(b, responseType)
+		// 	return generalresponse.JsonWrapperResponseRequest(b, responseType)
 		default:
 			return nil
 		}
@@ -221,6 +234,6 @@ func Do(cl clientoficial.Client, req *http.Request, responseType response.Respon
 		errorMsg.SetType(types.TypeErrorInRequest)
 		errorMsg.SetCode(types.CodeErrorInRequest)
 		errorMsg.SetMessage(log)
-		return response.NewResponse(errorMsg, response.ResponseError)
+		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	}
 }

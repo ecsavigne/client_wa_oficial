@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 
 	clientpack "github.com/ecsavigne/client_wa_oficial/v2/client"
-	"github.com/ecsavigne/client_wa_oficial/v2/client/ig"
+
+	"github.com/ecsavigne/client_wa_oficial/v2/example/examplemessage"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
-	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event"
 )
 
@@ -53,40 +54,8 @@ func EventHandler(data any) {
 	}
 }
 
-func sendMessageText(cl clientpack.Client, userId, msg string) response.Responser {
-	msgIGText := new(igpbv1.InstagramTextMessage)
-	recipient := new(igpbv1.Recipient)
-	recipient.SetId(userId)
-	// recipient.SetId("2014023525994448")
-	text := new(igpbv1.TextMessage)
-	text.SetText(msg)
-	msgIGText.SetRecipient(recipient)
-	msgIGText.SetMessage(text)
-
-	return cl.SendMessage(msgIGText)
-}
-
-func sendMessageMedia(cl clientpack.Client, userId, url, attacment_id string) response.Responser {
-	msgIGMedia := new(igpbv1.InstagramMediaMessage)
-	recipient := new(igpbv1.Recipient)
-	recipient.SetId(userId)
-
-	msg := new(igpbv1.MediaMessage)
-	attachment := new(igpbv1.Attachment)
-	payload := new(igpbv1.AttachmentPayload)
-	payload.SetUrl(url)
-	payload.SetAttachmentId(attacment_id)
-	attachment.SetPayload(payload)
-	attachment.SetType("image")
-	msg.SetAttachment(attachment)
-	msgIGMedia.SetRecipient(recipient)
-	msgIGMedia.SetMessage(msg)
-
-	return cl.SendMessage(msgIGMedia)
-}
-
-func main() {
-	var client clientpack.Client
+func testWpp(client clientpack.Client, rr response.Responser) {
+	fmt.Println(strings.Repeat(".", 25), " Test Client Wpp ", strings.Repeat(".", 25))
 	// Create one Client of WhatsApp Official
 	// my_client := wpp.NewClientWA(
 	// 	// wpp.WithEnvFilePath("../config_env"),
@@ -191,23 +160,50 @@ func main() {
 
 	// fmt.Printf("Response: %s\n", rr)
 	// fmt.Println("Permitions: ", types.GetPermission().Get("whatsapp_business_management", "Label"), "description: ", types.GetPermission().Get("whatsapp_business_management", "Description"))
+	fmt.Println(strings.Repeat(".", 25), " Fin testing Client WhatsApp ", strings.Repeat(".", 25))
+}
 
-	fmt.Println("test Client IG")
-	var e error
+func testIg(client clientpack.Client, rr response.Responser) {
+	fmt.Println(strings.Repeat(".", 25), " Test Client IG ", strings.Repeat(".", 25))
+	client = examplemessage.NewClientIG() // fmt.Printf("Response Client IG: %s\n", client)
+	// rr = examplemessage.SendMessageText(client, "2014023525994448", "Habla test ok, prueba de mensaje de texto") // 948876401474591
+	// fmt.Printf("Response: %s\n", rr)
+	// rr = examplemessage.SendMessageImage(client, "2014023525994448", "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTNvcThmcG85OTRlMTF5MTZueWk4ZGMxcDRkMHcxMXA1Z2oxNzZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O3wIKp4DlubUl1Bezt/giphy.gif", "") // 948876401474591
+	// rr = examplemessage.SendMessageImageCollage(client, "2014023525994448", []string{}, []string{"948876401474591", "948876401474591", "948876401474591", "1131758486677092", "1295230589210858", "1314539007200675"}) // 948876401474591
+	// rr = examplemessage.SendMessageAudio(client, "2014023525994448", "https://oficial.crmsocialhub.com.br/static/test.aac", "817700310893199") //2741747206192358
+	// rr = examplemessage.SendMessageVideo(client, "2014023525994448", "https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4", "1942160596402518")
+	// rr = examplemessage.SendMessageStickerLike(client, "2014023525994448")
+	// rr = examplemessage.SendMessagePDFFile(client, "2014023525994448", "https://oficial.crmsocialhub.com.br/static/Fatura%20de%20novembro.pdf", "995658263029909")
+	// rr = examplemessage.SendMessageReaction(client, "2014023525994448", "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4MTgyMjA5NjMwOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjI0NDk2NzIxNDY0NzM0MzozMjc2NTU3MTU2MzMwMTY1NDg5MDI3MzEyMTExOTUwMjMzNgZDZD", "", "unreact")
+	// rr = examplemessage.GetAccountInfoBusiness(client)
+	// rr = examplemessage.SendMessageQuickReplies(client, "2014023525994448")
+	// rr = examplemessage.SendPresence(client, "2014023525994448", "typing_on")
+	// time.Sleep(10 * time.Second)
+	// rr = examplemessage.SendPresence(client, "2014023525994448", "typing_off")
+	// rr = examplemessage.SendMessagePersistentMenu(client)
+	// rr = examplemessage.GetPersistentMenu(client)
+	// rr = examplemessage.DeletePersistentMenu(client)
+	// rr = examplemessage.SendMessageIceBreakers(client)
+	// rr = examplemessage.GetIceBreakers(client)
+	// rr = examplemessage.DeleteIceBreakers(client)
+	// rr = examplemessage.GetInstagramLink(client)
+	// rr = examplemessage.CreateInstagramWelcomeMessageFlowsADS(client)
+	// rr = examplemessage.GetWelcomeMessageFlowsADS(client)
+	rr = examplemessage.UpdateWelcomeMessageFlowsADS(client)
+	// rr = examplemessage.DeleteWelcomeMessageFlowsADS(client, map[string]any{"flow_id": "2443201722808096"})
+	fmt.Printf("Response: %v\n", rr)
 
-	client, e = ig.NewClientIG(
-		// ig.WithEnvFilePath("../../config_env"),
-		ig.WithEnvFilePath("../config_env"),
+	fmt.Println(strings.Repeat(".", 25), " Fin testing Client IG ", strings.Repeat(".", 25))
+}
+
+func main() {
+	var (
+		client clientpack.Client
+		rr     response.Responser
 	)
 
-	if e != nil {
-		fmt.Printf("Error creating client IG: %s\n", e)
-		return
-	}
-	// fmt.Printf("Response Client IG: %s\n", client)
-	// rr := sendMessageText(client, "2014023525994448", "Habla test")
-	rr := sendMessageMedia(client, "2014023525994448", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&s", "1212702750665906")
-	fmt.Printf("Response: %s\n", rr)
+	// testWpp(client, rr)
+	testIg(client, rr)
 
 	fmt.Println("Press Ctrl+C to exit...")
 	c := make(chan os.Signal, 1)
