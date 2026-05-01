@@ -23,6 +23,7 @@ type Business struct {
 	VerticalId                                uint32 `json:"vertical_id,omitempty"`
 	Success                                   bool   `json:"success,omitempty"`
 	Message                                   string `json:"message,omitempty"`
+	WhatsappBusinessManagerMessagingLimit     string `json:"whatsapp_business_manager_messaging_limit"`
 }
 
 func NewBusiness(config Responser) *Business {

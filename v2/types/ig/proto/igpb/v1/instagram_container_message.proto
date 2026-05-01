@@ -1,0 +1,35 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/field_behavior.proto";
+
+// InstagramContainerMessage represents a container for media to be published on Instagram
+message InstagramContainerMessage {
+  // The URL of the image. Set to the path of the image on a public server
+  string image_url = 1 [(buf.validate.field).string = {uri: true}];
+  // The URL of the video. Set to the path of the video on a public server
+  string video_url = 2 [(buf.validate.field).string = {uri: true}];
+  // The type of media (VIDEO, REELS, CAROUSEL, or STORIES)
+  string media_type = 3 [
+    (buf.validate.field).string = {
+      in: [
+        "REELS",
+        "CAROUSEL",
+        "STORIES"
+      ]
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+  // Whether the media will be part of a carousel
+  bool is_carousel_item = 4;
+  // The upload session type (resumable for large files)
+  string upload_type = 5 [(buf.validate.field).string = {
+    in: ["resumable"]
+  }];
+  // List of up to 10 container IDs of each image and video that should appear in the published carousel
+  repeated string children = 6 [(buf.validate.field).repeated = {max_items: 10}];
+  // The caption for the carousel
+  string caption = 7;
+}

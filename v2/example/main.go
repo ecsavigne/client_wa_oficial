@@ -189,7 +189,11 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	// rr = examplemessage.GetInstagramLink(client)
 	// rr = examplemessage.CreateInstagramWelcomeMessageFlowsADS(client)
 	// rr = examplemessage.GetWelcomeMessageFlowsADS(client)
-	rr = examplemessage.UpdateWelcomeMessageFlowsADS(client)
+	// rr = examplemessage.UpdateWelcomeMessageFlowsADS(client)
+	// rr = examplemessage.SendPublishImg(client)
+	// rr = examplemessage.SendPublishVideo(client)
+	// rr = examplemessage.SendHistoryImg(client)
+	rr = examplemessage.SendHistoryVideo(client)
 	// rr = examplemessage.DeleteWelcomeMessageFlowsADS(client, map[string]any{"flow_id": "2443201722808096"})
 	fmt.Printf("Response: %v\n", rr)
 

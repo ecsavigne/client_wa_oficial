@@ -14,8 +14,17 @@ plugins:
 managed:
   enabled: true
   override:
+    # - file_option: go_package_prefix
+    #   value: github.com/ecsavigne/client_wa_oficial/v2/types/messenger/gen
+    - file_option: go_package_prefix
+      value: github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen
+      path: igpb
+    - file_option: go_package_prefix
+      value: github.com/ecsavigne/client_wa_oficial/v2/types/general/gen
+      path: generalpb
     - file_option: go_package_prefix
       value: github.com/ecsavigne/client_wa_oficial/v2/types/messenger/gen
+      path: messengerpb
   disable:
     - file_option: go_package
       module: buf.build/bufbuild/protovalidate

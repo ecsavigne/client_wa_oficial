@@ -2043,7 +2043,7 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.Responser {
 // error is returned. The response is wrapped and returned as a ResponserRequest.
 
 func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQueryVersion, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time"})
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQueryVersion, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time,whatsapp_business_manager_messaging_limit"})
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err

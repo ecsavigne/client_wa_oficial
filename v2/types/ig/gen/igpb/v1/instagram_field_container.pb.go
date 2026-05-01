@@ -22,65 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// ContainerStatusCode represents the publication status codes for Instagram containers
-type ContainerStatusCode int32
-
-const (
-	ContainerStatusCode_CONTAINER_STATUS_CODE_UNSPECIFIED ContainerStatusCode = 0
-	// The container was not published in the last 24 hours and expired
-	ContainerStatusCode_CONTAINER_STATUS_CODE_EXPIRED ContainerStatusCode = 1
-	// The container did not complete the publication process
-	ContainerStatusCode_CONTAINER_STATUS_CODE_ERROR ContainerStatusCode = 2
-	// The container and its media object are ready for publication
-	ContainerStatusCode_CONTAINER_STATUS_CODE_FINISHED ContainerStatusCode = 3
-	// The container is still going through the publication process
-	ContainerStatusCode_CONTAINER_STATUS_CODE_IN_PROGRESS ContainerStatusCode = 4
-	// The container's media object has been published
-	ContainerStatusCode_CONTAINER_STATUS_CODE_PUBLISHED ContainerStatusCode = 5
-)
-
-// Enum value maps for ContainerStatusCode.
-var (
-	ContainerStatusCode_name = map[int32]string{
-		0: "CONTAINER_STATUS_CODE_UNSPECIFIED",
-		1: "CONTAINER_STATUS_CODE_EXPIRED",
-		2: "CONTAINER_STATUS_CODE_ERROR",
-		3: "CONTAINER_STATUS_CODE_FINISHED",
-		4: "CONTAINER_STATUS_CODE_IN_PROGRESS",
-		5: "CONTAINER_STATUS_CODE_PUBLISHED",
-	}
-	ContainerStatusCode_value = map[string]int32{
-		"CONTAINER_STATUS_CODE_UNSPECIFIED": 0,
-		"CONTAINER_STATUS_CODE_EXPIRED":     1,
-		"CONTAINER_STATUS_CODE_ERROR":       2,
-		"CONTAINER_STATUS_CODE_FINISHED":    3,
-		"CONTAINER_STATUS_CODE_IN_PROGRESS": 4,
-		"CONTAINER_STATUS_CODE_PUBLISHED":   5,
-	}
-)
-
-func (x ContainerStatusCode) Enum() *ContainerStatusCode {
-	p := new(ContainerStatusCode)
-	*p = x
-	return p
-}
-
-func (x ContainerStatusCode) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ContainerStatusCode) Descriptor() protoreflect.EnumDescriptor {
-	return file_igpb_v1_instagram_field_container_proto_enumTypes[0].Descriptor()
-}
-
-func (ContainerStatusCode) Type() protoreflect.EnumType {
-	return &file_igpb_v1_instagram_field_container_proto_enumTypes[0]
-}
-
-func (x ContainerStatusCode) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
 // CopyrightCheckStatus represents the copyright detection status for uploaded videos
 type CopyrightCheckStatus struct {
 	state                   protoimpl.MessageState `protogen:"opaque.v1"`
@@ -198,7 +139,7 @@ type InstagramFieldContainerResponse struct {
 	xxx_hidden_CopyrightCheckStatus *CopyrightCheckStatus  `protobuf:"bytes,1,opt,name=copyright_check_status,json=copyrightCheckStatus"`
 	xxx_hidden_Id                   *string                `protobuf:"bytes,2,opt,name=id"`
 	xxx_hidden_Status               *string                `protobuf:"bytes,3,opt,name=status"`
-	xxx_hidden_StatusCode           ContainerStatusCode    `protobuf:"varint,4,opt,name=status_code,json=statusCode,enum=igpb.v1.ContainerStatusCode"`
+	xxx_hidden_StatusCode           *string                `protobuf:"bytes,4,opt,name=status_code,json=statusCode"`
 	XXX_raceDetectHookData          protoimpl.RaceDetectHookData
 	XXX_presence                    [1]uint32
 	unknownFields                   protoimpl.UnknownFields
@@ -257,13 +198,14 @@ func (x *InstagramFieldContainerResponse) GetStatus() string {
 	return ""
 }
 
-func (x *InstagramFieldContainerResponse) GetStatusCode() ContainerStatusCode {
+func (x *InstagramFieldContainerResponse) GetStatusCode() string {
 	if x != nil {
-		if protoimpl.X.Present(&(x.XXX_presence[0]), 3) {
-			return x.xxx_hidden_StatusCode
+		if x.xxx_hidden_StatusCode != nil {
+			return *x.xxx_hidden_StatusCode
 		}
+		return ""
 	}
-	return ContainerStatusCode_CONTAINER_STATUS_CODE_UNSPECIFIED
+	return ""
 }
 
 func (x *InstagramFieldContainerResponse) SetCopyrightCheckStatus(v *CopyrightCheckStatus) {
@@ -280,8 +222,8 @@ func (x *InstagramFieldContainerResponse) SetStatus(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
-func (x *InstagramFieldContainerResponse) SetStatusCode(v ContainerStatusCode) {
-	x.xxx_hidden_StatusCode = v
+func (x *InstagramFieldContainerResponse) SetStatusCode(v string) {
+	x.xxx_hidden_StatusCode = &v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
 }
 
@@ -329,7 +271,7 @@ func (x *InstagramFieldContainerResponse) ClearStatus() {
 
 func (x *InstagramFieldContainerResponse) ClearStatusCode() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_StatusCode = ContainerStatusCode_CONTAINER_STATUS_CODE_UNSPECIFIED
+	x.xxx_hidden_StatusCode = nil
 }
 
 type InstagramFieldContainerResponse_builder struct {
@@ -341,8 +283,9 @@ type InstagramFieldContainerResponse_builder struct {
 	Id *string
 	// Publication status. If status_code is ERROR, this value will be an error subcode
 	Status *string
-	// The publication status code of the container
-	StatusCode *ContainerStatusCode
+	// The publication status code of the container.
+	// Possible values: EXPIRED, ERROR, FINISHED, IN_PROGRESS, PUBLISHED
+	StatusCode *string
 }
 
 func (b0 InstagramFieldContainerResponse_builder) Build() *InstagramFieldContainerResponse {
@@ -360,7 +303,7 @@ func (b0 InstagramFieldContainerResponse_builder) Build() *InstagramFieldContain
 	}
 	if b.StatusCode != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
-		x.xxx_hidden_StatusCode = *b.StatusCode
+		x.xxx_hidden_StatusCode = b.StatusCode
 	}
 	return m0
 }
@@ -372,38 +315,28 @@ const file_igpb_v1_instagram_field_container_proto_rawDesc = "" +
 	"'igpb/v1/instagram_field_container.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\x89\x01\n" +
 	"\x14CopyrightCheckStatus\x12#\n" +
 	"\rmatches_found\x18\x01 \x01(\bR\fmatchesFound\x12L\n" +
-	"\x06status\x18\x02 \x01(\tB4\xbaH1r/\x10\x012+^(completed|error|in_progress|not_started)$R\x06status\"\xf7\x01\n" +
+	"\x06status\x18\x02 \x01(\tB4\xbaH1r/\x10\x012+^(completed|error|in_progress|not_started)$R\x06status\"\x90\x02\n" +
 	"\x1fInstagramFieldContainerResponse\x12S\n" +
 	"\x16copyright_check_status\x18\x01 \x01(\v2\x1d.igpb.v1.CopyrightCheckStatusR\x14copyrightCheckStatus\x12\x1a\n" +
 	"\x02id\x18\x02 \x01(\tB\n" +
 	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id\x12\x1f\n" +
-	"\x06status\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06status\x12B\n" +
-	"\vstatus_code\x18\x04 \x01(\x0e2\x1c.igpb.v1.ContainerStatusCodeB\x03\xe0A\x02R\n" +
-	"statusCode*\xf0\x01\n" +
-	"\x13ContainerStatusCode\x12%\n" +
-	"!CONTAINER_STATUS_CODE_UNSPECIFIED\x10\x00\x12!\n" +
-	"\x1dCONTAINER_STATUS_CODE_EXPIRED\x10\x01\x12\x1f\n" +
-	"\x1bCONTAINER_STATUS_CODE_ERROR\x10\x02\x12\"\n" +
-	"\x1eCONTAINER_STATUS_CODE_FINISHED\x10\x03\x12%\n" +
-	"!CONTAINER_STATUS_CODE_IN_PROGRESS\x10\x04\x12#\n" +
-	"\x1fCONTAINER_STATUS_CODE_PUBLISHED\x10\x05B\xaf\x01\n" +
+	"\x06status\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06status\x12[\n" +
+	"\vstatus_code\x18\x04 \x01(\tB:\xe0A\x02\xbaH4r2R\aEXPIREDR\x05ERRORR\bFINISHEDR\vIN_PROGRESSR\tPUBLISHEDR\n" +
+	"statusCodeB\xaf\x01\n" +
 	"\vcom.igpb.v1B\x1cInstagramFieldContainerProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
-var file_igpb_v1_instagram_field_container_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_igpb_v1_instagram_field_container_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_igpb_v1_instagram_field_container_proto_goTypes = []any{
-	(ContainerStatusCode)(0),                // 0: igpb.v1.ContainerStatusCode
-	(*CopyrightCheckStatus)(nil),            // 1: igpb.v1.CopyrightCheckStatus
-	(*InstagramFieldContainerResponse)(nil), // 2: igpb.v1.InstagramFieldContainerResponse
+	(*CopyrightCheckStatus)(nil),            // 0: igpb.v1.CopyrightCheckStatus
+	(*InstagramFieldContainerResponse)(nil), // 1: igpb.v1.InstagramFieldContainerResponse
 }
 var file_igpb_v1_instagram_field_container_proto_depIdxs = []int32{
-	1, // 0: igpb.v1.InstagramFieldContainerResponse.copyright_check_status:type_name -> igpb.v1.CopyrightCheckStatus
-	0, // 1: igpb.v1.InstagramFieldContainerResponse.status_code:type_name -> igpb.v1.ContainerStatusCode
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 0: igpb.v1.InstagramFieldContainerResponse.copyright_check_status:type_name -> igpb.v1.CopyrightCheckStatus
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_igpb_v1_instagram_field_container_proto_init() }
@@ -416,14 +349,13 @@ func file_igpb_v1_instagram_field_container_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_igpb_v1_instagram_field_container_proto_rawDesc), len(file_igpb_v1_instagram_field_container_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_igpb_v1_instagram_field_container_proto_goTypes,
 		DependencyIndexes: file_igpb_v1_instagram_field_container_proto_depIdxs,
-		EnumInfos:         file_igpb_v1_instagram_field_container_proto_enumTypes,
 		MessageInfos:      file_igpb_v1_instagram_field_container_proto_msgTypes,
 	}.Build()
 	File_igpb_v1_instagram_field_container_proto = out.File

@@ -38,3 +38,20 @@ const (
 const (
 	IG_UPDATE_WELCOME_MESSAGE_FLOWS = "welcome_message_flows"
 )
+
+// type create
+const (
+	IG_CREATE_POST           = "post"
+	IG_CREATE_REELS          = "reels"
+	IG_CREATE_STORY          = "story"
+	IG_CREATE_STORY_CAROUSEL = "story_carousel"
+	IG_CREATE_POST_CAROUSEL  = "post_carousel"
+)
+
+// MediaType Post can be "STORIES", "REELS", "CAROUSEL"
+const (
+	IG_MEDIA_TYPE_STORIES  = "STORIES"
+	IG_MEDIA_TYPE_REELS    = "REELS"
+	IG_MEDIA_TYPE_CAROUSEL = "CAROUSEL"
+	IG_MEDIA_TYPE_POST     = ""
+)

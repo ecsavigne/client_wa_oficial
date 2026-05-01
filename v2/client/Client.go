@@ -35,6 +35,20 @@ type Client interface {
 	GetConfig() ConfigClient
 	SendMessage(msg proto.Message) response.Responser
 	String() string
+
+	/*
+		@typeCreate can be "post", container, reels, story, message, etc depending on the client, for example in IG can be "post", "reels", "story", in WhatsApp can be "message", etc.
+		{
+		typeCreate = IG.IG_CREATE_POST,
+		data = {
+			"images_url": []string{"https://example.com/image.jpg"},
+			"video_url": "https://example.com/video.mp4",
+		} // count of video + images must be less than 10 for a post, for reels and story only one media is allowed
+		etc.
+		@data is the data needed to create the message, for example in IG, can be the media url, caption, etc, in WhatsApp can be the phone number id, recipient id, message content, etc
+
+	*/
+	Create(typeCreate string, data ...map[string]any) response.Responser
 	/*
 		@typeInfo can be "account_business" for get info of account business, for example in IG, in WhatsApp can be "phone_number_id" for get info of phone number id
 	*/

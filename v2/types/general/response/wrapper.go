@@ -46,6 +46,10 @@ func getIgWrapperResponseRequest(data []byte, wrapper record, end_point Response
 		infoAccount := &igpbv1.InstagramInfoAccountBusinessResponse{}
 		protojson.Unmarshal(data, infoAccount)
 		gralResponse = NewResponse(infoAccount, InfoAccountBusinessResponse)
+	case end_point == InstagramFieldContainerResponse:
+		containerResponse := &igpbv1.InstagramFieldContainerResponse{}
+		protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, containerResponse)
+		gralResponse = NewResponse(containerResponse, InstagramFieldContainerResponse)
 	// general response
 	case end_point == ResponseUnknow:
 		fallthrough

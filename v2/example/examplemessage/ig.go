@@ -14,7 +14,7 @@ var NewClientIG = func() clientpack.Client {
 	client, e := ig.NewClientIG(
 		// ig.WithEnvFilePath("../../config_env"),
 		ig.WithEnvFilePath("../config_env"),
-		ig.WithToken("IGAAQ7JedvaElBZAGI3clhETVZAFa3hjeXRVd200cnZAucHplbkFrTVI3OUJwMTVfeVN2MHhzWjBPY2hvS2gwODROUTIybkhNWVlFcmdjdEFySmZAMU2VNcU1nMkVNeFlIZADJLcVBJVTBrT0o0NlFDdGtRZAGpadWFBRVU4ektSMWs5cwZDZD"),
+		ig.WithToken(""),
 		ig.WithUserID("17841448182209630"),
 	)
 
@@ -468,24 +468,52 @@ func UpdateWelcomeMessageFlowsADS(cl clientpack.Client) response.Responser {
 	return cl.Update(type_ig.IG_UPDATE_WELCOME_MESSAGE_FLOWS, mapData)
 }
 
-func SendPublishPost(cl clientpack.Client, scope_id, url, attacment_id string) response.Responser {
-	msgIGMedia := new(igpbv1.InstagramMediaMessage)
-	recipient := new(igpbv1.Recipient)
-	recipient.SetId(scope_id)
-
-	msg := new(igpbv1.MediaMessage)
-	attachment := new(igpbv1.Attachment)
-	payload := new(igpbv1.AttachmentPayload)
-	if attacment_id != "" {
-		payload.SetAttachmentId(attacment_id)
-	} else {
-		payload.SetUrl(url)
+func SendPublishImg(cl clientpack.Client) response.Responser {
+	dataParam := map[string]any{
+		"images_url": []string{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&ss"},
 	}
-	attachment.SetPayload(payload)
-	attachment.SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_MEDIA_SHARE)
-	msg.SetAttachment(attachment)
-	msgIGMedia.SetRecipient(recipient)
-	msgIGMedia.SetMessage(msg)
 
-	return cl.SendMessage(msgIGMedia)
+	return cl.Create(type_ig.IG_CREATE_POST, dataParam)
+}
+
+func SendPublishVideo(cl clientpack.Client) response.Responser {
+	dataParam := map[string]any{
+		"videos_url": []string{"https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4"},
+	}
+
+	return cl.Create(type_ig.IG_CREATE_POST, dataParam)
+}
+
+func SendPublishCarrusel(cl clientpack.Client) response.Responser {
+	dataParam := map[string]any{
+		"images_url": []string{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&ss"},
+		"videos_url": []string{"https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4"},
+	}
+
+	return cl.Create(type_ig.IG_CREATE_POST_CAROUSEL, dataParam)
+}
+
+func SendHistoryImg(cl clientpack.Client) response.Responser {
+	dataParam := map[string]any{
+		"images_url": []string{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&ss"},
+	}
+
+	return cl.Create(type_ig.IG_CREATE_STORY, dataParam)
+}
+
+func SendHistoryVideo(cl clientpack.Client) response.Responser {
+	dataParam := map[string]any{
+		"videos_url": []string{"https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4"},
+	}
+
+	return cl.Create(type_ig.IG_CREATE_STORY, dataParam)
+}
+
+func SendHistoryCarrusel(cl clientpack.Client) response.Responser {
+	dataParam := map[string]any{
+		"images_url": []string{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&ss"},
+		"videos_url": []string{"https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4"},
+	}
+
+	return cl.Create(type_ig.IG_CREATE_STORY_CAROUSEL, dataParam)
 }

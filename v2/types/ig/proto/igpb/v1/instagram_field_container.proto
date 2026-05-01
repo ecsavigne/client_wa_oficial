@@ -16,21 +16,6 @@ message CopyrightCheckStatus {
   }];
 }
 
-// ContainerStatusCode represents the publication status codes for Instagram containers
-enum ContainerStatusCode {
-  CONTAINER_STATUS_CODE_UNSPECIFIED = 0;
-  // The container was not published in the last 24 hours and expired
-  CONTAINER_STATUS_CODE_EXPIRED = 1;
-  // The container did not complete the publication process
-  CONTAINER_STATUS_CODE_ERROR = 2;
-  // The container and its media object are ready for publication
-  CONTAINER_STATUS_CODE_FINISHED = 3;
-  // The container is still going through the publication process
-  CONTAINER_STATUS_CODE_IN_PROGRESS = 4;
-  // The container's media object has been published
-  CONTAINER_STATUS_CODE_PUBLISHED = 5;
-}
-
 // InstagramFieldContainerResponse represents an Instagram container for media publication
 message InstagramFieldContainerResponse {
   // The copyright check status for the container (if applicable)
@@ -42,6 +27,18 @@ message InstagramFieldContainerResponse {
   ];
   // Publication status. If status_code is ERROR, this value will be an error subcode
   string status = 3 [(buf.validate.field).string = {min_len: 1}];
-  // The publication status code of the container
-  ContainerStatusCode status_code = 4 [(google.api.field_behavior) = REQUIRED];
+  // The publication status code of the container.
+  // Possible values: EXPIRED, ERROR, FINISHED, IN_PROGRESS, PUBLISHED
+  string status_code = 4 [
+    (buf.validate.field).string = {
+      in: [
+        "EXPIRED",
+        "ERROR",
+        "FINISHED",
+        "IN_PROGRESS",
+        "PUBLISHED"
+      ]
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
 }

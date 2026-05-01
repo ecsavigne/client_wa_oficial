@@ -2,10 +2,13 @@ package ig
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"net/url"
 	"path"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/client"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
@@ -382,6 +385,294 @@ func (self *ClientIG) SendMessage(msg proto.Message) gralresponse.Responser {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
 		errorResponse.SetMessage("Message not recognized. Message.type expect 'text', 'audio', 'image', 'video', 'document', 'sticker', 'location', 'contact', 'template', 'interactive', 'reaction'")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+}
+
+// Creates
+type resposeVerifyContainer struct {
+	response gralresponse.Responser
+}
+
+func (self *ClientIG) verifyContainer(idContainer string, out chan<- resposeVerifyContainer) {
+	// return self.createImagePostContainer(msg)
+	data := types.QueryData{
+		"fields": "status_code",
+	}
+	resp_ := self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", idContainer), data, false, gralresponse.InstagramFieldContainerResponse)
+	containerResponse, ok := resp_.GetResponse().(*igpbv1.InstagramFieldContainerResponse)
+	if !ok {
+		fmt.Printf("Error in function verifyContainer, file: IGClient.go. Response type is not InstagramFieldContainerResponse. Response type is: %T\n", resp_)
+		out <- resposeVerifyContainer{response: resp_}
+		return
+	}
+
+	for true {
+		fmt.Println("<<<<<<<<<  1  >>>>>>>>>  ", containerResponse.GetStatusCode())
+		switch containerResponse.GetStatusCode() {
+		case "FINISHED":
+			out <- resposeVerifyContainer{response: resp_}
+			return
+		case "ERROR":
+			errorResponse := &gralpbv1.ResponseError{}
+			errorResponse.SetCode(401)
+			errorResponse.SetMessage("Error in container. Status code is ERROR")
+			respose := gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+			out <- resposeVerifyContainer{response: respose}
+			return
+		default:
+			time.Sleep(20 * time.Second)
+			resp_ = self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", idContainer), data, false, gralresponse.InstagramFieldContainerResponse)
+			containerResponse, ok = resp_.GetResponse().(*igpbv1.InstagramFieldContainerResponse)
+		}
+	}
+}
+
+func (self *ClientIG) createContainer(msg *igpbv1.InstagramContainerMessage) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s", "media"), msg, true, gralresponse.InstagramFieldContainerResponse)
+}
+
+func (self *ClientIG) preparedContainer(imgs, videos []string, mediaType string) string {
+	msg := new(igpbv1.InstagramContainerMessage)
+	// msg.SetMediaType("STORIES")
+	if mediaType == "STORIES" {
+		msg.SetMediaType(mediaType)
+	}
+
+	if mediaType == "CAROUSEL" {
+		msg.SetIsCarouselItem(true)
+	}
+
+	if len(imgs) > 0 {
+		msg.SetImageUrl(imgs[0])
+	} else if len(videos) > 0 {
+		if mediaType == "" {
+			mediaType = "REELS"
+		}
+		msg.SetVideoUrl(videos[0])
+		msg.SetMediaType(mediaType)
+		msg.SetUploadType("resumable")
+	}
+
+	resp := self.createContainer(msg)
+	contResp, ok := resp.GetResponse().(*igpbv1.InstagramFieldContainerResponse)
+	if !ok {
+		return ""
+	}
+
+	return contResp.GetId()
+}
+
+type dataWorkerPreparedContainer struct {
+	imgs                    []string
+	videos                  []string
+	mediaType, id_container string
+}
+
+func (self *ClientIG) workerPreparedContainer(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
+	for el := range in {
+		id_container := self.preparedContainer(el.imgs, el.videos, el.mediaType)
+		out <- dataWorkerPreparedContainer{id_container: id_container}
+	}
+}
+
+func (self *ClientIG) workerVerifyContainer(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
+
+}
+
+func (self *ClientIG) verifyContainers(cointainers_id []string) (container_id_verified []string) {
+	var (
+		cantEl = len(cointainers_id)
+		in     = make(chan dataWorkerPreparedContainer, cantEl)
+		out    = make(chan dataWorkerPreparedContainer, cantEl)
+		wg     = new(sync.WaitGroup)
+	)
+	workers := math.Ceil(math.Sqrt(float64(cantEl)))
+	workers = max(workers, 2)
+
+	for range int(workers) {
+		wg.Go(func() {
+			self.workerPreparedContainer(in, out)
+		})
+	}
+
+	//  send data to worker
+	for _, v := range cointainers_id {
+		in <- dataWorkerPreparedContainer{id_container: v}
+	}
+	close(in)
+
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+
+	for el := range out {
+		container_id_verified = append(container_id_verified, el.id_container)
+	}
+
+	return container_id_verified
+}
+
+func (self *ClientIG) createCaruselContainer(ids []string, caption string) (container_id string) {
+	data := new(igpbv1.InstagramContainerMessage)
+	data.SetMediaType("CAROUSEL")
+	data.SetChildren(ids)
+	data.SetCaption(caption)
+
+	resp := self.executeRequest(http.MethodPost, "/media", data, true, gralresponse.InstagramFieldContainerResponse)
+
+	contResp, ok := resp.GetResponse().(*igpbv1.InstagramFieldContainerResponse)
+	if !ok {
+		return ""
+	}
+
+	return contResp.GetId()
+}
+
+func (self *ClientIG) preparedCaruselContainer(imgs, videos []string, mediaType string, caption string) (container_id string) {
+	var (
+		cantEl = len(imgs) + len(videos)
+		in     = make(chan dataWorkerPreparedContainer, cantEl)
+		out    = make(chan dataWorkerPreparedContainer, cantEl)
+		wg     = new(sync.WaitGroup)
+	)
+	workers := math.Ceil(math.Sqrt(float64(cantEl)))
+	workers = max(workers, 2)
+
+	for range int(workers) {
+		wg.Go(func() {
+			self.workerPreparedContainer(in, out)
+		})
+	}
+
+	//  send data to worker
+	for _, v := range imgs {
+		in <- dataWorkerPreparedContainer{imgs: []string{v}, videos: []string{}, mediaType: mediaType}
+	}
+	for _, v := range videos {
+		in <- dataWorkerPreparedContainer{imgs: []string{}, videos: []string{v}, mediaType: mediaType}
+	}
+	close(in)
+
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+
+	arrContainerID := make([]string, cantEl)
+	for el := range out {
+		arrContainerID = append(arrContainerID, el.id_container)
+	}
+
+	// verificar elementos do carrusel container e criar carrusel container
+	arrContainerIDTemp := self.verifyContainers(arrContainerID)
+
+	return self.createCaruselContainer(arrContainerIDTemp, caption)
+}
+
+func (self *ClientIG) createInstagramPostHistory(dataParam map[string]any, mediaType string) gralresponse.Responser {
+	if len(dataParam) == 0 {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create container. Please provide data in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	imgs, ok := dataParam["images_url"].([]string)
+	videos, ok2 := dataParam["videos_url"].([]string)
+	id_container := ""
+
+	var (
+		lenImgs, lenVideos int = 0, 0
+		out                    = make(chan resposeVerifyContainer, 1)
+	)
+
+	if ok {
+		lenImgs = len(imgs)
+	}
+
+	if ok2 {
+		lenVideos = len(videos)
+	}
+
+	cant := lenImgs + lenVideos
+
+	if (!ok && !ok2) || cant == 0 {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create container. Please provide []images_url or []videos_url array string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	if cant > 10 {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("The maximum number of media that can be included in a post is 10. Please provide a maximum of 10 media in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	if cant > 1 && cant <= 10 {
+		// criar carrucel container and get container id carrucel
+		caption := "Caption test"
+		val, ok := dataParam["caption"]
+		if ok {
+			caption, ok = val.(string)
+			if !ok {
+				caption = ""
+			}
+		}
+		id_container = self.preparedCaruselContainer(imgs, videos, mediaType, caption)
+		if id_container == "" {
+			errorResponse := &gralpbv1.ResponseError{}
+			errorResponse.SetCode(401)
+			errorResponse.SetMessage("Error creating carousel container. Please check the data provided and try again")
+			return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+		}
+	}
+
+	if cant == 1 {
+		// criar container and get container id
+		// media_type: "" <=> POST, STORIES, VIDEO, REEL
+		id_container = self.preparedContainer(imgs, videos, mediaType)
+		if id_container == "" {
+			errorResponse := &gralpbv1.ResponseError{}
+			errorResponse.SetCode(401)
+			errorResponse.SetMessage("Error creating container. Please check the data provided and try again")
+			return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+		}
+
+		// verificar status do container até que seja FINISHED ou ERROR
+		go self.verifyContainer(id_container, out)
+		verify := <-out
+		if verify.response.GetType() != gralresponse.InstagramFieldContainerResponse {
+			return verify.response
+		}
+	}
+
+	data := map[string]any{"creation_id": id_container}
+	return self.executeRequest(http.MethodPost, "/media_publish", data, true, gralresponse.InstagramFieldContainerResponse)
+}
+
+func (self *ClientIG) Create(typeCreate string, data ...map[string]any) gralresponse.Responser {
+	dataParam := make(map[string]any)
+	if len(data) > 0 {
+		dataParam = data[0]
+	}
+
+	switch typeCreate {
+	case ig.IG_CREATE_POST:
+		return self.createInstagramPostHistory(dataParam, ig.IG_MEDIA_TYPE_POST)
+	case ig.IG_CREATE_STORY:
+		return self.createInstagramPostHistory(dataParam, ig.IG_MEDIA_TYPE_STORIES)
+	// case ig.IG_CREATE_POST_CAROUSEL:
+	// 	return self.createInstagramPostHistory(dataParam, "")
+	// case ig.IG_CREATE_STORY_CAROUSEL:
+	// 	return self.createInstagramPostHistory(dataParam, "STORIES")
+	default:
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("typeCreate not recognized. typeCreate expect 'container'")
 		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 	}
 }
