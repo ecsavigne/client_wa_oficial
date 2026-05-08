@@ -280,7 +280,7 @@ func (self *ClientIG) sendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralre
 		return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 	}
 
-	if msg.GetMessage().GetAttachment().GetType() == ig.IG_MEDIA_MESSAGE_TYPE_LIKE_HEART || msg.GetMessage().GetAttachments() != nil {
+	if msg.GetMessage().GetAttachment().GetType() == ig.IG_ATTACHMENT_TYPE_LIKE_HEART.String() || msg.GetMessage().GetAttachments() != nil {
 		return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 	}
 
@@ -289,6 +289,7 @@ func (self *ClientIG) sendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralre
 	return nil
 }
 
+// TODO: Implementar
 func (self *ClientIG) sendMediaShareMessage(msg *igpbv1.InstagramMediaShareMessage) gralresponse.Responser {
 	return nil
 }
@@ -307,18 +308,22 @@ func (self *ClientIG) sendInstagramPersistentMenu(msg *igpbv1.InstagramPersisten
 	return self.executeRequest(http.MethodPost, "/messenger_profile", msg, true)
 }
 
+func (self *ClientIG) sendButtonGenericTemplateMessage(msg *igpbv1.InstagramTemplateButtonTemplate) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, "/me/messages", msg, false, gralresponse.SentMessageResponse)
+}
+
 /**
 * @name: SendAction
 * @description: Send action to instagram
 * @param {string} scope_id the id of the user to send the action to
-* @param {string} action the action to send. Can be "typing_on" or "typing_off"
+* @param {string} action the action to send. Can be "typing_on",  "typing_off" or "mark_seen"
 * @return gralresponse.Responser
  */
 func (self *ClientIG) sendAction(scope_id, action string) gralresponse.Responser {
-	if action != "typing_on" && action != "typing_off" {
+	if action != "typing_on" && action != "typing_off" && action != "mark_seen" {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
-		errorResponse.SetMessage("Action not recognized. Action expect 'typing_on' or 'typing_off'")
+		errorResponse.SetMessage("Action not recognized. Action expect 'typing_on', 'typing_off' or 'mark_seen'")
 		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 	}
 
@@ -340,6 +345,10 @@ func (self *ClientIG) SendPresence(recipient_id, action string) gralresponse.Res
 	return self.sendAction(recipient_id, action)
 }
 
+func (self *ClientIG) MarkRead(recipient_id string) gralresponse.Responser {
+	return self.sendAction(recipient_id, "mark_seen")
+}
+
 func (self *ClientIG) sendInstagramIceBreakersMessage(msg *igpbv1.InstagramIceBreakersMessage) gralresponse.Responser {
 	resp := self.getInfoAccountBusiness().GetResponse()
 	infoAccount, ok := resp.(*igpbv1.InstagramInfoAccountBusinessResponse)
@@ -354,6 +363,14 @@ func (self *ClientIG) sendInstagramIceBreakersMessage(msg *igpbv1.InstagramIceBr
 }
 func (self *ClientIG) createInstagramWelcomeMessageFlows(msg *igpbv1.InstagramWelcomeMessageFlows) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s/%s", "me", "welcome_message_flows"), msg, false)
+}
+
+func (self *ClientIG) sendPrivateReplyMessage(msg *igpbv1.InstagramPrivateReplyMessage) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
+}
+
+func (self *ClientIG) sendInstagramHumanAgentMessage(msg *igpbv1.InstagramHumanAgentMessage) gralresponse.Responser {
+	return self.executeRequest(http.MethodPost, "/me/messages", msg, false, gralresponse.SentMessageResponse)
 }
 
 /**
@@ -380,6 +397,21 @@ func (self *ClientIG) SendMessage(msg proto.Message) gralresponse.Responser {
 		return self.sendInstagramIceBreakersMessage(v)
 	case *igpbv1.InstagramWelcomeMessageFlows:
 		return self.createInstagramWelcomeMessageFlows(v)
+	case *igpbv1.InstagramPrivateReplyMessage:
+		return self.sendPrivateReplyMessage(v)
+	case *igpbv1.InstagramHumanAgentMessage:
+		return self.sendInstagramHumanAgentMessage(v)
+	case *igpbv1.InstagramTemplateButtonTemplate:
+		switch v.GetMessage().GetAttachment().GetPayload().GetTemplateType() {
+		case ig.IG_TEMPLATE_BUTTON.String(), ig.IG_TEMPLATE_GENERIC.String():
+			return self.sendButtonGenericTemplateMessage(v)
+		default:
+			errorResponse := &gralpbv1.ResponseError{}
+			errorResponse.SetCode(401)
+			errorResponse.SetMessage("Message not recognized. Attachment type expect 'template_button' or 'generic'")
+			return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+		}
+		// return self.sendInstagramTemplateButtonTemplate(v)
 	default:
 		fmt.Printf("Error in SendMessage, file: IGClient.go. Message type not recognized. Type of message is: %T\n", v)
 		errorResponse := &gralpbv1.ResponseError{}
@@ -402,13 +434,11 @@ func (self *ClientIG) verifyContainer(idContainer string, out chan<- resposeVeri
 	resp_ := self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", idContainer), data, false, gralresponse.InstagramFieldContainerResponse)
 	containerResponse, ok := resp_.GetResponse().(*igpbv1.InstagramFieldContainerResponse)
 	if !ok {
-		fmt.Printf("Error in function verifyContainer, file: IGClient.go. Response type is not InstagramFieldContainerResponse. Response type is: %T\n", resp_)
 		out <- resposeVerifyContainer{response: resp_}
 		return
 	}
 
 	for true {
-		fmt.Println("<<<<<<<<<  1  >>>>>>>>>  ", containerResponse.GetStatusCode())
 		switch containerResponse.GetStatusCode() {
 		case "FINISHED":
 			out <- resposeVerifyContainer{response: resp_}
@@ -428,33 +458,30 @@ func (self *ClientIG) verifyContainer(idContainer string, out chan<- resposeVeri
 	}
 }
 
-func (self *ClientIG) createContainer(msg *igpbv1.InstagramContainerMessage) gralresponse.Responser {
-	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s", "media"), msg, true, gralresponse.InstagramFieldContainerResponse)
-}
-
-func (self *ClientIG) preparedContainer(imgs, videos []string, mediaType string) string {
+func (self *ClientIG) createContainer(imgs, videos []string, mediaType ig.IG_MEDIA_TYPE) string {
 	msg := new(igpbv1.InstagramContainerMessage)
-	// msg.SetMediaType("STORIES")
-	if mediaType == "STORIES" {
-		msg.SetMediaType(mediaType)
+
+	if mediaType == ig.IG_MEDIA_TYPE_STORIES {
+		msg.SetMediaType(mediaType.String())
 	}
 
-	if mediaType == "CAROUSEL" {
+	if mediaType == ig.IG_MEDIA_TYPE_CAROUSEL {
 		msg.SetIsCarouselItem(true)
+		// msg.SetMediaType(mediaType.String())
 	}
 
 	if len(imgs) > 0 {
 		msg.SetImageUrl(imgs[0])
 	} else if len(videos) > 0 {
-		if mediaType == "" {
-			mediaType = "REELS"
+		if mediaType == ig.IG_MEDIA_TYPE_POST || mediaType == ig.IG_MEDIA_TYPE_CAROUSEL {
+			msg.SetMediaType(ig.IG_MEDIA_TYPE_REELS.String())
 		}
+
 		msg.SetVideoUrl(videos[0])
-		msg.SetMediaType(mediaType)
 		msg.SetUploadType("resumable")
 	}
 
-	resp := self.createContainer(msg)
+	resp := self.executeRequest(http.MethodPost, fmt.Sprintf("/%s", "media"), msg, true, gralresponse.InstagramFieldContainerResponse)
 	contResp, ok := resp.GetResponse().(*igpbv1.InstagramFieldContainerResponse)
 	if !ok {
 		return ""
@@ -464,50 +491,67 @@ func (self *ClientIG) preparedContainer(imgs, videos []string, mediaType string)
 }
 
 type dataWorkerPreparedContainer struct {
-	imgs                    []string
-	videos                  []string
-	mediaType, id_container string
+	imgs         []string
+	videos       []string
+	mediaType    ig.IG_MEDIA_TYPE
+	id_container string
 }
 
 func (self *ClientIG) workerPreparedContainer(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
 	for el := range in {
-		id_container := self.preparedContainer(el.imgs, el.videos, el.mediaType)
+		fmt.Println("<<<<<< workerPreparedContainer >>>>>>  imgs: ", el.imgs, " videos: ", el.videos, " mediaType: ", el.mediaType)
+		id_container := self.createContainer(el.imgs, el.videos, el.mediaType)
 		out <- dataWorkerPreparedContainer{id_container: id_container}
 	}
 }
 
-func (self *ClientIG) workerVerifyContainer(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
+func (self *ClientIG) workerVerifyContainers(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
+	for el := range in {
+		ch := make(chan resposeVerifyContainer, 1)
+		go self.verifyContainer(el.id_container, ch)
+		resp := <-ch
+		if resp.response.GetType() == gralresponse.ResponseError {
+			out <- dataWorkerPreparedContainer{id_container: ""}
+		} else {
+			out <- dataWorkerPreparedContainer{id_container: el.id_container}
+		}
+	}
 
 }
 
-func (self *ClientIG) verifyContainers(cointainers_id []string) (container_id_verified []string) {
+func (self *ClientIG) verifyContainers(cointainers_id []string) []string {
 	var (
-		cantEl = len(cointainers_id)
-		in     = make(chan dataWorkerPreparedContainer, cantEl)
-		out    = make(chan dataWorkerPreparedContainer, cantEl)
-		wg     = new(sync.WaitGroup)
+		cantEl                = len(cointainers_id)
+		in                    = make(chan dataWorkerPreparedContainer, cantEl)
+		out                   = make(chan dataWorkerPreparedContainer, cantEl)
+		wg                    = new(sync.WaitGroup)
+		container_id_verified = make([]string, 0, cantEl)
 	)
 	workers := math.Ceil(math.Sqrt(float64(cantEl)))
 	workers = max(workers, 2)
 
 	for range int(workers) {
 		wg.Go(func() {
-			self.workerPreparedContainer(in, out)
+			// Verificar container
+			self.workerVerifyContainers(in, out)
 		})
 	}
 
 	//  send data to worker
-	for _, v := range cointainers_id {
-		in <- dataWorkerPreparedContainer{id_container: v}
-	}
-	close(in)
+	go func() {
+		defer close(in)
+		for _, v := range cointainers_id {
+			in <- dataWorkerPreparedContainer{id_container: v}
+		}
+	}()
 
 	go func() {
+		defer close(out)
 		wg.Wait()
-		close(out)
 	}()
 
 	for el := range out {
+		// get container verified
 		container_id_verified = append(container_id_verified, el.id_container)
 	}
 
@@ -518,7 +562,9 @@ func (self *ClientIG) createCaruselContainer(ids []string, caption string) (cont
 	data := new(igpbv1.InstagramContainerMessage)
 	data.SetMediaType("CAROUSEL")
 	data.SetChildren(ids)
-	data.SetCaption(caption)
+	if caption != "" {
+		data.SetCaption(caption)
+	}
 
 	resp := self.executeRequest(http.MethodPost, "/media", data, true, gralresponse.InstagramFieldContainerResponse)
 
@@ -530,7 +576,7 @@ func (self *ClientIG) createCaruselContainer(ids []string, caption string) (cont
 	return contResp.GetId()
 }
 
-func (self *ClientIG) preparedCaruselContainer(imgs, videos []string, mediaType string, caption string) (container_id string) {
+func (self *ClientIG) preparedCaruselContainer(imgs, videos []string, mediaType ig.IG_MEDIA_TYPE, caption string) (container_id string) {
 	var (
 		cantEl = len(imgs) + len(videos)
 		in     = make(chan dataWorkerPreparedContainer, cantEl)
@@ -547,20 +593,23 @@ func (self *ClientIG) preparedCaruselContainer(imgs, videos []string, mediaType 
 	}
 
 	//  send data to worker
-	for _, v := range imgs {
-		in <- dataWorkerPreparedContainer{imgs: []string{v}, videos: []string{}, mediaType: mediaType}
-	}
-	for _, v := range videos {
-		in <- dataWorkerPreparedContainer{imgs: []string{}, videos: []string{v}, mediaType: mediaType}
-	}
-	close(in)
-
 	go func() {
-		wg.Wait()
-		close(out)
+		defer close(in)
+
+		for _, v := range imgs {
+			in <- dataWorkerPreparedContainer{imgs: []string{v}, videos: []string{}, mediaType: mediaType}
+		}
+		for _, v := range videos {
+			in <- dataWorkerPreparedContainer{imgs: []string{}, videos: []string{v}, mediaType: mediaType}
+		}
 	}()
 
-	arrContainerID := make([]string, cantEl)
+	go func() {
+		defer close(out)
+		wg.Wait()
+	}()
+
+	arrContainerID := make([]string, 0, cantEl)
 	for el := range out {
 		arrContainerID = append(arrContainerID, el.id_container)
 	}
@@ -571,7 +620,7 @@ func (self *ClientIG) preparedCaruselContainer(imgs, videos []string, mediaType 
 	return self.createCaruselContainer(arrContainerIDTemp, caption)
 }
 
-func (self *ClientIG) createInstagramPostHistory(dataParam map[string]any, mediaType string) gralresponse.Responser {
+func (self *ClientIG) createInstagramPostHistory(dataParam map[string]any, mediaType ig.IG_MEDIA_TYPE) gralresponse.Responser {
 	if len(dataParam) == 0 {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -614,7 +663,7 @@ func (self *ClientIG) createInstagramPostHistory(dataParam map[string]any, media
 
 	if cant > 1 && cant <= 10 {
 		// criar carrucel container and get container id carrucel
-		caption := "Caption test"
+		caption := ""
 		val, ok := dataParam["caption"]
 		if ok {
 			caption, ok = val.(string)
@@ -622,6 +671,13 @@ func (self *ClientIG) createInstagramPostHistory(dataParam map[string]any, media
 				caption = ""
 			}
 		}
+
+		if mediaType == ig.IG_MEDIA_TYPE_POST {
+			mediaType = ig.IG_MEDIA_TYPE_CAROUSEL
+		} else {
+			mediaType = ig.IG_MEDIA_TYPE_STORIES
+		}
+
 		id_container = self.preparedCaruselContainer(imgs, videos, mediaType, caption)
 		if id_container == "" {
 			errorResponse := &gralpbv1.ResponseError{}
@@ -634,27 +690,183 @@ func (self *ClientIG) createInstagramPostHistory(dataParam map[string]any, media
 	if cant == 1 {
 		// criar container and get container id
 		// media_type: "" <=> POST, STORIES, VIDEO, REEL
-		id_container = self.preparedContainer(imgs, videos, mediaType)
+		id_container = self.createContainer(imgs, videos, mediaType)
 		if id_container == "" {
 			errorResponse := &gralpbv1.ResponseError{}
 			errorResponse.SetCode(401)
 			errorResponse.SetMessage("Error creating container. Please check the data provided and try again")
 			return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 		}
+	}
 
-		// verificar status do container até que seja FINISHED ou ERROR
-		go self.verifyContainer(id_container, out)
-		verify := <-out
-		if verify.response.GetType() != gralresponse.InstagramFieldContainerResponse {
-			return verify.response
-		}
+	// verificar status do container até que seja FINISHED ou ERROR
+	go self.verifyContainer(id_container, out)
+	verify := <-out
+	if verify.response.GetType() != gralresponse.InstagramFieldContainerResponse {
+		return verify.response
 	}
 
 	data := map[string]any{"creation_id": id_container}
 	return self.executeRequest(http.MethodPost, "/media_publish", data, true, gralresponse.InstagramFieldContainerResponse)
 }
 
-func (self *ClientIG) Create(typeCreate string, data ...map[string]any) gralresponse.Responser {
+/*
+@ig_media_id: id do post, stories or midia
+
+	@data in Create: map[string]any{
+		"message": "string", // comment message
+		"ig_media_id": "string", // id do post, stories or midia
+	}
+*/
+func (self *ClientIG) createComment(data map[string]any) gralresponse.Responser {
+	if data["message"] == nil || data["ig_media_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create comment. Please provide 'message' and 'ig_media_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	msg, ok := data["message"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create comment. 'message' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igMediaID, ok := data["ig_media_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create comment. 'ig_media_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	queryData := types.QueryData{
+		"message": msg,
+	}
+
+	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s/comments?%s", igMediaID, queryData.String()), nil, false, gralresponse.InstagramFieldContainerResponse)
+}
+
+/*
+@ig_comment_id: id do comment
+
+	@data in Create: map[string]any{
+		"message": "string", // comment message
+		"ig_comment_id": "string", // id do comment
+	}
+*/
+func (self *ClientIG) replyComment(data map[string]any) gralresponse.Responser {
+	if data["message"] == nil || data["ig_comment_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create comment. Please provide 'message' and 'ig_comment_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	msg, ok := data["message"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create comment. 'message' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igCommentID, ok := data["ig_comment_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to create comment. 'ig_comment_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	queryData := types.QueryData{
+		"message": msg,
+	}
+
+	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s/replies?%s", igCommentID, queryData.String()), nil, false, gralresponse.InstagramFieldContainerResponse)
+}
+
+/*
+@ig_comment_id: id do comment
+
+	@data in Create: map[string]any{
+		"ig_comment_id": "string", // id do comment, comment is nivel 1 or comment reply
+		"hide": bool, // true to hide comment, false to show comment
+	}
+*/
+func (self *ClientIG) hideShowComment(data map[string]any) gralresponse.Responser {
+	if data["hide"] == nil || data["ig_comment_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to hide/show comment. Please provide 'hide' and 'ig_comment_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	hide, ok := data["hide"].(bool)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to hide/show comment. 'hide' must be a boolean in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igCommentID, ok := data["ig_comment_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to hide/show comment. 'ig_comment_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	queryData := map[string]any{
+		"hide": hide,
+	}
+
+	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s", igCommentID), queryData, false, gralresponse.ResponseSuccess)
+}
+
+/*
+@ig_media_id: id do post, stories or midia
+
+	@data in Create: map[string]any{
+		"ig_media_id": "string", // id do post, stories or midia
+		"comment_enabled": bool, // true to enable comment, false to disable comment
+	}
+*/
+func (self *ClientIG) enableComment(data map[string]any) gralresponse.Responser {
+	if data["comment_enabled"] == nil || data["ig_media_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to enable comment. Please provide 'comment_enabled' and 'ig_media_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	commentEnabled, ok := data["comment_enabled"].(bool)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to enable comment. 'comment_enabled' must be a boolean in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igMediaID, ok := data["ig_media_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to enable comment. 'ig_media_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	queryData := map[string]any{
+		"comment_enabled": commentEnabled,
+	}
+
+	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s", igMediaID), queryData, false, gralresponse.ResponseSuccess)
+}
+
+func (self *ClientIG) Create(typeCreate ig.IG_CREATE_TYPE, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 	if len(data) > 0 {
 		dataParam = data[0]
@@ -665,14 +877,18 @@ func (self *ClientIG) Create(typeCreate string, data ...map[string]any) gralresp
 		return self.createInstagramPostHistory(dataParam, ig.IG_MEDIA_TYPE_POST)
 	case ig.IG_CREATE_STORY:
 		return self.createInstagramPostHistory(dataParam, ig.IG_MEDIA_TYPE_STORIES)
-	// case ig.IG_CREATE_POST_CAROUSEL:
-	// 	return self.createInstagramPostHistory(dataParam, "")
-	// case ig.IG_CREATE_STORY_CAROUSEL:
-	// 	return self.createInstagramPostHistory(dataParam, "STORIES")
+	case ig.IG_CREATE_COMMENT:
+		return self.createComment(dataParam)
+	case ig.IG_CREATE_REPLY_COMMENT:
+		return self.replyComment(dataParam)
+	case ig.IG_CREATE_HIDE_COMMENT:
+		return self.hideShowComment(dataParam)
+	case ig.IG_CREATE_ENABLE_COMMENT:
+		return self.enableComment(dataParam)
 	default:
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
-		errorResponse.SetMessage("typeCreate not recognized. typeCreate expect 'container'")
+		errorResponse.SetMessage("typeCreate not recognized. typeCreate expect 'post', 'story', 'comment', 'reply_comment', 'hide_comment' or 'enable_comment'")
 		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 	}
 }
@@ -680,7 +896,7 @@ func (self *ClientIG) Create(typeCreate string, data ...map[string]any) gralresp
 // Gets
 func (self *ClientIG) getInfoAccountBusiness() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/", types.QueryData{
-		"fields": "id,user_id,media_count,name,username,followers_count,follows_count,profile_picture_url",
+		"fields": "id,user_id,media_count,account_type,name,username,followers_count,follows_count,profile_picture_url",
 	}, true, gralresponse.InfoAccountBusinessResponse)
 }
 
@@ -720,7 +936,74 @@ func (self *ClientIG) getWelcomeMessageFlowsADS() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/me/welcome_message_flows", types.QueryData{}, false)
 }
 
-func (self *ClientIG) Get(type_info string) gralresponse.Responser {
+/*
+@ig_media_id: id do post, stories or midia
+
+	@data in Get: map[string]any{
+		"ig_media_id": "string", // id do post, stories ou midia
+	}
+
+@return: list of replies comments of the comment with from,text,timestamp,user,username,replies,parent_id,like_count,hidden
+*/
+func (self *ClientIG) getComments(data map[string]any) gralresponse.Responser {
+	if data["ig_media_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get comments. Please provide 'ig_media_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igMediaID, ok := data["ig_media_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get comments. 'ig_media_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	dataQuery := types.QueryData{
+		"fields": "from,text,timestamp,user,username,replies,parent_id,like_count,hidden",
+	}
+	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s/comments", igMediaID), dataQuery, false, gralresponse.InstagramCommentResponse)
+}
+
+/*
+@ig_comment_id: id do comment
+
+	@data in Get: map[string]any{
+		"ig_comment_id": "string", // id do comment
+	}
+
+@return: list of replies comments of the comment with text,timestamp,from,user,username
+*/
+func (self *ClientIG) getRepliesComments(data map[string]any) gralresponse.Responser {
+	if data["ig_comment_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get replies comments. Please provide 'ig_comment_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igCommentID, ok := data["ig_comment_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get replies comments. 'ig_comment_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	dataQuery := types.QueryData{
+		"fields": "text,timestamp,from,user,username",
+	}
+	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s/replies", igCommentID), dataQuery, false, gralresponse.InstagramCommentResponse)
+}
+
+func (self *ClientIG) Get(type_info string, data ...map[string]any) gralresponse.Responser {
+	dataParam := make(map[string]any)
+	if len(data) > 0 {
+		dataParam = data[0]
+	}
+
 	switch type_info {
 	case ig.IG_GET_INFO_ACCOUNT_BUSINESS:
 		return self.getInfoAccountBusiness()
@@ -732,6 +1015,10 @@ func (self *ClientIG) Get(type_info string) gralresponse.Responser {
 		return self.getInstagramLink()
 	case ig.IG_GET_INFO_WELCOME_MESSAGE_FLOWS:
 		return self.getWelcomeMessageFlowsADS()
+	case ig.IG_GET_COMMENT:
+		return self.getComments(dataParam)
+	case ig.IG_GET_REPLIES_COMMENTS:
+		return self.getRepliesComments(dataParam)
 	default:
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -765,6 +1052,32 @@ func (self *ClientIG) deleteWelcomeMessageFlowsADS(data types.QueryData) gralres
 	return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 }
 
+/*
+@ig_comment_id: id do comment
+
+	@data in Delete: map[string]any{
+		"ig_comment_id": "string", // id do comment to delete
+	}
+*/
+func (self *ClientIG) deleteComment(data map[string]any) gralresponse.Responser {
+	if data["ig_comment_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to delete comment. Please provide 'ig_comment_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igCommentID, ok := data["ig_comment_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to delete comment. 'ig_comment_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	return self.executeRequest(http.MethodDelete, fmt.Sprintf("/%s", igCommentID), nil, false, gralresponse.ResponseSuccess)
+}
+
 func (self *ClientIG) Delete(typeDelete string, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 	if len(data) > 0 {
@@ -778,10 +1091,12 @@ func (self *ClientIG) Delete(typeDelete string, data ...map[string]any) gralresp
 		return self.deleteIceBreakers()
 	case ig.IG_DELETE_WELCOME_MESSAGE_FLOWS:
 		return self.deleteWelcomeMessageFlowsADS(dataParam)
+	case ig.IG_DELETE_COMMENT:
+		return self.deleteComment(dataParam)
 	default:
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
-		errorResponse.SetMessage("typeDelete not recognized. typeDelete expect 'persistent_menu', 'ice_breakers', 'welcome_message_flows'")
+		errorResponse.SetMessage("typeDelete not recognized. typeDelete expect 'persistent_menu', 'ice_breakers', 'welcome_message_flows', 'comment'")
 		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/ig"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -48,11 +49,12 @@ type Client interface {
 		@data is the data needed to create the message, for example in IG, can be the media url, caption, etc, in WhatsApp can be the phone number id, recipient id, message content, etc
 
 	*/
-	Create(typeCreate string, data ...map[string]any) response.Responser
+	Create(typeCreate ig.IG_CREATE_TYPE, data ...map[string]any) response.Responser
 	/*
 		@typeInfo can be "account_business" for get info of account business, for example in IG, in WhatsApp can be "phone_number_id" for get info of phone number id
+		@data is the data needed to get the info, for example in IG, can be the id of the message, in WhatsApp can be the phone number id
 	*/
-	Get(typeInfo string) response.Responser
+	Get(typeInfo string, data ...map[string]any) response.Responser
 
 	/*
 		@typeDelete can be "message" for delete a message, for example in IG, in WhatsApp can be "message" for delete a message.
@@ -73,5 +75,6 @@ type Client interface {
 		@action can be "typing_on", "typing_off", or "recording_on", "recording_off" depending on the client, for example in IG can be "typing_on" or "typing_off", in WhatsApp can be "typing_on", "typing_off", "recording_on", "recording_off"
 	*/
 	SendPresence(recipient_id, presence string) response.Responser
+	MarkRead(recipient_id string) response.Responser
 	MultipartRequest(method string, data proto.Message, ePoint string) (*http.Request, error)
 }

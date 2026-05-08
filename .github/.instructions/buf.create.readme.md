@@ -4,7 +4,8 @@
 3. Mantén el orden lógico de los campos y asigna tags consecutivos desde `1`.
 4. Si un campo es lista/array, usa `repeated`.
 5. Si detectas objetos anidados, crea `message` separados reutilizables.
-6. Mapea tipos correctamente:
+6. Evita crear ENUM, si encuentras una estructura que puede ser creada como enum sustituyela por un atributo `string` que acepta solo las opciones posibles como texto.
+7. Mapea tipos correctamente:
     - `string` -> `string`
     - `int/int32` -> `int32`
     - `int64` -> `int64`
@@ -12,15 +13,15 @@
     - `bool` -> `bool`
     - fecha/hora ISO8601 -> `google.protobuf.Timestamp` (importándolo)
  y agregando `import "google/protobuf/timestamp.proto";` cuando aplique).
-10. El `.proto` debe seguir este formato base:
+1.  El `.proto` debe seguir este formato base:
     - `edition = "2023";`
     - `package <dominio>pb.v1;`onal fuera de esos bloques.
     - Imports obligatorios:
       - `import "buf/validate/validate.proto";`
       - `import "google/api/field_behavior.proto";`
-11. Aplica validaciones con `buf.validate` en campos de texto cuando sea posible (`min_len`, `max_len` o `cel`).
-12. Marca campos obligatorios con `(google.api.field_behavior) = REQUIRED`.
-13. Mantén mensajes limpios y consistentes con el estilo del ejemplo (anotaciones en línea por campo).
+2.  Aplica validaciones con `buf.validate` en campos de texto cuando sea posible (`min_len`, `max_len` o `cel`).
+3.  Marca campos obligatorios con `(google.api.field_behavior) = REQUIRED`.
+4.  Mantén mensajes limpios y consistentes con el estilo del ejemplo (anotaciones en línea por campo).
 
 ## Salida esperada (actualizada)
 - Un bloque ` ```proto ` con el archivo completo.

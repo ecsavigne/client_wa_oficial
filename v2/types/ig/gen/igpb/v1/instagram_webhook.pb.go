@@ -26,6 +26,7 @@ const (
 type User struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_Username    *string                `protobuf:"bytes,2,opt,name=username"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -67,9 +68,24 @@ func (x *User) GetId() string {
 	return ""
 }
 
+func (x *User) GetUsername() string {
+	if x != nil {
+		if x.xxx_hidden_Username != nil {
+			return *x.xxx_hidden_Username
+		}
+		return ""
+	}
+	return ""
+}
+
 func (x *User) SetId(v string) {
 	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
+func (x *User) SetUsername(v string) {
+	x.xxx_hidden_Username = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *User) HasId() bool {
@@ -79,9 +95,21 @@ func (x *User) HasId() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
+func (x *User) HasUsername() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
 func (x *User) ClearId() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Id = nil
+}
+
+func (x *User) ClearUsername() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Username = nil
 }
 
 type User_builder struct {
@@ -89,6 +117,8 @@ type User_builder struct {
 
 	// The Instagram-scoped user ID
 	Id *string
+	// The username of the user
+	Username *string
 }
 
 func (b0 User_builder) Build() *User {
@@ -96,8 +126,12 @@ func (b0 User_builder) Build() *User {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
 		x.xxx_hidden_Id = b.Id
+	}
+	if b.Username != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Username = b.Username
 	}
 	return m0
 }
@@ -483,6 +517,7 @@ type Entry struct {
 	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
 	xxx_hidden_Time        int64                  `protobuf:"varint,2,opt,name=time"`
 	xxx_hidden_Messaging   *[]*MessagingItem      `protobuf:"bytes,3,rep,name=messaging"`
+	xxx_hidden_Value       *WebhookValue          `protobuf:"bytes,4,opt,name=value"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -540,18 +575,29 @@ func (x *Entry) GetMessaging() []*MessagingItem {
 	return nil
 }
 
+func (x *Entry) GetValue() *WebhookValue {
+	if x != nil {
+		return x.xxx_hidden_Value
+	}
+	return nil
+}
+
 func (x *Entry) SetId(v string) {
 	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *Entry) SetTime(v int64) {
 	x.xxx_hidden_Time = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *Entry) SetMessaging(v []*MessagingItem) {
 	x.xxx_hidden_Messaging = &v
+}
+
+func (x *Entry) SetValue(v *WebhookValue) {
+	x.xxx_hidden_Value = v
 }
 
 func (x *Entry) HasId() bool {
@@ -568,6 +614,13 @@ func (x *Entry) HasTime() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
+func (x *Entry) HasValue() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Value != nil
+}
+
 func (x *Entry) ClearId() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Id = nil
@@ -576,6 +629,10 @@ func (x *Entry) ClearId() {
 func (x *Entry) ClearTime() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_Time = 0
+}
+
+func (x *Entry) ClearValue() {
+	x.xxx_hidden_Value = nil
 }
 
 type Entry_builder struct {
@@ -587,6 +644,8 @@ type Entry_builder struct {
 	Time *int64
 	// Array of messaging items in this entry
 	Messaging []*MessagingItem
+	// The value object for non-messaging events like comments
+	Value *WebhookValue
 }
 
 func (b0 Entry_builder) Build() *Entry {
@@ -594,14 +653,289 @@ func (b0 Entry_builder) Build() *Entry {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
 		x.xxx_hidden_Id = b.Id
 	}
 	if b.Time != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
 		x.xxx_hidden_Time = *b.Time
 	}
 	x.xxx_hidden_Messaging = &b.Messaging
+	x.xxx_hidden_Value = b.Value
+	return m0
+}
+
+// WebhookValue represents the value object in a webhook entry
+type WebhookValue struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_From        *User                  `protobuf:"bytes,2,opt,name=from"`
+	xxx_hidden_Text        *string                `protobuf:"bytes,3,opt,name=text"`
+	xxx_hidden_Media       *WebhookMedia          `protobuf:"bytes,4,opt,name=media"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *WebhookValue) Reset() {
+	*x = WebhookValue{}
+	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WebhookValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WebhookValue) ProtoMessage() {}
+
+func (x *WebhookValue) ProtoReflect() protoreflect.Message {
+	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *WebhookValue) GetId() string {
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *WebhookValue) GetFrom() *User {
+	if x != nil {
+		return x.xxx_hidden_From
+	}
+	return nil
+}
+
+func (x *WebhookValue) GetText() string {
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *WebhookValue) GetMedia() *WebhookMedia {
+	if x != nil {
+		return x.xxx_hidden_Media
+	}
+	return nil
+}
+
+func (x *WebhookValue) SetId(v string) {
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
+}
+
+func (x *WebhookValue) SetFrom(v *User) {
+	x.xxx_hidden_From = v
+}
+
+func (x *WebhookValue) SetText(v string) {
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *WebhookValue) SetMedia(v *WebhookMedia) {
+	x.xxx_hidden_Media = v
+}
+
+func (x *WebhookValue) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *WebhookValue) HasFrom() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_From != nil
+}
+
+func (x *WebhookValue) HasText() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *WebhookValue) HasMedia() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Media != nil
+}
+
+func (x *WebhookValue) ClearId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
+}
+
+func (x *WebhookValue) ClearFrom() {
+	x.xxx_hidden_From = nil
+}
+
+func (x *WebhookValue) ClearText() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Text = nil
+}
+
+func (x *WebhookValue) ClearMedia() {
+	x.xxx_hidden_Media = nil
+}
+
+type WebhookValue_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id    *string
+	From  *User
+	Text  *string
+	Media *WebhookMedia
+}
+
+func (b0 WebhookValue_builder) Build() *WebhookValue {
+	m0 := &WebhookValue{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Id = b.Id
+	}
+	x.xxx_hidden_From = b.From
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_Text = b.Text
+	}
+	x.xxx_hidden_Media = b.Media
+	return m0
+}
+
+// WebhookMedia represents the media associated with a webhook event
+type WebhookMedia struct {
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id               *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_MediaProductType *string                `protobuf:"bytes,2,opt,name=media_product_type,json=mediaProductType"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
+}
+
+func (x *WebhookMedia) Reset() {
+	*x = WebhookMedia{}
+	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WebhookMedia) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WebhookMedia) ProtoMessage() {}
+
+func (x *WebhookMedia) ProtoReflect() protoreflect.Message {
+	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *WebhookMedia) GetId() string {
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *WebhookMedia) GetMediaProductType() string {
+	if x != nil {
+		if x.xxx_hidden_MediaProductType != nil {
+			return *x.xxx_hidden_MediaProductType
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *WebhookMedia) SetId(v string) {
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
+func (x *WebhookMedia) SetMediaProductType(v string) {
+	x.xxx_hidden_MediaProductType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *WebhookMedia) HasId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *WebhookMedia) HasMediaProductType() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *WebhookMedia) ClearId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
+}
+
+func (x *WebhookMedia) ClearMediaProductType() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_MediaProductType = nil
+}
+
+type WebhookMedia_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id               *string
+	MediaProductType *string
+}
+
+func (b0 WebhookMedia_builder) Build() *WebhookMedia {
+	m0 := &WebhookMedia{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.MediaProductType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_MediaProductType = b.MediaProductType
+	}
 	return m0
 }
 
@@ -618,7 +952,7 @@ type InstagramWebhookEvent struct {
 
 func (x *InstagramWebhookEvent) Reset() {
 	*x = InstagramWebhookEvent{}
-	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[5]
+	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -630,7 +964,7 @@ func (x *InstagramWebhookEvent) String() string {
 func (*InstagramWebhookEvent) ProtoMessage() {}
 
 func (x *InstagramWebhookEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[5]
+	mi := &file_igpb_v1_instagram_webhook_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -706,10 +1040,11 @@ var File_igpb_v1_instagram_webhook_proto protoreflect.FileDescriptor
 
 const file_igpb_v1_instagram_webhook_proto_rawDesc = "" +
 	"\n" +
-	"\x1figpb/v1/instagram_webhook.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\"\n" +
+	"\x1figpb/v1/instagram_webhook.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\">\n" +
 	"\x04User\x12\x1a\n" +
 	"\x02id\x18\x01 \x01(\tB\n" +
-	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id\"9\n" +
+	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\"9\n" +
 	"\x11QuickReplyPayload\x12$\n" +
 	"\apayload\x18\x01 \x01(\tB\n" +
 	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\apayload\"\x90\x01\n" +
@@ -724,25 +1059,36 @@ const file_igpb_v1_instagram_webhook_proto_rawDesc = "" +
 	"\x06sender\x18\x01 \x01(\v2\r.igpb.v1.UserB\x03\xe0A\x02R\x06sender\x120\n" +
 	"\trecipient\x18\x02 \x01(\v2\r.igpb.v1.UserB\x03\xe0A\x02R\trecipient\x12!\n" +
 	"\ttimestamp\x18\x03 \x01(\x03B\x03\xe0A\x02R\ttimestamp\x126\n" +
-	"\amessage\x18\x04 \x01(\v2\x17.igpb.v1.WebhookMessageB\x03\xe0A\x02R\amessage\"w\n" +
+	"\amessage\x18\x04 \x01(\v2\x17.igpb.v1.WebhookMessageB\x03\xe0A\x02R\amessage\"\xa4\x01\n" +
 	"\x05Entry\x12\x1a\n" +
 	"\x02id\x18\x01 \x01(\tB\n" +
 	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id\x12\x17\n" +
 	"\x04time\x18\x02 \x01(\x03B\x03\xe0A\x02R\x04time\x129\n" +
-	"\tmessaging\x18\x03 \x03(\v2\x16.igpb.v1.MessagingItemB\x03\xe0A\x02R\tmessaging\"s\n" +
+	"\tmessaging\x18\x03 \x03(\v2\x16.igpb.v1.MessagingItemB\x03\xe0A\x02R\tmessaging\x12+\n" +
+	"\x05value\x18\x04 \x01(\v2\x15.igpb.v1.WebhookValueR\x05value\"\x82\x01\n" +
+	"\fWebhookValue\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
+	"\x04from\x18\x02 \x01(\v2\r.igpb.v1.UserR\x04from\x12\x12\n" +
+	"\x04text\x18\x03 \x01(\tR\x04text\x12+\n" +
+	"\x05media\x18\x04 \x01(\v2\x15.igpb.v1.WebhookMediaR\x05media\"L\n" +
+	"\fWebhookMedia\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12,\n" +
+	"\x12media_product_type\x18\x02 \x01(\tR\x10mediaProductType\"s\n" +
 	"\x15InstagramWebhookEvent\x12/\n" +
 	"\x06object\x18\x01 \x01(\tB\x17\xe0A\x02\xbaH\x11r\x0f\x10\x012\v^instagram$R\x06object\x12)\n" +
 	"\x05entry\x18\x02 \x03(\v2\x0e.igpb.v1.EntryB\x03\xe0A\x02R\x05entryB\xa8\x01\n" +
 	"\vcom.igpb.v1B\x15InstagramWebhookProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
-var file_igpb_v1_instagram_webhook_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_igpb_v1_instagram_webhook_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_igpb_v1_instagram_webhook_proto_goTypes = []any{
 	(*User)(nil),                  // 0: igpb.v1.User
 	(*QuickReplyPayload)(nil),     // 1: igpb.v1.QuickReplyPayload
 	(*WebhookMessage)(nil),        // 2: igpb.v1.WebhookMessage
 	(*MessagingItem)(nil),         // 3: igpb.v1.MessagingItem
 	(*Entry)(nil),                 // 4: igpb.v1.Entry
-	(*InstagramWebhookEvent)(nil), // 5: igpb.v1.InstagramWebhookEvent
+	(*WebhookValue)(nil),          // 5: igpb.v1.WebhookValue
+	(*WebhookMedia)(nil),          // 6: igpb.v1.WebhookMedia
+	(*InstagramWebhookEvent)(nil), // 7: igpb.v1.InstagramWebhookEvent
 }
 var file_igpb_v1_instagram_webhook_proto_depIdxs = []int32{
 	1, // 0: igpb.v1.WebhookMessage.quick_reply:type_name -> igpb.v1.QuickReplyPayload
@@ -750,12 +1096,15 @@ var file_igpb_v1_instagram_webhook_proto_depIdxs = []int32{
 	0, // 2: igpb.v1.MessagingItem.recipient:type_name -> igpb.v1.User
 	2, // 3: igpb.v1.MessagingItem.message:type_name -> igpb.v1.WebhookMessage
 	3, // 4: igpb.v1.Entry.messaging:type_name -> igpb.v1.MessagingItem
-	4, // 5: igpb.v1.InstagramWebhookEvent.entry:type_name -> igpb.v1.Entry
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	5, // 5: igpb.v1.Entry.value:type_name -> igpb.v1.WebhookValue
+	0, // 6: igpb.v1.WebhookValue.from:type_name -> igpb.v1.User
+	6, // 7: igpb.v1.WebhookValue.media:type_name -> igpb.v1.WebhookMedia
+	4, // 8: igpb.v1.InstagramWebhookEvent.entry:type_name -> igpb.v1.Entry
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_igpb_v1_instagram_webhook_proto_init() }
@@ -769,7 +1118,7 @@ func file_igpb_v1_instagram_webhook_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_igpb_v1_instagram_webhook_proto_rawDesc), len(file_igpb_v1_instagram_webhook_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

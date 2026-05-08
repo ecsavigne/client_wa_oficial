@@ -89,7 +89,7 @@ func DefaultRequest(config clientoficial.ConfigClient, method string, ePoint str
 		byt, err = json.Marshal(data)
 		if err == nil {
 			switch data.(type) {
-			case types.QueryData, map[string]any:
+			case types.QueryData, map[string]any, nil:
 				if len(byt) > 0 {
 					buff.Write(byt)
 				} else {
@@ -114,6 +114,8 @@ func DefaultRequest(config clientoficial.ConfigClient, method string, ePoint str
 				return nil, fmt.Errorf("failed to marshal map data: %v", err)
 			}
 			buff.Write(byt)
+		case nil:
+			buff.Write(nil)
 		default:
 			return nil, fmt.Errorf("unsupported data type: %T", v)
 		}

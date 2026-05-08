@@ -1,0 +1,48 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+message Cursors {
+  string before = 1;
+  string after = 2;
+}
+
+message Paging {
+  Cursors cursors = 1;
+}
+
+message ReplyItem {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message Replies {
+  repeated ReplyItem data = 1;
+  Paging paging = 2;
+}
+
+message CommentUser {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  string username = 2;
+  string self_ig_scoped_id = 3;
+}
+
+message Comment {
+  CommentUser from = 1;
+  string text = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  string parent_id = 4;
+  int32 like_count = 5;
+  bool hidden = 6;
+  string id = 7;
+  CommentUser user = 8;
+  string username = 9;
+  Replies replies = 10;
+}
+
+message InstagramCommentResponseMessage {
+  repeated Comment data = 1;
+  Paging paging = 2;
+}

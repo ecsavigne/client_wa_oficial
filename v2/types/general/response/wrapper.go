@@ -2,6 +2,7 @@ package response
 
 import (
 	"encoding/json"
+	"strings"
 
 	generalpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
@@ -21,10 +22,16 @@ func isError(dataBin record) bool {
 	return dataBin["error"] != nil
 }
 
+func fixData(data []byte) []byte {
+	fixedData := strings.ReplaceAll(string(data), "+0000", "Z")
+	return []byte(fixedData)
+}
+
 func getIgWrapperResponseRequest(data []byte, wrapper record, end_point ResponseType) Responser {
 	var (
 		gralResponse Responser
 		errorMsg     = &generalpbv1.ResponseError{}
+		err          error
 	)
 
 	switch {
@@ -40,25 +47,40 @@ func getIgWrapperResponseRequest(data []byte, wrapper record, end_point Response
 		}
 	case end_point == SentMessageResponse:
 		respMsg := &igpbv1.InstagramMessageResponse{}
-		protojson.Unmarshal(data, respMsg)
+		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, respMsg)
 		gralResponse = NewResponse(respMsg, SentMessageResponse)
 	case end_point == InfoAccountBusinessResponse:
 		infoAccount := &igpbv1.InstagramInfoAccountBusinessResponse{}
-		protojson.Unmarshal(data, infoAccount)
+		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, infoAccount)
 		gralResponse = NewResponse(infoAccount, InfoAccountBusinessResponse)
 	case end_point == InstagramFieldContainerResponse:
 		containerResponse := &igpbv1.InstagramFieldContainerResponse{}
-		protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, containerResponse)
+		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, containerResponse)
 		gralResponse = NewResponse(containerResponse, InstagramFieldContainerResponse)
+	case end_point == ResponseSuccess:
+		successResponse := &generalpbv1.SuccessResponse{}
+		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, successResponse)
+		gralResponse = NewResponse(successResponse, ResponseSuccess)
+	case end_point == InstagramCommentResponse:
+		commentResponse := &igpbv1.InstagramCommentResponseMessage{}
+		data = fixData(data)
+		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, commentResponse)
+		gralResponse = NewResponse(commentResponse, InstagramCommentResponse)
 	// general response
 	case end_point == ResponseUnknow:
 		fallthrough
 	default:
 		unknow := &generalpbv1.UnknownResponse{}
 		dataValue := make(map[string]*structpb.Value)
-		json.Unmarshal(data, &dataValue)
+		err = json.Unmarshal(data, &dataValue)
 		unknow.SetData(dataValue)
 		gralResponse = NewResponse(unknow, ResponseUnknow)
+	}
+
+	if err != nil {
+		errorMsg.SetCode(401)
+		errorMsg.SetMessage(err.Error())
+		return NewResponse(errorMsg, ResponseError)
 	}
 
 	return gralResponse

@@ -22,51 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// AccountType represents the type of Instagram account
-type AccountType int32
-
-const (
-	AccountType_ACCOUNT_TYPE_UNSPECIFIED   AccountType = 0
-	AccountType_ACCOUNT_TYPE_BUSINESS      AccountType = 1
-	AccountType_ACCOUNT_TYPE_MEDIA_CREATOR AccountType = 2
-)
-
-// Enum value maps for AccountType.
-var (
-	AccountType_name = map[int32]string{
-		0: "ACCOUNT_TYPE_UNSPECIFIED",
-		1: "ACCOUNT_TYPE_BUSINESS",
-		2: "ACCOUNT_TYPE_MEDIA_CREATOR",
-	}
-	AccountType_value = map[string]int32{
-		"ACCOUNT_TYPE_UNSPECIFIED":   0,
-		"ACCOUNT_TYPE_BUSINESS":      1,
-		"ACCOUNT_TYPE_MEDIA_CREATOR": 2,
-	}
-)
-
-func (x AccountType) Enum() *AccountType {
-	p := new(AccountType)
-	*p = x
-	return p
-}
-
-func (x AccountType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (AccountType) Descriptor() protoreflect.EnumDescriptor {
-	return file_igpb_v1_instagram_info_account_business_response_proto_enumTypes[0].Descriptor()
-}
-
-func (AccountType) Type() protoreflect.EnumType {
-	return &file_igpb_v1_instagram_info_account_business_response_proto_enumTypes[0]
-}
-
-func (x AccountType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
 // InstagramInfoAccountBusinessResponse contains detailed information about an Instagram business account
 type InstagramInfoAccountBusinessResponse struct {
 	state                        protoimpl.MessageState `protogen:"opaque.v1"`
@@ -74,7 +29,7 @@ type InstagramInfoAccountBusinessResponse struct {
 	xxx_hidden_UserId            *string                `protobuf:"bytes,2,opt,name=user_id,json=userId"`
 	xxx_hidden_Username          *string                `protobuf:"bytes,3,opt,name=username"`
 	xxx_hidden_Name              *string                `protobuf:"bytes,4,opt,name=name"`
-	xxx_hidden_AccountType       AccountType            `protobuf:"varint,5,opt,name=account_type,json=accountType,enum=igpb.v1.AccountType"`
+	xxx_hidden_AccountType       *string                `protobuf:"bytes,5,opt,name=account_type,json=accountType"`
 	xxx_hidden_ProfilePictureUrl *string                `protobuf:"bytes,6,opt,name=profile_picture_url,json=profilePictureUrl"`
 	xxx_hidden_FollowersCount    int64                  `protobuf:"varint,7,opt,name=followers_count,json=followersCount"`
 	xxx_hidden_FollowsCount      int64                  `protobuf:"varint,8,opt,name=follows_count,json=followsCount"`
@@ -150,13 +105,14 @@ func (x *InstagramInfoAccountBusinessResponse) GetName() string {
 	return ""
 }
 
-func (x *InstagramInfoAccountBusinessResponse) GetAccountType() AccountType {
+func (x *InstagramInfoAccountBusinessResponse) GetAccountType() string {
 	if x != nil {
-		if protoimpl.X.Present(&(x.XXX_presence[0]), 4) {
-			return x.xxx_hidden_AccountType
+		if x.xxx_hidden_AccountType != nil {
+			return *x.xxx_hidden_AccountType
 		}
+		return ""
 	}
-	return AccountType_ACCOUNT_TYPE_UNSPECIFIED
+	return ""
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetProfilePictureUrl() string {
@@ -210,8 +166,8 @@ func (x *InstagramInfoAccountBusinessResponse) SetName(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 9)
 }
 
-func (x *InstagramInfoAccountBusinessResponse) SetAccountType(v AccountType) {
-	x.xxx_hidden_AccountType = v
+func (x *InstagramInfoAccountBusinessResponse) SetAccountType(v string) {
+	x.xxx_hidden_AccountType = &v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 9)
 }
 
@@ -320,7 +276,7 @@ func (x *InstagramInfoAccountBusinessResponse) ClearName() {
 
 func (x *InstagramInfoAccountBusinessResponse) ClearAccountType() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_AccountType = AccountType_ACCOUNT_TYPE_UNSPECIFIED
+	x.xxx_hidden_AccountType = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearProfilePictureUrl() {
@@ -355,7 +311,7 @@ type InstagramInfoAccountBusinessResponse_builder struct {
 	// The app user's name
 	Name *string
 	// The app user's account type (Business or Media_Creator)
-	AccountType *AccountType
+	AccountType *string
 	// The URL for the app user's profile picture
 	ProfilePictureUrl *string
 	// The number of followers of the app user's Instagram professional account
@@ -388,7 +344,7 @@ func (b0 InstagramInfoAccountBusinessResponse_builder) Build() *InstagramInfoAcc
 	}
 	if b.AccountType != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 9)
-		x.xxx_hidden_AccountType = *b.AccountType
+		x.xxx_hidden_AccountType = b.AccountType
 	}
 	if b.ProfilePictureUrl != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 9)
@@ -413,7 +369,7 @@ var File_igpb_v1_instagram_info_account_business_response_proto protoreflect.Fil
 
 const file_igpb_v1_instagram_info_account_business_response_proto_rawDesc = "" +
 	"\n" +
-	"6igpb/v1/instagram_info_account_business_response.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xc7\x03\n" +
+	"6igpb/v1/instagram_info_account_business_response.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xcf\x03\n" +
 	"$InstagramInfoAccountBusinessResponse\x12\x1a\n" +
 	"\x02id\x18\x01 \x01(\tB\n" +
 	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id\x12-\n" +
@@ -421,8 +377,8 @@ const file_igpb_v1_instagram_info_account_business_response_proto_rawDesc = "" +
 	"\busername\x18\x03 \x01(\tB\n" +
 	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\busername\x12\x1e\n" +
 	"\x04name\x18\x04 \x01(\tB\n" +
-	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x04name\x12<\n" +
-	"\faccount_type\x18\x05 \x01(\x0e2\x14.igpb.v1.AccountTypeB\x03\xe0A\x02R\vaccountType\x12;\n" +
+	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x04name\x12D\n" +
+	"\faccount_type\x18\x05 \x01(\tB!\xe0A\x02\xbaH\x1br\x19R\bBusinessR\rMedia_CreatorR\vaccountType\x12;\n" +
 	"\x13profile_picture_url\x18\x06 \x01(\tB\v\xe0A\x02\xbaH\x05r\x03\x88\x01\x01R\x11profilePictureUrl\x123\n" +
 	"\x0ffollowers_count\x18\a \x01(\x03B\n" +
 	"\xe0A\x02\xbaH\x04\"\x02(\x00R\x0efollowersCount\x12/\n" +
@@ -430,26 +386,19 @@ const file_igpb_v1_instagram_info_account_business_response_proto_rawDesc = "" +
 	"\xe0A\x02\xbaH\x04\"\x02(\x00R\ffollowsCount\x12+\n" +
 	"\vmedia_count\x18\t \x01(\x03B\n" +
 	"\xe0A\x02\xbaH\x04\"\x02(\x00R\n" +
-	"mediaCount*f\n" +
-	"\vAccountType\x12\x1c\n" +
-	"\x18ACCOUNT_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
-	"\x15ACCOUNT_TYPE_BUSINESS\x10\x01\x12\x1e\n" +
-	"\x1aACCOUNT_TYPE_MEDIA_CREATOR\x10\x02B\xbc\x01\n" +
+	"mediaCountB\xbc\x01\n" +
 	"\vcom.igpb.v1B)InstagramInfoAccountBusinessResponseProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
-var file_igpb_v1_instagram_info_account_business_response_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_igpb_v1_instagram_info_account_business_response_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_igpb_v1_instagram_info_account_business_response_proto_goTypes = []any{
-	(AccountType)(0), // 0: igpb.v1.AccountType
-	(*InstagramInfoAccountBusinessResponse)(nil), // 1: igpb.v1.InstagramInfoAccountBusinessResponse
+	(*InstagramInfoAccountBusinessResponse)(nil), // 0: igpb.v1.InstagramInfoAccountBusinessResponse
 }
 var file_igpb_v1_instagram_info_account_business_response_proto_depIdxs = []int32{
-	0, // 0: igpb.v1.InstagramInfoAccountBusinessResponse.account_type:type_name -> igpb.v1.AccountType
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_igpb_v1_instagram_info_account_business_response_proto_init() }
@@ -462,14 +411,13 @@ func file_igpb_v1_instagram_info_account_business_response_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_igpb_v1_instagram_info_account_business_response_proto_rawDesc), len(file_igpb_v1_instagram_info_account_business_response_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_igpb_v1_instagram_info_account_business_response_proto_goTypes,
 		DependencyIndexes: file_igpb_v1_instagram_info_account_business_response_proto_depIdxs,
-		EnumInfos:         file_igpb_v1_instagram_info_account_business_response_proto_enumTypes,
 		MessageInfos:      file_igpb_v1_instagram_info_account_business_response_proto_msgTypes,
 	}.Build()
 	File_igpb_v1_instagram_info_account_business_response_proto = out.File

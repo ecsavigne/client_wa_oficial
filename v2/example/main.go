@@ -180,6 +180,7 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	// rr = examplemessage.SendPresence(client, "2014023525994448", "typing_on")
 	// time.Sleep(10 * time.Second)
 	// rr = examplemessage.SendPresence(client, "2014023525994448", "typing_off")
+	// rr = examplemessage.MarkRead(client, "2014023525994448")
 	// rr = examplemessage.SendMessagePersistentMenu(client)
 	// rr = examplemessage.GetPersistentMenu(client)
 	// rr = examplemessage.DeletePersistentMenu(client)
@@ -193,8 +194,21 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	// rr = examplemessage.SendPublishImg(client)
 	// rr = examplemessage.SendPublishVideo(client)
 	// rr = examplemessage.SendHistoryImg(client)
-	rr = examplemessage.SendHistoryVideo(client)
+	// rr = examplemessage.SendHistoryMultiFile(client)
+	// rr = examplemessage.SendPublishMultiFile(client)
+	// rr = examplemessage.SendHistoryVideo(client)
 	// rr = examplemessage.DeleteWelcomeMessageFlowsADS(client, map[string]any{"flow_id": "2443201722808096"})
+	// rr = examplemessage.SendComment(client, "18587550463038160", "Comment for delete") // id_comment= 18100424243098700, 17872615263491604,18323375431266497
+	// rr = examplemessage.SendReplyComment(client, "18100424243098700", "This is another reply to the comment") // id_comment_reply = 18201544162352582, 18161992246446955
+	// rr = examplemessage.HideComment(client, "18100424243098700", false)
+	// rr = examplemessage.EnableComment(client, "18587550463038160", true)
+	// rr = examplemessage.DeleteComment(client, "18094680020181966")
+	// rr = examplemessage.GetComment(client, "18587550463038160")  // 17898066633441351
+	// rr = examplemessage.GetRepliesComments(client, "18097893587111689")
+	// rr = examplemessage.SendButtonTemplateMessage(client, "2014023525994448")
+	// rr = examplemessage.SendGenericTemplateMessage(client, "2014023525994448")
+	// rr = examplemessage.SendPrivateReplyMessage(client, "17898066633441351", "This is a private reply message")
+	// rr = examplemessage.SendHumanAgentMessage(client, "2014023525994448", "This is a message from human agent")
 	fmt.Printf("Response: %v\n", rr)
 
 	fmt.Println(strings.Repeat(".", 25), " Fin testing Client IG ", strings.Repeat(".", 25))

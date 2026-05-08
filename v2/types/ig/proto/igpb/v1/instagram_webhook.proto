@@ -12,6 +12,8 @@ message User {
     (buf.validate.field).string = {min_len: 1},
     (google.api.field_behavior) = REQUIRED
   ];
+  // The username of the user
+  string username = 2;
 }
 
 // QuickReplyPayload contains the selected quick reply information
@@ -62,6 +64,22 @@ message Entry {
   int64 time = 2 [(google.api.field_behavior) = REQUIRED];
   // Array of messaging items in this entry
   repeated MessagingItem messaging = 3 [(google.api.field_behavior) = REQUIRED];
+  // The value object for non-messaging events like comments
+  WebhookValue value = 4;
+}
+
+// WebhookValue represents the value object in a webhook entry
+message WebhookValue {
+  string id = 1;
+  User from = 2;
+  string text = 3;
+  WebhookMedia media = 4;
+}
+
+// WebhookMedia represents the media associated with a webhook event
+message WebhookMedia {
+  string id = 1;
+  string media_product_type = 2;
 }
 
 // InstagramWebhookEvent represents the complete webhook event payload received from Instagram

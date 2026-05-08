@@ -14,7 +14,7 @@ var NewClientIG = func() clientpack.Client {
 	client, e := ig.NewClientIG(
 		// ig.WithEnvFilePath("../../config_env"),
 		ig.WithEnvFilePath("../config_env"),
-		ig.WithToken(""),
+		ig.WithToken("IGAAQ7JedvaElBZAGI3clhETVZAFa3hjeXRVd200cnZAucHplbkFrTVI3OUJwMTVfeVN2MHhzWjBPY2hvS2gwODROUTIybkhNWVlFcmdjdEFySmZAMU2VNcU1nMkVNeFlIZADJLcVBJVTBrT0o0NlFDdGtRZAGpadWFBRVU4ektSMWs5cwZDZD"),
 		ig.WithUserID("17841448182209630"),
 	)
 
@@ -81,7 +81,7 @@ func SendMessageImage(cl clientpack.Client, scope_id, url, attacment_id string) 
 		payload.SetUrl(url)
 	}
 	attachment.SetPayload(payload)
-	attachment.SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_IMAGE)
+	attachment.SetType(type_ig.IG_ATTACHMENT_TYPE_TEMPLATE.String())
 	msg.SetAttachment(attachment)
 	msgIGMedia.SetRecipient(recipient)
 	msgIGMedia.SetMessage(msg)
@@ -103,7 +103,7 @@ func SendMessageImageCollage(cl clientpack.Client, scope_id string, urls, attach
 			payload := new(igpbv1.AttachmentPayload)
 			payload.SetAttachmentId(attId)
 			arrAttachment[i].SetPayload(payload)
-			arrAttachment[i].SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_IMAGE)
+			arrAttachment[i].SetType(type_ig.IG_ATTACHMENT_TYPE_IMAGE.String())
 		}
 	} else {
 		for i, url := range urls {
@@ -111,7 +111,7 @@ func SendMessageImageCollage(cl clientpack.Client, scope_id string, urls, attach
 			payload := new(igpbv1.AttachmentPayload)
 			payload.SetUrl(url)
 			arrAttachment[i].SetPayload(payload)
-			arrAttachment[i].SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_IMAGE)
+			arrAttachment[i].SetType(type_ig.IG_ATTACHMENT_TYPE_IMAGE.String())
 		}
 		// payload.SetUrl(url)
 	}
@@ -141,7 +141,7 @@ func SendMessageAudio(cl clientpack.Client, scope_id, url, attacment_id string) 
 		payload.SetUrl(url)
 	}
 	attachment.SetPayload(payload)
-	attachment.SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_AUDIO)
+	attachment.SetType(type_ig.IG_ATTACHMENT_TYPE_AUDIO.String())
 	msg.SetAttachment(attachment)
 	msgIGMedia.SetRecipient(recipient)
 	msgIGMedia.SetMessage(msg)
@@ -167,7 +167,7 @@ func SendMessageVideo(cl clientpack.Client, scope_id, url, attacment_id string) 
 		payload.SetUrl(url)
 	}
 	attachment.SetPayload(payload)
-	attachment.SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_VIDEO)
+	attachment.SetType(type_ig.IG_ATTACHMENT_TYPE_VIDEO.String())
 	msg.SetAttachment(attachment)
 	msgIGMedia.SetRecipient(recipient)
 	msgIGMedia.SetMessage(msg)
@@ -192,7 +192,7 @@ func SendMessagePDFFile(cl clientpack.Client, scope_id, url, attacment_id string
 		payload.SetUrl(url)
 	}
 	attachment.SetPayload(payload)
-	attachment.SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_FILE)
+	attachment.SetType(type_ig.IG_ATTACHMENT_TYPE_FILE.String())
 	msg.SetAttachment(attachment)
 	msgIGMedia.SetRecipient(recipient)
 	msgIGMedia.SetMessage(msg)
@@ -210,7 +210,7 @@ func SendMessageStickerLike(cl clientpack.Client, scope_id string) response.Resp
 	payload := new(igpbv1.AttachmentPayload)
 
 	attachment.SetPayload(payload)
-	attachment.SetType(type_ig.IG_MEDIA_MESSAGE_TYPE_LIKE_HEART)
+	attachment.SetType(type_ig.IG_ATTACHMENT_TYPE_LIKE_HEART.String())
 	msg.SetAttachment(attachment)
 	msgIGMedia.SetRecipient(recipient)
 	msgIGMedia.SetMessage(msg)
@@ -231,21 +231,21 @@ func SendMessageQuickReplies(cl clientpack.Client, scope_id string) response.Res
 	qr := new(igpbv1.QuickReply)
 	qr.SetContentType("text")
 	qr.SetTitle("Option 1")
-	qr.SetPayload("payload option_1")
+	qr.SetPayload("click button option_1")
 	*arrQReply = append(*arrQReply, qr)
 
 	// section 2
 	qr = new(igpbv1.QuickReply)
 	qr.SetContentType("user_email")
 	qr.SetTitle("email")
-	qr.SetPayload("payload email")
+	qr.SetPayload("click button email")
 	*arrQReply = append(*arrQReply, qr)
 
 	// section 3
 	qr = new(igpbv1.QuickReply)
 	qr.SetContentType("user_phone_number")
 	qr.SetTitle("phone")
-	qr.SetPayload("payload phone")
+	qr.SetPayload("click button phone")
 	*arrQReply = append(*arrQReply, qr)
 
 	qrMessage.SetQuickReplies(*arrQReply)
@@ -375,6 +375,10 @@ func SendPresence(cl clientpack.Client, scope_id string, action string) response
 	return cl.SendPresence(scope_id, action)
 }
 
+func MarkRead(cl clientpack.Client, scope_id string) response.Responser {
+	return cl.MarkRead(scope_id)
+}
+
 // gets
 /*
 id:						The app user's app-scoped ID
@@ -484,13 +488,13 @@ func SendPublishVideo(cl clientpack.Client) response.Responser {
 	return cl.Create(type_ig.IG_CREATE_POST, dataParam)
 }
 
-func SendPublishCarrusel(cl clientpack.Client) response.Responser {
+func SendPublishMultiFile(cl clientpack.Client) response.Responser {
 	dataParam := map[string]any{
 		"images_url": []string{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&ss"},
 		"videos_url": []string{"https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4"},
 	}
 
-	return cl.Create(type_ig.IG_CREATE_POST_CAROUSEL, dataParam)
+	return cl.Create(type_ig.IG_CREATE_POST, dataParam)
 }
 
 func SendHistoryImg(cl clientpack.Client) response.Responser {
@@ -509,11 +513,192 @@ func SendHistoryVideo(cl clientpack.Client) response.Responser {
 	return cl.Create(type_ig.IG_CREATE_STORY, dataParam)
 }
 
-func SendHistoryCarrusel(cl clientpack.Client) response.Responser {
+func SendHistoryMultiFile(cl clientpack.Client) response.Responser {
 	dataParam := map[string]any{
 		"images_url": []string{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN2z0ERwXQUqH29urPuzWueLXKhJAY6SMyAA&ss"},
 		"videos_url": []string{"https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4"},
 	}
 
-	return cl.Create(type_ig.IG_CREATE_STORY_CAROUSEL, dataParam)
+	return cl.Create(type_ig.IG_CREATE_STORY, dataParam)
+}
+
+func SendComment(cl clientpack.Client, media_id, comment string) response.Responser {
+	dataParam := map[string]any{
+		"ig_media_id": media_id,
+		"message":     comment,
+	}
+
+	return cl.Create(type_ig.IG_CREATE_COMMENT, dataParam)
+}
+
+func SendReplyComment(cl clientpack.Client, comment_id, reply string) response.Responser {
+	dataParam := map[string]any{
+		"ig_comment_id": comment_id,
+		"message":       reply,
+	}
+
+	return cl.Create(type_ig.IG_CREATE_REPLY_COMMENT, dataParam)
+}
+
+func HideComment(cl clientpack.Client, comment_id string, hide bool) response.Responser {
+	dataParam := map[string]any{
+		"ig_comment_id": comment_id,
+		"hide":          hide,
+	}
+
+	return cl.Create(type_ig.IG_CREATE_HIDE_COMMENT, dataParam)
+}
+
+func EnableComment(cl clientpack.Client, ig_media_id string, comment_enabled bool) response.Responser {
+	dataParam := map[string]any{
+		"ig_media_id":     ig_media_id,
+		"comment_enabled": comment_enabled,
+	}
+
+	return cl.Create(type_ig.IG_CREATE_ENABLE_COMMENT, dataParam)
+}
+
+func DeleteComment(cl clientpack.Client, ig_comment_id string) response.Responser {
+	dataParam := map[string]any{
+		"ig_comment_id": ig_comment_id,
+	}
+
+	return cl.Delete(type_ig.IG_DELETE_COMMENT, dataParam)
+}
+
+func GetComment(cl clientpack.Client, ig_media_id string) response.Responser {
+	dataParam := map[string]any{
+		"ig_media_id": ig_media_id,
+	}
+
+	return cl.Get(type_ig.IG_GET_COMMENT, dataParam)
+}
+
+func GetRepliesComments(cl clientpack.Client, ig_comment_id string) response.Responser {
+	dataParam := map[string]any{
+		"ig_comment_id": ig_comment_id,
+	}
+
+	return cl.Get(type_ig.IG_GET_REPLIES_COMMENTS, dataParam)
+}
+
+func SendButtonTemplateMessage(cl clientpack.Client, scope_id string) response.Responser {
+	msgIGButtonTemplate := new(igpbv1.InstagramTemplateButtonTemplate)
+	recipient := new(igpbv1.Recipient)
+	recipient.SetId(scope_id)
+
+	msgIGButtonTemplate.SetRecipient(recipient)
+
+	msg := new(igpbv1.ButtonMessage)
+	// igpbv1.templateAttachment_Button
+	attachment := new(igpbv1.TemplateAttachment)
+	attachment.SetType(type_ig.IG_ATTACHMENT_TYPE_TEMPLATE.String())
+
+	payload := new(igpbv1.TemplatePayload)
+	payload.SetTemplateType(type_ig.IG_TEMPLATE_BUTTON.String())
+	payload.SetText("Este é um exemplo de mensagem com template de botão.")
+
+	buttons := new([]*igpbv1.TemplateButton)
+
+	button1 := new(igpbv1.TemplateButton)
+	button1.SetType(type_ig.IG_TYPE_BUTTON_POSTBACK.String())
+	button1.SetTitle("Botão para postback")
+	button1.SetPayload("data send by postback button for webhook")
+	*buttons = append(*buttons, button1)
+
+	button2 := new(igpbv1.TemplateButton)
+	button2.SetType(type_ig.IG_TYPE_BUTTON_WEB_URL.String())
+	button2.SetTitle("Botão para web_url")
+	button2.SetUrl("https://app.socialhub.com/")
+	*buttons = append(*buttons, button2)
+
+	payload.SetButtons(*buttons)
+	attachment.SetPayload(payload)
+	msg.SetAttachment(attachment)
+	msgIGButtonTemplate.SetMessage(msg)
+
+	return cl.SendMessage(msgIGButtonTemplate)
+}
+
+func SendGenericTemplateMessage(cl clientpack.Client, scope_id string) response.Responser {
+	msgIGButtonTemplate := new(igpbv1.InstagramTemplateButtonTemplate)
+	recipient := new(igpbv1.Recipient)
+	recipient.SetId(scope_id)
+
+	msgIGButtonTemplate.SetRecipient(recipient)
+
+	msg := new(igpbv1.ButtonMessage)
+	// igpbv1.templateAttachment_Button
+	attachment := new(igpbv1.TemplateAttachment)
+	attachment.SetType(type_ig.IG_ATTACHMENT_TYPE_TEMPLATE.String())
+
+	payload := new(igpbv1.TemplatePayload)
+	payload.SetTemplateType(type_ig.IG_TEMPLATE_GENERIC.String())
+
+	elements := new([]*igpbv1.Element)
+
+	element1 := new(igpbv1.Element)
+	// element1.SetType(type_ig.IG_TYPE_BUTTON_POSTBACK.String())
+	element1.SetTitle("Botão para postback")
+	element1.SetImageUrl("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTNvcThmcG85OTRlMTF5MTZueWk4ZGMxcDRkMHcxMXA1Z2oxNzZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O3wIKp4DlubUl1Bezt/giphy.gif")
+	element1.SetSubtitle("Este é um exemplo de mensagem com template genérico.")
+
+	defaultAction := new(igpbv1.DefaultAction)
+	defaultAction.SetType(type_ig.IG_TYPE_BUTTON_WEB_URL.String())
+	defaultAction.SetUrl("https://app.socialhub.com/")
+	element1.SetDefaultAction(defaultAction)
+
+	buttons := new([]*igpbv1.TemplateButton)
+
+	button1 := new(igpbv1.TemplateButton)
+	button1.SetType(type_ig.IG_TYPE_BUTTON_POSTBACK.String())
+	button1.SetTitle("Botão para postback")
+	button1.SetPayload("data send by postback button for webhook")
+	*buttons = append(*buttons, button1)
+
+	button2 := new(igpbv1.TemplateButton)
+	button2.SetType(type_ig.IG_TYPE_BUTTON_WEB_URL.String())
+	button2.SetTitle("Botão para web_url")
+	button2.SetUrl("https://app.socialhub.com/")
+	*buttons = append(*buttons, button2)
+
+	element1.SetButtons(*buttons)
+	*elements = append(*elements, element1)
+
+	payload.SetElements(*elements)
+	attachment.SetPayload(payload)
+	msg.SetAttachment(attachment)
+	msgIGButtonTemplate.SetMessage(msg)
+
+	return cl.SendMessage(msgIGButtonTemplate)
+}
+
+func SendPrivateReplyMessage(cl clientpack.Client, comment_id, msg string) response.Responser {
+	msgIGPrivateReply := new(igpbv1.InstagramPrivateReplyMessage)
+
+	recipient := new(igpbv1.CommentRecipient)
+	recipient.SetCommentId(comment_id)
+	msgIGPrivateReply.SetRecipient(recipient)
+
+	msgPR := new(igpbv1.PrivateReplyMessage)
+	msgPR.SetText(msg)
+	msgIGPrivateReply.SetMessage(msgPR)
+
+	return cl.SendMessage(msgIGPrivateReply)
+}
+
+// Meta tem que revisar e aprovar o app pra ig
+func SendHumanAgentMessage(cl clientpack.Client, recipient_id, msg string) response.Responser {
+	msgIGHumanAgent := new(igpbv1.InstagramHumanAgentMessage)
+	msgIGHumanAgent.SetTag("HUMAN_AGENT")
+
+	recipient := new(igpbv1.Recipient)
+	recipient.SetId(recipient_id)
+	msgIGHumanAgent.SetRecipient(recipient)
+
+	msgHA := new(igpbv1.HumanAgentMessage)
+	msgHA.SetText(msg)
+	msgIGHumanAgent.SetMessage(msgHA)
+
+	return cl.SendMessage(msgIGHumanAgent)
 }

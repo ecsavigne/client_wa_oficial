@@ -5,13 +5,6 @@ package igpb.v1;
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
 
-// AccountType represents the type of Instagram account
-enum AccountType {
-  ACCOUNT_TYPE_UNSPECIFIED = 0;
-  ACCOUNT_TYPE_BUSINESS = 1;
-  ACCOUNT_TYPE_MEDIA_CREATOR = 2;
-}
-
 // InstagramInfoAccountBusinessResponse contains detailed information about an Instagram business account
 message InstagramInfoAccountBusinessResponse {
   // The app user's app-scoped ID
@@ -42,7 +35,15 @@ message InstagramInfoAccountBusinessResponse {
   ];
 
   // The app user's account type (Business or Media_Creator)
-  AccountType account_type = 5 [(google.api.field_behavior) = REQUIRED];
+  string account_type = 5 [
+    (buf.validate.field).string = {
+      in: [
+        "Business",
+        "Media_Creator"
+      ]
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
 
   // The URL for the app user's profile picture
   string profile_picture_url = 6 [

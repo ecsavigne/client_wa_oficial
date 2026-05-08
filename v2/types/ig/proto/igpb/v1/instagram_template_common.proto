@@ -5,17 +5,13 @@ package igpb.v1;
 import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
 
-// ButtonType represents the type of button action
-enum ButtonType {
-  BUTTON_TYPE_UNSPECIFIED = 0;
-  BUTTON_TYPE_WEB_URL = 1;
-  BUTTON_TYPE_POSTBACK = 2;
-}
-
 // DefaultAction represents the default action executed when the template is tapped
 message DefaultAction {
   // The type of action (must be web_url for generic templates)
-  ButtonType type = 1 [(google.api.field_behavior) = REQUIRED];
+  string type = 1 [
+    (buf.validate.field).string = {const: "web_url"},
+    (google.api.field_behavior) = REQUIRED
+  ];
 
   // The URL to open when the template is tapped
   string url = 2 [
@@ -27,7 +23,15 @@ message DefaultAction {
 // TemplateButton represents a button in template messages
 message TemplateButton {
   // The type of button (web_url or postback)
-  ButtonType type = 1 [(google.api.field_behavior) = REQUIRED];
+  string type = 1 [
+    (buf.validate.field).string = {
+      in: [
+        "web_url",
+        "postback"
+      ]
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
 
   // The title text displayed on the button (max 20 characters)
   string title = 2 [
@@ -41,7 +45,7 @@ message TemplateButton {
   // The URL to open for web_url buttons
   string url = 3 [(buf.validate.field).string = {uri: true}];
 
-  // The payload string sent as postback for postback buttons
+  // The payload string sent as postback for postback buttons. The content to be sent in the messaging_postback webhook notification when a postback button is clicked
   string payload = 4;
 }
 
@@ -95,11 +99,11 @@ message ButtonTemplatePayload {
     (google.api.field_behavior) = REQUIRED
   ];
 
-  // The text message to display before the buttons
+  // The text message to display UTF-8-encoded text of up to 640 characters. Text will appear above the buttons.
   string text = 2 [
     (buf.validate.field).string = {
       min_len: 1
-      max_len: 1000
+      max_len: 640
     },
     (google.api.field_behavior) = REQUIRED
   ];
@@ -114,17 +118,35 @@ message ButtonTemplatePayload {
   ];
 }
 
+message TemplatePayload {
+  // Value must be button or generic.
+  string template_type = 1;
+
+  // UTF-8-encoded text of up to 640 characters. Text will appear above the buttons
+  string text = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 640
+  }];
+
+  // An array of element objects that describe instances of the generic template to be sent. Specifying multiple elements will send a horizontally scrollable carousel of templates. A maximum of 10 elements is supported.
+  repeated Element elements = 3 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 10
+  }];
+
+  // Set of 1-3 buttons that appear as call-to-actions.
+  repeated TemplateButton buttons = 4 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 3
+  }];
+}
+
 // TemplateAttachment represents a message attachment with a template
 // The payload can be one of several template types using oneof
 message TemplateAttachment {
   // Must be "template"
   string type = 1 [(buf.validate.field).string = {const: "template"}];
 
-  // The payload can be one of these template types
-  oneof payload {
-    // Generic template with carousel elements
-    GenericTemplatePayload generic = 2;
-    // Button template with text and action buttons
-    ButtonTemplatePayload button = 3;
-  }
+  // payload of the template.
+  TemplatePayload payload = 2 [(google.api.field_behavior) = REQUIRED];
 }

@@ -22,55 +22,10 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// ButtonType represents the type of button action
-type ButtonType int32
-
-const (
-	ButtonType_BUTTON_TYPE_UNSPECIFIED ButtonType = 0
-	ButtonType_BUTTON_TYPE_WEB_URL     ButtonType = 1
-	ButtonType_BUTTON_TYPE_POSTBACK    ButtonType = 2
-)
-
-// Enum value maps for ButtonType.
-var (
-	ButtonType_name = map[int32]string{
-		0: "BUTTON_TYPE_UNSPECIFIED",
-		1: "BUTTON_TYPE_WEB_URL",
-		2: "BUTTON_TYPE_POSTBACK",
-	}
-	ButtonType_value = map[string]int32{
-		"BUTTON_TYPE_UNSPECIFIED": 0,
-		"BUTTON_TYPE_WEB_URL":     1,
-		"BUTTON_TYPE_POSTBACK":    2,
-	}
-)
-
-func (x ButtonType) Enum() *ButtonType {
-	p := new(ButtonType)
-	*p = x
-	return p
-}
-
-func (x ButtonType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ButtonType) Descriptor() protoreflect.EnumDescriptor {
-	return file_igpb_v1_instagram_template_common_proto_enumTypes[0].Descriptor()
-}
-
-func (ButtonType) Type() protoreflect.EnumType {
-	return &file_igpb_v1_instagram_template_common_proto_enumTypes[0]
-}
-
-func (x ButtonType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
 // DefaultAction represents the default action executed when the template is tapped
 type DefaultAction struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Type        ButtonType             `protobuf:"varint,1,opt,name=type,enum=igpb.v1.ButtonType"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
 	xxx_hidden_Url         *string                `protobuf:"bytes,2,opt,name=url"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
@@ -103,13 +58,14 @@ func (x *DefaultAction) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *DefaultAction) GetType() ButtonType {
+func (x *DefaultAction) GetType() string {
 	if x != nil {
-		if protoimpl.X.Present(&(x.XXX_presence[0]), 0) {
-			return x.xxx_hidden_Type
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
 		}
+		return ""
 	}
-	return ButtonType_BUTTON_TYPE_UNSPECIFIED
+	return ""
 }
 
 func (x *DefaultAction) GetUrl() string {
@@ -122,8 +78,8 @@ func (x *DefaultAction) GetUrl() string {
 	return ""
 }
 
-func (x *DefaultAction) SetType(v ButtonType) {
-	x.xxx_hidden_Type = v
+func (x *DefaultAction) SetType(v string) {
+	x.xxx_hidden_Type = &v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
@@ -148,7 +104,7 @@ func (x *DefaultAction) HasUrl() bool {
 
 func (x *DefaultAction) ClearType() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Type = ButtonType_BUTTON_TYPE_UNSPECIFIED
+	x.xxx_hidden_Type = nil
 }
 
 func (x *DefaultAction) ClearUrl() {
@@ -160,7 +116,7 @@ type DefaultAction_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// The type of action (must be web_url for generic templates)
-	Type *ButtonType
+	Type *string
 	// The URL to open when the template is tapped
 	Url *string
 }
@@ -171,7 +127,7 @@ func (b0 DefaultAction_builder) Build() *DefaultAction {
 	_, _ = b, x
 	if b.Type != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Type = *b.Type
+		x.xxx_hidden_Type = b.Type
 	}
 	if b.Url != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
@@ -183,7 +139,7 @@ func (b0 DefaultAction_builder) Build() *DefaultAction {
 // TemplateButton represents a button in template messages
 type TemplateButton struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Type        ButtonType             `protobuf:"varint,1,opt,name=type,enum=igpb.v1.ButtonType"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
 	xxx_hidden_Title       *string                `protobuf:"bytes,2,opt,name=title"`
 	xxx_hidden_Url         *string                `protobuf:"bytes,3,opt,name=url"`
 	xxx_hidden_Payload     *string                `protobuf:"bytes,4,opt,name=payload"`
@@ -218,13 +174,14 @@ func (x *TemplateButton) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *TemplateButton) GetType() ButtonType {
+func (x *TemplateButton) GetType() string {
 	if x != nil {
-		if protoimpl.X.Present(&(x.XXX_presence[0]), 0) {
-			return x.xxx_hidden_Type
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
 		}
+		return ""
 	}
-	return ButtonType_BUTTON_TYPE_UNSPECIFIED
+	return ""
 }
 
 func (x *TemplateButton) GetTitle() string {
@@ -257,8 +214,8 @@ func (x *TemplateButton) GetPayload() string {
 	return ""
 }
 
-func (x *TemplateButton) SetType(v ButtonType) {
-	x.xxx_hidden_Type = v
+func (x *TemplateButton) SetType(v string) {
+	x.xxx_hidden_Type = &v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
@@ -307,7 +264,7 @@ func (x *TemplateButton) HasPayload() bool {
 
 func (x *TemplateButton) ClearType() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Type = ButtonType_BUTTON_TYPE_UNSPECIFIED
+	x.xxx_hidden_Type = nil
 }
 
 func (x *TemplateButton) ClearTitle() {
@@ -329,12 +286,12 @@ type TemplateButton_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// The type of button (web_url or postback)
-	Type *ButtonType
+	Type *string
 	// The title text displayed on the button (max 20 characters)
 	Title *string
 	// The URL to open for web_url buttons
 	Url *string
-	// The payload string sent as postback for postback buttons
+	// The payload string sent as postback for postback buttons. The content to be sent in the messaging_postback webhook notification when a postback button is clicked
 	Payload *string
 }
 
@@ -344,7 +301,7 @@ func (b0 TemplateButton_builder) Build() *TemplateButton {
 	_, _ = b, x
 	if b.Type != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
-		x.xxx_hidden_Type = *b.Type
+		x.xxx_hidden_Type = b.Type
 	}
 	if b.Title != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
@@ -758,7 +715,7 @@ type ButtonTemplatePayload_builder struct {
 
 	// Must be "button"
 	TemplateType *string
-	// The text message to display before the buttons
+	// The text message to display UTF-8-encoded text of up to 640 characters. Text will appear above the buttons.
 	Text *string
 	// An array of buttons to display (maximum of 3 buttons)
 	Buttons []*TemplateButton
@@ -780,12 +737,159 @@ func (b0 ButtonTemplatePayload_builder) Build() *ButtonTemplatePayload {
 	return m0
 }
 
+type TemplatePayload struct {
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_TemplateType *string                `protobuf:"bytes,1,opt,name=template_type,json=templateType"`
+	xxx_hidden_Text         *string                `protobuf:"bytes,2,opt,name=text"`
+	xxx_hidden_Elements     *[]*Element            `protobuf:"bytes,3,rep,name=elements"`
+	xxx_hidden_Buttons      *[]*TemplateButton     `protobuf:"bytes,4,rep,name=buttons"`
+	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
+	XXX_presence            [1]uint32
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
+}
+
+func (x *TemplatePayload) Reset() {
+	*x = TemplatePayload{}
+	mi := &file_igpb_v1_instagram_template_common_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplatePayload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplatePayload) ProtoMessage() {}
+
+func (x *TemplatePayload) ProtoReflect() protoreflect.Message {
+	mi := &file_igpb_v1_instagram_template_common_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *TemplatePayload) GetTemplateType() string {
+	if x != nil {
+		if x.xxx_hidden_TemplateType != nil {
+			return *x.xxx_hidden_TemplateType
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *TemplatePayload) GetText() string {
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *TemplatePayload) GetElements() []*Element {
+	if x != nil {
+		if x.xxx_hidden_Elements != nil {
+			return *x.xxx_hidden_Elements
+		}
+	}
+	return nil
+}
+
+func (x *TemplatePayload) GetButtons() []*TemplateButton {
+	if x != nil {
+		if x.xxx_hidden_Buttons != nil {
+			return *x.xxx_hidden_Buttons
+		}
+	}
+	return nil
+}
+
+func (x *TemplatePayload) SetTemplateType(v string) {
+	x.xxx_hidden_TemplateType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
+}
+
+func (x *TemplatePayload) SetText(v string) {
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+}
+
+func (x *TemplatePayload) SetElements(v []*Element) {
+	x.xxx_hidden_Elements = &v
+}
+
+func (x *TemplatePayload) SetButtons(v []*TemplateButton) {
+	x.xxx_hidden_Buttons = &v
+}
+
+func (x *TemplatePayload) HasTemplateType() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *TemplatePayload) HasText() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *TemplatePayload) ClearTemplateType() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_TemplateType = nil
+}
+
+func (x *TemplatePayload) ClearText() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Text = nil
+}
+
+type TemplatePayload_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Value must be button or generic.
+	TemplateType *string
+	// UTF-8-encoded text of up to 640 characters. Text will appear above the buttons
+	Text *string
+	// An array of element objects that describe instances of the generic template to be sent. Specifying multiple elements will send a horizontally scrollable carousel of templates. A maximum of 10 elements is supported.
+	Elements []*Element
+	// Set of 1-3 buttons that appear as call-to-actions.
+	Buttons []*TemplateButton
+}
+
+func (b0 TemplatePayload_builder) Build() *TemplatePayload {
+	m0 := &TemplatePayload{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.TemplateType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_TemplateType = b.TemplateType
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_Text = b.Text
+	}
+	x.xxx_hidden_Elements = &b.Elements
+	x.xxx_hidden_Buttons = &b.Buttons
+	return m0
+}
+
 // TemplateAttachment represents a message attachment with a template
 // The payload can be one of several template types using oneof
 type TemplateAttachment struct {
-	state                  protoimpl.MessageState       `protogen:"opaque.v1"`
-	xxx_hidden_Type        *string                      `protobuf:"bytes,1,opt,name=type"`
-	xxx_hidden_Payload     isTemplateAttachment_Payload `protobuf_oneof:"payload"`
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
+	xxx_hidden_Payload     *TemplatePayload       `protobuf:"bytes,2,opt,name=payload"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -794,7 +898,7 @@ type TemplateAttachment struct {
 
 func (x *TemplateAttachment) Reset() {
 	*x = TemplateAttachment{}
-	mi := &file_igpb_v1_instagram_template_common_proto_msgTypes[5]
+	mi := &file_igpb_v1_instagram_template_common_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -806,7 +910,7 @@ func (x *TemplateAttachment) String() string {
 func (*TemplateAttachment) ProtoMessage() {}
 
 func (x *TemplateAttachment) ProtoReflect() protoreflect.Message {
-	mi := &file_igpb_v1_instagram_template_common_proto_msgTypes[5]
+	mi := &file_igpb_v1_instagram_template_common_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -827,20 +931,9 @@ func (x *TemplateAttachment) GetType() string {
 	return ""
 }
 
-func (x *TemplateAttachment) GetGeneric() *GenericTemplatePayload {
+func (x *TemplateAttachment) GetPayload() *TemplatePayload {
 	if x != nil {
-		if x, ok := x.xxx_hidden_Payload.(*templateAttachment_Generic); ok {
-			return x.Generic
-		}
-	}
-	return nil
-}
-
-func (x *TemplateAttachment) GetButton() *ButtonTemplatePayload {
-	if x != nil {
-		if x, ok := x.xxx_hidden_Payload.(*templateAttachment_Button); ok {
-			return x.Button
-		}
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
@@ -850,20 +943,8 @@ func (x *TemplateAttachment) SetType(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
-func (x *TemplateAttachment) SetGeneric(v *GenericTemplatePayload) {
-	if v == nil {
-		x.xxx_hidden_Payload = nil
-		return
-	}
-	x.xxx_hidden_Payload = &templateAttachment_Generic{v}
-}
-
-func (x *TemplateAttachment) SetButton(v *ButtonTemplatePayload) {
-	if v == nil {
-		x.xxx_hidden_Payload = nil
-		return
-	}
-	x.xxx_hidden_Payload = &templateAttachment_Button{v}
+func (x *TemplateAttachment) SetPayload(v *TemplatePayload) {
+	x.xxx_hidden_Payload = v
 }
 
 func (x *TemplateAttachment) HasType() bool {
@@ -880,22 +961,6 @@ func (x *TemplateAttachment) HasPayload() bool {
 	return x.xxx_hidden_Payload != nil
 }
 
-func (x *TemplateAttachment) HasGeneric() bool {
-	if x == nil {
-		return false
-	}
-	_, ok := x.xxx_hidden_Payload.(*templateAttachment_Generic)
-	return ok
-}
-
-func (x *TemplateAttachment) HasButton() bool {
-	if x == nil {
-		return false
-	}
-	_, ok := x.xxx_hidden_Payload.(*templateAttachment_Button)
-	return ok
-}
-
 func (x *TemplateAttachment) ClearType() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Type = nil
@@ -905,49 +970,13 @@ func (x *TemplateAttachment) ClearPayload() {
 	x.xxx_hidden_Payload = nil
 }
 
-func (x *TemplateAttachment) ClearGeneric() {
-	if _, ok := x.xxx_hidden_Payload.(*templateAttachment_Generic); ok {
-		x.xxx_hidden_Payload = nil
-	}
-}
-
-func (x *TemplateAttachment) ClearButton() {
-	if _, ok := x.xxx_hidden_Payload.(*templateAttachment_Button); ok {
-		x.xxx_hidden_Payload = nil
-	}
-}
-
-const TemplateAttachment_Payload_not_set_case case_TemplateAttachment_Payload = 0
-const TemplateAttachment_Generic_case case_TemplateAttachment_Payload = 2
-const TemplateAttachment_Button_case case_TemplateAttachment_Payload = 3
-
-func (x *TemplateAttachment) WhichPayload() case_TemplateAttachment_Payload {
-	if x == nil {
-		return TemplateAttachment_Payload_not_set_case
-	}
-	switch x.xxx_hidden_Payload.(type) {
-	case *templateAttachment_Generic:
-		return TemplateAttachment_Generic_case
-	case *templateAttachment_Button:
-		return TemplateAttachment_Button_case
-	default:
-		return TemplateAttachment_Payload_not_set_case
-	}
-}
-
 type TemplateAttachment_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// Must be "template"
 	Type *string
-	// The payload can be one of these template types
-
-	// Fields of oneof xxx_hidden_Payload:
-	// Generic template with carousel elements
-	Generic *GenericTemplatePayload
-	// Button template with text and action buttons
-	Button *ButtonTemplatePayload
-	// -- end of xxx_hidden_Payload
+	// payload of the template.
+	Payload *TemplatePayload
 }
 
 func (b0 TemplateAttachment_builder) Build() *TemplateAttachment {
@@ -958,53 +987,21 @@ func (b0 TemplateAttachment_builder) Build() *TemplateAttachment {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
 		x.xxx_hidden_Type = b.Type
 	}
-	if b.Generic != nil {
-		x.xxx_hidden_Payload = &templateAttachment_Generic{b.Generic}
-	}
-	if b.Button != nil {
-		x.xxx_hidden_Payload = &templateAttachment_Button{b.Button}
-	}
+	x.xxx_hidden_Payload = b.Payload
 	return m0
 }
-
-type case_TemplateAttachment_Payload protoreflect.FieldNumber
-
-func (x case_TemplateAttachment_Payload) String() string {
-	md := file_igpb_v1_instagram_template_common_proto_msgTypes[5].Descriptor()
-	if x == 0 {
-		return "not set"
-	}
-	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
-}
-
-type isTemplateAttachment_Payload interface {
-	isTemplateAttachment_Payload()
-}
-
-type templateAttachment_Generic struct {
-	// Generic template with carousel elements
-	Generic *GenericTemplatePayload `protobuf:"bytes,2,opt,name=generic,oneof"`
-}
-
-type templateAttachment_Button struct {
-	// Button template with text and action buttons
-	Button *ButtonTemplatePayload `protobuf:"bytes,3,opt,name=button,oneof"`
-}
-
-func (*templateAttachment_Generic) isTemplateAttachment_Payload() {}
-
-func (*templateAttachment_Button) isTemplateAttachment_Payload() {}
 
 var File_igpb_v1_instagram_template_common_proto protoreflect.FileDescriptor
 
 const file_igpb_v1_instagram_template_common_proto_rawDesc = "" +
 	"\n" +
-	"'igpb/v1/instagram_template_common.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\\\n" +
-	"\rDefaultAction\x12,\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x13.igpb.v1.ButtonTypeB\x03\xe0A\x02R\x04type\x12\x1d\n" +
-	"\x03url\x18\x02 \x01(\tB\v\xe0A\x02\xbaH\x05r\x03\x88\x01\x01R\x03url\"\x98\x01\n" +
-	"\x0eTemplateButton\x12,\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x13.igpb.v1.ButtonTypeB\x03\xe0A\x02R\x04type\x12\"\n" +
+	"'igpb/v1/instagram_template_common.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"U\n" +
+	"\rDefaultAction\x12%\n" +
+	"\x04type\x18\x01 \x01(\tB\x11\xe0A\x02\xbaH\vr\t\n" +
+	"\aweb_urlR\x04type\x12\x1d\n" +
+	"\x03url\x18\x02 \x01(\tB\v\xe0A\x02\xbaH\x05r\x03\x88\x01\x01R\x03url\"\x9b\x01\n" +
+	"\x0eTemplateButton\x12/\n" +
+	"\x04type\x18\x01 \x01(\tB\x1b\xe0A\x02\xbaH\x15r\x13R\aweb_urlR\bpostbackR\x04type\x12\"\n" +
 	"\x05title\x18\x02 \x01(\tB\f\xe0A\x02\xbaH\x06r\x04\x10\x01\x18\x14R\x05title\x12\x1a\n" +
 	"\x03url\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\x03url\x12\x18\n" +
 	"\apayload\x18\x04 \x01(\tR\apayload\"\xf5\x01\n" +
@@ -1023,47 +1020,47 @@ const file_igpb_v1_instagram_template_common_proto_rawDesc = "" +
 	"\rtemplate_type\x18\x01 \x01(\tB\x10\xe0A\x02\xbaH\n" +
 	"r\b\n" +
 	"\x06buttonR\ftemplateType\x12!\n" +
-	"\x04text\x18\x02 \x01(\tB\r\xe0A\x02\xbaH\ar\x05\x10\x01\x18\xe8\aR\x04text\x12@\n" +
-	"\abuttons\x18\x03 \x03(\v2\x17.igpb.v1.TemplateButtonB\r\xe0A\x02\xbaH\a\x92\x01\x04\b\x01\x10\x03R\abuttons\"\xbb\x01\n" +
+	"\x04text\x18\x02 \x01(\tB\r\xe0A\x02\xbaH\ar\x05\x10\x01\x18\x80\x05R\x04text\x12@\n" +
+	"\abuttons\x18\x03 \x03(\v2\x17.igpb.v1.TemplateButtonB\r\xe0A\x02\xbaH\a\x92\x01\x04\b\x01\x10\x03R\abuttons\"\xcf\x01\n" +
+	"\x0fTemplatePayload\x12#\n" +
+	"\rtemplate_type\x18\x01 \x01(\tR\ftemplateType\x12\x1e\n" +
+	"\x04text\x18\x02 \x01(\tB\n" +
+	"\xbaH\ar\x05\x10\x01\x18\x80\x05R\x04text\x128\n" +
+	"\belements\x18\x03 \x03(\v2\x10.igpb.v1.ElementB\n" +
+	"\xbaH\a\x92\x01\x04\b\x01\x10\n" +
+	"R\belements\x12=\n" +
+	"\abuttons\x18\x04 \x03(\v2\x17.igpb.v1.TemplateButtonB\n" +
+	"\xbaH\a\x92\x01\x04\b\x01\x10\x03R\abuttons\"r\n" +
 	"\x12TemplateAttachment\x12#\n" +
 	"\x04type\x18\x01 \x01(\tB\x0f\xbaH\fr\n" +
 	"\n" +
-	"\btemplateR\x04type\x12;\n" +
-	"\ageneric\x18\x02 \x01(\v2\x1f.igpb.v1.GenericTemplatePayloadH\x00R\ageneric\x128\n" +
-	"\x06button\x18\x03 \x01(\v2\x1e.igpb.v1.ButtonTemplatePayloadH\x00R\x06buttonB\t\n" +
-	"\apayload*\\\n" +
-	"\n" +
-	"ButtonType\x12\x1b\n" +
-	"\x17BUTTON_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
-	"\x13BUTTON_TYPE_WEB_URL\x10\x01\x12\x18\n" +
-	"\x14BUTTON_TYPE_POSTBACK\x10\x02B\xaf\x01\n" +
+	"\btemplateR\x04type\x127\n" +
+	"\apayload\x18\x02 \x01(\v2\x18.igpb.v1.TemplatePayloadB\x03\xe0A\x02R\apayloadB\xaf\x01\n" +
 	"\vcom.igpb.v1B\x1cInstagramTemplateCommonProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
-var file_igpb_v1_instagram_template_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_igpb_v1_instagram_template_common_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_igpb_v1_instagram_template_common_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_igpb_v1_instagram_template_common_proto_goTypes = []any{
-	(ButtonType)(0),                // 0: igpb.v1.ButtonType
-	(*DefaultAction)(nil),          // 1: igpb.v1.DefaultAction
-	(*TemplateButton)(nil),         // 2: igpb.v1.TemplateButton
-	(*Element)(nil),                // 3: igpb.v1.Element
-	(*GenericTemplatePayload)(nil), // 4: igpb.v1.GenericTemplatePayload
-	(*ButtonTemplatePayload)(nil),  // 5: igpb.v1.ButtonTemplatePayload
+	(*DefaultAction)(nil),          // 0: igpb.v1.DefaultAction
+	(*TemplateButton)(nil),         // 1: igpb.v1.TemplateButton
+	(*Element)(nil),                // 2: igpb.v1.Element
+	(*GenericTemplatePayload)(nil), // 3: igpb.v1.GenericTemplatePayload
+	(*ButtonTemplatePayload)(nil),  // 4: igpb.v1.ButtonTemplatePayload
+	(*TemplatePayload)(nil),        // 5: igpb.v1.TemplatePayload
 	(*TemplateAttachment)(nil),     // 6: igpb.v1.TemplateAttachment
 }
 var file_igpb_v1_instagram_template_common_proto_depIdxs = []int32{
-	0, // 0: igpb.v1.DefaultAction.type:type_name -> igpb.v1.ButtonType
-	0, // 1: igpb.v1.TemplateButton.type:type_name -> igpb.v1.ButtonType
-	1, // 2: igpb.v1.Element.default_action:type_name -> igpb.v1.DefaultAction
-	2, // 3: igpb.v1.Element.buttons:type_name -> igpb.v1.TemplateButton
-	3, // 4: igpb.v1.GenericTemplatePayload.elements:type_name -> igpb.v1.Element
-	2, // 5: igpb.v1.ButtonTemplatePayload.buttons:type_name -> igpb.v1.TemplateButton
-	4, // 6: igpb.v1.TemplateAttachment.generic:type_name -> igpb.v1.GenericTemplatePayload
-	5, // 7: igpb.v1.TemplateAttachment.button:type_name -> igpb.v1.ButtonTemplatePayload
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	0, // 0: igpb.v1.Element.default_action:type_name -> igpb.v1.DefaultAction
+	1, // 1: igpb.v1.Element.buttons:type_name -> igpb.v1.TemplateButton
+	2, // 2: igpb.v1.GenericTemplatePayload.elements:type_name -> igpb.v1.Element
+	1, // 3: igpb.v1.ButtonTemplatePayload.buttons:type_name -> igpb.v1.TemplateButton
+	2, // 4: igpb.v1.TemplatePayload.elements:type_name -> igpb.v1.Element
+	1, // 5: igpb.v1.TemplatePayload.buttons:type_name -> igpb.v1.TemplateButton
+	5, // 6: igpb.v1.TemplateAttachment.payload:type_name -> igpb.v1.TemplatePayload
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_igpb_v1_instagram_template_common_proto_init() }
@@ -1071,23 +1068,18 @@ func file_igpb_v1_instagram_template_common_proto_init() {
 	if File_igpb_v1_instagram_template_common_proto != nil {
 		return
 	}
-	file_igpb_v1_instagram_template_common_proto_msgTypes[5].OneofWrappers = []any{
-		(*templateAttachment_Generic)(nil),
-		(*templateAttachment_Button)(nil),
-	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_igpb_v1_instagram_template_common_proto_rawDesc), len(file_igpb_v1_instagram_template_common_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   6,
+			NumEnums:      0,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_igpb_v1_instagram_template_common_proto_goTypes,
 		DependencyIndexes: file_igpb_v1_instagram_template_common_proto_depIdxs,
-		EnumInfos:         file_igpb_v1_instagram_template_common_proto_enumTypes,
 		MessageInfos:      file_igpb_v1_instagram_template_common_proto_msgTypes,
 	}.Build()
 	File_igpb_v1_instagram_template_common_proto = out.File
