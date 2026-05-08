@@ -702,3 +702,63 @@ func SendHumanAgentMessage(cl clientpack.Client, recipient_id, msg string) respo
 
 	return cl.SendMessage(msgIGHumanAgent)
 }
+
+func SubscribeWebHook(cl clientpack.Client) response.Responser {
+	return cl.SubscribeWebHook()
+}
+
+func UnsubscribeWebHook(cl clientpack.Client) response.Responser {
+	return cl.UnsubscribeWebHook()
+}
+
+func GetSubscibeWebhookField(cl clientpack.Client) response.Responser {
+	return cl.Get(type_ig.IG_GET_SUBSCRIBE_WEBHOOK_FIELD)
+}
+
+func GetMetricsMedia(cl clientpack.Client, igMediaID string) response.Responser {
+	dataParam := map[string]any{
+		"ig_media_id": igMediaID,
+	}
+
+	return cl.Get(type_ig.IG_GET_METRICS_MEDIA, dataParam)
+}
+
+func GetMetricsMediaInsight(cl clientpack.Client, igMediaID string) response.Responser {
+	dataParam := map[string]any{
+		"ig_media_id": igMediaID,
+	}
+
+	return cl.Get(type_ig.IG_GET_METRICS_MEDIA_INSIGHT, dataParam)
+}
+
+func GetMetricsAccountInsight(cl clientpack.Client) response.Responser {
+	return cl.Get(type_ig.IG_GET_METRICS_USER_INSIGHT)
+}
+
+func GetConversations(cl clientpack.Client) response.Responser {
+	return cl.Get(type_ig.IG_GET_LIST_CONVERSATION)
+}
+
+func GetUserConversation(cl clientpack.Client, igUserID string) response.Responser {
+	dataParam := map[string]any{
+		"ig_user_id": igUserID,
+	}
+
+	return cl.Get(type_ig.IG_GET_USER_CONVERSATION, dataParam)
+}
+
+func GetMessagesOfConversation(cl clientpack.Client, conversationID string) response.Responser {
+	dataParam := map[string]any{
+		"conversation_id": conversationID,
+	}
+
+	return cl.Get(type_ig.IG_GET_MESSAGES_CONVERSATION, dataParam)
+}
+
+func GetMessageInfo(cl clientpack.Client, messageID string) response.Responser {
+	dataParam := map[string]any{
+		"message_id": messageID,
+	}
+
+	return cl.Get(type_ig.IG_GET_INFO_MESSAGE, dataParam)
+}

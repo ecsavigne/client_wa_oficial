@@ -25,23 +25,35 @@ func (self IG_ATTACHMENT_TYPE) String() string {
 }
 
 // type get info
+type IG_GET_INFO_TYPE string
+
 const (
-	IG_GET_INFO_ACCOUNT_BUSINESS      = "account_business"
-	IG_GET_INFO_LINK                  = "ig_link"
-	IG_GET_INFO_PERSISTENT_MENU       = "persistent_menu"
-	IG_GET_INFO_ICE_BREAKERS          = "ice_breakers"
-	IG_GET_INFO_WELCOME_MESSAGE_FLOWS = "welcome_message_flows"
-	IG_GET_COMMENT                    = "comment"
-	IG_GET_REPLIES_COMMENTS           = "replies_comments"
+	IG_GET_INFO_ACCOUNT_BUSINESS      IG_GET_INFO_TYPE = "account_business"
+	IG_GET_INFO_LINK                  IG_GET_INFO_TYPE = "ig_link"
+	IG_GET_INFO_PERSISTENT_MENU       IG_GET_INFO_TYPE = "persistent_menu"
+	IG_GET_INFO_ICE_BREAKERS          IG_GET_INFO_TYPE = "ice_breakers"
+	IG_GET_INFO_WELCOME_MESSAGE_FLOWS IG_GET_INFO_TYPE = "welcome_message_flows"
+	IG_GET_COMMENT                    IG_GET_INFO_TYPE = "comment"
+	IG_GET_REPLIES_COMMENTS           IG_GET_INFO_TYPE = "replies_comments"
+	IG_GET_SUBSCRIBE_WEBHOOK_FIELD    IG_GET_INFO_TYPE = "subscribe_webhook_field"
+	IG_GET_METRICS_MEDIA              IG_GET_INFO_TYPE = "metrics_media"
+	IG_GET_METRICS_MEDIA_INSIGHT      IG_GET_INFO_TYPE = "metrics_media_insight"
+	IG_GET_METRICS_USER_INSIGHT       IG_GET_INFO_TYPE = "metrics_user_insight"
+	IG_GET_LIST_CONVERSATION          IG_GET_INFO_TYPE = "list_conversation"
+	IG_GET_MESSAGES_CONVERSATION      IG_GET_INFO_TYPE = "messages_conversation"
+	IG_GET_USER_CONVERSATION          IG_GET_INFO_TYPE = "user_conversation"
+	IG_GET_INFO_MESSAGE               IG_GET_INFO_TYPE = "info_message"
 )
 
 // type delete
+type IG_DELETE_TYPE string
+
 const (
-	IG_DELETE_MESSAGE               = "message"
-	IG_DELETE_PERSISTENT_MENU       = "persistent_menu"
-	IG_DELETE_ICE_BREAKERS          = "ice_breakers"
-	IG_DELETE_WELCOME_MESSAGE_FLOWS = "welcome_message_flows"
-	IG_DELETE_COMMENT               = "comment"
+	IG_DELETE_MESSAGE               IG_DELETE_TYPE = "message"
+	IG_DELETE_PERSISTENT_MENU       IG_DELETE_TYPE = "persistent_menu"
+	IG_DELETE_ICE_BREAKERS          IG_DELETE_TYPE = "ice_breakers"
+	IG_DELETE_WELCOME_MESSAGE_FLOWS IG_DELETE_TYPE = "welcome_message_flows"
+	IG_DELETE_COMMENT               IG_DELETE_TYPE = "comment"
 )
 
 // type ig template

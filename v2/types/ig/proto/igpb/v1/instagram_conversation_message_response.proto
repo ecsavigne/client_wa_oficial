@@ -1,0 +1,43 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+
+message ConversationCursors {
+  string after = 1;
+}
+
+message ConversationMessage {
+  google.protobuf.Timestamp created_time = 1;
+  ConversationMessageParticipant from = 2;
+  string id = 3 [(google.api.field_behavior) = REQUIRED];
+  string message = 4;
+  ConversationMessageTo to = 5;
+  google.protobuf.Timestamp updated_time = 6;
+}
+
+message ConversationMessageParticipant {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  string username = 2;
+}
+
+message ConversationMessageTo {
+  repeated ConversationMessageParticipant data = 1;
+}
+
+message ConversationMessages {
+  repeated ConversationMessage data = 1;
+  ConversationPaging paging = 2;
+}
+
+message ConversationPaging {
+  ConversationCursors cursors = 1;
+  string next = 2;
+}
+
+message InstagramConversationMessageResponse {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  ConversationMessages messages = 2;
+}

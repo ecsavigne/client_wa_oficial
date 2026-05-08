@@ -36,6 +36,11 @@ type Client interface {
 	GetConfig() ConfigClient
 	SendMessage(msg proto.Message) response.Responser
 	String() string
+	/*
+		the webhook subscription to subscribe, for example in IG can be the ig_user_id, in WhatsApp can be the waba_id, etc depending on the client.
+	*/
+	SubscribeWebHook() response.Responser
+	UnsubscribeWebHook() response.Responser
 
 	/*
 		@typeCreate can be "post", container, reels, story, message, etc depending on the client, for example in IG can be "post", "reels", "story", in WhatsApp can be "message", etc.
@@ -54,14 +59,14 @@ type Client interface {
 		@typeInfo can be "account_business" for get info of account business, for example in IG, in WhatsApp can be "phone_number_id" for get info of phone number id
 		@data is the data needed to get the info, for example in IG, can be the id of the message, in WhatsApp can be the phone number id
 	*/
-	Get(typeInfo string, data ...map[string]any) response.Responser
+	Get(typeInfo ig.IG_GET_INFO_TYPE, data ...map[string]any) response.Responser
 
 	/*
 		@typeDelete can be "message" for delete a message, for example in IG, in WhatsApp can be "message" for delete a message.
 
 		@data is the data needed to delete the message, for example in IG, can be the id of the message, in WhatsApp can be the id of the message and the phone number id
 	*/
-	Delete(typeDelete string, data ...map[string]any) response.Responser
+	Delete(typeDelete ig.IG_DELETE_TYPE, data ...map[string]any) response.Responser
 
 	/*
 		@typeUpdate can be "message" for update a message, for example in IG, in WhatsApp can be "message" for update a message.

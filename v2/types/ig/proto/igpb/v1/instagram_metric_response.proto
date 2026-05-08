@@ -1,0 +1,12 @@
+edition = "2023";
+
+package igpb.v1;
+
+import "google/api/field_behavior.proto";
+
+message InstagramMetricResponse {
+  int64 comments_count = 1;
+  string id = 2 [(google.api.field_behavior) = REQUIRED];
+  int64 like_count = 3;
+  string media_type = 4;
+}

@@ -15,6 +15,7 @@ import (
 	generalpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
 	gralpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
 	gralrequest "github.com/ecsavigne/client_wa_oficial/v2/types/general/request"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
 	gralresponse "github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/ig"
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
@@ -219,8 +220,6 @@ func NewClientIG(opts ...OptionsClientIG) (*ClientIG, error) {
 func (self *ClientIG) GetType() string                { return self.typeClient.String() }
 func (self *ClientIG) GetConfig() client.ConfigClient { return self.config }
 
-// func getPossivelResponse() gralresponse.ResponseType{}
-
 func (self *ClientIG) executeRequest(method string, ePoint string, data any, isID bool, resp_ ...gralresponse.ResponseType) gralresponse.Responser {
 	respType := gralresponse.ResponseUnknow
 	if len(resp_) > 0 {
@@ -242,6 +241,18 @@ func (self *ClientIG) executeRequest(method string, ePoint string, data any, isI
 	}
 
 	return gralrequest.Do(self, req, respType)
+}
+
+func (self *ClientIG) SubscribeWebHook() response.Responser {
+	data := map[string]any{
+		"subscribed_fields": []string{"messages", "messaging_postbacks", "messaging_seen", "messaging_handover", "messaging_referral", "message_reactions", "standby", "comments", "live_comments", "mentions", "story_insights"},
+	}
+
+	return self.executeRequest(http.MethodPost, "/subscribed_apps", data, true, gralresponse.ResponseSuccess)
+}
+
+func (self *ClientIG) UnsubscribeWebHook() gralresponse.Responser {
+	return self.executeRequest(http.MethodDelete, "/subscribed_apps", nil, true, gralresponse.ResponseSuccess)
 }
 
 func (self *ClientIG) sendTextMessage(msg *igpbv1.InstagramTextMessage) gralresponse.Responser {
@@ -998,7 +1009,148 @@ func (self *ClientIG) getRepliesComments(data map[string]any) gralresponse.Respo
 	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s/replies", igCommentID), dataQuery, false, gralresponse.InstagramCommentResponse)
 }
 
-func (self *ClientIG) Get(type_info string, data ...map[string]any) gralresponse.Responser {
+func (self *ClientIG) getSubscibeWebhookField() gralresponse.Responser {
+	return self.executeRequest(http.MethodGet, "/subscribed_apps", nil, true, gralresponse.ResponseUnknow)
+}
+
+/*
+IG_GET_METRICS_MIDIA              IG_GET_INFO_TYPE = "metrics_midia"
+
+	IG_GET_METRICS_MIDIA_INSIGHT      IG_GET_INFO_TYPE = "metrics_midia_insight"
+	IG_GET_METRICS_USER_INSIGHT
+*/
+func (self *ClientIG) getMetricsMedia(data map[string]any) gralresponse.Responser {
+	if data["ig_media_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get metrics media. Please provide 'ig_media_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igMediaID, ok := data["ig_media_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get metrics media. 'ig_media_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	dataQuery := types.QueryData{
+		"fields": "like_count,comments_count,id,media_type",
+	}
+	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", igMediaID), dataQuery, false, gralresponse.InstagramMetricResponse)
+}
+
+func (self *ClientIG) getMetricsUserInsight() gralresponse.Responser {
+	dataQuery := types.QueryData{
+		"metric": "reach,follower_count,website_clicks,profile_views,online_followers,accounts_engaged,total_interactions,likes,comments,shares,saves,replies,engaged_audience_demographics,reached_audience_demographics,follower_demographics,follows_and_unfollows,profile_links_taps,views,threads_likes,threads_replies,reposts,quotes,threads_followers,threads_follower_demographics,content_views,threads_views,threads_clicks,threads_reposts",
+		"period": "day",
+	}
+
+	return self.executeRequest(http.MethodGet, "/insights", dataQuery, true, gralresponse.InstagramMetricInsightResponse)
+}
+
+func (self *ClientIG) getMetricsMediaInsight(data map[string]any) gralresponse.Responser {
+	if data["ig_media_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get metrics media insight. Please provide 'ig_media_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	igMediaID, ok := data["ig_media_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get metrics media insight. 'ig_media_id' must be a string in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	dataQuery := types.QueryData{
+		"metric": "shares,comments,likes,saved,total_interactions,follows,profile_visits,profile_activity,reach,views,content_views",
+	}
+
+	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s/insights", igMediaID), dataQuery, false, gralresponse.InstagramMetricInsightResponse)
+}
+
+func (self *ClientIG) getListConversation() gralresponse.Responser {
+	dataQuery := types.QueryData{
+		"platform": "INSTAGRAM",
+	}
+
+	return self.executeRequest(http.MethodGet, "/me/conversations", dataQuery, false, gralresponse.InstagramListConversationResponse)
+}
+
+func (self *ClientIG) getConversationWithUser(data map[string]any) gralresponse.Responser {
+	if data["ig_user_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get conversation with user. Please provide 'ig_user_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	ig_user_id, ok := data["ig_user_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get conversation with user. Please provide 'ig_user_id' in data parameter and it must be a string")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	dataQuery := types.QueryData{
+		"user_id": ig_user_id,
+	}
+
+	return self.executeRequest(http.MethodGet, "/me/conversations", dataQuery, false, gralresponse.InstagramListConversationResponse)
+}
+
+func (self *ClientIG) getMessagesOfConversation(data map[string]any) gralresponse.Responser {
+	if data["conversation_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get messages of conversation. Please provide 'conversation_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	conversation_id, ok := data["conversation_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get messages of conversation. Please provide 'conversation_id' in data parameter and it must be a string")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	dataQuery := types.QueryData{
+		"fields": "messages{from,to,created_time,updated_at,message}",
+	}
+
+	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", conversation_id), dataQuery, false, gralresponse.InstagramConversationMessageResponse)
+}
+
+func (self *ClientIG) getInfoAboutMessage(data map[string]any) gralresponse.Responser {
+	if data["message_id"] == nil {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get info about message. Please provide 'message_id' in data parameter")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	message_id, ok := data["message_id"].(string)
+	if !ok {
+		errorResponse := &gralpbv1.ResponseError{}
+		errorResponse.SetCode(401)
+		errorResponse.SetMessage("Data is required to get info about message. Please provide 'message_id' in data parameter and it must be a string")
+		return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
+	}
+
+	dataQuery := types.QueryData{
+		"fields": "id,created_time,from,to,message",
+	}
+
+	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", message_id), dataQuery, false, gralresponse.ConversationMessageResponse)
+}
+
+func (self *ClientIG) Get(type_info ig.IG_GET_INFO_TYPE, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 	if len(data) > 0 {
 		dataParam = data[0]
@@ -1019,6 +1171,22 @@ func (self *ClientIG) Get(type_info string, data ...map[string]any) gralresponse
 		return self.getComments(dataParam)
 	case ig.IG_GET_REPLIES_COMMENTS:
 		return self.getRepliesComments(dataParam)
+	case ig.IG_GET_SUBSCRIBE_WEBHOOK_FIELD:
+		return self.getSubscibeWebhookField()
+	case ig.IG_GET_METRICS_MEDIA:
+		return self.getMetricsMedia(dataParam)
+	case ig.IG_GET_METRICS_MEDIA_INSIGHT:
+		return self.getMetricsMediaInsight(dataParam)
+	case ig.IG_GET_METRICS_USER_INSIGHT:
+		return self.getMetricsUserInsight()
+	case ig.IG_GET_LIST_CONVERSATION:
+		return self.getListConversation()
+	case ig.IG_GET_USER_CONVERSATION:
+		return self.getConversationWithUser(dataParam)
+	case ig.IG_GET_MESSAGES_CONVERSATION:
+		return self.getMessagesOfConversation(dataParam)
+	case ig.IG_GET_INFO_MESSAGE:
+		return self.getInfoAboutMessage(dataParam)
 	default:
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1078,7 +1246,7 @@ func (self *ClientIG) deleteComment(data map[string]any) gralresponse.Responser 
 	return self.executeRequest(http.MethodDelete, fmt.Sprintf("/%s", igCommentID), nil, false, gralresponse.ResponseSuccess)
 }
 
-func (self *ClientIG) Delete(typeDelete string, data ...map[string]any) gralresponse.Responser {
+func (self *ClientIG) Delete(typeDelete ig.IG_DELETE_TYPE, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 	if len(data) > 0 {
 		dataParam = data[0]
