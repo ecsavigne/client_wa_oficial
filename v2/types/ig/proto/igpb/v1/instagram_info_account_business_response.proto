@@ -7,35 +7,8 @@ import "google/api/field_behavior.proto";
 
 // InstagramInfoAccountBusinessResponse contains detailed information about an Instagram business account
 message InstagramInfoAccountBusinessResponse {
-  // The app user's app-scoped ID
-  string id = 1 [
-    (buf.validate.field).string = {min_len: 1},
-    (google.api.field_behavior) = REQUIRED
-  ];
-
-  // The Instagram professional account ID (IG_ID)
-  string user_id = 2 [
-    (buf.validate.field).string = {
-      min_len: 1
-      pattern: "^[0-9]+$"
-    },
-    (google.api.field_behavior) = REQUIRED
-  ];
-
-  // The app user's Instagram username
-  string username = 3 [
-    (buf.validate.field).string = {min_len: 1},
-    (google.api.field_behavior) = REQUIRED
-  ];
-
-  // The app user's name
-  string name = 4 [
-    (buf.validate.field).string = {min_len: 1},
-    (google.api.field_behavior) = REQUIRED
-  ];
-
   // The app user's account type (Business or Media_Creator)
-  string account_type = 5 [
+  string account_type = 1 [
     (buf.validate.field).string = {
       in: [
         "Business",
@@ -45,27 +18,57 @@ message InstagramInfoAccountBusinessResponse {
     (google.api.field_behavior) = REQUIRED
   ];
 
-  // The URL for the app user's profile picture
-  string profile_picture_url = 6 [
-    (buf.validate.field).string = {uri: true},
-    (google.api.field_behavior) = REQUIRED
-  ];
-
   // The number of followers of the app user's Instagram professional account
-  int64 followers_count = 7 [
+  int64 followers_count = 2 [
     (buf.validate.field).int64 = {gte: 0},
     (google.api.field_behavior) = REQUIRED
   ];
 
   // The number of Instagram accounts the app user's Instagram professional account follows
-  int64 follows_count = 8 [
+  int64 follows_count = 3 [
     (buf.validate.field).int64 = {gte: 0},
     (google.api.field_behavior) = REQUIRED
   ];
 
+  // The app user's app-scoped ID
+  string id = 4 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
   // The number of Media objects on the User
-  int64 media_count = 9 [
+  int64 media_count = 5 [
     (buf.validate.field).int64 = {gte: 0},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The app user's name
+  string name = 6 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+  bytes payload = 7;
+
+  // The URL for the app user's profile picture
+  string profile_picture_url = 8 [
+    (buf.validate.field).string = {uri: true},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The Instagram professional account ID (IG_ID)
+  string user_id = 9 [
+    (buf.validate.field).string = {
+      min_len: 1
+      pattern: "^[0-9]+$"
+    },
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The app user's Instagram username
+  string username = 10 [
+    (buf.validate.field).string = {min_len: 1},
     (google.api.field_behavior) = REQUIRED
   ];
 }

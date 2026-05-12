@@ -24,7 +24,8 @@ const (
 // SuccessResponse represents a generic success response
 type SuccessResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Success     bool                   `protobuf:"varint,1,opt,name=success"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,1,opt,name=payload"`
+	xxx_hidden_Success     bool                   `protobuf:"varint,2,opt,name=success"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -56,6 +57,13 @@ func (x *SuccessResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *SuccessResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *SuccessResponse) GetSuccess() bool {
 	if x != nil {
 		return x.xxx_hidden_Success
@@ -63,26 +71,48 @@ func (x *SuccessResponse) GetSuccess() bool {
 	return false
 }
 
-func (x *SuccessResponse) SetSuccess(v bool) {
-	x.xxx_hidden_Success = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+func (x *SuccessResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
-func (x *SuccessResponse) HasSuccess() bool {
+func (x *SuccessResponse) SetSuccess(v bool) {
+	x.xxx_hidden_Success = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *SuccessResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
-func (x *SuccessResponse) ClearSuccess() {
+func (x *SuccessResponse) HasSuccess() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *SuccessResponse) ClearPayload() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Payload = nil
+}
+
+func (x *SuccessResponse) ClearSuccess() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
 	x.xxx_hidden_Success = false
 }
 
 type SuccessResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 	// Whether the operation was successful
 	Success *bool
 }
@@ -91,8 +121,12 @@ func (b0 SuccessResponse_builder) Build() *SuccessResponse {
 	m0 := &SuccessResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	if b.Success != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
 		x.xxx_hidden_Success = *b.Success
 	}
 	return m0
@@ -102,9 +136,10 @@ var File_generalpb_v1_general_success_proto protoreflect.FileDescriptor
 
 const file_generalpb_v1_general_success_proto_rawDesc = "" +
 	"\n" +
-	"\"generalpb/v1/general_success.proto\x12\fgeneralpb.v1\x1a\x1fgoogle/api/field_behavior.proto\"0\n" +
-	"\x0fSuccessResponse\x12\x1d\n" +
-	"\asuccess\x18\x01 \x01(\bB\x03\xe0A\x02R\asuccessB\xce\x01\n" +
+	"\"generalpb/v1/general_success.proto\x12\fgeneralpb.v1\x1a\x1fgoogle/api/field_behavior.proto\"J\n" +
+	"\x0fSuccessResponse\x12\x18\n" +
+	"\apayload\x18\x01 \x01(\fR\apayload\x12\x1d\n" +
+	"\asuccess\x18\x02 \x01(\bB\x03\xe0A\x02R\asuccessB\xce\x01\n" +
 	"\x10com.generalpb.v1B\x13GeneralSuccessProtoP\x01ZTgithub.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1;generalpbv1\xa2\x02\x03GXX\xaa\x02\fGeneralpb.V1\xca\x02\fGeneralpb\\V1\xe2\x02\x18Generalpb\\V1\\GPBMetadata\xea\x02\rGeneralpb::V1b\beditionsp\xe8\a"
 
 var file_generalpb_v1_general_success_proto_msgTypes = make([]protoimpl.MessageInfo, 1)

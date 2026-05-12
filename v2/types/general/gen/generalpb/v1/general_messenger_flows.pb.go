@@ -7,14 +7,13 @@
 package generalpbv1
 
 import (
-	reflect "reflect"
-	unsafe "unsafe"
-
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	v1 "github.com/ecsavigne/client_wa_oficial/v2/types/messenger/gen/messengerpb/v1"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	reflect "reflect"
+	unsafe "unsafe"
 )
 
 const (
@@ -210,11 +209,14 @@ func (b0 Paging_builder) Build() *Paging {
 
 // MessengerFlowsResponse represents the response containing a list of messenger flows
 type MessengerFlowsResponse struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data   *[]*v1.MessengerFlow   `protobuf:"bytes,1,rep,name=data"`
-	xxx_hidden_Paging *Paging                `protobuf:"bytes,2,opt,name=paging"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *[]*v1.MessengerFlow   `protobuf:"bytes,1,rep,name=data"`
+	xxx_hidden_Paging      *Paging                `protobuf:"bytes,2,opt,name=paging"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,3,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *MessengerFlowsResponse) Reset() {
@@ -258,12 +260,27 @@ func (x *MessengerFlowsResponse) GetPaging() *Paging {
 	return nil
 }
 
+func (x *MessengerFlowsResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *MessengerFlowsResponse) SetData(v []*v1.MessengerFlow) {
 	x.xxx_hidden_Data = &v
 }
 
 func (x *MessengerFlowsResponse) SetPaging(v *Paging) {
 	x.xxx_hidden_Paging = v
+}
+
+func (x *MessengerFlowsResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *MessengerFlowsResponse) HasPaging() bool {
@@ -273,8 +290,20 @@ func (x *MessengerFlowsResponse) HasPaging() bool {
 	return x.xxx_hidden_Paging != nil
 }
 
+func (x *MessengerFlowsResponse) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
 func (x *MessengerFlowsResponse) ClearPaging() {
 	x.xxx_hidden_Paging = nil
+}
+
+func (x *MessengerFlowsResponse) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
 }
 
 type MessengerFlowsResponse_builder struct {
@@ -284,6 +313,8 @@ type MessengerFlowsResponse_builder struct {
 	Data []*v1.MessengerFlow
 	// Pagination information for navigating through multiple pages
 	Paging *Paging
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 MessengerFlowsResponse_builder) Build() *MessengerFlowsResponse {
@@ -292,6 +323,10 @@ func (b0 MessengerFlowsResponse_builder) Build() *MessengerFlowsResponse {
 	_, _ = b, x
 	x.xxx_hidden_Data = &b.Data
 	x.xxx_hidden_Paging = b.Paging
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
@@ -304,10 +339,11 @@ const file_generalpb_v1_general_messenger_flows_proto_rawDesc = "" +
 	"\x06before\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06before\x12\x1d\n" +
 	"\x05after\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05after\">\n" +
 	"\x06Paging\x124\n" +
-	"\acursors\x18\x01 \x01(\v2\x15.generalpb.v1.CursorsB\x03\xe0A\x02R\acursors\"\x83\x01\n" +
+	"\acursors\x18\x01 \x01(\v2\x15.generalpb.v1.CursorsB\x03\xe0A\x02R\acursors\"\x9d\x01\n" +
 	"\x16MessengerFlowsResponse\x126\n" +
 	"\x04data\x18\x01 \x03(\v2\x1d.messengerpb.v1.MessengerFlowB\x03\xe0A\x02R\x04data\x121\n" +
-	"\x06paging\x18\x02 \x01(\v2\x14.generalpb.v1.PagingB\x03\xe0A\x02R\x06pagingB\xd5\x01\n" +
+	"\x06paging\x18\x02 \x01(\v2\x14.generalpb.v1.PagingB\x03\xe0A\x02R\x06paging\x12\x18\n" +
+	"\apayload\x18\x03 \x01(\fR\apayloadB\xd5\x01\n" +
 	"\x10com.generalpb.v1B\x1aGeneralMessengerFlowsProtoP\x01ZTgithub.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1;generalpbv1\xa2\x02\x03GXX\xaa\x02\fGeneralpb.V1\xca\x02\fGeneralpb\\V1\xe2\x02\x18Generalpb\\V1\\GPBMetadata\xea\x02\rGeneralpb::V1b\beditionsp\xe8\a"
 
 var file_generalpb_v1_general_messenger_flows_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

@@ -27,6 +27,7 @@ type InstagramMetricResponse struct {
 	xxx_hidden_Id            *string                `protobuf:"bytes,2,opt,name=id"`
 	xxx_hidden_LikeCount     int64                  `protobuf:"varint,3,opt,name=like_count,json=likeCount"`
 	xxx_hidden_MediaType     *string                `protobuf:"bytes,4,opt,name=media_type,json=mediaType"`
+	xxx_hidden_Payload       []byte                 `protobuf:"bytes,5,opt,name=payload"`
 	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
 	XXX_presence             [1]uint32
 	unknownFields            protoimpl.UnknownFields
@@ -92,24 +93,39 @@ func (x *InstagramMetricResponse) GetMediaType() string {
 	return ""
 }
 
+func (x *InstagramMetricResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *InstagramMetricResponse) SetCommentsCount(v int64) {
 	x.xxx_hidden_CommentsCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
 }
 
 func (x *InstagramMetricResponse) SetId(v string) {
 	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
 func (x *InstagramMetricResponse) SetLikeCount(v int64) {
 	x.xxx_hidden_LikeCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *InstagramMetricResponse) SetMediaType(v string) {
 	x.xxx_hidden_MediaType = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+}
+
+func (x *InstagramMetricResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *InstagramMetricResponse) HasCommentsCount() bool {
@@ -140,6 +156,13 @@ func (x *InstagramMetricResponse) HasMediaType() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
+func (x *InstagramMetricResponse) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
 func (x *InstagramMetricResponse) ClearCommentsCount() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_CommentsCount = 0
@@ -160,6 +183,11 @@ func (x *InstagramMetricResponse) ClearMediaType() {
 	x.xxx_hidden_MediaType = nil
 }
 
+func (x *InstagramMetricResponse) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Payload = nil
+}
+
 type InstagramMetricResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -167,6 +195,8 @@ type InstagramMetricResponse_builder struct {
 	Id            *string
 	LikeCount     *int64
 	MediaType     *string
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 InstagramMetricResponse_builder) Build() *InstagramMetricResponse {
@@ -174,20 +204,24 @@ func (b0 InstagramMetricResponse_builder) Build() *InstagramMetricResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.CommentsCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
 		x.xxx_hidden_CommentsCount = *b.CommentsCount
 	}
 	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
 		x.xxx_hidden_Id = b.Id
 	}
 	if b.LikeCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
 		x.xxx_hidden_LikeCount = *b.LikeCount
 	}
 	if b.MediaType != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
 		x.xxx_hidden_MediaType = b.MediaType
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_Payload = b.Payload
 	}
 	return m0
 }
@@ -196,14 +230,15 @@ var File_igpb_v1_instagram_metric_response_proto protoreflect.FileDescriptor
 
 const file_igpb_v1_instagram_metric_response_proto_rawDesc = "" +
 	"\n" +
-	"'igpb/v1/instagram_metric_response.proto\x12\aigpb.v1\x1a\x1fgoogle/api/field_behavior.proto\"\x93\x01\n" +
+	"'igpb/v1/instagram_metric_response.proto\x12\aigpb.v1\x1a\x1fgoogle/api/field_behavior.proto\"\xad\x01\n" +
 	"\x17InstagramMetricResponse\x12%\n" +
 	"\x0ecomments_count\x18\x01 \x01(\x03R\rcommentsCount\x12\x13\n" +
 	"\x02id\x18\x02 \x01(\tB\x03\xe0A\x02R\x02id\x12\x1d\n" +
 	"\n" +
 	"like_count\x18\x03 \x01(\x03R\tlikeCount\x12\x1d\n" +
 	"\n" +
-	"media_type\x18\x04 \x01(\tR\tmediaTypeB\xaf\x01\n" +
+	"media_type\x18\x04 \x01(\tR\tmediaType\x12\x18\n" +
+	"\apayload\x18\x05 \x01(\fR\apayloadB\xaf\x01\n" +
 	"\vcom.igpb.v1B\x1cInstagramMetricResponseProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
 var file_igpb_v1_instagram_metric_response_proto_msgTypes = make([]protoimpl.MessageInfo, 1)

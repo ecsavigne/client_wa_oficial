@@ -138,8 +138,9 @@ type InstagramFieldContainerResponse struct {
 	state                           protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_CopyrightCheckStatus *CopyrightCheckStatus  `protobuf:"bytes,1,opt,name=copyright_check_status,json=copyrightCheckStatus"`
 	xxx_hidden_Id                   *string                `protobuf:"bytes,2,opt,name=id"`
-	xxx_hidden_Status               *string                `protobuf:"bytes,3,opt,name=status"`
-	xxx_hidden_StatusCode           *string                `protobuf:"bytes,4,opt,name=status_code,json=statusCode"`
+	xxx_hidden_Payload              []byte                 `protobuf:"bytes,3,opt,name=payload"`
+	xxx_hidden_Status               *string                `protobuf:"bytes,4,opt,name=status"`
+	xxx_hidden_StatusCode           *string                `protobuf:"bytes,5,opt,name=status_code,json=statusCode"`
 	XXX_raceDetectHookData          protoimpl.RaceDetectHookData
 	XXX_presence                    [1]uint32
 	unknownFields                   protoimpl.UnknownFields
@@ -188,6 +189,13 @@ func (x *InstagramFieldContainerResponse) GetId() string {
 	return ""
 }
 
+func (x *InstagramFieldContainerResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *InstagramFieldContainerResponse) GetStatus() string {
 	if x != nil {
 		if x.xxx_hidden_Status != nil {
@@ -214,17 +222,25 @@ func (x *InstagramFieldContainerResponse) SetCopyrightCheckStatus(v *CopyrightCh
 
 func (x *InstagramFieldContainerResponse) SetId(v string) {
 	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+}
+
+func (x *InstagramFieldContainerResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *InstagramFieldContainerResponse) SetStatus(v string) {
 	x.xxx_hidden_Status = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
 }
 
 func (x *InstagramFieldContainerResponse) SetStatusCode(v string) {
 	x.xxx_hidden_StatusCode = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *InstagramFieldContainerResponse) HasCopyrightCheckStatus() bool {
@@ -241,18 +257,25 @@ func (x *InstagramFieldContainerResponse) HasId() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
-func (x *InstagramFieldContainerResponse) HasStatus() bool {
+func (x *InstagramFieldContainerResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
-func (x *InstagramFieldContainerResponse) HasStatusCode() bool {
+func (x *InstagramFieldContainerResponse) HasStatus() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *InstagramFieldContainerResponse) HasStatusCode() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *InstagramFieldContainerResponse) ClearCopyrightCheckStatus() {
@@ -264,13 +287,18 @@ func (x *InstagramFieldContainerResponse) ClearId() {
 	x.xxx_hidden_Id = nil
 }
 
-func (x *InstagramFieldContainerResponse) ClearStatus() {
+func (x *InstagramFieldContainerResponse) ClearPayload() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
+}
+
+func (x *InstagramFieldContainerResponse) ClearStatus() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
 	x.xxx_hidden_Status = nil
 }
 
 func (x *InstagramFieldContainerResponse) ClearStatusCode() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
 	x.xxx_hidden_StatusCode = nil
 }
 
@@ -281,6 +309,8 @@ type InstagramFieldContainerResponse_builder struct {
 	CopyrightCheckStatus *CopyrightCheckStatus
 	// The identifier of the Instagram container
 	Id *string
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 	// Publication status. If status_code is ERROR, this value will be an error subcode
 	Status *string
 	// The publication status code of the container.
@@ -294,15 +324,19 @@ func (b0 InstagramFieldContainerResponse_builder) Build() *InstagramFieldContain
 	_, _ = b, x
 	x.xxx_hidden_CopyrightCheckStatus = b.CopyrightCheckStatus
 	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
 		x.xxx_hidden_Id = b.Id
 	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	if b.Status != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
 		x.xxx_hidden_Status = b.Status
 	}
 	if b.StatusCode != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
 		x.xxx_hidden_StatusCode = b.StatusCode
 	}
 	return m0
@@ -315,13 +349,14 @@ const file_igpb_v1_instagram_field_container_proto_rawDesc = "" +
 	"'igpb/v1/instagram_field_container.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\x89\x01\n" +
 	"\x14CopyrightCheckStatus\x12#\n" +
 	"\rmatches_found\x18\x01 \x01(\bR\fmatchesFound\x12L\n" +
-	"\x06status\x18\x02 \x01(\tB4\xbaH1r/\x10\x012+^(completed|error|in_progress|not_started)$R\x06status\"\x90\x02\n" +
+	"\x06status\x18\x02 \x01(\tB4\xbaH1r/\x10\x012+^(completed|error|in_progress|not_started)$R\x06status\"\xaa\x02\n" +
 	"\x1fInstagramFieldContainerResponse\x12S\n" +
 	"\x16copyright_check_status\x18\x01 \x01(\v2\x1d.igpb.v1.CopyrightCheckStatusR\x14copyrightCheckStatus\x12\x1a\n" +
 	"\x02id\x18\x02 \x01(\tB\n" +
-	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id\x12\x1f\n" +
-	"\x06status\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06status\x12[\n" +
-	"\vstatus_code\x18\x04 \x01(\tB:\xe0A\x02\xbaH4r2R\aEXPIREDR\x05ERRORR\bFINISHEDR\vIN_PROGRESSR\tPUBLISHEDR\n" +
+	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\x02id\x12\x18\n" +
+	"\apayload\x18\x03 \x01(\fR\apayload\x12\x1f\n" +
+	"\x06status\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06status\x12[\n" +
+	"\vstatus_code\x18\x05 \x01(\tB:\xe0A\x02\xbaH4r2R\aEXPIREDR\x05ERRORR\bFINISHEDR\vIN_PROGRESSR\tPUBLISHEDR\n" +
 	"statusCodeB\xaf\x01\n" +
 	"\vcom.igpb.v1B\x1cInstagramFieldContainerProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 

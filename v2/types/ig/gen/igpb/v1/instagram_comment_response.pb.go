@@ -845,11 +845,14 @@ func (b0 Comment_builder) Build() *Comment {
 }
 
 type InstagramCommentResponseMessage struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data   *[]*Comment            `protobuf:"bytes,1,rep,name=data"`
-	xxx_hidden_Paging *Paging                `protobuf:"bytes,2,opt,name=paging"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *[]*Comment            `protobuf:"bytes,1,rep,name=data"`
+	xxx_hidden_Paging      *Paging                `protobuf:"bytes,2,opt,name=paging"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,3,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *InstagramCommentResponseMessage) Reset() {
@@ -893,12 +896,27 @@ func (x *InstagramCommentResponseMessage) GetPaging() *Paging {
 	return nil
 }
 
+func (x *InstagramCommentResponseMessage) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *InstagramCommentResponseMessage) SetData(v []*Comment) {
 	x.xxx_hidden_Data = &v
 }
 
 func (x *InstagramCommentResponseMessage) SetPaging(v *Paging) {
 	x.xxx_hidden_Paging = v
+}
+
+func (x *InstagramCommentResponseMessage) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *InstagramCommentResponseMessage) HasPaging() bool {
@@ -908,8 +926,20 @@ func (x *InstagramCommentResponseMessage) HasPaging() bool {
 	return x.xxx_hidden_Paging != nil
 }
 
+func (x *InstagramCommentResponseMessage) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
 func (x *InstagramCommentResponseMessage) ClearPaging() {
 	x.xxx_hidden_Paging = nil
+}
+
+func (x *InstagramCommentResponseMessage) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
 }
 
 type InstagramCommentResponseMessage_builder struct {
@@ -917,6 +947,8 @@ type InstagramCommentResponseMessage_builder struct {
 
 	Data   []*Comment
 	Paging *Paging
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 InstagramCommentResponseMessage_builder) Build() *InstagramCommentResponseMessage {
@@ -925,6 +957,10 @@ func (b0 InstagramCommentResponseMessage_builder) Build() *InstagramCommentRespo
 	_, _ = b, x
 	x.xxx_hidden_Data = &b.Data
 	x.xxx_hidden_Paging = b.Paging
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
@@ -959,10 +995,11 @@ const file_igpb_v1_instagram_comment_response_proto_rawDesc = "" +
 	"\x04user\x18\b \x01(\v2\x14.igpb.v1.CommentUserR\x04user\x12\x1a\n" +
 	"\busername\x18\t \x01(\tR\busername\x12*\n" +
 	"\areplies\x18\n" +
-	" \x01(\v2\x10.igpb.v1.RepliesR\areplies\"p\n" +
+	" \x01(\v2\x10.igpb.v1.RepliesR\areplies\"\x8a\x01\n" +
 	"\x1fInstagramCommentResponseMessage\x12$\n" +
 	"\x04data\x18\x01 \x03(\v2\x10.igpb.v1.CommentR\x04data\x12'\n" +
-	"\x06paging\x18\x02 \x01(\v2\x0f.igpb.v1.PagingR\x06pagingB\xb0\x01\n" +
+	"\x06paging\x18\x02 \x01(\v2\x0f.igpb.v1.PagingR\x06paging\x12\x18\n" +
+	"\apayload\x18\x03 \x01(\fR\apayloadB\xb0\x01\n" +
 	"\vcom.igpb.v1B\x1dInstagramCommentResponseProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
 var file_igpb_v1_instagram_comment_response_proto_msgTypes = make([]protoimpl.MessageInfo, 7)

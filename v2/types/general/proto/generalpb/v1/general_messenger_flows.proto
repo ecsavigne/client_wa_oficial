@@ -26,4 +26,6 @@ message MessengerFlowsResponse {
   repeated messengerpb.v1.MessengerFlow data = 1 [(google.api.field_behavior) = REQUIRED];
   // Pagination information for navigating through multiple pages
   Paging paging = 2 [(google.api.field_behavior) = REQUIRED];
+  // The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+  bytes payload = 3;
 }

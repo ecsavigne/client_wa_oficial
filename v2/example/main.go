@@ -215,7 +215,7 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	// rr = examplemessage.GetMetricsMedia(client, "18587550463038160")
 	// rr = examplemessage.GetMetricsMediaInsight(client, "18587550463038160")
 	// rr = examplemessage.GetMetricsAccountInsight(client)
-	rr = examplemessage.GetConversations(client)
+	// rr = examplemessage.GetConversations(client)
 	// rr = examplemessage.GetUserConversation(client, "2014023525994448")
 	// rr = examplemessage.GetMessagesOfConversation(client, "aWdfZAG06MzQwMjgyMzY2ODQxNzEwMzAxMjQ0Mjc2MjQ0OTY3MjE0NjQ3MzQz")
 	// rr = examplemessage.GetMessageInfo(client, "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4MTgyMjA5NjMwOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjI0NDk2NzIxNDY0NzM0MzozMjY5MDUxNjYwMjgzNDE1MjI2MzAwNTk0OTk2MzI3MjE5MgZDZD")

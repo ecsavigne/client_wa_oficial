@@ -106,8 +106,9 @@ type ConversationMessage struct {
 	xxx_hidden_From        *ConversationMessageParticipant `protobuf:"bytes,2,opt,name=from"`
 	xxx_hidden_Id          *string                         `protobuf:"bytes,3,opt,name=id"`
 	xxx_hidden_Message     *string                         `protobuf:"bytes,4,opt,name=message"`
-	xxx_hidden_To          *ConversationMessageTo          `protobuf:"bytes,5,opt,name=to"`
-	xxx_hidden_UpdatedTime *timestamppb.Timestamp          `protobuf:"bytes,6,opt,name=updated_time,json=updatedTime"`
+	xxx_hidden_Payload     []byte                          `protobuf:"bytes,5,opt,name=payload"`
+	xxx_hidden_To          *ConversationMessageTo          `protobuf:"bytes,6,opt,name=to"`
+	xxx_hidden_UpdatedTime *timestamppb.Timestamp          `protobuf:"bytes,7,opt,name=updated_time,json=updatedTime"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -173,6 +174,13 @@ func (x *ConversationMessage) GetMessage() string {
 	return ""
 }
 
+func (x *ConversationMessage) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *ConversationMessage) GetTo() *ConversationMessageTo {
 	if x != nil {
 		return x.xxx_hidden_To
@@ -197,12 +205,20 @@ func (x *ConversationMessage) SetFrom(v *ConversationMessageParticipant) {
 
 func (x *ConversationMessage) SetId(v string) {
 	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 7)
 }
 
 func (x *ConversationMessage) SetMessage(v string) {
 	x.xxx_hidden_Message = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
+}
+
+func (x *ConversationMessage) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 7)
 }
 
 func (x *ConversationMessage) SetTo(v *ConversationMessageTo) {
@@ -241,6 +257,13 @@ func (x *ConversationMessage) HasMessage() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
+func (x *ConversationMessage) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
 func (x *ConversationMessage) HasTo() bool {
 	if x == nil {
 		return false
@@ -273,6 +296,11 @@ func (x *ConversationMessage) ClearMessage() {
 	x.xxx_hidden_Message = nil
 }
 
+func (x *ConversationMessage) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Payload = nil
+}
+
 func (x *ConversationMessage) ClearTo() {
 	x.xxx_hidden_To = nil
 }
@@ -288,6 +316,8 @@ type ConversationMessage_builder struct {
 	From        *ConversationMessageParticipant
 	Id          *string
 	Message     *string
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload     []byte
 	To          *ConversationMessageTo
 	UpdatedTime *timestamppb.Timestamp
 }
@@ -299,12 +329,16 @@ func (b0 ConversationMessage_builder) Build() *ConversationMessage {
 	x.xxx_hidden_CreatedTime = b.CreatedTime
 	x.xxx_hidden_From = b.From
 	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 7)
 		x.xxx_hidden_Id = b.Id
 	}
 	if b.Message != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
 		x.xxx_hidden_Message = b.Message
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 7)
+		x.xxx_hidden_Payload = b.Payload
 	}
 	x.xxx_hidden_To = b.To
 	x.xxx_hidden_UpdatedTime = b.UpdatedTime
@@ -482,11 +516,14 @@ func (b0 ConversationMessageTo_builder) Build() *ConversationMessageTo {
 }
 
 type ConversationMessages struct {
-	state             protoimpl.MessageState  `protogen:"opaque.v1"`
-	xxx_hidden_Data   *[]*ConversationMessage `protobuf:"bytes,1,rep,name=data"`
-	xxx_hidden_Paging *ConversationPaging     `protobuf:"bytes,2,opt,name=paging"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                  protoimpl.MessageState  `protogen:"opaque.v1"`
+	xxx_hidden_Data        *[]*ConversationMessage `protobuf:"bytes,1,rep,name=data"`
+	xxx_hidden_Paging      *ConversationPaging     `protobuf:"bytes,2,opt,name=paging"`
+	xxx_hidden_Payload     []byte                  `protobuf:"bytes,3,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *ConversationMessages) Reset() {
@@ -530,12 +567,27 @@ func (x *ConversationMessages) GetPaging() *ConversationPaging {
 	return nil
 }
 
+func (x *ConversationMessages) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *ConversationMessages) SetData(v []*ConversationMessage) {
 	x.xxx_hidden_Data = &v
 }
 
 func (x *ConversationMessages) SetPaging(v *ConversationPaging) {
 	x.xxx_hidden_Paging = v
+}
+
+func (x *ConversationMessages) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *ConversationMessages) HasPaging() bool {
@@ -545,8 +597,20 @@ func (x *ConversationMessages) HasPaging() bool {
 	return x.xxx_hidden_Paging != nil
 }
 
+func (x *ConversationMessages) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
 func (x *ConversationMessages) ClearPaging() {
 	x.xxx_hidden_Paging = nil
+}
+
+func (x *ConversationMessages) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
 }
 
 type ConversationMessages_builder struct {
@@ -554,6 +618,8 @@ type ConversationMessages_builder struct {
 
 	Data   []*ConversationMessage
 	Paging *ConversationPaging
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 ConversationMessages_builder) Build() *ConversationMessages {
@@ -562,6 +628,10 @@ func (b0 ConversationMessages_builder) Build() *ConversationMessages {
 	_, _ = b, x
 	x.xxx_hidden_Data = &b.Data
 	x.xxx_hidden_Paging = b.Paging
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
@@ -672,6 +742,7 @@ type InstagramConversationMessageResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
 	xxx_hidden_Messages    *ConversationMessages  `protobuf:"bytes,2,opt,name=messages"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,3,opt,name=payload"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -720,13 +791,28 @@ func (x *InstagramConversationMessageResponse) GetMessages() *ConversationMessag
 	return nil
 }
 
+func (x *InstagramConversationMessageResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *InstagramConversationMessageResponse) SetId(v string) {
 	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *InstagramConversationMessageResponse) SetMessages(v *ConversationMessages) {
 	x.xxx_hidden_Messages = v
+}
+
+func (x *InstagramConversationMessageResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *InstagramConversationMessageResponse) HasId() bool {
@@ -743,6 +829,13 @@ func (x *InstagramConversationMessageResponse) HasMessages() bool {
 	return x.xxx_hidden_Messages != nil
 }
 
+func (x *InstagramConversationMessageResponse) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
 func (x *InstagramConversationMessageResponse) ClearId() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_Id = nil
@@ -752,11 +845,18 @@ func (x *InstagramConversationMessageResponse) ClearMessages() {
 	x.xxx_hidden_Messages = nil
 }
 
+func (x *InstagramConversationMessageResponse) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
+}
+
 type InstagramConversationMessageResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Id       *string
 	Messages *ConversationMessages
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 InstagramConversationMessageResponse_builder) Build() *InstagramConversationMessageResponse {
@@ -764,10 +864,14 @@ func (b0 InstagramConversationMessageResponse_builder) Build() *InstagramConvers
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
 		x.xxx_hidden_Id = b.Id
 	}
 	x.xxx_hidden_Messages = b.Messages
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
@@ -777,28 +881,31 @@ const file_igpb_v1_instagram_conversation_message_response_proto_rawDesc = "" +
 	"\n" +
 	"5igpb/v1/instagram_conversation_message_response.proto\x12\aigpb.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"+\n" +
 	"\x13ConversationCursors\x12\x14\n" +
-	"\x05after\x18\x01 \x01(\tR\x05after\"\xaf\x02\n" +
+	"\x05after\x18\x01 \x01(\tR\x05after\"\xc9\x02\n" +
 	"\x13ConversationMessage\x12=\n" +
 	"\fcreated_time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\vcreatedTime\x12;\n" +
 	"\x04from\x18\x02 \x01(\v2'.igpb.v1.ConversationMessageParticipantR\x04from\x12\x13\n" +
 	"\x02id\x18\x03 \x01(\tB\x03\xe0A\x02R\x02id\x12\x18\n" +
-	"\amessage\x18\x04 \x01(\tR\amessage\x12.\n" +
-	"\x02to\x18\x05 \x01(\v2\x1e.igpb.v1.ConversationMessageToR\x02to\x12=\n" +
-	"\fupdated_time\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\vupdatedTime\"Q\n" +
+	"\amessage\x18\x04 \x01(\tR\amessage\x12\x18\n" +
+	"\apayload\x18\x05 \x01(\fR\apayload\x12.\n" +
+	"\x02to\x18\x06 \x01(\v2\x1e.igpb.v1.ConversationMessageToR\x02to\x12=\n" +
+	"\fupdated_time\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\vupdatedTime\"Q\n" +
 	"\x1eConversationMessageParticipant\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\tB\x03\xe0A\x02R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\"T\n" +
 	"\x15ConversationMessageTo\x12;\n" +
-	"\x04data\x18\x01 \x03(\v2'.igpb.v1.ConversationMessageParticipantR\x04data\"}\n" +
+	"\x04data\x18\x01 \x03(\v2'.igpb.v1.ConversationMessageParticipantR\x04data\"\x97\x01\n" +
 	"\x14ConversationMessages\x120\n" +
 	"\x04data\x18\x01 \x03(\v2\x1c.igpb.v1.ConversationMessageR\x04data\x123\n" +
-	"\x06paging\x18\x02 \x01(\v2\x1b.igpb.v1.ConversationPagingR\x06paging\"`\n" +
+	"\x06paging\x18\x02 \x01(\v2\x1b.igpb.v1.ConversationPagingR\x06paging\x12\x18\n" +
+	"\apayload\x18\x03 \x01(\fR\apayload\"`\n" +
 	"\x12ConversationPaging\x126\n" +
 	"\acursors\x18\x01 \x01(\v2\x1c.igpb.v1.ConversationCursorsR\acursors\x12\x12\n" +
-	"\x04next\x18\x02 \x01(\tR\x04next\"v\n" +
+	"\x04next\x18\x02 \x01(\tR\x04next\"\x90\x01\n" +
 	"$InstagramConversationMessageResponse\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\tB\x03\xe0A\x02R\x02id\x129\n" +
-	"\bmessages\x18\x02 \x01(\v2\x1d.igpb.v1.ConversationMessagesR\bmessagesB\xbc\x01\n" +
+	"\bmessages\x18\x02 \x01(\v2\x1d.igpb.v1.ConversationMessagesR\bmessages\x12\x18\n" +
+	"\apayload\x18\x03 \x01(\fR\apayloadB\xbc\x01\n" +
 	"\vcom.igpb.v1B)InstagramConversationMessageResponseProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
 var file_igpb_v1_instagram_conversation_message_response_proto_msgTypes = make([]protoimpl.MessageInfo, 7)

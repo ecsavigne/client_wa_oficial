@@ -25,9 +25,10 @@ const (
 // InstagramMessageResponse is the response after sending any message via Instagram
 type InstagramMessageResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_RecipientId *string                `protobuf:"bytes,1,opt,name=recipient_id,json=recipientId"`
+	xxx_hidden_MediaId     *string                `protobuf:"bytes,1,opt,name=media_id,json=mediaId"`
 	xxx_hidden_MessageId   *string                `protobuf:"bytes,2,opt,name=message_id,json=messageId"`
-	xxx_hidden_MediaId     *string                `protobuf:"bytes,3,opt,name=media_id,json=mediaId"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,3,opt,name=payload"`
+	xxx_hidden_RecipientId *string                `protobuf:"bytes,4,opt,name=recipient_id,json=recipientId"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -59,10 +60,10 @@ func (x *InstagramMessageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *InstagramMessageResponse) GetRecipientId() string {
+func (x *InstagramMessageResponse) GetMediaId() string {
 	if x != nil {
-		if x.xxx_hidden_RecipientId != nil {
-			return *x.xxx_hidden_RecipientId
+		if x.xxx_hidden_MediaId != nil {
+			return *x.xxx_hidden_MediaId
 		}
 		return ""
 	}
@@ -79,32 +80,47 @@ func (x *InstagramMessageResponse) GetMessageId() string {
 	return ""
 }
 
-func (x *InstagramMessageResponse) GetMediaId() string {
+func (x *InstagramMessageResponse) GetPayload() []byte {
 	if x != nil {
-		if x.xxx_hidden_MediaId != nil {
-			return *x.xxx_hidden_MediaId
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
+func (x *InstagramMessageResponse) GetRecipientId() string {
+	if x != nil {
+		if x.xxx_hidden_RecipientId != nil {
+			return *x.xxx_hidden_RecipientId
 		}
 		return ""
 	}
 	return ""
 }
 
-func (x *InstagramMessageResponse) SetRecipientId(v string) {
-	x.xxx_hidden_RecipientId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+func (x *InstagramMessageResponse) SetMediaId(v string) {
+	x.xxx_hidden_MediaId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *InstagramMessageResponse) SetMessageId(v string) {
 	x.xxx_hidden_MessageId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
-func (x *InstagramMessageResponse) SetMediaId(v string) {
-	x.xxx_hidden_MediaId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+func (x *InstagramMessageResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
-func (x *InstagramMessageResponse) HasRecipientId() bool {
+func (x *InstagramMessageResponse) SetRecipientId(v string) {
+	x.xxx_hidden_RecipientId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+}
+
+func (x *InstagramMessageResponse) HasMediaId() bool {
 	if x == nil {
 		return false
 	}
@@ -118,16 +134,23 @@ func (x *InstagramMessageResponse) HasMessageId() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
-func (x *InstagramMessageResponse) HasMediaId() bool {
+func (x *InstagramMessageResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
-func (x *InstagramMessageResponse) ClearRecipientId() {
+func (x *InstagramMessageResponse) HasRecipientId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *InstagramMessageResponse) ClearMediaId() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_RecipientId = nil
+	x.xxx_hidden_MediaId = nil
 }
 
 func (x *InstagramMessageResponse) ClearMessageId() {
@@ -135,37 +158,48 @@ func (x *InstagramMessageResponse) ClearMessageId() {
 	x.xxx_hidden_MessageId = nil
 }
 
-func (x *InstagramMessageResponse) ClearMediaId() {
+func (x *InstagramMessageResponse) ClearPayload() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_MediaId = nil
+	x.xxx_hidden_Payload = nil
+}
+
+func (x *InstagramMessageResponse) ClearRecipientId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_RecipientId = nil
 }
 
 type InstagramMessageResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	// The ID of the chat where the message was sent
-	RecipientId *string
-	// The unique ID of the sent message
-	MessageId *string
 	// The ID of the media file stored on Meta servers (only present when a media message was sent)
 	MediaId *string
+	// The unique ID of the sent message
+	MessageId *string
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
+	// The ID of the chat where the message was sent
+	RecipientId *string
 }
 
 func (b0 InstagramMessageResponse_builder) Build() *InstagramMessageResponse {
 	m0 := &InstagramMessageResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.RecipientId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_RecipientId = b.RecipientId
+	if b.MediaId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_MediaId = b.MediaId
 	}
 	if b.MessageId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
 		x.xxx_hidden_MessageId = b.MessageId
 	}
-	if b.MediaId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_MediaId = b.MediaId
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_Payload = b.Payload
+	}
+	if b.RecipientId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_RecipientId = b.RecipientId
 	}
 	return m0
 }
@@ -174,14 +208,15 @@ var File_igpb_v1_instagram_message_response_proto protoreflect.FileDescriptor
 
 const file_igpb_v1_instagram_message_response_proto_rawDesc = "" +
 	"\n" +
-	"(igpb/v1/instagram_message_response.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\x8f\x01\n" +
-	"\x18InstagramMessageResponse\x12-\n" +
-	"\frecipient_id\x18\x01 \x01(\tB\n" +
-	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\vrecipientId\x12)\n" +
+	"(igpb/v1/instagram_message_response.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xa9\x01\n" +
+	"\x18InstagramMessageResponse\x12\x19\n" +
+	"\bmedia_id\x18\x01 \x01(\tR\amediaId\x12)\n" +
 	"\n" +
 	"message_id\x18\x02 \x01(\tB\n" +
-	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\tmessageId\x12\x19\n" +
-	"\bmedia_id\x18\x03 \x01(\tR\amediaIdB\xb0\x01\n" +
+	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\tmessageId\x12\x18\n" +
+	"\apayload\x18\x03 \x01(\fR\apayload\x12-\n" +
+	"\frecipient_id\x18\x04 \x01(\tB\n" +
+	"\xe0A\x02\xbaH\x04r\x02\x10\x01R\vrecipientIdB\xb0\x01\n" +
 	"\vcom.igpb.v1B\x1dInstagramMessageResponseProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
 var file_igpb_v1_instagram_message_response_proto_msgTypes = make([]protoimpl.MessageInfo, 1)

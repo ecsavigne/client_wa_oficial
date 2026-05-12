@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/general/response/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/ig"
+	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -29,6 +31,7 @@ type ConfigClient interface {
 	String() string
 	GetType() TYPE_CONFIG
 	GetUserID() string
+	GetEventHandle() func(any)
 }
 
 type Client interface {
@@ -36,6 +39,11 @@ type Client interface {
 	GetConfig() ConfigClient
 	SendMessage(msg proto.Message) response.Responser
 	String() string
+	Broadcast(data map[string]any)
+	MessageIsForMe(message []byte) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK)
+	GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string)
+	GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status string)
+	IsVailidStatusMessage(status string) bool
 	/*
 		the webhook subscription to subscribe, for example in IG can be the ig_user_id, in WhatsApp can be the waba_id, etc depending on the client.
 	*/

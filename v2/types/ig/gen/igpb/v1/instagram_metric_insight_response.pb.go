@@ -23,10 +23,13 @@ const (
 )
 
 type InstagramMetricInsightResponse struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data *[]*MetricInsight      `protobuf:"bytes,1,rep,name=data"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *[]*MetricInsight      `protobuf:"bytes,1,rep,name=data"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,2,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *InstagramMetricInsightResponse) Reset() {
@@ -63,14 +66,43 @@ func (x *InstagramMetricInsightResponse) GetData() []*MetricInsight {
 	return nil
 }
 
+func (x *InstagramMetricInsightResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *InstagramMetricInsightResponse) SetData(v []*MetricInsight) {
 	x.xxx_hidden_Data = &v
+}
+
+func (x *InstagramMetricInsightResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *InstagramMetricInsightResponse) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *InstagramMetricInsightResponse) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Payload = nil
 }
 
 type InstagramMetricInsightResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Data []*MetricInsight
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 InstagramMetricInsightResponse_builder) Build() *InstagramMetricInsightResponse {
@@ -78,6 +110,10 @@ func (b0 InstagramMetricInsightResponse_builder) Build() *InstagramMetricInsight
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Data = &b.Data
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
@@ -411,9 +447,10 @@ var File_igpb_v1_instagram_metric_insight_response_proto protoreflect.FileDescri
 
 const file_igpb_v1_instagram_metric_insight_response_proto_rawDesc = "" +
 	"\n" +
-	"/igpb/v1/instagram_metric_insight_response.proto\x12\aigpb.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"L\n" +
+	"/igpb/v1/instagram_metric_insight_response.proto\x12\aigpb.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"f\n" +
 	"\x1eInstagramMetricInsightResponse\x12*\n" +
-	"\x04data\x18\x01 \x03(\v2\x16.igpb.v1.MetricInsightR\x04data\"\xb6\x01\n" +
+	"\x04data\x18\x01 \x03(\v2\x16.igpb.v1.MetricInsightR\x04data\x12\x18\n" +
+	"\apayload\x18\x02 \x01(\fR\apayload\"\xb6\x01\n" +
 	"\rMetricInsight\x12 \n" +
 	"\vdescription\x18\x01 \x01(\tR\vdescription\x12\x13\n" +
 	"\x02id\x18\x02 \x01(\tB\x03\xe0A\x02R\x02id\x12\x12\n" +

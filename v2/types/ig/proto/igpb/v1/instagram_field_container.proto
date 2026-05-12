@@ -25,11 +25,13 @@ message InstagramFieldContainerResponse {
     (buf.validate.field).string = {min_len: 1},
     (google.api.field_behavior) = REQUIRED
   ];
+  // The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+  bytes payload = 3;
   // Publication status. If status_code is ERROR, this value will be an error subcode
-  string status = 3 [(buf.validate.field).string = {min_len: 1}];
+  string status = 4 [(buf.validate.field).string = {min_len: 1}];
   // The publication status code of the container.
   // Possible values: EXPIRED, ERROR, FINISHED, IN_PROGRESS, PUBLISHED
-  string status_code = 4 [
+  string status_code = 5 [
     (buf.validate.field).string = {
       in: [
         "EXPIRED",

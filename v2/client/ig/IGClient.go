@@ -1,6 +1,7 @@
 package ig
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"net/http"
@@ -17,9 +18,13 @@ import (
 	gralrequest "github.com/ecsavigne/client_wa_oficial/v2/types/general/request"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
 	gralresponse "github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
+	gralevt "github.com/ecsavigne/client_wa_oficial/v2/types/general/response/event"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/general/response/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/ig"
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
+	"github.com/ecsavigne/client_wa_oficial/v2/types/ig/response/event"
 	"github.com/spf13/viper"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -173,6 +178,159 @@ type ClientIG struct {
 	config     *Config
 	typeClient client.CLIENT_TYPE
 	url        *url.URL
+}
+
+func (self *ClientIG) MessageIsForMe(webHookData []byte) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
+	webHookMsg := new(igpbv1.InstagramWebhookEvent)
+	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(webHookData, webHookMsg)
+
+	return true, evt_types.ParseTypeNotificationWebhook(webHookMsg.GetObject())
+}
+
+func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string) {
+	defer func() {
+		if r := recover(); r != nil {
+			typ = ""
+		}
+	}()
+
+	// return msg.GetEntry()[0].GetChanges()[0].GetValue().
+	return "msg.Entry[0].Changes[0].Value.Messages[0].Type"
+}
+
+func (self *ClientIG) IsVailidStatusMessage(status string) bool {
+	if status == "read" || status == "delivered" || status == "sent" || status == "failed" ||
+		status == "deleted" || status == "warning" {
+		return true
+	}
+
+	return false
+}
+
+func (self *ClientIG) GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status string) {
+	defer func() {
+		if r := recover(); r != nil {
+			status = ""
+		}
+	}()
+
+	return " msg.Entry[0].Changes[0].Value.Statuses[0].Status"
+}
+
+func (self *ClientIG) Broadcast(data map[string]any) {
+	defer func() {
+		if r := recover(); r != nil {
+			return
+		}
+	}()
+
+	var evt gralevt.EventInterface
+
+	// Listener message of the server way WebHook
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		return
+	}
+
+	// msg := codeWebHook(message)
+	msg := new(igpbv1.InstagramWebhookEvent)
+	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(dataBytes, msg)
+	isForme, typeNotification := self.MessageIsForMe(dataBytes)
+	if !isForme {
+		return
+	}
+
+	switch typeNotification {
+	// case len(msg.Entry) != 0 &&
+	// 	len(msg.Entry[0].Changes) != 0 &&
+	// 	len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
+	// 	msg.Entry[0].Changes[0].Value.Messages[0].Type != ""
+	// :
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
+		switch self.GetTypeMessage(msg) {
+		case "audio":
+			evt = &event.IGMessageAudioEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "button":
+			evt = &event.IGMessageButtonEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "document":
+			evt = &event.IGMessageDocumentEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "text":
+			evt = &event.IGMessageTextEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "image":
+			evt = &event.IGMessageImageEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "interactive":
+			evt = &event.IGMessageInteractiveEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "order":
+			evt = &event.IGMessageOrderEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "sticker":
+			evt = &event.IGMessageStickerEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "system":
+			evt = &event.IGMessageSystemEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "video":
+			evt = &event.IGMessageVideoEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "reaction":
+			evt = &event.IGMessageReactionEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "location":
+			evt = &event.IGMessageLocationEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "contacts":
+			evt = &event.IGMessageContactEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "unknown":
+			evt = &event.IGMessageUnknownEvent{
+				InstagramWebhookEvent: msg,
+			}
+		default:
+			// can be status message or another notification about message
+			status := self.GetSatusMessage(msg)
+
+			switch {
+			case status != "":
+				if self.IsVailidStatusMessage(status) {
+					evt = &event.IGStatusMessageEvent{
+						InstagramWebhookEvent: msg,
+					}
+				}
+			default:
+				self.GetConfig().GetEventHandle()(msg)
+			}
+		}
+
+	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_CATEGORY,
+		evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_STATUS:
+		evt = &event.IGMessageTemplateEvent{
+			InstagramWebhookEvent: msg,
+		}
+	default:
+		self.GetConfig().GetEventHandle()(msg)
+		return
+	}
+
+	self.GetConfig().GetEventHandle()(evt)
 }
 
 func (self *ClientIG) String() string {
@@ -936,9 +1094,8 @@ func (self *ClientIG) getInstagramLink() gralresponse.Responser {
 	link := fmt.Sprintf("https://ig.me/%s", infoAccount.GetUsername())
 
 	unknow := &generalpbv1.UnknownResponse{}
-	unknow.SetData(map[string]*structpb.Value{
-		"link": structpb.NewStringValue(link),
-	})
+	structValue, _ := structpb.NewValue(map[string]any{"link": link})
+	unknow.SetData(structValue)
 
 	return gralresponse.NewResponse(unknow, gralresponse.ResponseUnknow)
 }

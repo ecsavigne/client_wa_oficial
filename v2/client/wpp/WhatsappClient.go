@@ -21,11 +21,11 @@ import (
 
 	"github.com/ecsavigne/client_wa_oficial/v2/client"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/general/response/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/message"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event"
-	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event/types"
 	"golang.org/x/net/http2"
 )
 
@@ -92,10 +92,6 @@ func (cl *ClientWA) messageIsForMe(component *event.Components) (isForme bool, t
 	}
 
 	return isForme, evt_types.ParseTypeNotificationWebhook(field)
-}
-
-func (cl ClientWA) GetType() string {
-	return cl.typeClient.String()
 }
 
 func (cl *ClientWA) Broadcast(data map[string]any) {
@@ -212,198 +208,6 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 	cl.Config.EventHandle(evt)
 
 }
-
-// func (cl *ClientWA) initWebHookSocket() {
-// 	// url = "wss://webhooks.savcoe-services.com/ws"
-// 	// Conectar al servidor WebSocket
-// 	defer func() {
-// 		if r := recover(); r != nil {
-// 		}
-// 	}()
-
-// 	var evt event.EventInterface
-
-// 	conn, _, err := websocket.DefaultDialer.Dial(cl.Config.WebhookSocket, nil)
-// 	if err != nil {
-// 		switch {
-// 		case websocket.IsUnexpectedCloseError(err):
-// 			evt = &event.ErrorSocketConnectEvent{
-// 				Error: response.NewError(&response.Error{
-// 					Type:    types.TypeErrorUnexpectedClose,
-// 					Code:    types.CodeErrorUnexpectedClose,
-// 					Message: types.MsgErrorUnexpectedClose,
-// 				}),
-// 			}
-// 		case str.Contains(err.Error(), "tls: internal error"):
-// 			evt = &event.ErrorSocketConnectEvent{
-// 				Error: response.NewError(&response.Error{
-// 					Type:    types.TypeErrorTlsInternal,
-// 					Code:    types.CodeErrorTlsInternal,
-// 					Message: types.MsgErrorTlsInternal,
-// 				}),
-// 			}
-// 		case str.Contains(err.Error(), "bad handshake"):
-// 			evt = &event.ErrorSocketConnectEvent{
-// 				Error: response.NewError(&response.Error{
-// 					Type:    types.TypeErrorBadHandshake,
-// 					Code:    types.CodeErrorBadHandshake,
-// 					Message: types.MsgErrorBadHandshake,
-// 				}),
-// 			}
-// 		case str.Contains(err.Error(), "dial tcp: lookup ws"):
-// 			evt = &event.ErrorSocketConnectEvent{
-// 				Error: response.NewError(&response.Error{
-// 					Type:    types.TypeErrorDialTcp,
-// 					Code:    types.CodeErrorDialTcp,
-// 					Message: types.MsgErrorDialTcp,
-// 				}),
-// 			}
-// 		default:
-// 			evt = &event.ErrorSocketConnectEvent{
-// 				Error: response.NewError(&response.Error{
-// 					Type:    types.TypeErrorUnrecognizedWebSocket,
-// 					Code:    types.CodeErrorUnrecognizedWebSocket,
-// 					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorUnrecognizedWebSocket, err.Error()),
-// 				}),
-// 			}
-// 		}
-// 		cl.EventHandle(evt)
-// 		return
-// 	}
-// 	defer conn.Close()
-
-// 	// Listener message of the server way socket
-// 	for {
-// 		_, message, err := conn.ReadMessage()
-// 		if err != nil {
-// 			evt = &event.ErrorSocketConnectEvent{
-// 				Error: response.NewError(&response.Error{
-// 					Type:    types.TypeErrorConectionClosedWebSocket,
-// 					Code:    types.CodeErrorUnrecognizedWebSocket,
-// 					Message: fmt.Sprintf("%s. Original error: %s", types.MsgErrorConectionClosedWebSocket, err.Error()),
-// 				}),
-// 			}
-// 			cl.EventHandle(evt)
-// 			break
-// 		}
-
-// 		msg := codeWebHook(message)
-// 		isForme, _ := cl.messageIsForMe(msg)
-// 		if !isForme {
-// 			continue
-// 		}
-
-// 		switch {
-// 		case len(msg.Entry) != 0 &&
-// 			len(msg.Entry[0].Changes) != 0 &&
-// 			len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-// 			msg.Entry[0].Changes[0].Value.Messages[0].Type != "":
-// 			switch msg.Entry[0].Changes[0].Value.Messages[0].Type {
-// 			case "audio":
-// 				evt = &event.MessageAudioEvent{
-// 					Components: msg,
-// 				}
-// 			case "button":
-// 				evt = &event.MessageButtonEvent{
-// 					Components: msg,
-// 				}
-// 			case "document":
-// 				evt = &event.MessageDocumentEvent{
-// 					Components: msg,
-// 				}
-// 			case "text":
-// 				evt = &event.MessageTextEvent{
-// 					Components: msg,
-// 				}
-// 			case "image":
-// 				evt = &event.MessageImageEvent{
-// 					Components: msg,
-// 				}
-// 			case "interactive":
-// 				evt = &event.MessageInteractiveEvent{
-// 					Components: msg,
-// 				}
-// 			case "order":
-// 				evt = &event.MessageOrderEvent{
-// 					Components: msg,
-// 				}
-// 			case "sticker":
-// 				evt = &event.MessageStickerEvent{
-// 					Components: msg,
-// 				}
-// 			case "system":
-// 				evt = &event.MessageSystemEvent{
-// 					Components: msg,
-// 				}
-// 			case "video":
-// 				evt = &event.MessageVideoEvent{
-// 					Components: msg,
-// 				}
-// 			case "reaction":
-// 				evt = &event.MessageReactionEvent{
-// 					Components: msg,
-// 				}
-// 			case "location":
-// 				evt = &event.MessageLocationEvent{
-// 					Components: msg,
-// 				}
-// 			case "contacts":
-// 				evt = &event.MessageContactEvent{
-// 					Components: msg,
-// 				}
-// 			case "unknown":
-// 				evt = &event.MessageUnknownEvent{
-// 					Components: msg,
-// 				}
-// 			default:
-// 				cl.Config.EventHandle(message)
-// 			}
-// 		case len(msg.Entry) != 0 &&
-// 			len(msg.Entry[0].Changes) != 0 &&
-// 			len(msg.Entry[0].Changes[0].Value.Statuses) != 0:
-// 			evt = &event.StatusMessageEvent{
-// 				Components: msg,
-// 			}
-
-// 			recipientId := msg.Entry[0].Changes[0].Value.Statuses[0].RecipientID
-// 			id := msg.Entry[0].Changes[0].Value.Statuses[0].ID
-
-// 			mu := sync.Mutex{}
-// 			mu.Lock()
-// 			pair, ok := infoContacts[id]
-// 			mu.Unlock()
-
-// 			if msg.Entry[0].Changes[0].Value.Statuses[0].Status == "failed" &&
-// 				msg.Entry[0].Changes[0].Value.Statuses[0].Errors[0].Message == "Message undeliverable" {
-// 				if ok {
-// 					pair.Channel <- InfoContact{
-// 						ContactPhone: pair.Phone,
-// 						RecipientID:  recipientId,
-// 						IsOnWhats:    false,
-// 					}
-// 				}
-
-// 			} else {
-// 				if ok {
-// 					pair.Channel <- InfoContact{
-// 						ContactPhone: pair.Phone,
-// 						RecipientID:  recipientId,
-// 						IsOnWhats:    true,
-// 					}
-// 				}
-// 			}
-// 		case len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-// 			len(msg.Entry[0].Changes[0].Value.Messages[0].Contacts) != 0:
-// 			evt = &event.MessageContactEvent{
-// 				Components: msg,
-// 			}
-// 		default:
-// 			cl.Config.EventHandle(message)
-// 		}
-
-// 		cl.Config.EventHandle(evt)
-// 	}
-// }
 
 func defaultConfig() *Config {
 	return &Config{
@@ -2364,7 +2168,7 @@ func (c *ClientWA) getAllTplFromWaba(waba_id string, q ...QueryData) response.Re
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b).GetTemplateResponse()
+	return response.JsonWrapperResponseRequest(b, response.ResponseTemplate).GetTemplateResponse()
 }
 
 // getAllTemplate associated to a waba
@@ -2448,7 +2252,7 @@ func (c *ClientWA) getAllTplFromLibrary(q ...QueryData) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b).GetTemplateResponse()
+	return response.JsonWrapperResponseRequest(b, response.ResponseTemplate).GetTemplateResponse()
 }
 
 // GetAllTemplate pre approval from library, lands is a list of land codes ej: ["AR", "CO", "mx", "fr"] not sensitive to case

@@ -24,10 +24,13 @@ const (
 
 // UnknownResponse represents a response with unknown or dynamic structure
 type UnknownResponse struct {
-	state           protoimpl.MessageState     `protogen:"opaque.v1"`
-	xxx_hidden_Data map[string]*structpb.Value `protobuf:"bytes,1,rep,name=data" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *structpb.Value        `protobuf:"bytes,1,opt,name=data"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,2,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *UnknownResponse) Reset() {
@@ -55,22 +58,62 @@ func (x *UnknownResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *UnknownResponse) GetData() map[string]*structpb.Value {
+func (x *UnknownResponse) GetData() *structpb.Value {
 	if x != nil {
 		return x.xxx_hidden_Data
 	}
 	return nil
 }
 
-func (x *UnknownResponse) SetData(v map[string]*structpb.Value) {
+func (x *UnknownResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
+func (x *UnknownResponse) SetData(v *structpb.Value) {
 	x.xxx_hidden_Data = v
+}
+
+func (x *UnknownResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *UnknownResponse) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Data != nil
+}
+
+func (x *UnknownResponse) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *UnknownResponse) ClearData() {
+	x.xxx_hidden_Data = nil
+}
+
+func (x *UnknownResponse) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Payload = nil
 }
 
 type UnknownResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// Dynamic key-value data with arbitrary value types
-	Data map[string]*structpb.Value
+	Data *structpb.Value
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 UnknownResponse_builder) Build() *UnknownResponse {
@@ -78,6 +121,10 @@ func (b0 UnknownResponse_builder) Build() *UnknownResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Data = b.Data
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
@@ -85,28 +132,24 @@ var File_generalpb_v1_general_unknown_proto protoreflect.FileDescriptor
 
 const file_generalpb_v1_general_unknown_proto_rawDesc = "" +
 	"\n" +
-	"\"generalpb/v1/general_unknown.proto\x12\fgeneralpb.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xa4\x01\n" +
-	"\x0fUnknownResponse\x12@\n" +
-	"\x04data\x18\x01 \x03(\v2'.generalpb.v1.UnknownResponse.DataEntryB\x03\xe0A\x01R\x04data\x1aO\n" +
-	"\tDataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12,\n" +
-	"\x05value\x18\x02 \x01(\v2\x16.google.protobuf.ValueR\x05value:\x028\x01B\xce\x01\n" +
+	"\"generalpb/v1/general_unknown.proto\x12\fgeneralpb.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1cgoogle/protobuf/struct.proto\"\\\n" +
+	"\x0fUnknownResponse\x12/\n" +
+	"\x04data\x18\x01 \x01(\v2\x16.google.protobuf.ValueB\x03\xe0A\x01R\x04data\x12\x18\n" +
+	"\apayload\x18\x02 \x01(\fR\apayloadB\xce\x01\n" +
 	"\x10com.generalpb.v1B\x13GeneralUnknownProtoP\x01ZTgithub.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1;generalpbv1\xa2\x02\x03GXX\xaa\x02\fGeneralpb.V1\xca\x02\fGeneralpb\\V1\xe2\x02\x18Generalpb\\V1\\GPBMetadata\xea\x02\rGeneralpb::V1b\beditionsp\xe8\a"
 
-var file_generalpb_v1_general_unknown_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_generalpb_v1_general_unknown_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_generalpb_v1_general_unknown_proto_goTypes = []any{
 	(*UnknownResponse)(nil), // 0: generalpb.v1.UnknownResponse
-	nil,                     // 1: generalpb.v1.UnknownResponse.DataEntry
-	(*structpb.Value)(nil),  // 2: google.protobuf.Value
+	(*structpb.Value)(nil),  // 1: google.protobuf.Value
 }
 var file_generalpb_v1_general_unknown_proto_depIdxs = []int32{
-	1, // 0: generalpb.v1.UnknownResponse.data:type_name -> generalpb.v1.UnknownResponse.DataEntry
-	2, // 1: generalpb.v1.UnknownResponse.DataEntry.value:type_name -> google.protobuf.Value
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 0: generalpb.v1.UnknownResponse.data:type_name -> google.protobuf.Value
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_generalpb_v1_general_unknown_proto_init() }
@@ -120,7 +163,7 @@ func file_generalpb_v1_general_unknown_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_generalpb_v1_general_unknown_proto_rawDesc), len(file_generalpb_v1_general_unknown_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

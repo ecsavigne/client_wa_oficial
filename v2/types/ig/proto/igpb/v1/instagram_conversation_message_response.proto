@@ -14,8 +14,10 @@ message ConversationMessage {
   ConversationMessageParticipant from = 2;
   string id = 3 [(google.api.field_behavior) = REQUIRED];
   string message = 4;
-  ConversationMessageTo to = 5;
-  google.protobuf.Timestamp updated_time = 6;
+  // The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+  bytes payload = 5;
+  ConversationMessageTo to = 6;
+  google.protobuf.Timestamp updated_time = 7;
 }
 
 message ConversationMessageParticipant {
@@ -30,6 +32,8 @@ message ConversationMessageTo {
 message ConversationMessages {
   repeated ConversationMessage data = 1;
   ConversationPaging paging = 2;
+  // The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+  bytes payload = 3;
 }
 
 message ConversationPaging {
@@ -40,4 +44,6 @@ message ConversationPaging {
 message InstagramConversationMessageResponse {
   string id = 1 [(google.api.field_behavior) = REQUIRED];
   ConversationMessages messages = 2;
+  // The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+  bytes payload = 3;
 }

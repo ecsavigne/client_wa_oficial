@@ -1,9 +1,9 @@
 package event
 
 import (
+	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/general/response/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response"
-	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/wpp/response/event/types"
 )
 
 type MessageTemplateEvent struct {

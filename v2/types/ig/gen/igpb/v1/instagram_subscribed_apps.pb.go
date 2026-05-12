@@ -119,10 +119,13 @@ func (b0 SubscribedApp_builder) Build() *SubscribedApp {
 
 // SubscribedAppsResponse represents the API response for subscribed apps
 type SubscribedAppsResponse struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data *[]*SubscribedApp      `protobuf:"bytes,1,rep,name=data"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *[]*SubscribedApp      `protobuf:"bytes,1,rep,name=data"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,2,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *SubscribedAppsResponse) Reset() {
@@ -159,8 +162,35 @@ func (x *SubscribedAppsResponse) GetData() []*SubscribedApp {
 	return nil
 }
 
+func (x *SubscribedAppsResponse) GetPayload() []byte {
+	if x != nil {
+		return x.xxx_hidden_Payload
+	}
+	return nil
+}
+
 func (x *SubscribedAppsResponse) SetData(v []*SubscribedApp) {
 	x.xxx_hidden_Data = &v
+}
+
+func (x *SubscribedAppsResponse) SetPayload(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *SubscribedAppsResponse) HasPayload() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *SubscribedAppsResponse) ClearPayload() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Payload = nil
 }
 
 type SubscribedAppsResponse_builder struct {
@@ -168,6 +198,8 @@ type SubscribedAppsResponse_builder struct {
 
 	// The list of subscribed app entries
 	Data []*SubscribedApp
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte
 }
 
 func (b0 SubscribedAppsResponse_builder) Build() *SubscribedAppsResponse {
@@ -175,6 +207,10 @@ func (b0 SubscribedAppsResponse_builder) Build() *SubscribedAppsResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Data = &b.Data
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
@@ -185,9 +221,10 @@ const file_igpb_v1_instagram_subscribed_apps_proto_rawDesc = "" +
 	"'igpb/v1/instagram_subscribed_apps.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\"o\n" +
 	"\rSubscribedApp\x12$\n" +
 	"\x02id\x18\x01 \x01(\tB\x14\xe0A\x02\xbaH\x0er\f\x10\x012\b^[0-9]+$R\x02id\x128\n" +
-	"\x11subscribed_fields\x18\x02 \x03(\tB\v\xe0A\x02\xbaH\x05\x92\x01\x02\b\x01R\x10subscribedFields\"Q\n" +
+	"\x11subscribed_fields\x18\x02 \x03(\tB\v\xe0A\x02\xbaH\x05\x92\x01\x02\b\x01R\x10subscribedFields\"k\n" +
 	"\x16SubscribedAppsResponse\x127\n" +
-	"\x04data\x18\x01 \x03(\v2\x16.igpb.v1.SubscribedAppB\v\xe0A\x02\xbaH\x05\x92\x01\x02\b\x01R\x04dataB\xaf\x01\n" +
+	"\x04data\x18\x01 \x03(\v2\x16.igpb.v1.SubscribedAppB\v\xe0A\x02\xbaH\x05\x92\x01\x02\b\x01R\x04data\x12\x18\n" +
+	"\apayload\x18\x02 \x01(\fR\apayloadB\xaf\x01\n" +
 	"\vcom.igpb.v1B\x1cInstagramSubscribedAppsProtoP\x01ZEgithub.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1;igpbv1\xa2\x02\x03IXX\xaa\x02\aIgpb.V1\xca\x02\aIgpb\\V1\xe2\x02\x13Igpb\\V1\\GPBMetadata\xea\x02\bIgpb::V1b\beditionsp\xe8\a"
 
 var file_igpb_v1_instagram_subscribed_apps_proto_msgTypes = make([]protoimpl.MessageInfo, 2)

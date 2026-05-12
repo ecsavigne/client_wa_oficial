@@ -48,56 +48,68 @@ func getIgWrapperResponseRequest(data []byte, wrapper record, end_point Response
 	case end_point == SentMessageResponse:
 		respMsg := &igpbv1.InstagramMessageResponse{}
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, respMsg)
+		respMsg.SetPayload(data)
 		gralResponse = NewResponse(respMsg, SentMessageResponse)
 	case end_point == InfoAccountBusinessResponse:
 		infoAccount := &igpbv1.InstagramInfoAccountBusinessResponse{}
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, infoAccount)
+		infoAccount.SetPayload(data)
 		gralResponse = NewResponse(infoAccount, InfoAccountBusinessResponse)
 	case end_point == InstagramFieldContainerResponse:
 		containerResponse := &igpbv1.InstagramFieldContainerResponse{}
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, containerResponse)
+		containerResponse.SetPayload(data)
 		gralResponse = NewResponse(containerResponse, InstagramFieldContainerResponse)
 	case end_point == ResponseSuccess:
 		successResponse := &generalpbv1.SuccessResponse{}
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, successResponse)
+		successResponse.SetPayload(data)
 		gralResponse = NewResponse(successResponse, ResponseSuccess)
 	case end_point == InstagramCommentResponse:
 		commentResponse := &igpbv1.InstagramCommentResponseMessage{}
 		data = fixData(data)
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, commentResponse)
+		commentResponse.SetPayload(data)
 		gralResponse = NewResponse(commentResponse, InstagramCommentResponse)
 	// general response
 	case end_point == InstagramMetricInsightResponse:
 		metricInsightResponse := &igpbv1.InstagramMetricInsightResponse{}
 		data = fixData(data)
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, metricInsightResponse)
+		metricInsightResponse.SetPayload(data)
 		gralResponse = NewResponse(metricInsightResponse, InstagramMetricInsightResponse)
 	case end_point == InstagramMetricResponse:
 		metricResponse := &igpbv1.InstagramMetricResponse{}
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, metricResponse)
+		metricResponse.SetPayload(data)
 		gralResponse = NewResponse(metricResponse, InstagramMetricResponse)
 	case end_point == InstagramConversationMessageResponse:
 		conversationMessageResponse := &igpbv1.InstagramConversationMessageResponse{}
 		data = fixData(data)
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, conversationMessageResponse)
+		conversationMessageResponse.SetPayload(data)
 		gralResponse = NewResponse(conversationMessageResponse, InstagramConversationMessageResponse)
 	case end_point == ConversationMessageResponse:
 		conversationMessage := &igpbv1.ConversationMessage{}
 		data = fixData(data)
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, conversationMessage)
+		conversationMessage.SetPayload(data)
 		gralResponse = NewResponse(conversationMessage, ConversationMessageResponse)
 	case end_point == InstagramListConversationResponse:
 		listConversationResponse := &igpbv1.ConversationMessages{}
 		data = fixData(data)
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, listConversationResponse)
+		listConversationResponse.SetPayload(data)
 		gralResponse = NewResponse(listConversationResponse, InstagramListConversationResponse)
 	case end_point == ResponseUnknow:
 		fallthrough
 	default:
 		unknow := &generalpbv1.UnknownResponse{}
-		dataValue := make(map[string]*structpb.Value)
-		err = json.Unmarshal(data, &dataValue)
+		dataMap := make(map[string]any)
+		err = json.Unmarshal(data, &dataMap)
+		dataValue, _ := structpb.NewValue(dataMap)
 		unknow.SetData(dataValue)
+		unknow.SetPayload(data)
 		gralResponse = NewResponse(unknow, ResponseUnknow)
 	}
 
