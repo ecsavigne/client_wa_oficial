@@ -1490,7 +1490,7 @@ func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b)
+	return response.JsonWrapperResponseRequest(b, response.ResponseWabaInfo)
 }
 
 func validKeyInMapInFunc(data map[string]any, key []string, funcName string) response.Responser {
@@ -1942,6 +1942,13 @@ func workerFindWabaId(ctx context.Context, wg *sync.WaitGroup, cl *ClientWA, dIn
 // If not found, return nil, nil.
 func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.WabaInfo, *response.PhoneInfo) {
 	wabas := c.GetOwnedWaba(portafolio_id)
+
+	if k := wabas.GetResponseWaba(); k != nil {
+		if k.Data[0] == (response.WabaInfo{}) {
+			return nil, nil
+		}
+	}
+
 	arrWabaInfo := wabas.GetResponseWaba().Data
 	cant := len(arrWabaInfo)
 	arrFuncCancel := make([]context.CancelFunc, 0)
