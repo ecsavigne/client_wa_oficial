@@ -2,6 +2,7 @@
 package wpp
 
 import (
+	"bytes"
 	"context"
 	"crypto/tls"
 	"encoding/json"
@@ -1490,7 +1491,8 @@ func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.Responser {
 		})
 	}
 
-	return response.JsonWrapperResponseRequest(b, response.ResponseWabaInfo)
+	// return response.JsonWrapperResponseRequest(b, response.ResponseWabaInfo)
+	return response.JsonWrapperResponseRequest(b)
 }
 
 func validKeyInMapInFunc(data map[string]any, key []string, funcName string) response.Responser {
@@ -1632,26 +1634,26 @@ func (c *ClientWA) RegisterForUseApi(phone_id string) response.Responser {
 
 	_, _, err := defaultRequest(http.MethodPost, fmt.Sprintf("/%s/%s", phone_id, "register"), c.Config, RequestWithVersion, data)
 	if err != nil {
-		if err, ok := err.(*response.Error); ok {
-			return err
-		}
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in RegisterForUseApi request of ClientWA. error is: ", err.Error()),
+			Message: fmt.Sprintf("Error in RegisterForUseApi creating defaultRequest of ClientWA. error is: %s", err.Error()),
 		})
 	}
 
 	// Do request
+	byt, _ := io.ReadAll(c.request.Body)
+	defer c.request.Body.Close()
+
+	c.request.Body = io.NopCloser(bytes.NewReader(byt))
+
 	resp, err := doRequest(c.request, c)
 	if err != nil {
-		if err, ok := err.(*response.Error); ok {
-			return err
-		}
+
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in RegisterForUseApi request of ClientWA. error is: ", err.Error()),
+			Message: fmt.Sprintf("Error in RegisterForUseApi executing doRequest (%s {%s}) of ClientWA. error is: %s", c.request.URL.String(), string(byt), err.Error()),
 		})
 	}
 
@@ -1943,11 +1945,11 @@ func workerFindWabaId(ctx context.Context, wg *sync.WaitGroup, cl *ClientWA, dIn
 func (c *ClientWA) FindWabaId(portafolio_id, phone_number string) (*response.WabaInfo, *response.PhoneInfo) {
 	wabas := c.GetOwnedWaba(portafolio_id)
 
-	if k := wabas.GetResponseWaba(); k != nil {
-		if k.Data[0] == (response.WabaInfo{}) {
-			return nil, nil
-		}
-	}
+	// if k := wabas.GetResponseWaba(); k != nil {
+	// 	if k.Data[0] == (response.WabaInfo{}) {
+	// 		return nil, nil
+	// 	}
+	// }
 
 	arrWabaInfo := wabas.GetResponseWaba().Data
 	cant := len(arrWabaInfo)
