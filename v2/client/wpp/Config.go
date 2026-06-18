@@ -9,9 +9,9 @@ import (
 
 type Config struct {
 	Token      string `json:"token"`
-	wabaID     string `json:"wa_business_account_id"`
-	phoneID    string `json:"wa_phone_number_id"`
-	businessID string `json:"business_id"`
+	wabaID     string
+	phoneID    string
+	businessID string
 	// Path del archivo .env incluyendo el nombre del archivo sin la extensión ej: file: /.../../config_env.env -> EnvFilePath: /.../../config_env
 	EnvFilePath string `json:"env_file_path"`
 	Error       error

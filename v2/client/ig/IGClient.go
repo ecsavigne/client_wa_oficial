@@ -320,8 +320,8 @@ func (self *ClientIG) Broadcast(data map[string]any) {
 			}
 		}
 
-	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_CATEGORY,
-		evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_UPDATE_STATUS:
+	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE,
+		evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_STATUS_UPDATE:
 		evt = &event.IGMessageTemplateEvent{
 			InstagramWebhookEvent: msg,
 		}
