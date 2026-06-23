@@ -123,7 +123,8 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 	// 	msg.Entry[0].Changes[0].Value.Messages[0].Type != ""
 	// :
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
-		switch getTypeMessage(msg) {
+		// switch getTypeMessage(msg) {
+		switch msg.GetTypeMessage() {
 		case "audio":
 			evt = &event.MessageAudioEvent{
 				Components: msg,
@@ -182,7 +183,8 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 			}
 		default:
 			// can be status message or another notification about message
-			status := getSatusMessage(msg)
+			// status := getSatusMessage(msg)
+			status := msg.GetSatusMessage()
 
 			switch {
 			case status != "":

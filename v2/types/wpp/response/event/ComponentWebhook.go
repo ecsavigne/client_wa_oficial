@@ -324,3 +324,23 @@ type Components struct {
 	Object string  `json:"object,omitempty"` // "whatsapp_business_account"
 	Entry  []Entry `json:"entry,omitempty"`
 }
+
+func (self Components) GetSatusMessage() (status string) {
+	defer func() {
+		if r := recover(); r != nil {
+			status = ""
+		}
+	}()
+
+	return self.Entry[0].Changes[0].Value.Statuses[0].Status
+}
+
+func (self Components) GetTypeMessage() (typ string) {
+	defer func() {
+		if r := recover(); r != nil {
+			typ = ""
+		}
+	}()
+
+	return self.Entry[0].Changes[0].Value.Messages[0].Type
+}
