@@ -93,7 +93,7 @@ func (cl *ClientWA) messageIsForMe(component *event.Components) (isForme bool, t
 	if phoneNumberID == cl.Config.getphoneID() {
 		isForme = true
 	} else {
-		if field == "partner_solutions" && wabaID == cl.Config.getBusinessID() {
+		if wabaID == cl.Config.getBusinessID() {
 			isForme = true
 		} else {
 			if wabaID == cl.Config.getWabaID() {
@@ -103,7 +103,7 @@ func (cl *ClientWA) messageIsForMe(component *event.Components) (isForme bool, t
 	}
 	// if wabaID == cl.Config.getWabaID() && (field == "template_category_update" || field == "message_template_status_update") {
 
-	return false, evt_types.ParseTypeNotificationWebhook(field)
+	return isForme, evt_types.ParseTypeNotificationWebhook(field)
 }
 
 func (cl *ClientWA) Broadcast(data map[string]any) {
