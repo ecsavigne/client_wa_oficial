@@ -51,5 +51,26 @@ const (
 	EventTypeMessageLocation    EventType = "EventTypeMessageLocation"
 	EventTypeMessage            EventType = "EventTypeMessage"
 	EventTypeStatusMessage      EventType = "EventTypeStatusMessage"
-	EventTypeTemplateMessage    EventType = "EventTypeTemplateMessage"
+
+	// EventTypeTemplateMessage EventType = "EventTypeTemplateMessage"
+
+	EventTypeMessageTemplateComponentsUpdate EventType = "EventTypeMessageTemplateComponentsUpdate"
+	EventTypeMessageTemplateQualityUpdate    EventType = "EventTypeMessageTemplateQualityUpdate"
+	EventTypeMessageTemplateStatusUpdate     EventType = "EventTypeMessageTemplateStatusUpdate"
+	EventTypeTemplateCategoryUpdate          EventType = "EventTypeTemplateCategoryUpdate"
+
+	EventTypeAccountUpdate            EventType = "EventTypeAccountUpdate"
+	EventTypeAccountAlerts            EventType = "EventTypeAccountAlerts"
+	EventTypeAccountReviewUpdate      EventType = "EventTypeAccountReviewUpdate"
+	EventTypeBusinessCapabilityUpdate EventType = "EventTypeBusinessCapabilityUpdate"
+
+	EventTypeHistory                    EventType = "EventTypeHistory"
+	EventTypePartnerSolutions           EventType = "EventTypePartnerSolutions"
+	EventTypePaymentConfigurationUpdate EventType = "EventTypePaymentConfigurationUpdate"
+	EventTypePhoneNumberNameUpdate      EventType = "EventTypePhoneNumberNameUpdate"
+	EventTypePhoneNumberQualityUpdate   EventType = "EventTypePhoneNumberQualityUpdate"
+	EventTypeSegurity                   EventType = "EventTypeSegurity"
+	EventTypSmbAppStateSync             EventType = "EventTypSmbAppStateSync"
+	EventTypeSmbMessageEchoes           EventType = "EventTypeSmbMessageEchoes"
+	EventTypeUserPreferences            EventType = "EventTypeUserPreferences"
 )

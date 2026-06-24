@@ -117,11 +117,28 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 	}
 
 	switch typeNotification {
-	// case len(msg.Entry) != 0 &&
-	// 	len(msg.Entry[0].Changes) != 0 &&
-	// 	len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-	// 	msg.Entry[0].Changes[0].Value.Messages[0].Type != ""
-	// :
+	// Account
+	case evt_types.WEBHOOK_NOTIFICATION_ACCOUNT_ALERTS:
+		evt = &event.AccountAlertsEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_ACCOUNT_REVIEW_UPDATE:
+		evt = &event.AccountReviewUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_ACCOUNT_UPDATE:
+		evt = &event.AccountUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_BUSINESS_CAPABILITY_UPDATE:
+		evt = &event.BusinessCapabilityUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_HISTORY:
+		evt = &event.HistoryEvent{
+			Components: msg,
+		}
+
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
 		// switch getTypeMessage(msg) {
 		switch msg.GetTypeMessage() {
@@ -197,10 +214,53 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 				cl.Config.EventHandle(message)
 			}
 		}
-
-	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE,
-		evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_STATUS_UPDATE:
-		evt = &event.MessageTemplateEvent{
+	// 	template
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_COMPONENTS_UPDATE:
+		evt = &event.MessageTemplateComponentsUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_QUALITY_UPDATE:
+		evt = &event.MessageTemplateQualityUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_STATUS_UPDATE:
+		evt = &event.MessageTemplateStatusUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_PARTNER_SOLUTIONS:
+		evt = &event.PartnerSolutionsEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_PAYMENT_CONFIGURATION_UPDATE:
+		evt = &event.PaymentConfigurationUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_PHONE_NUMBER_NAME_UPDATE:
+		evt = &event.PhoneNumberNameUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_PHONE_NUMBER_QUALITY_UPDATE:
+		evt = &event.PhoneNumberQualityUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_SECURITY:
+		evt = &event.SecurityEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_SMB_APP_STATE_SYNC:
+		evt = &event.SmbAppStateSyncEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES:
+		evt = &event.SmbMessageEchoesEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE:
+		evt = &event.TemplateCategoryUpdateEvent{
+			Components: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_USER_PREFERENCES:
+		evt = &event.UserPreferencesEvent{
 			Components: msg,
 		}
 	default:

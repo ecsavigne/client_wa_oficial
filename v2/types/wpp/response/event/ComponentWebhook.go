@@ -309,9 +309,49 @@ type Value struct {
 	*MessageTemplateWebhook `json:",omitempty"`
 }
 
+func (self Value) GetMessagingProduct() string {
+	return self.MessagingProduct
+}
+
+func (self Value) GetMetadata() *Metadata {
+	return self.Metadata
+}
+
+func (self Value) GetContacts() []Contact {
+	return self.Contacts
+}
+
+func (self Value) GetMessages() []Message {
+	return self.Messages
+}
+
+func (self Value) GetStatuses() []Statuse {
+	return self.Statuses
+}
+
 type Change struct {
 	Value *Value `json:"value,omitempty"`
 	Field string `json:"field,omitempty"` // Notification type. value will be "messages"
+}
+
+func (self Change) GetValue() (val *Value) {
+	defer func() {
+		if r := recover(); r != nil {
+			val = (*Value)(nil)
+		}
+	}()
+
+	return self.Value
+}
+
+func (self Change) GetField() (val string) {
+	defer func() {
+		if r := recover(); r != nil {
+			val = ""
+		}
+	}()
+
+	return self.Field
 }
 
 type Entry struct {
@@ -320,9 +360,17 @@ type Entry struct {
 	Changes []Change `json:"changes,omitempty"`
 }
 
+func (self Entry) GetChange() []Change {
+	return self.Changes
+}
+
 type Components struct {
 	Object string  `json:"object,omitempty"` // "whatsapp_business_account"
 	Entry  []Entry `json:"entry,omitempty"`
+}
+
+func (self Components) GetEntry() []Entry {
+	return self.Entry
 }
 
 func (self Components) GetSatusMessage() (status string) {
@@ -332,7 +380,7 @@ func (self Components) GetSatusMessage() (status string) {
 		}
 	}()
 
-	return self.Entry[0].Changes[0].Value.Statuses[0].Status
+	return self.GetEntry()[0].GetChange()[0].GetValue().GetStatuses()[0].Status
 }
 
 func (self Components) GetTypeMessage() (typ string) {
