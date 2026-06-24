@@ -302,14 +302,75 @@ type MessageTemplateWebhook struct {
 	*TemplateCategoryUpdate          `json:",omitempty"`
 }
 
+type WabaInfo struct {
+	WabaID                     string   `json:"waba_id,omitempty"`
+	AdAccountLinked            string   `json:"ad_account_linked,omitempty"`
+	OwnerBusinessID            string   `json:"owner_business_id,omitempty"`
+	PartnerAppID               string   `json:"partner_app_id,omitempty"`
+	SolutionID                 string   `json:"solution_id,omitempty"`
+	SolutionPartnerBusinessIDs []string `json:"solution_partner_business_ids,omitempty"`
+}
+
+type ViolationInfo struct {
+	ViolationType string `json:"violation_type,omitempty"`
+}
+
+type ExceptionCountries struct {
+	CountryCode string `json:"country_code,omitempty"`
+	StartTime   uint64 `json:"start_time,omitempty"`
+}
+type AuthInternationalRateEligibility struct {
+	ExceptionCountries []ExceptionCountries `json:"exception_countries"`
+	StartTime          uint64               `json:"start_time,omitempty"`
+}
+
+type BanInfo struct {
+	WabaBanState string `json:"waba_ban_state,omitempty"`
+	WabaBanDate  string `json:"waba_ban_date,omitempty"`
+}
+
+type VolumeTierInfo struct {
+	TierUpdateTime  uint64 `json:"tier_update_time,omitempty"`
+	PricingCategory string `json:"pricing_category,omitempty"`
+	Tier            string `json:"tier,omitempty"`
+	EffectiveMonth  string `json:"effective_month,omitempty"`
+	Region          string `json:"region,omitempty"`
+}
+
+type DisconnectionInfo struct {
+	Reason      string `json:"reason,omitempty"`
+	InitiatedBy string `json:"initiated_by,omitempty"`
+}
+
+type PartnerClientCertificationInfo struct {
+	ClientBusinessID string   `json:"client_business_id,omitempty"`
+	Status           string   `json:"status,omitempty"`
+	RejectionReasons []string `json:"rejection_reasons,omitempty"`
+}
+
+type RestrictionInfo struct {
+	RestrictionType string `json:"restriction_type,omitempty"`
+	Expiration      uint64 `json:"expiration,omitempty"`
+	Remediation     string `json:"remediation,omitempty"`
+}
+
 type Value struct {
-	MessagingProduct        string    `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
-	Metadata                *Metadata `json:"metadata,omitempty"`
-	Contacts                []Contact `json:"contacts,omitempty"`
-	Messages                []Message `json:"messages,omitempty"`
-	Statuses                []Statuse `json:"statuses,omitempty"`
-	Errors                  []Error   `json:"errors,omitempty"`
-	*MessageTemplateWebhook `json:",omitempty"`
+	MessagingProduct                 string                            `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
+	Metadata                         *Metadata                         `json:"metadata,omitempty"`
+	WabaInfo                         *WabaInfo                         `json:"waba_info,omitempty"`
+	ViolationInfo                    *ViolationInfo                    `json:"violation_info,omitempty"`
+	AuthInternationalRateEligibility *AuthInternationalRateEligibility `json:"auth_international_rate_eligibility,omitempty"`
+	BanInfo                          *BanInfo                          `json:"ban_info,omitempty"`
+	VolumeTierInfo                   *VolumeTierInfo                   `json:"volume_tier_info,omitempty"`
+	DisconnectionInfo                *DisconnectionInfo                `json:"disconnection_info,omitempty"`
+	PartnerClientCertificationInfo   *PartnerClientCertificationInfo   `json:"partner_client_certification_info,omitempty"`
+	RestrictionInfo                  []RestrictionInfo                 `json:"restriction_info,omitempty"`
+	Country                          string                            `json:"country,omitempty"`
+	Contacts                         []Contact                         `json:"contacts,omitempty"`
+	Messages                         []Message                         `json:"messages,omitempty"`
+	Statuses                         []Statuse                         `json:"statuses,omitempty"`
+	Errors                           []Error                           `json:"errors,omitempty"`
+	*MessageTemplateWebhook          `json:",omitempty"`
 }
 
 func (self Value) GetMessagingProduct() string {
