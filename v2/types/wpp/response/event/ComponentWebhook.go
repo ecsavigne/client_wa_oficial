@@ -10,6 +10,9 @@ type Metadata struct {
 	PhoneNumberID      string `json:"phone_number_id,omitempty"`
 }
 
+func (self Metadata) GetDisplayPhoneNumber() string { return self.DisplayPhoneNumber }
+func (self Metadata) GetPhoneNumberID() string      { return self.PhoneNumberID }
+
 type Profile struct {
 	Name string `json:"name,omitempty"` //  The customer's name.
 }
@@ -362,6 +365,10 @@ type Entry struct {
 
 func (self Entry) GetChange() []Change {
 	return self.Changes
+}
+
+func (self Entry) GetID() string {
+	return self.ID
 }
 
 type Components struct {
