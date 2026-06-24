@@ -75,23 +75,19 @@ func codeWebHook(msgByte []byte) *event.Components {
 // messageIsForMe && Field
 // field = template_category_update, message_template_status_update, messages
 func (cl *ClientWA) messageIsForMe(component *event.Components) (isForme bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
-	// field := component.Entry[0].Changes[0].Field
 	field := component.GetEntry()[0].GetChange()[0].Field
 	phoneNumberID := ""
-	// if component.Entry[0].Changes[0].Value.Metadata != nil {
+
 	if component.GetEntry()[0].GetChange()[0].GetValue().GetMetadata() != nil {
-		// phoneNumberID = component.Entry[0].Changes[0].Value.Metadata.PhoneNumberID
 		phoneNumberID = component.GetEntry()[0].GetChange()[0].GetValue().GetMetadata().GetPhoneNumberID()
 	}
-	// wabaID := component.Entry[0].ID
 	wabaID := component.GetEntry()[0].GetID()
 
-	// if phoneNumberID == cl.Config.getphoneID() && field == "messages" {
-	// 	return true, evt_types.ParseTypeNotificationWebhook(field)
-	// }
 	isForme = false
-	if phoneNumberID == cl.Config.getphoneID() {
+	if phoneNumberID == cl.Config.getphoneID() && field == "messages" {
 		isForme = true
+	} else if field == "messages" {
+		isForme = false
 	} else {
 		if wabaID == cl.Config.getBusinessID() {
 			isForme = true
@@ -101,7 +97,6 @@ func (cl *ClientWA) messageIsForMe(component *event.Components) (isForme bool, t
 			}
 		}
 	}
-	// if wabaID == cl.Config.getWabaID() && (field == "template_category_update" || field == "message_template_status_update") {
 
 	return isForme, evt_types.ParseTypeNotificationWebhook(field)
 }
