@@ -543,14 +543,10 @@ func (c *ClientWA) sendTextMessage(m message.Messager) response.Responser {
 
 	resp, e := c.makeRequest(http.MethodPost, "/messages", m)
 	if e != nil {
-		if ok := e.(*response.Error); ok != nil {
-			return e.(*response.Error)
-		}
-
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error en SendText request of ClientWA. error is: ", e.Error()),
+			Message: fmt.Sprintf("exception in SendText request of ClientWA. %s", e.Error()),
 		})
 	}
 
