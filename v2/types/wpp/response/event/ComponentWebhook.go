@@ -53,6 +53,7 @@ type InfoMedia struct {
 	ID       string `json:"id,omitempty"`
 	Caption  string `json:"caption,omitempty"`
 	Sha256   string `json:"sha256,omitempty"`
+	Url      string `json:"url,omitempty"`
 }
 
 type Image struct {
@@ -80,6 +81,37 @@ type Location struct {
 type ReferredProduct struct {
 	CatalogId         string `json:"catalog_id"`          // Unique identifier of the Meta catalog linked to the WhatsApp Business Account.
 	ProductRetailerId string `json:"product_retailer_id"` // Unique identifier of the product in a catalog.
+}
+
+type Revoke struct {
+	OriginalMessageId string `json:"original_message_id"`
+}
+
+type Edit struct {
+	OriginalMessageId string `json:"original_message_id"`
+	Message           *struct {
+		Context *struct {
+			ID string `json:"id,omitempty"`
+		} `json:"context,omitempty"`
+	} `json:"message,omitempty"`
+	Type         string `json:"type,omitempty"`
+	*TypeMessage `json:",omitempty"`
+}
+
+type TypeMessage struct {
+	*Audio        `json:"audio,omitempty"`
+	*Contact      `json:"contact,omitempty"`
+	*Document     `json:"document,omitempty"`
+	*ErrorMessage `json:"error,omitempty"`
+	*Image        `json:"image,omitempty"`
+	*Interactive  `json:"interactive,omitempty"`
+	*Location     `json:",omitempty"`
+	*Sticker      `json:"sticker,omitempty"`
+	*Text         `json:"text,omitempty"`
+	*Revoke       `json:"revoke,omitempty"`
+	*Reaction     `json:"reaction,omitempty"`
+	*Video        `json:"video,omitempty"`
+	*Edit         `json:"edit,omitempty"`
 }
 
 type Context struct {
@@ -354,23 +386,33 @@ type RestrictionInfo struct {
 	Remediation     string `json:"remediation,omitempty"`
 }
 
+type MessageEchoes struct {
+	From         string `json:"from,omitempty"`
+	To           string `json:"to,omitempty"`
+	ID           string `json:"id,omitempty"`
+	Timestamp    string `json:"timestamp,omitempty"`
+	Type         string `json:"type,omitempty"`
+	*TypeMessage `json:",omitempty"`
+}
+
 type Value struct {
-	MessagingProduct                 string                            `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
-	Metadata                         *Metadata                         `json:"metadata,omitempty"`
-	WabaInfo                         *WabaInfo                         `json:"waba_info,omitempty"`
-	ViolationInfo                    *ViolationInfo                    `json:"violation_info,omitempty"`
 	AuthInternationalRateEligibility *AuthInternationalRateEligibility `json:"auth_international_rate_eligibility,omitempty"`
 	BanInfo                          *BanInfo                          `json:"ban_info,omitempty"`
-	VolumeTierInfo                   *VolumeTierInfo                   `json:"volume_tier_info,omitempty"`
-	DisconnectionInfo                *DisconnectionInfo                `json:"disconnection_info,omitempty"`
-	PartnerClientCertificationInfo   *PartnerClientCertificationInfo   `json:"partner_client_certification_info,omitempty"`
-	RestrictionInfo                  []RestrictionInfo                 `json:"restriction_info,omitempty"`
 	Country                          string                            `json:"country,omitempty"`
 	Contacts                         []Contact                         `json:"contacts,omitempty"`
-	Messages                         []Message                         `json:"messages,omitempty"`
-	Statuses                         []Statuse                         `json:"statuses,omitempty"`
+	DisconnectionInfo                *DisconnectionInfo                `json:"disconnection_info,omitempty"`
 	Errors                           []Error                           `json:"errors,omitempty"`
+	MessagingProduct                 string                            `json:"messaging_product,omitempty"` //Product used to send the message. Value is always whatsapp.
+	Messages                         []Message                         `json:"messages,omitempty"`
+	MessageEchoes                    []MessageEchoes                   `json:"message_echoes,omitempty"`
 	*MessageTemplateWebhook          `json:",omitempty"`
+	Metadata                         *Metadata                       `json:"metadata,omitempty"`
+	WabaInfo                         *WabaInfo                       `json:"waba_info,omitempty"`
+	RestrictionInfo                  []RestrictionInfo               `json:"restriction_info,omitempty"`
+	PartnerClientCertificationInfo   *PartnerClientCertificationInfo `json:"partner_client_certification_info,omitempty"`
+	Statuses                         []Statuse                       `json:"statuses,omitempty"`
+	ViolationInfo                    *ViolationInfo                  `json:"violation_info,omitempty"`
+	VolumeTierInfo                   *VolumeTierInfo                 `json:"volume_tier_info,omitempty"`
 }
 
 func (self Value) GetMessagingProduct() string {
