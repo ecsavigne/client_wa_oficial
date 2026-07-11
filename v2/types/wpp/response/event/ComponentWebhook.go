@@ -479,6 +479,21 @@ type Components struct {
 	Entry  []Entry `json:"entry,omitempty"`
 }
 
+func (self Components) GetObject() string {
+	return self.Object
+}
+
+func (self Components) GetEvent() (vEvt string) {
+	defer func() {
+		if r := recover(); r != nil {
+			vEvt = ""
+		}
+	}()
+
+	vEvt = self.GetEntry()[0].GetChange()[0].GetValue().Event
+	return vEvt
+}
+
 func (self Components) GetEntry() []Entry {
 	return self.Entry
 }

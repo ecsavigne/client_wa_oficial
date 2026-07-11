@@ -25,7 +25,8 @@ func (*AccountUpdateEvent) GetType() wpp.EventType { return wpp.EventTypeAccount
 func (m *AccountUpdateEvent) String() string { return response.Val(m) }
 
 func (self *AccountUpdateEvent) GetEvent() string {
-	return self.GetEntry()[0].GetChange()[0].GetValue().Event
+	// return self.GetEntry()[0].GetChange()[0].GetValue().Event
+	return self.Components.GetEvent()
 }
 
 type AccountAlertsEvent struct {
