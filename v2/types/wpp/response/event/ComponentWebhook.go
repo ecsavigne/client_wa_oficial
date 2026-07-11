@@ -1,6 +1,7 @@
 package event
 
 import (
+	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/internal"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/wpp/message"
 )
@@ -343,6 +344,30 @@ type WabaInfo struct {
 	SolutionPartnerBusinessIDs []string `json:"solution_partner_business_ids,omitempty"`
 }
 
+func (self WabaInfo) GetWabaID() string {
+	return self.WabaID
+}
+
+func (self WabaInfo) GetOwnerBusinessID() string {
+	return self.OwnerBusinessID
+}
+
+func (self WabaInfo) GetSolutionID() string {
+	return self.SolutionID
+}
+
+func (self WabaInfo) GetSolutionPartnerBusinessIDs() []string {
+	return self.SolutionPartnerBusinessIDs
+}
+
+func (self WabaInfo) GetAdAccountLinked() string {
+	return self.AdAccountLinked
+}
+
+func (self WabaInfo) GetPartnerAppID() string {
+	return self.PartnerAppID
+}
+
 type ViolationInfo struct {
 	ViolationType string `json:"violation_type,omitempty"`
 }
@@ -415,23 +440,23 @@ type Value struct {
 	VolumeTierInfo                   *VolumeTierInfo                 `json:"volume_tier_info,omitempty"`
 }
 
-func (self Value) GetMessagingProduct() string {
+func (self *Value) GetMessagingProduct() string {
 	return self.MessagingProduct
 }
 
-func (self Value) GetMetadata() *Metadata {
+func (self *Value) GetMetadata() *Metadata {
 	return self.Metadata
 }
 
-func (self Value) GetContacts() []Contact {
+func (self *Value) GetContacts() []Contact {
 	return self.Contacts
 }
 
-func (self Value) GetMessages() []Message {
+func (self *Value) GetMessages() []Message {
 	return self.Messages
 }
 
-func (self Value) GetStatuses() []Statuse {
+func (self *Value) GetStatuses() []Statuse {
 	return self.Statuses
 }
 
@@ -466,11 +491,11 @@ type Entry struct {
 	Changes []Change `json:"changes,omitempty"`
 }
 
-func (self Entry) GetChange() []Change {
+func (self *Entry) GetChange() []Change {
 	return self.Changes
 }
 
-func (self Entry) GetID() string {
+func (self *Entry) GetID() string {
 	return self.ID
 }
 
@@ -479,26 +504,15 @@ type Components struct {
 	Entry  []Entry `json:"entry,omitempty"`
 }
 
-func (self Components) GetObject() string {
+func (self *Components) GetObject() string {
 	return self.Object
 }
 
-func (self Components) GetEvent() (vEvt string) {
-	defer func() {
-		if r := recover(); r != nil {
-			vEvt = ""
-		}
-	}()
-
-	vEvt = self.GetEntry()[0].GetChange()[0].GetValue().Event
-	return vEvt
-}
-
-func (self Components) GetEntry() []Entry {
+func (self *Components) GetEntry() []Entry {
 	return self.Entry
 }
 
-func (self Components) GetSatusMessage() (status string) {
+func (self *Components) GetSatusMessage() (status string) {
 	defer func() {
 		if r := recover(); r != nil {
 			status = ""
@@ -508,7 +522,7 @@ func (self Components) GetSatusMessage() (status string) {
 	return self.GetEntry()[0].GetChange()[0].GetValue().GetStatuses()[0].Status
 }
 
-func (self Components) GetTypeMessage() (typ string) {
+func (self *Components) GetTypeMessage() (typ string) {
 	defer func() {
 		if r := recover(); r != nil {
 			typ = ""
@@ -516,4 +530,331 @@ func (self Components) GetTypeMessage() (typ string) {
 	}()
 
 	return self.Entry[0].Changes[0].Value.Messages[0].Type
+}
+
+func (self *Components) GetNotificationType() (vNotification string) {
+	defer func() {
+		if r := recover(); r != nil {
+			vNotification = ""
+		}
+	}()
+
+	return self.GetEntry()[0].GetChange()[0].Field
+}
+
+// Only in event WEBHOOK_NOTIFICATION_ACCOUNT_UPDATE
+func (self *Components) GetEvent() (vEvt string) {
+	defer func() {
+		if r := recover(); r != nil {
+			vEvt = ""
+		}
+	}()
+
+	return self.GetEntry()[0].GetChange()[0].GetValue().Event
+}
+
+func (self *Components) GetChange() (vCh []Change) {
+	defer func() {
+		if r := recover(); r != nil {
+			vCh = []Change{}
+		}
+	}()
+
+	return self.GetEntry()[0].GetChange()
+}
+
+func (self *Components) GetValue() (vVal *Value) {
+	defer func() {
+		if r := recover(); r != nil {
+			vVal = nil
+		}
+	}()
+
+	return self.GetChange()[0].GetValue()
+}
+
+/*
+msgAud.Entry[0].Changes[0].Value.Messages[0].ID = GetMessageID() // type msg
+msgAud.Entry[0].Changes[0].Value.Messages[0].From = GetSenderMessage() // who send the message, fotr type message
+msgAud.GetEntry()[0].GetChange()[0].GetValue().GetMessages()[0].Audio = GetAudio()
+*/
+
+func (self *Components) GetMessages() (vMsg []Message) {
+	defer func() {
+		if r := recover(); r != nil {
+			vMsg = []Message{}
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetValue().GetMessages()
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetMessageID() (vMessageID string) {
+	defer func() {
+		if r := recover(); r != nil {
+			vMessageID = ""
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].ID
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetSenderMessage() (vMessageID string) {
+	defer func() {
+		if r := recover(); r != nil {
+			vMessageID = ""
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].From
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetAudioMessage() (vAudio *Audio) {
+	defer func() {
+		if r := recover(); r != nil {
+			vAudio = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Audio
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetVideoMessage() (vVideo *Video) {
+	defer func() {
+		if r := recover(); r != nil {
+			vVideo = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Video
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetImageMessage() (vImage *Image) {
+	defer func() {
+		if r := recover(); r != nil {
+			vImage = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Image
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetDocumentMessage() (vDocument *Document) {
+	defer func() {
+		if r := recover(); r != nil {
+			vDocument = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Document
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetStickerMessage() (vSticker *Sticker) {
+	defer func() {
+		if r := recover(); r != nil {
+			vSticker = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Sticker
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetLocationMessage() (vLocation *Location) {
+	defer func() {
+		if r := recover(); r != nil {
+			vLocation = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Location
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetContactMessage() (vContact []message.Contact) {
+	defer func() {
+		if r := recover(); r != nil {
+			vContact = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Contacts
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetTextMessage() (vText *Text) {
+	defer func() {
+		if r := recover(); r != nil {
+			vText = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Text
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetOrderMessage() (vOrder *Order) {
+	defer func() {
+		if r := recover(); r != nil {
+			vOrder = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Order
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetSystemMessage() (vSystem *System) {
+	defer func() {
+		if r := recover(); r != nil {
+			vSystem = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].System
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetReferralMessage() (vReferral *Referral) {
+	defer func() {
+		if r := recover(); r != nil {
+			vReferral = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Referral
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetErrors() (vErrors []ErrorMessage) {
+	defer func() {
+		if r := recover(); r != nil {
+			vErrors = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Errors
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetButton() (vButtons *Button) {
+	defer func() {
+		if r := recover(); r != nil {
+			vButtons = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Button
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetInteractive() (vInteractive *Interactive) {
+	defer func() {
+		if r := recover(); r != nil {
+			vInteractive = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Interactive
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetIdentity() (vIdentity *Identity) {
+	defer func() {
+		if r := recover(); r != nil {
+			vIdentity = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Identity
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetContext() (vContext *Context) {
+	defer func() {
+		if r := recover(); r != nil {
+			vContext = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Context
+	} else {
+		panic("this is not a message")
+	}
+}
+
+func (self *Components) GetReactionMessage() (vReaction *Reaction) {
+	defer func() {
+		if r := recover(); r != nil {
+			vReaction = nil
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
+		return self.GetMessages()[0].Reaction
+	} else {
+		panic("this is not a message")
+	}
 }

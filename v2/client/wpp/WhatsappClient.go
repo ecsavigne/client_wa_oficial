@@ -75,7 +75,8 @@ func codeWebHook(msgByte []byte) *event.Components {
 // messageIsForMe && Field
 // field = template_category_update, message_template_status_update, messages
 func (cl *ClientWA) messageIsForMe(component *event.Components) (isForme bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
-	field := component.GetEntry()[0].GetChange()[0].Field
+	// field := component.GetEntry()[0].GetChange()[0].Field
+	field := component.GetNotificationType()
 	phoneNumberID := ""
 
 	if component.GetEntry()[0].GetChange()[0].GetValue().GetMetadata() != nil {

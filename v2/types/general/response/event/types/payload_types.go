@@ -18,6 +18,7 @@ type TYPE_NOTIFICATION_WEBHOOK int
 
 // fields =  (WEBHOOK_NOTIFICATION_[FIELD_NAME])
 const (
+	// obj whatsapp
 	WEBHOOK_NOTIFICATION_UNKNOWN TYPE_NOTIFICATION_WEBHOOK = iota
 	/*
 		- Se rechaza el aumento del límite de mensajes de todos los números de teléfono de un portfolio comercial, se pospone la decisión sobre el aumento o se necesita más información antes de tomar una decisión.

@@ -29,6 +29,16 @@ func (self *AccountUpdateEvent) GetEvent() string {
 	return self.Components.GetEvent()
 }
 
+func (self *AccountUpdateEvent) GetWabaInfo() (vWabaInfo *WabaInfo) {
+	defer func() {
+		if r := recover(); r != nil {
+			vWabaInfo = nil
+		}
+	}()
+
+	return self.GetEntry()[0].Changes[0].Value.WabaInfo
+}
+
 type AccountAlertsEvent struct {
 	*Components
 }
