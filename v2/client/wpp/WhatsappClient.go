@@ -14,6 +14,7 @@ import (
 	"os"
 	"path"
 	"slices"
+	"strings"
 	str "strings"
 	"sync"
 	"time"
@@ -1483,7 +1484,9 @@ func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.Responser {
 }
 
 func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", phone_id), c.Config, RequestWithVersion, nil)
+	q := QueryData{"fields": strings.Join([]string{"id", "display_phone_number", "verified_name", "status", "quality_rating", "country_code", "country_dial_code", "code_verification_status", "name_status", "messaging_limit_tier", "account_mode", "certificate", "is_official_business_account", "host_platform", "is_on_biz_app", "is_preverified_number", "last_onboarded_time", "new_certificate", "new_display_name", "new_name_status", "platform_type", "throughput", "webhook_configuration"}, ",")}
+
+	req, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s?%s", phone_id, q.String()), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -1494,7 +1497,7 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
 		})
 	}
-
+	fmt.Println(req.URL.String())
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {

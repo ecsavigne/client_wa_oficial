@@ -1,12 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"strings"
 
 	clientpack "github.com/ecsavigne/client_wa_oficial/v2/client"
+	"github.com/ecsavigne/client_wa_oficial/v2/client/wpp"
 
 	"github.com/ecsavigne/client_wa_oficial/v2/example/examplemessage"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
@@ -54,25 +57,26 @@ func EventHandler(data any) {
 	}
 }
 
-func testWpp(client clientpack.Client, rr response.Responser) {
+func testWpp(client clientpack.Client, rr_ response.Responser) {
 	fmt.Println(strings.Repeat(".", 25), " Test Client Wpp ", strings.Repeat(".", 25))
 	// Create one Client of WhatsApp Official
-	// my_client := wpp.NewClientWA(
-	// 	// wpp.WithEnvFilePath("../config_env"),
-	// 	wpp.WithEnvFilePath("../../config_env"),
-	// 	// wpp.WithWebhookSocket("wss://webhooks.xxx.com/wa_official/ws"),
-	// 	// wpp.WithEventHandle(EventHandler),
-	// 	// wpp.WithWabaID(""),
-	// 	// wpp.WithToken(""),
-	// )
+	my_client := wpp.NewClientWA(
+		// wpp.WithEnvFilePath("../config_env"),
+		wpp.WithEnvFilePath("../../config_env"),
+		// wpp.WithWebhookSocket("wss://webhooks.xxx.com/wa_official/ws"),
+		// wpp.WithEventHandle(EventHandler),
+		// wpp.WithWabaID(""),
+		// wpp.WithToken(""),
+	)
 
-	// if my_client.Error != nil {
-	// 	// v, ok := my_client.Error.(*response.Error)
-	// 	// if ok {
-	// 	// 	fmt.Println("Errrr: \n", v)
-	// 	// }
-	// 	return
-	// }
+	if my_client.Error != nil {
+		// v, ok := my_client.Error.(*response.Error)
+		// if ok {
+		// 	fmt.Println("Errrr: \n", v)
+		// }
+		log.Fatalf("Error in function NewClientWA. Error is: %s", my_client.Error.Error())
+		return
+	}
 
 	// var m message.Messager = &message.MessageResponse{
 	// 	MessagerKernel: message.MessagerKernel{
@@ -157,8 +161,12 @@ func testWpp(client clientpack.Client, rr response.Responser) {
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.UnregisterNumber(94571)
+	rr := my_client.GetNumberInfo("1039657755908145")
+
+	byt, _ := json.MarshalIndent(rr, "", "  ")
 
 	// fmt.Printf("Response: %s\n", rr)
+	fmt.Printf("Response: %s\n", string(byt))
 	// fmt.Println("Permitions: ", types.GetPermission().Get("whatsapp_business_management", "Label"), "description: ", types.GetPermission().Get("whatsapp_business_management", "Description"))
 	fmt.Println(strings.Repeat(".", 25), " Fin testing Client WhatsApp ", strings.Repeat(".", 25))
 }
@@ -230,8 +238,8 @@ func main() {
 		rr     response.Responser
 	)
 
-	// testWpp(client, rr)
-	testIg(client, rr)
+	testWpp(client, rr)
+	// testIg(client, rr)
 
 	fmt.Println("Press Ctrl+C to exit...")
 	c := make(chan os.Signal, 1)
