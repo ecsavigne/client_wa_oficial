@@ -26,6 +26,9 @@ const (
 	MsgErrorTokenEmpty               MessageError = "Token is empty. Not can connect to Whatsapp"
 	MsgErrorConectionClosedWebSocket              = "Connection Closed WebSocket"
 	MsgErrorParsingJson              MessageError = "Error in parsing json data"
+	MsgErrorForbidden                MessageError = "Forbidden or Insufficient permissions"
+	MsgErrorEntityUnprocessable      MessageError = "Entity Unprocessable"
+	MsgErrorInternalServer           MessageError = "Internal Server Error"
 )
 
 // CodeErrors
@@ -48,7 +51,10 @@ const (
 	CodeErrorParsingJson              CodeError = 16
 	CodeErrorBadRequest               CodeError = 400
 	CodeErrorUnauthorized             CodeError = 401
+	CodeErrorForbidden                CodeError = 403
 	CodeErrorUrlNotFound              CodeError = 404
+	CodeErrorEntityUnprocessable      CodeError = 422
+	CodeErrorInternalServer           CodeError = 500
 )
 
 // TypeErrors
@@ -72,4 +78,7 @@ const (
 	TypeErrorInRequest                TypeError = "in_request"
 	TypeErrorTokenEmpty               TypeError = "token_empty"
 	TypeErrorParsingJson              TypeError = "parsing_json"
+	TypeErrorForbidden                TypeError = "forbidden"
+	TypeErrorEntityUnprocessable      TypeError = "entity_unprocessable"
+	TypeErrorInternalServer           TypeError = "internal_server_error"
 )

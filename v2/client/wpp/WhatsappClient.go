@@ -392,17 +392,23 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 	c.clientHttp.Client = createClientHttp2(30)
 	res, err := c.clientHttp.Do(req)
 	if err != nil {
-		log := fmt.Sprintf("Error in function doRequest when send HTTP request to server with Do. Error is: %s", err.Error())
-		c.Config.Error = fmt.Errorf("%s", log)
+		log := fmt.Sprintf("Error in function doRequest when do HTTP request to server with Do. Error is: %s", err.Error())
+		c.Config.Error = response.NewError(&response.Error{
+			Type:    types.TypeErrorBadRequest,
+			Code:    types.CodeErrorBadRequest,
+			Message: log,
+		})
 		return nil, c.Config.Error
 	}
 
 	switch res.StatusCode {
+	case 200:
+		return res, nil
 	case 400:
-		if e := response.GetResponseRequest(res.Body, "doRequest", "400").GetResponseError(); e != nil {
-			c.Config.Error = e
-			return nil, e
-		}
+		// if e := response.GetResponseRequest(res.Body, "doRequest", "400").GetResponseError(); e != nil {
+		// 	c.Config.Error = e
+		// 	return nil, e
+		// }
 		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBadRequest,
@@ -411,10 +417,10 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 		})
 		return nil, c.Config.Error
 	case 401:
-		if e := response.GetResponseRequest(res.Body, "doRequest", "401").GetResponseError(); e != nil {
-			c.Config.Error = e
-			return nil, e
-		}
+		// if e := response.GetResponseRequest(res.Body, "doRequest", "401").GetResponseError(); e != nil {
+		// 	c.Config.Error = e
+		// 	return nil, e
+		// }
 		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorUnauthorized,
@@ -422,11 +428,23 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 			Message: log,
 		})
 		return nil, c.Config.Error
+	case 403:
+		// if e := response.GetResponseRequest(res.Body, "doRequest", "403").GetResponseError(); e != nil {
+		// 	c.Config.Error = e
+		// 	return nil, e
+		// }
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
+		c.Config.Error = response.NewError(&response.Error{
+			Type:    types.TypeErrorForbidden,
+			Code:    types.CodeErrorForbidden,
+			Message: log,
+		})
+		return nil, c.Config.Error
 	case 404:
-		if e := response.GetResponseRequest(res.Body, "doRequest", "404").GetResponseError(); e != nil {
-			c.Config.Error = e
-			return nil, e
-		}
+		// if e := response.GetResponseRequest(res.Body, "doRequest", "404").GetResponseError(); e != nil {
+		// 	c.Config.Error = e
+		// 	return nil, e
+		// }
 		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorUrlNotFound,
@@ -434,9 +452,33 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 			Message: log,
 		})
 		return nil, c.Config.Error
-	}
+	case 422:
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
+		c.Config.Error = response.NewError(&response.Error{
+			Type:    types.TypeErrorEntityUnprocessable,
+			Code:    types.CodeErrorEntityUnprocessable,
+			Message: log,
+		})
+		return nil, c.Config.Error
+	case 500:
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
+		c.Config.Error = response.NewError(&response.Error{
+			Type:    types.TypeErrorInternalServer,
+			Code:    types.CodeErrorInternalServer,
+			Message: log,
+		})
+		return nil, c.Config.Error
+	default:
+		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
+		c.Config.Error = response.NewError(&response.Error{
+			Type:    types.TypeErrorUnrecognized,
+			Code:    types.CodeErrorUnrecognized,
+			Message: log,
+		})
 
-	return res, nil
+		return nil, c.Config.Error
+	}
+	// return res, nil
 }
 
 func (c *ClientWA) doRequest(req *http.Request) (response.Responser, error) {
@@ -1486,18 +1528,56 @@ func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.Responser {
 func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 	q := QueryData{"fields": strings.Join([]string{"id", "display_phone_number", "verified_name", "status", "quality_rating", "country_code", "country_dial_code", "code_verification_status", "name_status", "messaging_limit_tier", "account_mode", "certificate", "is_official_business_account", "host_platform", "is_on_biz_app", "is_preverified_number", "last_onboarded_time", "new_certificate", "new_display_name", "new_name_status", "platform_type", "throughput", "webhook_configuration"}, ",")}
 
-	req, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s?%s", phone_id, q.String()), c.Config, RequestWithVersion, nil)
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s?%s", phone_id, q.String()), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
-			return err
+			switch err.Code {
+			case types.CodeErrorBadRequest:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorBadRequest,
+					Message: "Bad Request: Invalid parameters or malformed request",
+				})
+			case types.CodeErrorUnauthorized:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorUnauthorized,
+					Message: "Unauthorized: Invalid access token or missing token",
+				})
+			case types.CodeErrorForbidden:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorForbidden,
+					Message: "Forbidden: Access token does not have permission to access this resource",
+				})
+			case types.CodeErrorUrlNotFound:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorUrlNotFound,
+					Message: "Not Found: The phone number does not exist or is not accessible",
+				})
+			case types.CodeErrorEntityUnprocessable:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorEntityUnprocessable,
+					Message: "Unprocessable Entity: The request parameters are valid but cannot be processed",
+				})
+			case types.CodeErrorInternalServer:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorInternalServer,
+					Message: "Internal Server Error: An unexpected error occurred on the server",
+				})
+			}
 		}
+
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
 		})
 	}
-	fmt.Println(req.URL.String())
+	// fmt.Println(req.URL.String())
 	// Do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
