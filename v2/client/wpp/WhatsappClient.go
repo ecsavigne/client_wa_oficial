@@ -1530,6 +1530,17 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 
 	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s?%s", phone_id, q.String()), c.Config, RequestWithVersion, nil)
 	if err != nil {
+		return response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: fmt.Sprintln("in GetNumberInfo request of ClientWA. error is: ", err.Error()),
+		})
+	}
+
+	// fmt.Println(req.URL.String())
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			switch err.Code {
 			case types.CodeErrorBadRequest:
@@ -1570,25 +1581,6 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 				})
 			}
 		}
-
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
-		})
-	}
-	// fmt.Println(req.URL.String())
-	// Do request
-	resp, err := doRequest(c.request, c)
-	if err != nil {
-		if err, ok := err.(*response.Error); ok {
-			return err
-		}
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
-		})
 	}
 
 	// prepare response
