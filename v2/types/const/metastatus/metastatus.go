@@ -11,6 +11,10 @@ const (
 	META_UNKNOWN      META_STATUS = "UNKNOWN"
 )
 
+func (m META_STATUS) String() string {
+	return string(m)
+}
+
 func (m META_STATUS) Code() int {
 	code := map[META_STATUS]int{
 		META_UNKNOWN:      1,

@@ -12,6 +12,10 @@ const (
 	NAME_PENDING_REVIEW           NAME_STATUS = "PENDING_REVIEW"
 )
 
+func (n NAME_STATUS) String() string {
+	return string(n)
+}
+
 func (n NAME_STATUS) Description() string {
 	description := map[NAME_STATUS]string{
 		NAME_NON_EXISTS:               "Não existe certificado nem solicitação de verificação.",
@@ -55,6 +59,10 @@ const (
 	QUALITY_RED     QUALITY_RATING = "RED"
 )
 
+func (q QUALITY_RATING) String() string {
+	return string(q)
+}
+
 func (q QUALITY_RATING) Description() string {
 	description := map[QUALITY_RATING]string{
 		QUALITY_UNKNOWN: "A classificação de qualidade ainda não foi determinada (novos números de telefone).",
@@ -93,6 +101,10 @@ const (
 	CODE_VERIFICATION_NOT_VERIFIED CODE_VERIFICATION_STATUS = "NOT_VERIFIED"
 	CODE_VERIFICATION_EXPIRED      CODE_VERIFICATION_STATUS = "EXPIRED"
 )
+
+func (c CODE_VERIFICATION_STATUS) String() string {
+	return string(c)
+}
 
 func (c CODE_VERIFICATION_STATUS) Description() string {
 	description := map[CODE_VERIFICATION_STATUS]string{
