@@ -1547,37 +1547,37 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 				return response.NewError(&response.Error{
 					Type:    response.ResponseError,
 					Code:    types.CodeErrorBadRequest,
-					Message: "Bad Request: Invalid parameters or malformed request",
+					Message: "Bad Request: Invalid parameters or malformed request. original error: " + err.Message,
 				})
 			case types.CodeErrorUnauthorized:
 				return response.NewError(&response.Error{
 					Type:    response.ResponseError,
 					Code:    types.CodeErrorUnauthorized,
-					Message: "Unauthorized: Invalid access token or missing token",
+					Message: "Unauthorized: Invalid access token or missing token. original error: " + err.Message,
 				})
 			case types.CodeErrorForbidden:
 				return response.NewError(&response.Error{
 					Type:    response.ResponseError,
 					Code:    types.CodeErrorForbidden,
-					Message: "Forbidden: Access token does not have permission to access this resource",
+					Message: "Forbidden: Access token does not have permission to access this resource. original error: " + err.Message,
 				})
 			case types.CodeErrorUrlNotFound:
 				return response.NewError(&response.Error{
 					Type:    response.ResponseError,
 					Code:    types.CodeErrorUrlNotFound,
-					Message: "Not Found: The phone number does not exist or is not accessible",
+					Message: "Not Found: The phone number does not exist or is not accessible. original error: " + err.Message,
 				})
 			case types.CodeErrorEntityUnprocessable:
 				return response.NewError(&response.Error{
 					Type:    response.ResponseError,
 					Code:    types.CodeErrorEntityUnprocessable,
-					Message: "Unprocessable Entity: The request parameters are valid but cannot be processed",
+					Message: "Unprocessable Entity: The request parameters are valid but cannot be processed. original error: " + err.Message,
 				})
 			case types.CodeErrorInternalServer:
 				return response.NewError(&response.Error{
 					Type:    response.ResponseError,
 					Code:    types.CodeErrorInternalServer,
-					Message: "Internal Server Error: An unexpected error occurred on the server",
+					Message: "Internal Server Error: An unexpected error occurred on the server. original error: " + err.Message,
 				})
 			}
 		}
