@@ -11,11 +11,14 @@ type WhatsappBusinessApiData struct {
 }
 
 type WabaInfo struct {
-	*WabaIdentyfy            `json:",omitempty"`
-	Currency                 string                   `json:"currency,omitempty"`
-	TimezoneID               string                   `json:"timezone_id,omitempty"`
-	MessageTemplateNamespace string                   `json:"message_template_namespace,omitempty"`
-	WhatsappBusinessApiData  *WhatsappBusinessApiData `json:"whatsapp_business_api_data,omitempty"`
+	*WabaIdentyfy              `json:",omitempty"`
+	Currency                   string                   `json:"currency,omitempty"`
+	TimezoneID                 string                   `json:"timezone_id,omitempty"`
+	MessageTemplateNamespace   string                   `json:"message_template_namespace,omitempty"`
+	WhatsappBusinessApiData    *WhatsappBusinessApiData `json:"whatsapp_business_api_data,omitempty"`
+	AccountReviewStatus        string                   `json:"account_review_status,omitempty"`
+	BusinessVerificationStatus string                   `json:"business_verification_status,omitempty"`
+	OwnershipType              string                   `json:"ownership_type,omitempty"`
 }
 
 type Waba struct {
