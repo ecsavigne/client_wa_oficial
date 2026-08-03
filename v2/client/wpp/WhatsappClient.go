@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"maps"
 	"net/http"
 	"net/url"
@@ -1960,7 +1959,6 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.Responser {
 
 	// Do request
 	resp, err := doRequest(c.request, c)
-	log.Printf("%s\n", c.request.URL.String())
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			switch err.Code {
@@ -2025,7 +2023,9 @@ func (c *ClientWA) GetWabaInfo(waba_id string) response.Responser {
 // error is returned. The response is wrapped and returned as a ResponserRequest.
 
 func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQueryVersion, QueryData{"fields": "id,name,extended_updated_time,link,two_factor_type,is_hidden,payment_account_id,verification_status,updated_time,created_time,whatsapp_business_manager_messaging_limit"})
+	q := QueryData{"fields": strings.Join([]string{"id", "block_offline_analytics", "created_by", "created_time", "extended_updated_time", "is_hidden", "link", "marketing_messages_onboarding_status", "name", "payment_account_id", "profile_picture_uri", "timezone_id", "two_factor_type", "updated_by", "updated_time", "verification_status", "vertical", "vertical_id", "whatsapp_business_manager_messaging_limit"}, ",")}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", business_id), c.Config, RequestWithQueryVersion, q)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -2041,13 +2041,45 @@ func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
 	resp, err := doRequest(c.request, c)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
-			return err
+			switch err.Code {
+			case types.CodeErrorBadRequest:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorBadRequest,
+					Message: "Bad Request: Invalid parameters or malformed request. original error: " + err.Message,
+				})
+			case types.CodeErrorUnauthorized:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorUnauthorized,
+					Message: "Unauthorized: Invalid access token or missing token. original error: " + err.Message,
+				})
+			case types.CodeErrorForbidden:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorForbidden,
+					Message: "Forbidden: Access token does not have permission to access this resource. original error: " + err.Message,
+				})
+			case types.CodeErrorUrlNotFound:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorUrlNotFound,
+					Message: "Not Found: The phone number does not exist or is not accessible. original error: " + err.Message,
+				})
+			case types.CodeErrorEntityUnprocessable:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorEntityUnprocessable,
+					Message: "Unprocessable Entity: The request parameters are valid but cannot be processed. original error: " + err.Message,
+				})
+			case types.CodeErrorInternalServer:
+				return response.NewError(&response.Error{
+					Type:    response.ResponseError,
+					Code:    types.CodeErrorInternalServer,
+					Message: "Internal Server Error: An unexpected error occurred on the server. original error: " + err.Message,
+				})
+			}
 		}
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
-		})
 	}
 
 	// prepare response

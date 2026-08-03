@@ -162,8 +162,8 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.UnregisterNumber(94571)
 	// rr := my_client.GetNumberInfo("1039657755908145")
-	rr := my_client.GetWabaInfo("2075632806348397")
-
+	// rr := my_client.GetWabaInfo("2075632806348397")
+	rr := my_client.GetBusinessInfo("991179623372311")
 	byt, _ := json.MarshalIndent(rr, "", "  ")
 
 	// fmt.Printf("Response: %s\n", rr)
