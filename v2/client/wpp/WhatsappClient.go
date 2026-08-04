@@ -1486,7 +1486,9 @@ func (c *ClientWA) DeleteMessage(id string) response.Responser {
 // GetInfoAllNumberInWaba retrieves information about all phone numbers associated with a given
 // WhatsApp Business Account (specified by waba_id).
 func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", waba_id, "phone_numbers"), c.Config, RequestWithVersion, nil)
+	q := QueryData{"fields": strings.Join([]string{"id", "display_phone_number", "verified_name", "status", "quality_rating", "country_code", "country_dial_code", "code_verification_status", "name_status", "messaging_limit_tier", "account_mode", "certificate", "is_official_business_account", "host_platform", "is_on_biz_app", "is_preverified_number", "last_onboarded_time", "new_certificate", "new_display_name", "new_name_status", "platform_type", "throughput", "webhook_configuration"}, ",")}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s?%s", waba_id, "phone_numbers", q.String()), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		if err, ok := err.(*response.Error); ok {
 			return err
@@ -1494,7 +1496,7 @@ func (c *ClientWA) GetInfoAllNumberInWaba(waba_id string) response.Responser {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in GetInfoAllNumberInWA request of ClientWA. error is: ", err.Error()),
+			Message: fmt.Sprintln("in GetInfoAllNumberInWA request of ClientWA. error is: ", err.Error()),
 		})
 	}
 
@@ -1601,7 +1603,9 @@ func (c *ClientWA) GetNumberInfo(phone_id string) response.Responser {
 // WhatsApp Business API client. It returns a JSON response containing an array of phone
 // numbers and their associated information.
 func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.Responser {
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s", portafolio_id, "owned_whatsapp_business_accounts"), c.Config, RequestWithVersion)
+	q := QueryData{"fields": strings.Join([]string{"id", "name", "timezone_id", "message_template_namespace", "account_review_status", "business_verification_status", "country", "ownership_type", "primary_business_location", "currency"}, ",")}
+
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s/%s?%s", portafolio_id, "owned_whatsapp_business_accounts", q.String()), c.Config, RequestWithVersion)
 	if err != nil {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
@@ -1627,7 +1631,7 @@ func (c *ClientWA) GetOwnedWaba(portafolio_id string) response.Responser {
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in GetInfoAllWaba request of ClientWA. error is: ", err.Error()),
+			Message: fmt.Sprintln("in GetInfoAllWaba request of ClientWA. error is: ", err.Error()),
 		})
 	}
 
