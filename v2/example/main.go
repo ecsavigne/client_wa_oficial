@@ -227,7 +227,7 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	// rr = examplemessage.GetConversations(client)
 	// rr = examplemessage.GetUserConversation(client, "2014023525994448")
 	// rr = examplemessage.GetMessagesOfConversation(client, "aWdfZAG06MzQwMjgyMzY2ODQxNzEwMzAxMjQ0Mjc2MjQ0OTY3MjE0NjQ3MzQz")
-	// rr = examplemessage.GetMessageInfo(client, "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4MTgyMjA5NjMwOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjI0NDk2NzIxNDY0NzM0MzozMjY5MDUxNjYwMjgzNDE1MjI2MzAwNTk0OTk2MzI3MjE5MgZDZD")
+	rr = examplemessage.GetMessageInfo(client, "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4MTgyMjA5NjMwOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjI0NDk2NzIxNDY0NzM0MzozMjY5MDUxNjYwMjgzNDE1MjI2MzAwNTk0OTk2MzI3MjE5MgZDZD")
 	fmt.Printf("Response: %v\n", rr)
 
 	fmt.Println(strings.Repeat(".", 25), " Fin testing Client IG ", strings.Repeat(".", 25))
@@ -239,8 +239,8 @@ func main() {
 		rr     response.Responser
 	)
 
-	testWpp(client, rr)
-	// testIg(client, rr)
+	// testWpp(client, rr)
+	testIg(client, rr)
 
 	fmt.Println("Press Ctrl+C to exit...")
 	c := make(chan os.Signal, 1)

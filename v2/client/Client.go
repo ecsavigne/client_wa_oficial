@@ -3,10 +3,18 @@ package client
 import (
 	"net/http"
 
+	"github.com/centrifugal/centrifuge-go"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/avro"
+	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/avrov2"
+	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/avrov3"
+	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/jsonschema"
+	"github.com/confluentinc/confluent-kafka-go/v2/schemaregistry/serde/protobuf"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
 	evt_types "github.com/ecsavigne/client_wa_oficial/v2/types/general/response/event/types"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/ig"
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
+	"github.com/pusher/pusher-websocket-go"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -90,4 +98,15 @@ type Client interface {
 	SendPresence(recipient_id, presence string) response.Responser
 	MarkRead(recipient_id string) response.Responser
 	MultipartRequest(method string, data proto.Message, ePoint string) (*http.Request, error)
+}
+
+// represent not generic type
+type NotTyp struct{}
+
+type ClientReceiver interface {
+	*centrifuge.Client | *pusher.Client | *kafka.Consumer | NotTyp
+}
+type Deserializer interface {
+	*jsonschema.Deserializer | *protobuf.Deserializer | *avro.GenericDeserializer |
+		*avrov2.Deserializer | *avrov3.Deserializer | NotTyp
 }

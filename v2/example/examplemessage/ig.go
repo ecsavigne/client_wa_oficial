@@ -3,6 +3,7 @@ package examplemessage
 import (
 	"fmt"
 
+	"github.com/ecsavigne/client_wa_oficial/v2/client"
 	clientpack "github.com/ecsavigne/client_wa_oficial/v2/client"
 	"github.com/ecsavigne/client_wa_oficial/v2/client/ig"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/general/response"
@@ -10,12 +11,12 @@ import (
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
 )
 
-var NewClientIG = func() clientpack.Client {
+func NewClientIG[T1 client.NotTyp, T2 client.NotTyp]() clientpack.Client {
 	client, e := ig.NewClientIG(
 		// ig.WithEnvFilePath("../../config_env"),
-		ig.WithEnvFilePath("../config_env"),
-		ig.WithToken("IGAAQ7JedvaElBZAGI3clhETVZAFa3hjeXRVd200cnZAucHplbkFrTVI3OUJwMTVfeVN2MHhzWjBPY2hvS2gwODROUTIybkhNWVlFcmdjdEFySmZAMU2VNcU1nMkVNeFlIZADJLcVBJVTBrT0o0NlFDdGtRZAGpadWFBRVU4ektSMWs5cwZDZD"),
-		ig.WithUserID("17841448182209630"),
+		ig.WithEnvFilePath[T1, T2]("../config_env"),
+		ig.WithToken[T1, T2]("IGAAQ7JedvaElBZAFlvUzZAOWGNqY3BIeFJMUWtucVRsSzJETlFsb0ZAjcTFXT1lMRkFlckNPSnU1SjJYTU40X0Q1MVNzOWJhcHU5VHo3YUVRSUR1Vkt0NXNsSmQzTWJiZAVhGajZAYX21MRF92cFdoRlVJX1lpX1R3SEIxaUNMRzJRTQZDZD"),
+		ig.WithUserID[T1, T2]("17841448182209630"),
 	)
 
 	if e != nil {

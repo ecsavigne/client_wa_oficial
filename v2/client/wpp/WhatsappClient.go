@@ -497,14 +497,13 @@ func (c *ClientWA) doRequest(req *http.Request) (response.Responser, error) {
 
 	bodyResponse, e := io.ReadAll(res.Body)
 	if e != nil {
-		log := fmt.Sprintf("Error in function doRequest of ClientWA when reading response body. Error is: %s", e.Error())
 		responser = response.NewError(&response.Error{
 			Type:    types.TypeErrorUnrecognized,
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintf("Type: %s. Error is: %s", types.MsgErrorUnrecognized, e.Error()),
 		})
-		c.Config.Error = fmt.Errorf("%s", log)
-		return nil, c.Config.Error
+		c.Config.Error = e
+		return responser, e
 	}
 
 	return response.JsonWrapperResponseRequest(bodyResponse), nil
