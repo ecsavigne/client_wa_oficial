@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_webhook.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,23 +24,18 @@ const (
 
 // Entry represents an entry in the webhook payload
 type Entry struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Array of changes in this entry
-	Changes []*WebhookChange `protobuf:"bytes,1,rep,name=changes" json:"changes,omitempty"`
-	// The field that changed (for specific webhook payloads)
-	Field *string `protobuf:"bytes,2,opt,name=field" json:"field,omitempty"`
-	// The ID for the Instagram Professional account that owns the quick replies
-	Id *string `protobuf:"bytes,3,opt,name=id" json:"id,omitempty"`
-	// Array of messaging items in this entry
-	Messaging []*MessagingItem `protobuf:"bytes,4,rep,name=messaging" json:"messaging,omitempty"`
-	// The time the notification was sent (Unix timestamp in milliseconds)
-	Time *int64 `protobuf:"varint,5,opt,name=time" json:"time,omitempty"`
-	// The user ID associated with the entry
-	Uid *string `protobuf:"bytes,6,opt,name=uid" json:"uid,omitempty"`
-	// The value object for non-messaging events like comments
-	Value         *WebhookValue `protobuf:"bytes,7,opt,name=value" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Changes     *[]*WebhookChange      `protobuf:"bytes,1,rep,name=changes"`
+	xxx_hidden_Field       *string                `protobuf:"bytes,2,opt,name=field"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,3,opt,name=id"`
+	xxx_hidden_Messaging   *[]*MessagingItem      `protobuf:"bytes,4,rep,name=messaging"`
+	xxx_hidden_Time        int64                  `protobuf:"varint,5,opt,name=time"`
+	xxx_hidden_Uid         *string                `protobuf:"bytes,6,opt,name=uid"`
+	xxx_hidden_Value       *WebhookValue          `protobuf:"bytes,7,opt,name=value"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *Entry) Reset() {
@@ -72,134 +65,155 @@ func (x *Entry) ProtoReflect() protoreflect.Message {
 
 func (x *Entry) GetChanges() []*WebhookChange {
 	if x != nil {
-		return x.Changes
+		if x.xxx_hidden_Changes != nil {
+			return *x.xxx_hidden_Changes
+		}
 	}
 	return nil
 }
 
 func (x *Entry) GetField() string {
-	if x != nil && x.Field != nil {
-		return *x.Field
+	if x != nil {
+		if x.xxx_hidden_Field != nil {
+			return *x.xxx_hidden_Field
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Entry) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Entry) GetMessaging() []*MessagingItem {
 	if x != nil {
-		return x.Messaging
+		if x.xxx_hidden_Messaging != nil {
+			return *x.xxx_hidden_Messaging
+		}
 	}
 	return nil
 }
 
 func (x *Entry) GetTime() int64 {
-	if x != nil && x.Time != nil {
-		return *x.Time
+	if x != nil {
+		return x.xxx_hidden_Time
 	}
 	return 0
 }
 
 func (x *Entry) GetUid() string {
-	if x != nil && x.Uid != nil {
-		return *x.Uid
+	if x != nil {
+		if x.xxx_hidden_Uid != nil {
+			return *x.xxx_hidden_Uid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Entry) GetValue() *WebhookValue {
 	if x != nil {
-		return x.Value
+		return x.xxx_hidden_Value
 	}
 	return nil
 }
 
 func (x *Entry) SetChanges(v []*WebhookChange) {
-	x.Changes = v
+	x.xxx_hidden_Changes = &v
 }
 
 func (x *Entry) SetField(v string) {
-	x.Field = &v
+	x.xxx_hidden_Field = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 7)
 }
 
 func (x *Entry) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 7)
 }
 
 func (x *Entry) SetMessaging(v []*MessagingItem) {
-	x.Messaging = v
+	x.xxx_hidden_Messaging = &v
 }
 
 func (x *Entry) SetTime(v int64) {
-	x.Time = &v
+	x.xxx_hidden_Time = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 7)
 }
 
 func (x *Entry) SetUid(v string) {
-	x.Uid = &v
+	x.xxx_hidden_Uid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 7)
 }
 
 func (x *Entry) SetValue(v *WebhookValue) {
-	x.Value = v
+	x.xxx_hidden_Value = v
 }
 
 func (x *Entry) HasField() bool {
 	if x == nil {
 		return false
 	}
-	return x.Field != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *Entry) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *Entry) HasTime() bool {
 	if x == nil {
 		return false
 	}
-	return x.Time != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *Entry) HasUid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Uid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *Entry) HasValue() bool {
 	if x == nil {
 		return false
 	}
-	return x.Value != nil
+	return x.xxx_hidden_Value != nil
 }
 
 func (x *Entry) ClearField() {
-	x.Field = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Field = nil
 }
 
 func (x *Entry) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *Entry) ClearTime() {
-	x.Time = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Time = 0
 }
 
 func (x *Entry) ClearUid() {
-	x.Uid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_Uid = nil
 }
 
 func (x *Entry) ClearValue() {
-	x.Value = nil
+	x.xxx_hidden_Value = nil
 }
 
 type Entry_builder struct {
@@ -225,27 +239,38 @@ func (b0 Entry_builder) Build() *Entry {
 	m0 := &Entry{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Changes = b.Changes
-	x.Field = b.Field
-	x.Id = b.Id
-	x.Messaging = b.Messaging
-	x.Time = b.Time
-	x.Uid = b.Uid
-	x.Value = b.Value
+	x.xxx_hidden_Changes = &b.Changes
+	if b.Field != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 7)
+		x.xxx_hidden_Field = b.Field
+	}
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 7)
+		x.xxx_hidden_Id = b.Id
+	}
+	x.xxx_hidden_Messaging = &b.Messaging
+	if b.Time != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 7)
+		x.xxx_hidden_Time = *b.Time
+	}
+	if b.Uid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 7)
+		x.xxx_hidden_Uid = b.Uid
+	}
+	x.xxx_hidden_Value = b.Value
 	return m0
 }
 
 // User represents a user with name and username
 type User struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The user ID
-	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	// The username of the user
-	Username *string `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
-	// The name of the user
-	Name          *string `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_Username    *string                `protobuf:"bytes,2,opt,name=username"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,3,opt,name=name"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *User) Reset() {
@@ -274,69 +299,84 @@ func (x *User) ProtoReflect() protoreflect.Message {
 }
 
 func (x *User) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *User) GetUsername() string {
-	if x != nil && x.Username != nil {
-		return *x.Username
+	if x != nil {
+		if x.xxx_hidden_Username != nil {
+			return *x.xxx_hidden_Username
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *User) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *User) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *User) SetUsername(v string) {
-	x.Username = &v
+	x.xxx_hidden_Username = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *User) SetName(v string) {
-	x.Name = &v
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *User) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *User) HasUsername() bool {
 	if x == nil {
 		return false
 	}
-	return x.Username != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *User) HasName() bool {
 	if x == nil {
 		return false
 	}
-	return x.Name != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *User) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *User) ClearUsername() {
-	x.Username = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Username = nil
 }
 
 func (x *User) ClearName() {
-	x.Name = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Name = nil
 }
 
 type User_builder struct {
@@ -354,31 +394,35 @@ func (b0 User_builder) Build() *User {
 	m0 := &User{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
-	x.Username = b.Username
-	x.Name = b.Name
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Username != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Username = b.Username
+	}
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Name = b.Name
+	}
 	return m0
 }
 
 // InstagramWebhookEvent represents the complete webhook event payload received from Instagram
 type InstagramWebhookEvent struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// An array of strings indicating the names of the fields that have been changed. Only included if you disable the Include Values setting.
-	ChangedFields []string `protobuf:"bytes,1,rep,name=changed_fields,json=changedFields" json:"changed_fields,omitempty"`
-	// An array containing an object describing the changed fields and their new values. Only included if you enable the Include Values setting.
-	Changes []*WebhookChange `protobuf:"bytes,2,rep,name=changes" json:"changes,omitempty"`
-	// An array containing an object describing the changes. Multiple changes from different objects that are of the same type may be batched together.
-	Entry []*Entry `protobuf:"bytes,3,rep,name=entry" json:"entry,omitempty"`
-	// The object's ID
-	Id *string `protobuf:"bytes,4,opt,name=id" json:"id,omitempty"`
-	// The object's type (e.g., user, page, etc.)
-	Object *string `protobuf:"bytes,5,opt,name=object" json:"object,omitempty"`
-	// The raw payload of the webhook
-	Payload []byte `protobuf:"bytes,6,opt,name=payload" json:"payload,omitempty"`
-	// A UNIX timestamp indicating when the Event Notification was sent
-	Time          *int64 `protobuf:"varint,7,opt,name=time" json:"time,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ChangedFields []string               `protobuf:"bytes,1,rep,name=changed_fields,json=changedFields"`
+	xxx_hidden_Changes       *[]*WebhookChange      `protobuf:"bytes,2,rep,name=changes"`
+	xxx_hidden_Entry         *[]*Entry              `protobuf:"bytes,3,rep,name=entry"`
+	xxx_hidden_Id            *string                `protobuf:"bytes,4,opt,name=id"`
+	xxx_hidden_Object        *string                `protobuf:"bytes,5,opt,name=object"`
+	xxx_hidden_Payload       []byte                 `protobuf:"bytes,6,opt,name=payload"`
+	xxx_hidden_Time          int64                  `protobuf:"varint,7,opt,name=time"`
+	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
+	XXX_presence             [1]uint32
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *InstagramWebhookEvent) Reset() {
@@ -408,126 +452,144 @@ func (x *InstagramWebhookEvent) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramWebhookEvent) GetChangedFields() []string {
 	if x != nil {
-		return x.ChangedFields
+		return x.xxx_hidden_ChangedFields
 	}
 	return nil
 }
 
 func (x *InstagramWebhookEvent) GetChanges() []*WebhookChange {
 	if x != nil {
-		return x.Changes
+		if x.xxx_hidden_Changes != nil {
+			return *x.xxx_hidden_Changes
+		}
 	}
 	return nil
 }
 
 func (x *InstagramWebhookEvent) GetEntry() []*Entry {
 	if x != nil {
-		return x.Entry
+		if x.xxx_hidden_Entry != nil {
+			return *x.xxx_hidden_Entry
+		}
 	}
 	return nil
 }
 
 func (x *InstagramWebhookEvent) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramWebhookEvent) GetObject() string {
-	if x != nil && x.Object != nil {
-		return *x.Object
+	if x != nil {
+		if x.xxx_hidden_Object != nil {
+			return *x.xxx_hidden_Object
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramWebhookEvent) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *InstagramWebhookEvent) GetTime() int64 {
-	if x != nil && x.Time != nil {
-		return *x.Time
+	if x != nil {
+		return x.xxx_hidden_Time
 	}
 	return 0
 }
 
 func (x *InstagramWebhookEvent) SetChangedFields(v []string) {
-	x.ChangedFields = v
+	x.xxx_hidden_ChangedFields = v
 }
 
 func (x *InstagramWebhookEvent) SetChanges(v []*WebhookChange) {
-	x.Changes = v
+	x.xxx_hidden_Changes = &v
 }
 
 func (x *InstagramWebhookEvent) SetEntry(v []*Entry) {
-	x.Entry = v
+	x.xxx_hidden_Entry = &v
 }
 
 func (x *InstagramWebhookEvent) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
 }
 
 func (x *InstagramWebhookEvent) SetObject(v string) {
-	x.Object = &v
+	x.xxx_hidden_Object = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 7)
 }
 
 func (x *InstagramWebhookEvent) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 7)
 }
 
 func (x *InstagramWebhookEvent) SetTime(v int64) {
-	x.Time = &v
+	x.xxx_hidden_Time = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 7)
 }
 
 func (x *InstagramWebhookEvent) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *InstagramWebhookEvent) HasObject() bool {
 	if x == nil {
 		return false
 	}
-	return x.Object != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *InstagramWebhookEvent) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *InstagramWebhookEvent) HasTime() bool {
 	if x == nil {
 		return false
 	}
-	return x.Time != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
 }
 
 func (x *InstagramWebhookEvent) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *InstagramWebhookEvent) ClearObject() {
-	x.Object = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Object = nil
 }
 
 func (x *InstagramWebhookEvent) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_Payload = nil
 }
 
 func (x *InstagramWebhookEvent) ClearTime() {
-	x.Time = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_Time = 0
 }
 
 type InstagramWebhookEvent_builder struct {
@@ -553,41 +615,45 @@ func (b0 InstagramWebhookEvent_builder) Build() *InstagramWebhookEvent {
 	m0 := &InstagramWebhookEvent{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.ChangedFields = b.ChangedFields
-	x.Changes = b.Changes
-	x.Entry = b.Entry
-	x.Id = b.Id
-	x.Object = b.Object
-	x.Payload = b.Payload
-	x.Time = b.Time
+	x.xxx_hidden_ChangedFields = b.ChangedFields
+	x.xxx_hidden_Changes = &b.Changes
+	x.xxx_hidden_Entry = &b.Entry
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Object != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 7)
+		x.xxx_hidden_Object = b.Object
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 7)
+		x.xxx_hidden_Payload = b.Payload
+	}
+	if b.Time != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 7)
+		x.xxx_hidden_Time = *b.Time
+	}
 	return m0
 }
 
 // MessagingItem represents a single messaging event in the webhook
 type MessagingItem struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Indicates if the event was generated by the app user
-	IsSelf *bool `protobuf:"varint,1,opt,name=is_self,json=isSelf" json:"is_self,omitempty"`
-	// The message content
-	Message *WebhookMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
-	// The message edit content
-	MessageEdit *WebhookMessageEdit `protobuf:"bytes,3,opt,name=message_edit,json=messageEdit" json:"message_edit,omitempty"`
-	// The postback content
-	Postback *WebhookPostback `protobuf:"bytes,4,opt,name=postback" json:"postback,omitempty"`
-	// The reaction content
-	Reaction *WebhookReaction `protobuf:"bytes,5,opt,name=reaction" json:"reaction,omitempty"`
-	// The read content
-	Read *WebhookRead `protobuf:"bytes,6,opt,name=read" json:"read,omitempty"`
-	// The user who is receiving the message (Instagram Professional account)
-	Recipient *User `protobuf:"bytes,7,opt,name=recipient" json:"recipient,omitempty"`
-	// The referral content
-	Referral *WebhookReferral `protobuf:"bytes,8,opt,name=referral" json:"referral,omitempty"`
-	// The user who sent the message
-	Sender *User `protobuf:"bytes,9,opt,name=sender" json:"sender,omitempty"`
-	// Unix timestamp when the message was sent
-	Timestamp     *int64 `protobuf:"varint,10,opt,name=timestamp" json:"timestamp,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_IsSelf      bool                   `protobuf:"varint,1,opt,name=is_self,json=isSelf"`
+	xxx_hidden_Message     *WebhookMessage        `protobuf:"bytes,2,opt,name=message"`
+	xxx_hidden_MessageEdit *WebhookMessageEdit    `protobuf:"bytes,3,opt,name=message_edit,json=messageEdit"`
+	xxx_hidden_Postback    *WebhookPostback       `protobuf:"bytes,4,opt,name=postback"`
+	xxx_hidden_Reaction    *WebhookReaction       `protobuf:"bytes,5,opt,name=reaction"`
+	xxx_hidden_Read        *WebhookRead           `protobuf:"bytes,6,opt,name=read"`
+	xxx_hidden_Recipient   *User                  `protobuf:"bytes,7,opt,name=recipient"`
+	xxx_hidden_Referral    *WebhookReferral       `protobuf:"bytes,8,opt,name=referral"`
+	xxx_hidden_Sender      *User                  `protobuf:"bytes,9,opt,name=sender"`
+	xxx_hidden_Timestamp   int64                  `protobuf:"varint,10,opt,name=timestamp"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *MessagingItem) Reset() {
@@ -616,223 +682,227 @@ func (x *MessagingItem) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MessagingItem) GetIsSelf() bool {
-	if x != nil && x.IsSelf != nil {
-		return *x.IsSelf
+	if x != nil {
+		return x.xxx_hidden_IsSelf
 	}
 	return false
 }
 
 func (x *MessagingItem) GetMessage() *WebhookMessage {
 	if x != nil {
-		return x.Message
+		return x.xxx_hidden_Message
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetMessageEdit() *WebhookMessageEdit {
 	if x != nil {
-		return x.MessageEdit
+		return x.xxx_hidden_MessageEdit
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetPostback() *WebhookPostback {
 	if x != nil {
-		return x.Postback
+		return x.xxx_hidden_Postback
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetReaction() *WebhookReaction {
 	if x != nil {
-		return x.Reaction
+		return x.xxx_hidden_Reaction
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetRead() *WebhookRead {
 	if x != nil {
-		return x.Read
+		return x.xxx_hidden_Read
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetRecipient() *User {
 	if x != nil {
-		return x.Recipient
+		return x.xxx_hidden_Recipient
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetReferral() *WebhookReferral {
 	if x != nil {
-		return x.Referral
+		return x.xxx_hidden_Referral
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetSender() *User {
 	if x != nil {
-		return x.Sender
+		return x.xxx_hidden_Sender
 	}
 	return nil
 }
 
 func (x *MessagingItem) GetTimestamp() int64 {
-	if x != nil && x.Timestamp != nil {
-		return *x.Timestamp
+	if x != nil {
+		return x.xxx_hidden_Timestamp
 	}
 	return 0
 }
 
 func (x *MessagingItem) SetIsSelf(v bool) {
-	x.IsSelf = &v
+	x.xxx_hidden_IsSelf = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 10)
 }
 
 func (x *MessagingItem) SetMessage(v *WebhookMessage) {
-	x.Message = v
+	x.xxx_hidden_Message = v
 }
 
 func (x *MessagingItem) SetMessageEdit(v *WebhookMessageEdit) {
-	x.MessageEdit = v
+	x.xxx_hidden_MessageEdit = v
 }
 
 func (x *MessagingItem) SetPostback(v *WebhookPostback) {
-	x.Postback = v
+	x.xxx_hidden_Postback = v
 }
 
 func (x *MessagingItem) SetReaction(v *WebhookReaction) {
-	x.Reaction = v
+	x.xxx_hidden_Reaction = v
 }
 
 func (x *MessagingItem) SetRead(v *WebhookRead) {
-	x.Read = v
+	x.xxx_hidden_Read = v
 }
 
 func (x *MessagingItem) SetRecipient(v *User) {
-	x.Recipient = v
+	x.xxx_hidden_Recipient = v
 }
 
 func (x *MessagingItem) SetReferral(v *WebhookReferral) {
-	x.Referral = v
+	x.xxx_hidden_Referral = v
 }
 
 func (x *MessagingItem) SetSender(v *User) {
-	x.Sender = v
+	x.xxx_hidden_Sender = v
 }
 
 func (x *MessagingItem) SetTimestamp(v int64) {
-	x.Timestamp = &v
+	x.xxx_hidden_Timestamp = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 10)
 }
 
 func (x *MessagingItem) HasIsSelf() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsSelf != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *MessagingItem) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.Message != nil
+	return x.xxx_hidden_Message != nil
 }
 
 func (x *MessagingItem) HasMessageEdit() bool {
 	if x == nil {
 		return false
 	}
-	return x.MessageEdit != nil
+	return x.xxx_hidden_MessageEdit != nil
 }
 
 func (x *MessagingItem) HasPostback() bool {
 	if x == nil {
 		return false
 	}
-	return x.Postback != nil
+	return x.xxx_hidden_Postback != nil
 }
 
 func (x *MessagingItem) HasReaction() bool {
 	if x == nil {
 		return false
 	}
-	return x.Reaction != nil
+	return x.xxx_hidden_Reaction != nil
 }
 
 func (x *MessagingItem) HasRead() bool {
 	if x == nil {
 		return false
 	}
-	return x.Read != nil
+	return x.xxx_hidden_Read != nil
 }
 
 func (x *MessagingItem) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.Recipient != nil
+	return x.xxx_hidden_Recipient != nil
 }
 
 func (x *MessagingItem) HasReferral() bool {
 	if x == nil {
 		return false
 	}
-	return x.Referral != nil
+	return x.xxx_hidden_Referral != nil
 }
 
 func (x *MessagingItem) HasSender() bool {
 	if x == nil {
 		return false
 	}
-	return x.Sender != nil
+	return x.xxx_hidden_Sender != nil
 }
 
 func (x *MessagingItem) HasTimestamp() bool {
 	if x == nil {
 		return false
 	}
-	return x.Timestamp != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *MessagingItem) ClearIsSelf() {
-	x.IsSelf = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_IsSelf = false
 }
 
 func (x *MessagingItem) ClearMessage() {
-	x.Message = nil
+	x.xxx_hidden_Message = nil
 }
 
 func (x *MessagingItem) ClearMessageEdit() {
-	x.MessageEdit = nil
+	x.xxx_hidden_MessageEdit = nil
 }
 
 func (x *MessagingItem) ClearPostback() {
-	x.Postback = nil
+	x.xxx_hidden_Postback = nil
 }
 
 func (x *MessagingItem) ClearReaction() {
-	x.Reaction = nil
+	x.xxx_hidden_Reaction = nil
 }
 
 func (x *MessagingItem) ClearRead() {
-	x.Read = nil
+	x.xxx_hidden_Read = nil
 }
 
 func (x *MessagingItem) ClearRecipient() {
-	x.Recipient = nil
+	x.xxx_hidden_Recipient = nil
 }
 
 func (x *MessagingItem) ClearReferral() {
-	x.Referral = nil
+	x.xxx_hidden_Referral = nil
 }
 
 func (x *MessagingItem) ClearSender() {
-	x.Sender = nil
+	x.xxx_hidden_Sender = nil
 }
 
 func (x *MessagingItem) ClearTimestamp() {
-	x.Timestamp = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	x.xxx_hidden_Timestamp = 0
 }
 
 type MessagingItem_builder struct {
@@ -864,26 +934,33 @@ func (b0 MessagingItem_builder) Build() *MessagingItem {
 	m0 := &MessagingItem{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.IsSelf = b.IsSelf
-	x.Message = b.Message
-	x.MessageEdit = b.MessageEdit
-	x.Postback = b.Postback
-	x.Reaction = b.Reaction
-	x.Read = b.Read
-	x.Recipient = b.Recipient
-	x.Referral = b.Referral
-	x.Sender = b.Sender
-	x.Timestamp = b.Timestamp
+	if b.IsSelf != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 10)
+		x.xxx_hidden_IsSelf = *b.IsSelf
+	}
+	x.xxx_hidden_Message = b.Message
+	x.xxx_hidden_MessageEdit = b.MessageEdit
+	x.xxx_hidden_Postback = b.Postback
+	x.xxx_hidden_Reaction = b.Reaction
+	x.xxx_hidden_Read = b.Read
+	x.xxx_hidden_Recipient = b.Recipient
+	x.xxx_hidden_Referral = b.Referral
+	x.xxx_hidden_Sender = b.Sender
+	if b.Timestamp != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 10)
+		x.xxx_hidden_Timestamp = *b.Timestamp
+	}
 	return m0
 }
 
 // QuickReplyPayload contains the selected quick reply information
 type QuickReplyPayload struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The payload for the specific quick reply that was selected
-	Payload       *string `protobuf:"bytes,1,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Payload     *string                `protobuf:"bytes,1,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *QuickReplyPayload) Reset() {
@@ -912,25 +989,30 @@ func (x *QuickReplyPayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QuickReplyPayload) GetPayload() string {
-	if x != nil && x.Payload != nil {
-		return *x.Payload
+	if x != nil {
+		if x.xxx_hidden_Payload != nil {
+			return *x.xxx_hidden_Payload
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *QuickReplyPayload) SetPayload(v string) {
-	x.Payload = &v
+	x.xxx_hidden_Payload = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *QuickReplyPayload) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *QuickReplyPayload) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Payload = nil
 }
 
 type QuickReplyPayload_builder struct {
@@ -944,19 +1026,22 @@ func (b0 QuickReplyPayload_builder) Build() *QuickReplyPayload {
 	m0 := &QuickReplyPayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Payload = b.Payload
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
 // WebhookChange represents a change event in the webhook
 type WebhookChange struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The field that changed
-	Field *string `protobuf:"bytes,1,opt,name=field" json:"field,omitempty"`
-	// The value object containing details about the change
-	Value         *WebhookValue `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Field       *string                `protobuf:"bytes,1,opt,name=field"`
+	xxx_hidden_Value       *WebhookValue          `protobuf:"bytes,2,opt,name=value"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookChange) Reset() {
@@ -985,47 +1070,52 @@ func (x *WebhookChange) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookChange) GetField() string {
-	if x != nil && x.Field != nil {
-		return *x.Field
+	if x != nil {
+		if x.xxx_hidden_Field != nil {
+			return *x.xxx_hidden_Field
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookChange) GetValue() *WebhookValue {
 	if x != nil {
-		return x.Value
+		return x.xxx_hidden_Value
 	}
 	return nil
 }
 
 func (x *WebhookChange) SetField(v string) {
-	x.Field = &v
+	x.xxx_hidden_Field = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *WebhookChange) SetValue(v *WebhookValue) {
-	x.Value = v
+	x.xxx_hidden_Value = v
 }
 
 func (x *WebhookChange) HasField() bool {
 	if x == nil {
 		return false
 	}
-	return x.Field != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookChange) HasValue() bool {
 	if x == nil {
 		return false
 	}
-	return x.Value != nil
+	return x.xxx_hidden_Value != nil
 }
 
 func (x *WebhookChange) ClearField() {
-	x.Field = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Field = nil
 }
 
 func (x *WebhookChange) ClearValue() {
-	x.Value = nil
+	x.xxx_hidden_Value = nil
 }
 
 type WebhookChange_builder struct {
@@ -1041,28 +1131,27 @@ func (b0 WebhookChange_builder) Build() *WebhookChange {
 	m0 := &WebhookChange{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Field = b.Field
-	x.Value = b.Value
+	if b.Field != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Field = b.Field
+	}
+	x.xxx_hidden_Value = b.Value
 	return m0
 }
 
 // WebhookMedia represents the media associated with a webhook event
 type WebhookMedia struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The ID of the ad
-	AdId *string `protobuf:"bytes,1,opt,name=ad_id,json=adId" json:"ad_id,omitempty"`
-	// The title of the ad
-	AdTitle *string `protobuf:"bytes,2,opt,name=ad_title,json=adTitle" json:"ad_title,omitempty"`
-	// The ID of the media
-	Id *string `protobuf:"bytes,3,opt,name=id" json:"id,omitempty"`
-	// The product type of the media
-	MediaProductType *string `protobuf:"bytes,4,opt,name=media_product_type,json=mediaProductType" json:"media_product_type,omitempty"`
-	// The original ID of the media
-	OriginalMediaId *string `protobuf:"bytes,5,opt,name=original_media_id,json=originalMediaId" json:"original_media_id,omitempty"`
-	// The type of sticker in the media
-	StickerType   *string `protobuf:"bytes,6,opt,name=sticker_type,json=stickerType" json:"sticker_type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_AdId             *string                `protobuf:"bytes,1,opt,name=ad_id,json=adId"`
+	xxx_hidden_AdTitle          *string                `protobuf:"bytes,2,opt,name=ad_title,json=adTitle"`
+	xxx_hidden_Id               *string                `protobuf:"bytes,3,opt,name=id"`
+	xxx_hidden_MediaProductType *string                `protobuf:"bytes,4,opt,name=media_product_type,json=mediaProductType"`
+	xxx_hidden_OriginalMediaId  *string                `protobuf:"bytes,5,opt,name=original_media_id,json=originalMediaId"`
+	xxx_hidden_StickerType      *string                `protobuf:"bytes,6,opt,name=sticker_type,json=stickerType"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *WebhookMedia) Reset() {
@@ -1091,135 +1180,165 @@ func (x *WebhookMedia) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookMedia) GetAdId() string {
-	if x != nil && x.AdId != nil {
-		return *x.AdId
+	if x != nil {
+		if x.xxx_hidden_AdId != nil {
+			return *x.xxx_hidden_AdId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMedia) GetAdTitle() string {
-	if x != nil && x.AdTitle != nil {
-		return *x.AdTitle
+	if x != nil {
+		if x.xxx_hidden_AdTitle != nil {
+			return *x.xxx_hidden_AdTitle
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMedia) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMedia) GetMediaProductType() string {
-	if x != nil && x.MediaProductType != nil {
-		return *x.MediaProductType
+	if x != nil {
+		if x.xxx_hidden_MediaProductType != nil {
+			return *x.xxx_hidden_MediaProductType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMedia) GetOriginalMediaId() string {
-	if x != nil && x.OriginalMediaId != nil {
-		return *x.OriginalMediaId
+	if x != nil {
+		if x.xxx_hidden_OriginalMediaId != nil {
+			return *x.xxx_hidden_OriginalMediaId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMedia) GetStickerType() string {
-	if x != nil && x.StickerType != nil {
-		return *x.StickerType
+	if x != nil {
+		if x.xxx_hidden_StickerType != nil {
+			return *x.xxx_hidden_StickerType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMedia) SetAdId(v string) {
-	x.AdId = &v
+	x.xxx_hidden_AdId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 6)
 }
 
 func (x *WebhookMedia) SetAdTitle(v string) {
-	x.AdTitle = &v
+	x.xxx_hidden_AdTitle = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 6)
 }
 
 func (x *WebhookMedia) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
 }
 
 func (x *WebhookMedia) SetMediaProductType(v string) {
-	x.MediaProductType = &v
+	x.xxx_hidden_MediaProductType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
 }
 
 func (x *WebhookMedia) SetOriginalMediaId(v string) {
-	x.OriginalMediaId = &v
+	x.xxx_hidden_OriginalMediaId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
 }
 
 func (x *WebhookMedia) SetStickerType(v string) {
-	x.StickerType = &v
+	x.xxx_hidden_StickerType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
 }
 
 func (x *WebhookMedia) HasAdId() bool {
 	if x == nil {
 		return false
 	}
-	return x.AdId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookMedia) HasAdTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.AdTitle != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookMedia) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookMedia) HasMediaProductType() bool {
 	if x == nil {
 		return false
 	}
-	return x.MediaProductType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *WebhookMedia) HasOriginalMediaId() bool {
 	if x == nil {
 		return false
 	}
-	return x.OriginalMediaId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *WebhookMedia) HasStickerType() bool {
 	if x == nil {
 		return false
 	}
-	return x.StickerType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *WebhookMedia) ClearAdId() {
-	x.AdId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_AdId = nil
 }
 
 func (x *WebhookMedia) ClearAdTitle() {
-	x.AdTitle = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_AdTitle = nil
 }
 
 func (x *WebhookMedia) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *WebhookMedia) ClearMediaProductType() {
-	x.MediaProductType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_MediaProductType = nil
 }
 
 func (x *WebhookMedia) ClearOriginalMediaId() {
-	x.OriginalMediaId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_OriginalMediaId = nil
 }
 
 func (x *WebhookMedia) ClearStickerType() {
-	x.StickerType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_StickerType = nil
 }
 
 type WebhookMedia_builder struct {
@@ -1243,38 +1362,49 @@ func (b0 WebhookMedia_builder) Build() *WebhookMedia {
 	m0 := &WebhookMedia{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.AdId = b.AdId
-	x.AdTitle = b.AdTitle
-	x.Id = b.Id
-	x.MediaProductType = b.MediaProductType
-	x.OriginalMediaId = b.OriginalMediaId
-	x.StickerType = b.StickerType
+	if b.AdId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 6)
+		x.xxx_hidden_AdId = b.AdId
+	}
+	if b.AdTitle != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 6)
+		x.xxx_hidden_AdTitle = b.AdTitle
+	}
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.MediaProductType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
+		x.xxx_hidden_MediaProductType = b.MediaProductType
+	}
+	if b.OriginalMediaId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
+		x.xxx_hidden_OriginalMediaId = b.OriginalMediaId
+	}
+	if b.StickerType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
+		x.xxx_hidden_StickerType = b.StickerType
+	}
 	return m0
 }
 
 // WebhookMessage represents the message data in a webhook event
 type WebhookMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Indicates if the message is deleted
-	IsDeleted *bool `protobuf:"varint,1,opt,name=is_deleted,json=isDeleted" json:"is_deleted,omitempty"`
-	// Indicates if the message is an echo
-	IsEcho *bool `protobuf:"varint,2,opt,name=is_echo,json=isEcho" json:"is_echo,omitempty"`
-	// Indicates if the message is sent by the app user
-	IsSelf *bool `protobuf:"varint,3,opt,name=is_self,json=isSelf" json:"is_self,omitempty"`
-	// Indicates if the message is unsupported
-	IsUnsupported *bool `protobuf:"varint,4,opt,name=is_unsupported,json=isUnsupported" json:"is_unsupported,omitempty"`
-	// The unique message ID
-	Mid *string `protobuf:"bytes,5,opt,name=mid" json:"mid,omitempty"`
-	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
-	Payload []byte `protobuf:"bytes,6,opt,name=payload" json:"payload,omitempty"`
-	// The selected quick reply information
-	QuickReply *QuickReplyPayload `protobuf:"bytes,7,opt,name=quick_reply,json=quickReply" json:"quick_reply,omitempty"`
-	// The reply context if this message is a reply
-	ReplyTo *WebhookReplyTo `protobuf:"bytes,8,opt,name=reply_to,json=replyTo" json:"reply_to,omitempty"`
-	// The text, email, or phone number of the message
-	Text          *string `protobuf:"bytes,9,opt,name=text" json:"text,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_IsDeleted     bool                   `protobuf:"varint,1,opt,name=is_deleted,json=isDeleted"`
+	xxx_hidden_IsEcho        bool                   `protobuf:"varint,2,opt,name=is_echo,json=isEcho"`
+	xxx_hidden_IsSelf        bool                   `protobuf:"varint,3,opt,name=is_self,json=isSelf"`
+	xxx_hidden_IsUnsupported bool                   `protobuf:"varint,4,opt,name=is_unsupported,json=isUnsupported"`
+	xxx_hidden_Mid           *string                `protobuf:"bytes,5,opt,name=mid"`
+	xxx_hidden_Payload       []byte                 `protobuf:"bytes,6,opt,name=payload"`
+	xxx_hidden_QuickReply    *QuickReplyPayload     `protobuf:"bytes,7,opt,name=quick_reply,json=quickReply"`
+	xxx_hidden_ReplyTo       *WebhookReplyTo        `protobuf:"bytes,8,opt,name=reply_to,json=replyTo"`
+	xxx_hidden_Text          *string                `protobuf:"bytes,9,opt,name=text"`
+	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
+	XXX_presence             [1]uint32
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *WebhookMessage) Reset() {
@@ -1303,204 +1433,224 @@ func (x *WebhookMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookMessage) GetIsDeleted() bool {
-	if x != nil && x.IsDeleted != nil {
-		return *x.IsDeleted
+	if x != nil {
+		return x.xxx_hidden_IsDeleted
 	}
 	return false
 }
 
 func (x *WebhookMessage) GetIsEcho() bool {
-	if x != nil && x.IsEcho != nil {
-		return *x.IsEcho
+	if x != nil {
+		return x.xxx_hidden_IsEcho
 	}
 	return false
 }
 
 func (x *WebhookMessage) GetIsSelf() bool {
-	if x != nil && x.IsSelf != nil {
-		return *x.IsSelf
+	if x != nil {
+		return x.xxx_hidden_IsSelf
 	}
 	return false
 }
 
 func (x *WebhookMessage) GetIsUnsupported() bool {
-	if x != nil && x.IsUnsupported != nil {
-		return *x.IsUnsupported
+	if x != nil {
+		return x.xxx_hidden_IsUnsupported
 	}
 	return false
 }
 
 func (x *WebhookMessage) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMessage) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *WebhookMessage) GetQuickReply() *QuickReplyPayload {
 	if x != nil {
-		return x.QuickReply
+		return x.xxx_hidden_QuickReply
 	}
 	return nil
 }
 
 func (x *WebhookMessage) GetReplyTo() *WebhookReplyTo {
 	if x != nil {
-		return x.ReplyTo
+		return x.xxx_hidden_ReplyTo
 	}
 	return nil
 }
 
 func (x *WebhookMessage) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMessage) SetIsDeleted(v bool) {
-	x.IsDeleted = &v
+	x.xxx_hidden_IsDeleted = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 9)
 }
 
 func (x *WebhookMessage) SetIsEcho(v bool) {
-	x.IsEcho = &v
+	x.xxx_hidden_IsEcho = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 9)
 }
 
 func (x *WebhookMessage) SetIsSelf(v bool) {
-	x.IsSelf = &v
+	x.xxx_hidden_IsSelf = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 9)
 }
 
 func (x *WebhookMessage) SetIsUnsupported(v bool) {
-	x.IsUnsupported = &v
+	x.xxx_hidden_IsUnsupported = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 9)
 }
 
 func (x *WebhookMessage) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 9)
 }
 
 func (x *WebhookMessage) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 9)
 }
 
 func (x *WebhookMessage) SetQuickReply(v *QuickReplyPayload) {
-	x.QuickReply = v
+	x.xxx_hidden_QuickReply = v
 }
 
 func (x *WebhookMessage) SetReplyTo(v *WebhookReplyTo) {
-	x.ReplyTo = v
+	x.xxx_hidden_ReplyTo = v
 }
 
 func (x *WebhookMessage) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 9)
 }
 
 func (x *WebhookMessage) HasIsDeleted() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsDeleted != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookMessage) HasIsEcho() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsEcho != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookMessage) HasIsSelf() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsSelf != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookMessage) HasIsUnsupported() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsUnsupported != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *WebhookMessage) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *WebhookMessage) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *WebhookMessage) HasQuickReply() bool {
 	if x == nil {
 		return false
 	}
-	return x.QuickReply != nil
+	return x.xxx_hidden_QuickReply != nil
 }
 
 func (x *WebhookMessage) HasReplyTo() bool {
 	if x == nil {
 		return false
 	}
-	return x.ReplyTo != nil
+	return x.xxx_hidden_ReplyTo != nil
 }
 
 func (x *WebhookMessage) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *WebhookMessage) ClearIsDeleted() {
-	x.IsDeleted = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_IsDeleted = false
 }
 
 func (x *WebhookMessage) ClearIsEcho() {
-	x.IsEcho = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_IsEcho = false
 }
 
 func (x *WebhookMessage) ClearIsSelf() {
-	x.IsSelf = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_IsSelf = false
 }
 
 func (x *WebhookMessage) ClearIsUnsupported() {
-	x.IsUnsupported = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_IsUnsupported = false
 }
 
 func (x *WebhookMessage) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *WebhookMessage) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_Payload = nil
 }
 
 func (x *WebhookMessage) ClearQuickReply() {
-	x.QuickReply = nil
+	x.xxx_hidden_QuickReply = nil
 }
 
 func (x *WebhookMessage) ClearReplyTo() {
-	x.ReplyTo = nil
+	x.xxx_hidden_ReplyTo = nil
 }
 
 func (x *WebhookMessage) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	x.xxx_hidden_Text = nil
 }
 
 type WebhookMessage_builder struct {
@@ -1530,29 +1680,49 @@ func (b0 WebhookMessage_builder) Build() *WebhookMessage {
 	m0 := &WebhookMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.IsDeleted = b.IsDeleted
-	x.IsEcho = b.IsEcho
-	x.IsSelf = b.IsSelf
-	x.IsUnsupported = b.IsUnsupported
-	x.Mid = b.Mid
-	x.Payload = b.Payload
-	x.QuickReply = b.QuickReply
-	x.ReplyTo = b.ReplyTo
-	x.Text = b.Text
+	if b.IsDeleted != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 9)
+		x.xxx_hidden_IsDeleted = *b.IsDeleted
+	}
+	if b.IsEcho != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 9)
+		x.xxx_hidden_IsEcho = *b.IsEcho
+	}
+	if b.IsSelf != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 9)
+		x.xxx_hidden_IsSelf = *b.IsSelf
+	}
+	if b.IsUnsupported != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 9)
+		x.xxx_hidden_IsUnsupported = *b.IsUnsupported
+	}
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 9)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 9)
+		x.xxx_hidden_Payload = b.Payload
+	}
+	x.xxx_hidden_QuickReply = b.QuickReply
+	x.xxx_hidden_ReplyTo = b.ReplyTo
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 9)
+		x.xxx_hidden_Text = b.Text
+	}
 	return m0
 }
 
 // WebhookMessageEdit represents a message edit event in the webhook
 type WebhookMessageEdit struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The unique message ID of the edited message
-	Mid *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	// Edit number/counter
-	NumEdit *int32 `protobuf:"varint,2,opt,name=num_edit,json=numEdit" json:"num_edit,omitempty"`
-	// New text content of the message
-	Text          *string `protobuf:"bytes,3,opt,name=text" json:"text,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	xxx_hidden_NumEdit     int32                  `protobuf:"varint,2,opt,name=num_edit,json=numEdit"`
+	xxx_hidden_Text        *string                `protobuf:"bytes,3,opt,name=text"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookMessageEdit) Reset() {
@@ -1581,69 +1751,81 @@ func (x *WebhookMessageEdit) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookMessageEdit) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMessageEdit) GetNumEdit() int32 {
-	if x != nil && x.NumEdit != nil {
-		return *x.NumEdit
+	if x != nil {
+		return x.xxx_hidden_NumEdit
 	}
 	return 0
 }
 
 func (x *WebhookMessageEdit) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookMessageEdit) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *WebhookMessageEdit) SetNumEdit(v int32) {
-	x.NumEdit = &v
+	x.xxx_hidden_NumEdit = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *WebhookMessageEdit) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *WebhookMessageEdit) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookMessageEdit) HasNumEdit() bool {
 	if x == nil {
 		return false
 	}
-	return x.NumEdit != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookMessageEdit) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookMessageEdit) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *WebhookMessageEdit) ClearNumEdit() {
-	x.NumEdit = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_NumEdit = 0
 }
 
 func (x *WebhookMessageEdit) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Text = nil
 }
 
 type WebhookMessageEdit_builder struct {
@@ -1661,23 +1843,31 @@ func (b0 WebhookMessageEdit_builder) Build() *WebhookMessageEdit {
 	m0 := &WebhookMessageEdit{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
-	x.NumEdit = b.NumEdit
-	x.Text = b.Text
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.NumEdit != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_NumEdit = *b.NumEdit
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Text = b.Text
+	}
 	return m0
 }
 
 // WebhookPassThreadControl represents a pass thread control event
 type WebhookPassThreadControl struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Metadata for passing thread control
-	Metadata *string `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// The ID of the app that is taking control
-	NewOwnerAppId *string `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId" json:"new_owner_app_id,omitempty"`
-	// The ID of the app that had previous control
-	PreviousOwnerAppId *string `protobuf:"bytes,3,opt,name=previous_owner_app_id,json=previousOwnerAppId" json:"previous_owner_app_id,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state                         protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Metadata           *string                `protobuf:"bytes,1,opt,name=metadata"`
+	xxx_hidden_NewOwnerAppId      *string                `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId"`
+	xxx_hidden_PreviousOwnerAppId *string                `protobuf:"bytes,3,opt,name=previous_owner_app_id,json=previousOwnerAppId"`
+	XXX_raceDetectHookData        protoimpl.RaceDetectHookData
+	XXX_presence                  [1]uint32
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
 }
 
 func (x *WebhookPassThreadControl) Reset() {
@@ -1706,69 +1896,84 @@ func (x *WebhookPassThreadControl) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookPassThreadControl) GetMetadata() string {
-	if x != nil && x.Metadata != nil {
-		return *x.Metadata
+	if x != nil {
+		if x.xxx_hidden_Metadata != nil {
+			return *x.xxx_hidden_Metadata
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookPassThreadControl) GetNewOwnerAppId() string {
-	if x != nil && x.NewOwnerAppId != nil {
-		return *x.NewOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_NewOwnerAppId != nil {
+			return *x.xxx_hidden_NewOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookPassThreadControl) GetPreviousOwnerAppId() string {
-	if x != nil && x.PreviousOwnerAppId != nil {
-		return *x.PreviousOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_PreviousOwnerAppId != nil {
+			return *x.xxx_hidden_PreviousOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookPassThreadControl) SetMetadata(v string) {
-	x.Metadata = &v
+	x.xxx_hidden_Metadata = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *WebhookPassThreadControl) SetNewOwnerAppId(v string) {
-	x.NewOwnerAppId = &v
+	x.xxx_hidden_NewOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *WebhookPassThreadControl) SetPreviousOwnerAppId(v string) {
-	x.PreviousOwnerAppId = &v
+	x.xxx_hidden_PreviousOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *WebhookPassThreadControl) HasMetadata() bool {
 	if x == nil {
 		return false
 	}
-	return x.Metadata != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookPassThreadControl) HasNewOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.NewOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookPassThreadControl) HasPreviousOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.PreviousOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookPassThreadControl) ClearMetadata() {
-	x.Metadata = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Metadata = nil
 }
 
 func (x *WebhookPassThreadControl) ClearNewOwnerAppId() {
-	x.NewOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_NewOwnerAppId = nil
 }
 
 func (x *WebhookPassThreadControl) ClearPreviousOwnerAppId() {
-	x.PreviousOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_PreviousOwnerAppId = nil
 }
 
 type WebhookPassThreadControl_builder struct {
@@ -1786,23 +1991,31 @@ func (b0 WebhookPassThreadControl_builder) Build() *WebhookPassThreadControl {
 	m0 := &WebhookPassThreadControl{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Metadata = b.Metadata
-	x.NewOwnerAppId = b.NewOwnerAppId
-	x.PreviousOwnerAppId = b.PreviousOwnerAppId
+	if b.Metadata != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Metadata = b.Metadata
+	}
+	if b.NewOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_NewOwnerAppId = b.NewOwnerAppId
+	}
+	if b.PreviousOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_PreviousOwnerAppId = b.PreviousOwnerAppId
+	}
 	return m0
 }
 
 // WebhookPollResponseInfo represents poll response information
 type WebhookPollResponseInfo struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The selected option number
-	Number *int32 `protobuf:"varint,1,opt,name=number" json:"number,omitempty"`
-	// The ratio of the response
-	Ratio *float32 `protobuf:"fixed32,2,opt,name=ratio" json:"ratio,omitempty"`
-	// The text of the response
-	Text          *string `protobuf:"bytes,3,opt,name=text" json:"text,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Number      int32                  `protobuf:"varint,1,opt,name=number"`
+	xxx_hidden_Ratio       float32                `protobuf:"fixed32,2,opt,name=ratio"`
+	xxx_hidden_Text        *string                `protobuf:"bytes,3,opt,name=text"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookPollResponseInfo) Reset() {
@@ -1831,69 +2044,78 @@ func (x *WebhookPollResponseInfo) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookPollResponseInfo) GetNumber() int32 {
-	if x != nil && x.Number != nil {
-		return *x.Number
+	if x != nil {
+		return x.xxx_hidden_Number
 	}
 	return 0
 }
 
 func (x *WebhookPollResponseInfo) GetRatio() float32 {
-	if x != nil && x.Ratio != nil {
-		return *x.Ratio
+	if x != nil {
+		return x.xxx_hidden_Ratio
 	}
 	return 0
 }
 
 func (x *WebhookPollResponseInfo) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookPollResponseInfo) SetNumber(v int32) {
-	x.Number = &v
+	x.xxx_hidden_Number = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *WebhookPollResponseInfo) SetRatio(v float32) {
-	x.Ratio = &v
+	x.xxx_hidden_Ratio = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *WebhookPollResponseInfo) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *WebhookPollResponseInfo) HasNumber() bool {
 	if x == nil {
 		return false
 	}
-	return x.Number != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookPollResponseInfo) HasRatio() bool {
 	if x == nil {
 		return false
 	}
-	return x.Ratio != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookPollResponseInfo) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookPollResponseInfo) ClearNumber() {
-	x.Number = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Number = 0
 }
 
 func (x *WebhookPollResponseInfo) ClearRatio() {
-	x.Ratio = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Ratio = 0
 }
 
 func (x *WebhookPollResponseInfo) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Text = nil
 }
 
 type WebhookPollResponseInfo_builder struct {
@@ -1911,23 +2133,31 @@ func (b0 WebhookPollResponseInfo_builder) Build() *WebhookPollResponseInfo {
 	m0 := &WebhookPollResponseInfo{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Number = b.Number
-	x.Ratio = b.Ratio
-	x.Text = b.Text
+	if b.Number != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Number = *b.Number
+	}
+	if b.Ratio != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Ratio = *b.Ratio
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Text = b.Text
+	}
 	return m0
 }
 
 // WebhookPostback represents a postback event in the webhook
 type WebhookPostback struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The unique message ID associated with the postback
-	Mid *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	// The payload string defined in the postback
-	Payload *string `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
-	// The title of the postback button
-	Title         *string `protobuf:"bytes,3,opt,name=title" json:"title,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	xxx_hidden_Payload     *string                `protobuf:"bytes,2,opt,name=payload"`
+	xxx_hidden_Title       *string                `protobuf:"bytes,3,opt,name=title"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookPostback) Reset() {
@@ -1956,69 +2186,84 @@ func (x *WebhookPostback) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookPostback) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookPostback) GetPayload() string {
-	if x != nil && x.Payload != nil {
-		return *x.Payload
+	if x != nil {
+		if x.xxx_hidden_Payload != nil {
+			return *x.xxx_hidden_Payload
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookPostback) GetTitle() string {
-	if x != nil && x.Title != nil {
-		return *x.Title
+	if x != nil {
+		if x.xxx_hidden_Title != nil {
+			return *x.xxx_hidden_Title
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookPostback) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *WebhookPostback) SetPayload(v string) {
-	x.Payload = &v
+	x.xxx_hidden_Payload = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *WebhookPostback) SetTitle(v string) {
-	x.Title = &v
+	x.xxx_hidden_Title = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *WebhookPostback) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookPostback) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookPostback) HasTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.Title != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookPostback) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *WebhookPostback) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Payload = nil
 }
 
 func (x *WebhookPostback) ClearTitle() {
-	x.Title = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Title = nil
 }
 
 type WebhookPostback_builder struct {
@@ -2036,27 +2281,33 @@ func (b0 WebhookPostback_builder) Build() *WebhookPostback {
 	m0 := &WebhookPostback{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
-	x.Payload = b.Payload
-	x.Title = b.Title
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
+	if b.Title != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Title = b.Title
+	}
 	return m0
 }
 
 // WebhookReaction represents a reaction event in the webhook
 type WebhookReaction struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Action performed (e.g., 'react', 'unreact')
-	Action *string `protobuf:"bytes,1,opt,name=action" json:"action,omitempty"`
-	// The emoji used for the reaction
-	Emoji *string `protobuf:"bytes,2,opt,name=emoji" json:"emoji,omitempty"`
-	// Folder associated with the reaction
-	Folder *string `protobuf:"bytes,3,opt,name=folder" json:"folder,omitempty"`
-	// The unique message ID the reaction is applied to
-	Mid *string `protobuf:"bytes,4,opt,name=mid" json:"mid,omitempty"`
-	// The reaction string value
-	Reaction      *string `protobuf:"bytes,5,opt,name=reaction" json:"reaction,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Action      *string                `protobuf:"bytes,1,opt,name=action"`
+	xxx_hidden_Emoji       *string                `protobuf:"bytes,2,opt,name=emoji"`
+	xxx_hidden_Folder      *string                `protobuf:"bytes,3,opt,name=folder"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,4,opt,name=mid"`
+	xxx_hidden_Reaction    *string                `protobuf:"bytes,5,opt,name=reaction"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookReaction) Reset() {
@@ -2085,113 +2336,138 @@ func (x *WebhookReaction) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookReaction) GetAction() string {
-	if x != nil && x.Action != nil {
-		return *x.Action
+	if x != nil {
+		if x.xxx_hidden_Action != nil {
+			return *x.xxx_hidden_Action
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReaction) GetEmoji() string {
-	if x != nil && x.Emoji != nil {
-		return *x.Emoji
+	if x != nil {
+		if x.xxx_hidden_Emoji != nil {
+			return *x.xxx_hidden_Emoji
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReaction) GetFolder() string {
-	if x != nil && x.Folder != nil {
-		return *x.Folder
+	if x != nil {
+		if x.xxx_hidden_Folder != nil {
+			return *x.xxx_hidden_Folder
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReaction) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReaction) GetReaction() string {
-	if x != nil && x.Reaction != nil {
-		return *x.Reaction
+	if x != nil {
+		if x.xxx_hidden_Reaction != nil {
+			return *x.xxx_hidden_Reaction
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReaction) SetAction(v string) {
-	x.Action = &v
+	x.xxx_hidden_Action = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
 }
 
 func (x *WebhookReaction) SetEmoji(v string) {
-	x.Emoji = &v
+	x.xxx_hidden_Emoji = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
 func (x *WebhookReaction) SetFolder(v string) {
-	x.Folder = &v
+	x.xxx_hidden_Folder = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *WebhookReaction) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
 }
 
 func (x *WebhookReaction) SetReaction(v string) {
-	x.Reaction = &v
+	x.xxx_hidden_Reaction = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *WebhookReaction) HasAction() bool {
 	if x == nil {
 		return false
 	}
-	return x.Action != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookReaction) HasEmoji() bool {
 	if x == nil {
 		return false
 	}
-	return x.Emoji != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookReaction) HasFolder() bool {
 	if x == nil {
 		return false
 	}
-	return x.Folder != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookReaction) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *WebhookReaction) HasReaction() bool {
 	if x == nil {
 		return false
 	}
-	return x.Reaction != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *WebhookReaction) ClearAction() {
-	x.Action = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Action = nil
 }
 
 func (x *WebhookReaction) ClearEmoji() {
-	x.Emoji = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Emoji = nil
 }
 
 func (x *WebhookReaction) ClearFolder() {
-	x.Folder = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Folder = nil
 }
 
 func (x *WebhookReaction) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *WebhookReaction) ClearReaction() {
-	x.Reaction = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Reaction = nil
 }
 
 type WebhookReaction_builder struct {
@@ -2213,21 +2489,37 @@ func (b0 WebhookReaction_builder) Build() *WebhookReaction {
 	m0 := &WebhookReaction{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Action = b.Action
-	x.Emoji = b.Emoji
-	x.Folder = b.Folder
-	x.Mid = b.Mid
-	x.Reaction = b.Reaction
+	if b.Action != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		x.xxx_hidden_Action = b.Action
+	}
+	if b.Emoji != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_Emoji = b.Emoji
+	}
+	if b.Folder != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Folder = b.Folder
+	}
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.Reaction != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_Reaction = b.Reaction
+	}
 	return m0
 }
 
 // WebhookRead represents a read event in the webhook
 type WebhookRead struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The unique message ID that was read
-	Mid           *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookRead) Reset() {
@@ -2256,25 +2548,30 @@ func (x *WebhookRead) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookRead) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookRead) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *WebhookRead) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookRead) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 type WebhookRead_builder struct {
@@ -2288,21 +2585,23 @@ func (b0 WebhookRead_builder) Build() *WebhookRead {
 	m0 := &WebhookRead{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Mid = b.Mid
+	}
 	return m0
 }
 
 // WebhookReferral represents a referral event in the webhook
 type WebhookReferral struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Referral parameter payload
-	Ref *string `protobuf:"bytes,1,opt,name=ref" json:"ref,omitempty"`
-	// Source of the referral
-	Source *string `protobuf:"bytes,2,opt,name=source" json:"source,omitempty"`
-	// Type of referral
-	Type          *string `protobuf:"bytes,3,opt,name=type" json:"type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Ref         *string                `protobuf:"bytes,1,opt,name=ref"`
+	xxx_hidden_Source      *string                `protobuf:"bytes,2,opt,name=source"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,3,opt,name=type"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookReferral) Reset() {
@@ -2331,69 +2630,84 @@ func (x *WebhookReferral) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookReferral) GetRef() string {
-	if x != nil && x.Ref != nil {
-		return *x.Ref
+	if x != nil {
+		if x.xxx_hidden_Ref != nil {
+			return *x.xxx_hidden_Ref
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReferral) GetSource() string {
-	if x != nil && x.Source != nil {
-		return *x.Source
+	if x != nil {
+		if x.xxx_hidden_Source != nil {
+			return *x.xxx_hidden_Source
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReferral) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookReferral) SetRef(v string) {
-	x.Ref = &v
+	x.xxx_hidden_Ref = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *WebhookReferral) SetSource(v string) {
-	x.Source = &v
+	x.xxx_hidden_Source = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *WebhookReferral) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *WebhookReferral) HasRef() bool {
 	if x == nil {
 		return false
 	}
-	return x.Ref != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookReferral) HasSource() bool {
 	if x == nil {
 		return false
 	}
-	return x.Source != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookReferral) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookReferral) ClearRef() {
-	x.Ref = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Ref = nil
 }
 
 func (x *WebhookReferral) ClearSource() {
-	x.Source = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Source = nil
 }
 
 func (x *WebhookReferral) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Type = nil
 }
 
 type WebhookReferral_builder struct {
@@ -2411,19 +2725,27 @@ func (b0 WebhookReferral_builder) Build() *WebhookReferral {
 	m0 := &WebhookReferral{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Ref = b.Ref
-	x.Source = b.Source
-	x.Type = b.Type
+	if b.Ref != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Ref = b.Ref
+	}
+	if b.Source != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Source = b.Source
+	}
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Type = b.Type
+	}
 	return m0
 }
 
 // WebhookReplyTo represents the reply context of a message
 type WebhookReplyTo struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The story context of the reply
-	Story         *WebhookStory `protobuf:"bytes,1,opt,name=story" json:"story,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Story *WebhookStory          `protobuf:"bytes,1,opt,name=story"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *WebhookReplyTo) Reset() {
@@ -2453,24 +2775,24 @@ func (x *WebhookReplyTo) ProtoReflect() protoreflect.Message {
 
 func (x *WebhookReplyTo) GetStory() *WebhookStory {
 	if x != nil {
-		return x.Story
+		return x.xxx_hidden_Story
 	}
 	return nil
 }
 
 func (x *WebhookReplyTo) SetStory(v *WebhookStory) {
-	x.Story = v
+	x.xxx_hidden_Story = v
 }
 
 func (x *WebhookReplyTo) HasStory() bool {
 	if x == nil {
 		return false
 	}
-	return x.Story != nil
+	return x.xxx_hidden_Story != nil
 }
 
 func (x *WebhookReplyTo) ClearStory() {
-	x.Story = nil
+	x.xxx_hidden_Story = nil
 }
 
 type WebhookReplyTo_builder struct {
@@ -2484,19 +2806,19 @@ func (b0 WebhookReplyTo_builder) Build() *WebhookReplyTo {
 	m0 := &WebhookReplyTo{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Story = b.Story
+	x.xxx_hidden_Story = b.Story
 	return m0
 }
 
 // WebhookRequestThreadControl represents a request thread control event
 type WebhookRequestThreadControl struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Metadata associated with the request
-	Metadata *string `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// The ID of the app requesting thread control
-	RequestedOwnerAppId *string `protobuf:"bytes,2,opt,name=requested_owner_app_id,json=requestedOwnerAppId" json:"requested_owner_app_id,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state                          protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Metadata            *string                `protobuf:"bytes,1,opt,name=metadata"`
+	xxx_hidden_RequestedOwnerAppId *string                `protobuf:"bytes,2,opt,name=requested_owner_app_id,json=requestedOwnerAppId"`
+	XXX_raceDetectHookData         protoimpl.RaceDetectHookData
+	XXX_presence                   [1]uint32
+	unknownFields                  protoimpl.UnknownFields
+	sizeCache                      protoimpl.SizeCache
 }
 
 func (x *WebhookRequestThreadControl) Reset() {
@@ -2525,47 +2847,57 @@ func (x *WebhookRequestThreadControl) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookRequestThreadControl) GetMetadata() string {
-	if x != nil && x.Metadata != nil {
-		return *x.Metadata
+	if x != nil {
+		if x.xxx_hidden_Metadata != nil {
+			return *x.xxx_hidden_Metadata
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookRequestThreadControl) GetRequestedOwnerAppId() string {
-	if x != nil && x.RequestedOwnerAppId != nil {
-		return *x.RequestedOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_RequestedOwnerAppId != nil {
+			return *x.xxx_hidden_RequestedOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookRequestThreadControl) SetMetadata(v string) {
-	x.Metadata = &v
+	x.xxx_hidden_Metadata = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *WebhookRequestThreadControl) SetRequestedOwnerAppId(v string) {
-	x.RequestedOwnerAppId = &v
+	x.xxx_hidden_RequestedOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *WebhookRequestThreadControl) HasMetadata() bool {
 	if x == nil {
 		return false
 	}
-	return x.Metadata != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookRequestThreadControl) HasRequestedOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.RequestedOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookRequestThreadControl) ClearMetadata() {
-	x.Metadata = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Metadata = nil
 }
 
 func (x *WebhookRequestThreadControl) ClearRequestedOwnerAppId() {
-	x.RequestedOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_RequestedOwnerAppId = nil
 }
 
 type WebhookRequestThreadControl_builder struct {
@@ -2581,20 +2913,26 @@ func (b0 WebhookRequestThreadControl_builder) Build() *WebhookRequestThreadContr
 	m0 := &WebhookRequestThreadControl{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Metadata = b.Metadata
-	x.RequestedOwnerAppId = b.RequestedOwnerAppId
+	if b.Metadata != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Metadata = b.Metadata
+	}
+	if b.RequestedOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_RequestedOwnerAppId = b.RequestedOwnerAppId
+	}
 	return m0
 }
 
 // WebhookStory represents a story context in a reply
 type WebhookStory struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The ID of the story
-	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	// The URL of the story
-	Url           *string `protobuf:"bytes,2,opt,name=url" json:"url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_Url         *string                `protobuf:"bytes,2,opt,name=url"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *WebhookStory) Reset() {
@@ -2623,47 +2961,57 @@ func (x *WebhookStory) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookStory) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookStory) GetUrl() string {
-	if x != nil && x.Url != nil {
-		return *x.Url
+	if x != nil {
+		if x.xxx_hidden_Url != nil {
+			return *x.xxx_hidden_Url
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookStory) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *WebhookStory) SetUrl(v string) {
-	x.Url = &v
+	x.xxx_hidden_Url = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *WebhookStory) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookStory) HasUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.Url != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookStory) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *WebhookStory) ClearUrl() {
-	x.Url = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Url = nil
 }
 
 type WebhookStory_builder struct {
@@ -2679,22 +3027,27 @@ func (b0 WebhookStory_builder) Build() *WebhookStory {
 	m0 := &WebhookStory{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
-	x.Url = b.Url
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Url != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Url = b.Url
+	}
 	return m0
 }
 
 // WebhookTakeThreadControl represents a take thread control event
 type WebhookTakeThreadControl struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Metadata associated with taking thread control
-	Metadata *string `protobuf:"bytes,1,opt,name=metadata" json:"metadata,omitempty"`
-	// The ID of the app that is taking control
-	NewOwnerAppId *string `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId" json:"new_owner_app_id,omitempty"`
-	// The ID of the app that had previous control
-	PreviousOwnerAppId *string `protobuf:"bytes,3,opt,name=previous_owner_app_id,json=previousOwnerAppId" json:"previous_owner_app_id,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state                         protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Metadata           *string                `protobuf:"bytes,1,opt,name=metadata"`
+	xxx_hidden_NewOwnerAppId      *string                `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId"`
+	xxx_hidden_PreviousOwnerAppId *string                `protobuf:"bytes,3,opt,name=previous_owner_app_id,json=previousOwnerAppId"`
+	XXX_raceDetectHookData        protoimpl.RaceDetectHookData
+	XXX_presence                  [1]uint32
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
 }
 
 func (x *WebhookTakeThreadControl) Reset() {
@@ -2723,69 +3076,84 @@ func (x *WebhookTakeThreadControl) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WebhookTakeThreadControl) GetMetadata() string {
-	if x != nil && x.Metadata != nil {
-		return *x.Metadata
+	if x != nil {
+		if x.xxx_hidden_Metadata != nil {
+			return *x.xxx_hidden_Metadata
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookTakeThreadControl) GetNewOwnerAppId() string {
-	if x != nil && x.NewOwnerAppId != nil {
-		return *x.NewOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_NewOwnerAppId != nil {
+			return *x.xxx_hidden_NewOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookTakeThreadControl) GetPreviousOwnerAppId() string {
-	if x != nil && x.PreviousOwnerAppId != nil {
-		return *x.PreviousOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_PreviousOwnerAppId != nil {
+			return *x.xxx_hidden_PreviousOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookTakeThreadControl) SetMetadata(v string) {
-	x.Metadata = &v
+	x.xxx_hidden_Metadata = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *WebhookTakeThreadControl) SetNewOwnerAppId(v string) {
-	x.NewOwnerAppId = &v
+	x.xxx_hidden_NewOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *WebhookTakeThreadControl) SetPreviousOwnerAppId(v string) {
-	x.PreviousOwnerAppId = &v
+	x.xxx_hidden_PreviousOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *WebhookTakeThreadControl) HasMetadata() bool {
 	if x == nil {
 		return false
 	}
-	return x.Metadata != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WebhookTakeThreadControl) HasNewOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.NewOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookTakeThreadControl) HasPreviousOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.PreviousOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookTakeThreadControl) ClearMetadata() {
-	x.Metadata = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Metadata = nil
 }
 
 func (x *WebhookTakeThreadControl) ClearNewOwnerAppId() {
-	x.NewOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_NewOwnerAppId = nil
 }
 
 func (x *WebhookTakeThreadControl) ClearPreviousOwnerAppId() {
-	x.PreviousOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_PreviousOwnerAppId = nil
 }
 
 type WebhookTakeThreadControl_builder struct {
@@ -2803,75 +3171,57 @@ func (b0 WebhookTakeThreadControl_builder) Build() *WebhookTakeThreadControl {
 	m0 := &WebhookTakeThreadControl{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Metadata = b.Metadata
-	x.NewOwnerAppId = b.NewOwnerAppId
-	x.PreviousOwnerAppId = b.PreviousOwnerAppId
+	if b.Metadata != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Metadata = b.Metadata
+	}
+	if b.NewOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_NewOwnerAppId = b.NewOwnerAppId
+	}
+	if b.PreviousOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_PreviousOwnerAppId = b.PreviousOwnerAppId
+	}
 	return m0
 }
 
 // WebhookValue represents the value object in a webhook entry
 type WebhookValue struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// A map of app roles associated with the event
-	AppRoles map[string]string `protobuf:"bytes,1,rep,name=app_roles,json=appRoles" json:"app_roles,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// ID of comment with mention.
-	CommentId *string `protobuf:"bytes,2,opt,name=comment_id,json=commentId" json:"comment_id,omitempty"`
-	// Metrics Exits count
-	Exits *int32 `protobuf:"varint,3,opt,name=exits" json:"exits,omitempty"`
-	// The user who performed the action
-	From *User `protobuf:"bytes,4,opt,name=from" json:"from,omitempty"`
-	// The generic ID associated with this value object
-	Id *string `protobuf:"bytes,5,opt,name=id" json:"id,omitempty"`
-	// Metrics Impressions count
-	Impressions *int32 `protobuf:"varint,6,opt,name=impressions" json:"impressions,omitempty"`
-	// Indicates if the action was made by the app/page itself
-	IsSelf *bool `protobuf:"varint,7,opt,name=is_self,json=isSelf" json:"is_self,omitempty"`
-	// Media details object
-	Media *WebhookMedia `protobuf:"bytes,8,opt,name=media" json:"media,omitempty"`
-	// ID of media containing comment with mention, or Media Id of the Story.
-	MediaId *string `protobuf:"bytes,9,opt,name=media_id,json=mediaId" json:"media_id,omitempty"`
-	// Event or message ID
-	Mid *string `protobuf:"bytes,10,opt,name=mid" json:"mid,omitempty"`
-	// ID of the target object
-	ObjectId *string `protobuf:"bytes,11,opt,name=object_id,json=objectId" json:"object_id,omitempty"`
-	// ID of the parent object
-	ParentId *string `protobuf:"bytes,12,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
-	// Thread control handover pass details
-	PassThreadControl *WebhookPassThreadControl `protobuf:"bytes,13,opt,name=pass_thread_control,json=passThreadControl" json:"pass_thread_control,omitempty"`
-	// User's response info for a poll
-	PollResponseInfo *WebhookPollResponseInfo `protobuf:"bytes,14,opt,name=poll_response_info,json=pollResponseInfo" json:"poll_response_info,omitempty"`
-	// Payload for a postback action
-	Postback *WebhookPostback `protobuf:"bytes,15,opt,name=postback" json:"postback,omitempty"`
-	// Metrics Reach count
-	Reach *int32 `protobuf:"varint,16,opt,name=reach" json:"reach,omitempty"`
-	// Reaction applied to message
-	Reaction *WebhookReaction `protobuf:"bytes,17,opt,name=reaction" json:"reaction,omitempty"`
-	// Message read context
-	Read *WebhookRead `protobuf:"bytes,18,opt,name=read" json:"read,omitempty"`
-	// The recipient details
-	Recipient *User `protobuf:"bytes,19,opt,name=recipient" json:"recipient,omitempty"`
-	// Deep-link referral details
-	Referral *WebhookReferral `protobuf:"bytes,20,opt,name=referral" json:"referral,omitempty"`
-	// Metrics Replies count
-	Replies *int32 `protobuf:"varint,21,opt,name=replies" json:"replies,omitempty"`
-	// Thread control handover request details
-	RequestThreadControl *WebhookRequestThreadControl `protobuf:"bytes,22,opt,name=request_thread_control,json=requestThreadControl" json:"request_thread_control,omitempty"`
-	// The sender details
-	Sender *User `protobuf:"bytes,23,opt,name=sender" json:"sender,omitempty"`
-	// Thread control handover take details
-	TakeThreadControl *WebhookTakeThreadControl `protobuf:"bytes,24,opt,name=take_thread_control,json=takeThreadControl" json:"take_thread_control,omitempty"`
-	// Metrics Taps back count
-	TapsBack *int32 `protobuf:"varint,25,opt,name=taps_back,json=tapsBack" json:"taps_back,omitempty"`
-	// Metrics Taps forward count
-	TapsForward *int32 `protobuf:"varint,26,opt,name=taps_forward,json=tapsForward" json:"taps_forward,omitempty"`
-	// Text context or content
-	Text *string `protobuf:"bytes,27,opt,name=text" json:"text,omitempty"`
-	// Timestamp when it was sent
-	Timestamp *int64 `protobuf:"varint,28,opt,name=timestamp" json:"timestamp,omitempty"`
-	// Verb defining the action (e.g., add, remove)
-	Verb          *string `protobuf:"bytes,29,opt,name=verb" json:"verb,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                           protoimpl.MessageState       `protogen:"opaque.v1"`
+	xxx_hidden_AppRoles             map[string]string            `protobuf:"bytes,1,rep,name=app_roles,json=appRoles" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	xxx_hidden_CommentId            *string                      `protobuf:"bytes,2,opt,name=comment_id,json=commentId"`
+	xxx_hidden_Exits                int32                        `protobuf:"varint,3,opt,name=exits"`
+	xxx_hidden_From                 *User                        `protobuf:"bytes,4,opt,name=from"`
+	xxx_hidden_Id                   *string                      `protobuf:"bytes,5,opt,name=id"`
+	xxx_hidden_Impressions          int32                        `protobuf:"varint,6,opt,name=impressions"`
+	xxx_hidden_IsSelf               bool                         `protobuf:"varint,7,opt,name=is_self,json=isSelf"`
+	xxx_hidden_Media                *WebhookMedia                `protobuf:"bytes,8,opt,name=media"`
+	xxx_hidden_MediaId              *string                      `protobuf:"bytes,9,opt,name=media_id,json=mediaId"`
+	xxx_hidden_Mid                  *string                      `protobuf:"bytes,10,opt,name=mid"`
+	xxx_hidden_ObjectId             *string                      `protobuf:"bytes,11,opt,name=object_id,json=objectId"`
+	xxx_hidden_ParentId             *string                      `protobuf:"bytes,12,opt,name=parent_id,json=parentId"`
+	xxx_hidden_PassThreadControl    *WebhookPassThreadControl    `protobuf:"bytes,13,opt,name=pass_thread_control,json=passThreadControl"`
+	xxx_hidden_PollResponseInfo     *WebhookPollResponseInfo     `protobuf:"bytes,14,opt,name=poll_response_info,json=pollResponseInfo"`
+	xxx_hidden_Postback             *WebhookPostback             `protobuf:"bytes,15,opt,name=postback"`
+	xxx_hidden_Reach                int32                        `protobuf:"varint,16,opt,name=reach"`
+	xxx_hidden_Reaction             *WebhookReaction             `protobuf:"bytes,17,opt,name=reaction"`
+	xxx_hidden_Read                 *WebhookRead                 `protobuf:"bytes,18,opt,name=read"`
+	xxx_hidden_Recipient            *User                        `protobuf:"bytes,19,opt,name=recipient"`
+	xxx_hidden_Referral             *WebhookReferral             `protobuf:"bytes,20,opt,name=referral"`
+	xxx_hidden_Replies              int32                        `protobuf:"varint,21,opt,name=replies"`
+	xxx_hidden_RequestThreadControl *WebhookRequestThreadControl `protobuf:"bytes,22,opt,name=request_thread_control,json=requestThreadControl"`
+	xxx_hidden_Sender               *User                        `protobuf:"bytes,23,opt,name=sender"`
+	xxx_hidden_TakeThreadControl    *WebhookTakeThreadControl    `protobuf:"bytes,24,opt,name=take_thread_control,json=takeThreadControl"`
+	xxx_hidden_TapsBack             int32                        `protobuf:"varint,25,opt,name=taps_back,json=tapsBack"`
+	xxx_hidden_TapsForward          int32                        `protobuf:"varint,26,opt,name=taps_forward,json=tapsForward"`
+	xxx_hidden_Text                 *string                      `protobuf:"bytes,27,opt,name=text"`
+	xxx_hidden_Timestamp            int64                        `protobuf:"varint,28,opt,name=timestamp"`
+	xxx_hidden_Verb                 *string                      `protobuf:"bytes,29,opt,name=verb"`
+	XXX_raceDetectHookData          protoimpl.RaceDetectHookData
+	XXX_presence                    [1]uint32
+	unknownFields                   protoimpl.UnknownFields
+	sizeCache                       protoimpl.SizeCache
 }
 
 func (x *WebhookValue) Reset() {
@@ -2901,629 +3251,685 @@ func (x *WebhookValue) ProtoReflect() protoreflect.Message {
 
 func (x *WebhookValue) GetAppRoles() map[string]string {
 	if x != nil {
-		return x.AppRoles
+		return x.xxx_hidden_AppRoles
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetCommentId() string {
-	if x != nil && x.CommentId != nil {
-		return *x.CommentId
+	if x != nil {
+		if x.xxx_hidden_CommentId != nil {
+			return *x.xxx_hidden_CommentId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) GetExits() int32 {
-	if x != nil && x.Exits != nil {
-		return *x.Exits
+	if x != nil {
+		return x.xxx_hidden_Exits
 	}
 	return 0
 }
 
 func (x *WebhookValue) GetFrom() *User {
 	if x != nil {
-		return x.From
+		return x.xxx_hidden_From
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) GetImpressions() int32 {
-	if x != nil && x.Impressions != nil {
-		return *x.Impressions
+	if x != nil {
+		return x.xxx_hidden_Impressions
 	}
 	return 0
 }
 
 func (x *WebhookValue) GetIsSelf() bool {
-	if x != nil && x.IsSelf != nil {
-		return *x.IsSelf
+	if x != nil {
+		return x.xxx_hidden_IsSelf
 	}
 	return false
 }
 
 func (x *WebhookValue) GetMedia() *WebhookMedia {
 	if x != nil {
-		return x.Media
+		return x.xxx_hidden_Media
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetMediaId() string {
-	if x != nil && x.MediaId != nil {
-		return *x.MediaId
+	if x != nil {
+		if x.xxx_hidden_MediaId != nil {
+			return *x.xxx_hidden_MediaId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) GetObjectId() string {
-	if x != nil && x.ObjectId != nil {
-		return *x.ObjectId
+	if x != nil {
+		if x.xxx_hidden_ObjectId != nil {
+			return *x.xxx_hidden_ObjectId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) GetParentId() string {
-	if x != nil && x.ParentId != nil {
-		return *x.ParentId
+	if x != nil {
+		if x.xxx_hidden_ParentId != nil {
+			return *x.xxx_hidden_ParentId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) GetPassThreadControl() *WebhookPassThreadControl {
 	if x != nil {
-		return x.PassThreadControl
+		return x.xxx_hidden_PassThreadControl
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetPollResponseInfo() *WebhookPollResponseInfo {
 	if x != nil {
-		return x.PollResponseInfo
+		return x.xxx_hidden_PollResponseInfo
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetPostback() *WebhookPostback {
 	if x != nil {
-		return x.Postback
+		return x.xxx_hidden_Postback
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetReach() int32 {
-	if x != nil && x.Reach != nil {
-		return *x.Reach
+	if x != nil {
+		return x.xxx_hidden_Reach
 	}
 	return 0
 }
 
 func (x *WebhookValue) GetReaction() *WebhookReaction {
 	if x != nil {
-		return x.Reaction
+		return x.xxx_hidden_Reaction
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetRead() *WebhookRead {
 	if x != nil {
-		return x.Read
+		return x.xxx_hidden_Read
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetRecipient() *User {
 	if x != nil {
-		return x.Recipient
+		return x.xxx_hidden_Recipient
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetReferral() *WebhookReferral {
 	if x != nil {
-		return x.Referral
+		return x.xxx_hidden_Referral
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetReplies() int32 {
-	if x != nil && x.Replies != nil {
-		return *x.Replies
+	if x != nil {
+		return x.xxx_hidden_Replies
 	}
 	return 0
 }
 
 func (x *WebhookValue) GetRequestThreadControl() *WebhookRequestThreadControl {
 	if x != nil {
-		return x.RequestThreadControl
+		return x.xxx_hidden_RequestThreadControl
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetSender() *User {
 	if x != nil {
-		return x.Sender
+		return x.xxx_hidden_Sender
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetTakeThreadControl() *WebhookTakeThreadControl {
 	if x != nil {
-		return x.TakeThreadControl
+		return x.xxx_hidden_TakeThreadControl
 	}
 	return nil
 }
 
 func (x *WebhookValue) GetTapsBack() int32 {
-	if x != nil && x.TapsBack != nil {
-		return *x.TapsBack
+	if x != nil {
+		return x.xxx_hidden_TapsBack
 	}
 	return 0
 }
 
 func (x *WebhookValue) GetTapsForward() int32 {
-	if x != nil && x.TapsForward != nil {
-		return *x.TapsForward
+	if x != nil {
+		return x.xxx_hidden_TapsForward
 	}
 	return 0
 }
 
 func (x *WebhookValue) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) GetTimestamp() int64 {
-	if x != nil && x.Timestamp != nil {
-		return *x.Timestamp
+	if x != nil {
+		return x.xxx_hidden_Timestamp
 	}
 	return 0
 }
 
 func (x *WebhookValue) GetVerb() string {
-	if x != nil && x.Verb != nil {
-		return *x.Verb
+	if x != nil {
+		if x.xxx_hidden_Verb != nil {
+			return *x.xxx_hidden_Verb
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WebhookValue) SetAppRoles(v map[string]string) {
-	x.AppRoles = v
+	x.xxx_hidden_AppRoles = v
 }
 
 func (x *WebhookValue) SetCommentId(v string) {
-	x.CommentId = &v
+	x.xxx_hidden_CommentId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 29)
 }
 
 func (x *WebhookValue) SetExits(v int32) {
-	x.Exits = &v
+	x.xxx_hidden_Exits = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 29)
 }
 
 func (x *WebhookValue) SetFrom(v *User) {
-	x.From = v
+	x.xxx_hidden_From = v
 }
 
 func (x *WebhookValue) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 29)
 }
 
 func (x *WebhookValue) SetImpressions(v int32) {
-	x.Impressions = &v
+	x.xxx_hidden_Impressions = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 29)
 }
 
 func (x *WebhookValue) SetIsSelf(v bool) {
-	x.IsSelf = &v
+	x.xxx_hidden_IsSelf = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 29)
 }
 
 func (x *WebhookValue) SetMedia(v *WebhookMedia) {
-	x.Media = v
+	x.xxx_hidden_Media = v
 }
 
 func (x *WebhookValue) SetMediaId(v string) {
-	x.MediaId = &v
+	x.xxx_hidden_MediaId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 29)
 }
 
 func (x *WebhookValue) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 29)
 }
 
 func (x *WebhookValue) SetObjectId(v string) {
-	x.ObjectId = &v
+	x.xxx_hidden_ObjectId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 29)
 }
 
 func (x *WebhookValue) SetParentId(v string) {
-	x.ParentId = &v
+	x.xxx_hidden_ParentId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 29)
 }
 
 func (x *WebhookValue) SetPassThreadControl(v *WebhookPassThreadControl) {
-	x.PassThreadControl = v
+	x.xxx_hidden_PassThreadControl = v
 }
 
 func (x *WebhookValue) SetPollResponseInfo(v *WebhookPollResponseInfo) {
-	x.PollResponseInfo = v
+	x.xxx_hidden_PollResponseInfo = v
 }
 
 func (x *WebhookValue) SetPostback(v *WebhookPostback) {
-	x.Postback = v
+	x.xxx_hidden_Postback = v
 }
 
 func (x *WebhookValue) SetReach(v int32) {
-	x.Reach = &v
+	x.xxx_hidden_Reach = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 29)
 }
 
 func (x *WebhookValue) SetReaction(v *WebhookReaction) {
-	x.Reaction = v
+	x.xxx_hidden_Reaction = v
 }
 
 func (x *WebhookValue) SetRead(v *WebhookRead) {
-	x.Read = v
+	x.xxx_hidden_Read = v
 }
 
 func (x *WebhookValue) SetRecipient(v *User) {
-	x.Recipient = v
+	x.xxx_hidden_Recipient = v
 }
 
 func (x *WebhookValue) SetReferral(v *WebhookReferral) {
-	x.Referral = v
+	x.xxx_hidden_Referral = v
 }
 
 func (x *WebhookValue) SetReplies(v int32) {
-	x.Replies = &v
+	x.xxx_hidden_Replies = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 20, 29)
 }
 
 func (x *WebhookValue) SetRequestThreadControl(v *WebhookRequestThreadControl) {
-	x.RequestThreadControl = v
+	x.xxx_hidden_RequestThreadControl = v
 }
 
 func (x *WebhookValue) SetSender(v *User) {
-	x.Sender = v
+	x.xxx_hidden_Sender = v
 }
 
 func (x *WebhookValue) SetTakeThreadControl(v *WebhookTakeThreadControl) {
-	x.TakeThreadControl = v
+	x.xxx_hidden_TakeThreadControl = v
 }
 
 func (x *WebhookValue) SetTapsBack(v int32) {
-	x.TapsBack = &v
+	x.xxx_hidden_TapsBack = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 24, 29)
 }
 
 func (x *WebhookValue) SetTapsForward(v int32) {
-	x.TapsForward = &v
+	x.xxx_hidden_TapsForward = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 25, 29)
 }
 
 func (x *WebhookValue) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 26, 29)
 }
 
 func (x *WebhookValue) SetTimestamp(v int64) {
-	x.Timestamp = &v
+	x.xxx_hidden_Timestamp = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 27, 29)
 }
 
 func (x *WebhookValue) SetVerb(v string) {
-	x.Verb = &v
+	x.xxx_hidden_Verb = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 28, 29)
 }
 
 func (x *WebhookValue) HasCommentId() bool {
 	if x == nil {
 		return false
 	}
-	return x.CommentId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *WebhookValue) HasExits() bool {
 	if x == nil {
 		return false
 	}
-	return x.Exits != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *WebhookValue) HasFrom() bool {
 	if x == nil {
 		return false
 	}
-	return x.From != nil
+	return x.xxx_hidden_From != nil
 }
 
 func (x *WebhookValue) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *WebhookValue) HasImpressions() bool {
 	if x == nil {
 		return false
 	}
-	return x.Impressions != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *WebhookValue) HasIsSelf() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsSelf != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
 }
 
 func (x *WebhookValue) HasMedia() bool {
 	if x == nil {
 		return false
 	}
-	return x.Media != nil
+	return x.xxx_hidden_Media != nil
 }
 
 func (x *WebhookValue) HasMediaId() bool {
 	if x == nil {
 		return false
 	}
-	return x.MediaId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *WebhookValue) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *WebhookValue) HasObjectId() bool {
 	if x == nil {
 		return false
 	}
-	return x.ObjectId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
 func (x *WebhookValue) HasParentId() bool {
 	if x == nil {
 		return false
 	}
-	return x.ParentId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
 }
 
 func (x *WebhookValue) HasPassThreadControl() bool {
 	if x == nil {
 		return false
 	}
-	return x.PassThreadControl != nil
+	return x.xxx_hidden_PassThreadControl != nil
 }
 
 func (x *WebhookValue) HasPollResponseInfo() bool {
 	if x == nil {
 		return false
 	}
-	return x.PollResponseInfo != nil
+	return x.xxx_hidden_PollResponseInfo != nil
 }
 
 func (x *WebhookValue) HasPostback() bool {
 	if x == nil {
 		return false
 	}
-	return x.Postback != nil
+	return x.xxx_hidden_Postback != nil
 }
 
 func (x *WebhookValue) HasReach() bool {
 	if x == nil {
 		return false
 	}
-	return x.Reach != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 15)
 }
 
 func (x *WebhookValue) HasReaction() bool {
 	if x == nil {
 		return false
 	}
-	return x.Reaction != nil
+	return x.xxx_hidden_Reaction != nil
 }
 
 func (x *WebhookValue) HasRead() bool {
 	if x == nil {
 		return false
 	}
-	return x.Read != nil
+	return x.xxx_hidden_Read != nil
 }
 
 func (x *WebhookValue) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.Recipient != nil
+	return x.xxx_hidden_Recipient != nil
 }
 
 func (x *WebhookValue) HasReferral() bool {
 	if x == nil {
 		return false
 	}
-	return x.Referral != nil
+	return x.xxx_hidden_Referral != nil
 }
 
 func (x *WebhookValue) HasReplies() bool {
 	if x == nil {
 		return false
 	}
-	return x.Replies != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 20)
 }
 
 func (x *WebhookValue) HasRequestThreadControl() bool {
 	if x == nil {
 		return false
 	}
-	return x.RequestThreadControl != nil
+	return x.xxx_hidden_RequestThreadControl != nil
 }
 
 func (x *WebhookValue) HasSender() bool {
 	if x == nil {
 		return false
 	}
-	return x.Sender != nil
+	return x.xxx_hidden_Sender != nil
 }
 
 func (x *WebhookValue) HasTakeThreadControl() bool {
 	if x == nil {
 		return false
 	}
-	return x.TakeThreadControl != nil
+	return x.xxx_hidden_TakeThreadControl != nil
 }
 
 func (x *WebhookValue) HasTapsBack() bool {
 	if x == nil {
 		return false
 	}
-	return x.TapsBack != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 24)
 }
 
 func (x *WebhookValue) HasTapsForward() bool {
 	if x == nil {
 		return false
 	}
-	return x.TapsForward != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 25)
 }
 
 func (x *WebhookValue) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 26)
 }
 
 func (x *WebhookValue) HasTimestamp() bool {
 	if x == nil {
 		return false
 	}
-	return x.Timestamp != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 27)
 }
 
 func (x *WebhookValue) HasVerb() bool {
 	if x == nil {
 		return false
 	}
-	return x.Verb != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 28)
 }
 
 func (x *WebhookValue) ClearCommentId() {
-	x.CommentId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_CommentId = nil
 }
 
 func (x *WebhookValue) ClearExits() {
-	x.Exits = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Exits = 0
 }
 
 func (x *WebhookValue) ClearFrom() {
-	x.From = nil
+	x.xxx_hidden_From = nil
 }
 
 func (x *WebhookValue) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *WebhookValue) ClearImpressions() {
-	x.Impressions = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_Impressions = 0
 }
 
 func (x *WebhookValue) ClearIsSelf() {
-	x.IsSelf = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_IsSelf = false
 }
 
 func (x *WebhookValue) ClearMedia() {
-	x.Media = nil
+	x.xxx_hidden_Media = nil
 }
 
 func (x *WebhookValue) ClearMediaId() {
-	x.MediaId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	x.xxx_hidden_MediaId = nil
 }
 
 func (x *WebhookValue) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *WebhookValue) ClearObjectId() {
-	x.ObjectId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
+	x.xxx_hidden_ObjectId = nil
 }
 
 func (x *WebhookValue) ClearParentId() {
-	x.ParentId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	x.xxx_hidden_ParentId = nil
 }
 
 func (x *WebhookValue) ClearPassThreadControl() {
-	x.PassThreadControl = nil
+	x.xxx_hidden_PassThreadControl = nil
 }
 
 func (x *WebhookValue) ClearPollResponseInfo() {
-	x.PollResponseInfo = nil
+	x.xxx_hidden_PollResponseInfo = nil
 }
 
 func (x *WebhookValue) ClearPostback() {
-	x.Postback = nil
+	x.xxx_hidden_Postback = nil
 }
 
 func (x *WebhookValue) ClearReach() {
-	x.Reach = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 15)
+	x.xxx_hidden_Reach = 0
 }
 
 func (x *WebhookValue) ClearReaction() {
-	x.Reaction = nil
+	x.xxx_hidden_Reaction = nil
 }
 
 func (x *WebhookValue) ClearRead() {
-	x.Read = nil
+	x.xxx_hidden_Read = nil
 }
 
 func (x *WebhookValue) ClearRecipient() {
-	x.Recipient = nil
+	x.xxx_hidden_Recipient = nil
 }
 
 func (x *WebhookValue) ClearReferral() {
-	x.Referral = nil
+	x.xxx_hidden_Referral = nil
 }
 
 func (x *WebhookValue) ClearReplies() {
-	x.Replies = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 20)
+	x.xxx_hidden_Replies = 0
 }
 
 func (x *WebhookValue) ClearRequestThreadControl() {
-	x.RequestThreadControl = nil
+	x.xxx_hidden_RequestThreadControl = nil
 }
 
 func (x *WebhookValue) ClearSender() {
-	x.Sender = nil
+	x.xxx_hidden_Sender = nil
 }
 
 func (x *WebhookValue) ClearTakeThreadControl() {
-	x.TakeThreadControl = nil
+	x.xxx_hidden_TakeThreadControl = nil
 }
 
 func (x *WebhookValue) ClearTapsBack() {
-	x.TapsBack = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 24)
+	x.xxx_hidden_TapsBack = 0
 }
 
 func (x *WebhookValue) ClearTapsForward() {
-	x.TapsForward = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 25)
+	x.xxx_hidden_TapsForward = 0
 }
 
 func (x *WebhookValue) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 26)
+	x.xxx_hidden_Text = nil
 }
 
 func (x *WebhookValue) ClearTimestamp() {
-	x.Timestamp = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 27)
+	x.xxx_hidden_Timestamp = 0
 }
 
 func (x *WebhookValue) ClearVerb() {
-	x.Verb = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 28)
+	x.xxx_hidden_Verb = nil
 }
 
 type WebhookValue_builder struct {
@@ -3593,35 +3999,83 @@ func (b0 WebhookValue_builder) Build() *WebhookValue {
 	m0 := &WebhookValue{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.AppRoles = b.AppRoles
-	x.CommentId = b.CommentId
-	x.Exits = b.Exits
-	x.From = b.From
-	x.Id = b.Id
-	x.Impressions = b.Impressions
-	x.IsSelf = b.IsSelf
-	x.Media = b.Media
-	x.MediaId = b.MediaId
-	x.Mid = b.Mid
-	x.ObjectId = b.ObjectId
-	x.ParentId = b.ParentId
-	x.PassThreadControl = b.PassThreadControl
-	x.PollResponseInfo = b.PollResponseInfo
-	x.Postback = b.Postback
-	x.Reach = b.Reach
-	x.Reaction = b.Reaction
-	x.Read = b.Read
-	x.Recipient = b.Recipient
-	x.Referral = b.Referral
-	x.Replies = b.Replies
-	x.RequestThreadControl = b.RequestThreadControl
-	x.Sender = b.Sender
-	x.TakeThreadControl = b.TakeThreadControl
-	x.TapsBack = b.TapsBack
-	x.TapsForward = b.TapsForward
-	x.Text = b.Text
-	x.Timestamp = b.Timestamp
-	x.Verb = b.Verb
+	x.xxx_hidden_AppRoles = b.AppRoles
+	if b.CommentId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 29)
+		x.xxx_hidden_CommentId = b.CommentId
+	}
+	if b.Exits != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 29)
+		x.xxx_hidden_Exits = *b.Exits
+	}
+	x.xxx_hidden_From = b.From
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 29)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Impressions != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 29)
+		x.xxx_hidden_Impressions = *b.Impressions
+	}
+	if b.IsSelf != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 29)
+		x.xxx_hidden_IsSelf = *b.IsSelf
+	}
+	x.xxx_hidden_Media = b.Media
+	if b.MediaId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 29)
+		x.xxx_hidden_MediaId = b.MediaId
+	}
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 29)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.ObjectId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 29)
+		x.xxx_hidden_ObjectId = b.ObjectId
+	}
+	if b.ParentId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 29)
+		x.xxx_hidden_ParentId = b.ParentId
+	}
+	x.xxx_hidden_PassThreadControl = b.PassThreadControl
+	x.xxx_hidden_PollResponseInfo = b.PollResponseInfo
+	x.xxx_hidden_Postback = b.Postback
+	if b.Reach != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 29)
+		x.xxx_hidden_Reach = *b.Reach
+	}
+	x.xxx_hidden_Reaction = b.Reaction
+	x.xxx_hidden_Read = b.Read
+	x.xxx_hidden_Recipient = b.Recipient
+	x.xxx_hidden_Referral = b.Referral
+	if b.Replies != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 20, 29)
+		x.xxx_hidden_Replies = *b.Replies
+	}
+	x.xxx_hidden_RequestThreadControl = b.RequestThreadControl
+	x.xxx_hidden_Sender = b.Sender
+	x.xxx_hidden_TakeThreadControl = b.TakeThreadControl
+	if b.TapsBack != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 24, 29)
+		x.xxx_hidden_TapsBack = *b.TapsBack
+	}
+	if b.TapsForward != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 25, 29)
+		x.xxx_hidden_TapsForward = *b.TapsForward
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 26, 29)
+		x.xxx_hidden_Text = b.Text
+	}
+	if b.Timestamp != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 27, 29)
+		x.xxx_hidden_Timestamp = *b.Timestamp
+	}
+	if b.Verb != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 28, 29)
+		x.xxx_hidden_Verb = b.Verb
+	}
 	return m0
 }
 

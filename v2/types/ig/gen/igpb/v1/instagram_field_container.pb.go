@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_field_container.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,13 +24,13 @@ const (
 
 // CopyrightCheckStatus represents the copyright detection status for uploaded videos
 type CopyrightCheckStatus struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Whether matches were found indicating copyright infringement
-	MatchesFound *bool `protobuf:"varint,1,opt,name=matches_found,json=matchesFound" json:"matches_found,omitempty"`
-	// The status of the copyright detection process
-	Status        *string `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_MatchesFound bool                   `protobuf:"varint,1,opt,name=matches_found,json=matchesFound"`
+	xxx_hidden_Status       *string                `protobuf:"bytes,2,opt,name=status"`
+	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
+	XXX_presence            [1]uint32
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *CopyrightCheckStatus) Reset() {
@@ -61,47 +59,54 @@ func (x *CopyrightCheckStatus) ProtoReflect() protoreflect.Message {
 }
 
 func (x *CopyrightCheckStatus) GetMatchesFound() bool {
-	if x != nil && x.MatchesFound != nil {
-		return *x.MatchesFound
+	if x != nil {
+		return x.xxx_hidden_MatchesFound
 	}
 	return false
 }
 
 func (x *CopyrightCheckStatus) GetStatus() string {
-	if x != nil && x.Status != nil {
-		return *x.Status
+	if x != nil {
+		if x.xxx_hidden_Status != nil {
+			return *x.xxx_hidden_Status
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *CopyrightCheckStatus) SetMatchesFound(v bool) {
-	x.MatchesFound = &v
+	x.xxx_hidden_MatchesFound = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *CopyrightCheckStatus) SetStatus(v string) {
-	x.Status = &v
+	x.xxx_hidden_Status = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *CopyrightCheckStatus) HasMatchesFound() bool {
 	if x == nil {
 		return false
 	}
-	return x.MatchesFound != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *CopyrightCheckStatus) HasStatus() bool {
 	if x == nil {
 		return false
 	}
-	return x.Status != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *CopyrightCheckStatus) ClearMatchesFound() {
-	x.MatchesFound = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_MatchesFound = false
 }
 
 func (x *CopyrightCheckStatus) ClearStatus() {
-	x.Status = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Status = nil
 }
 
 type CopyrightCheckStatus_builder struct {
@@ -117,27 +122,29 @@ func (b0 CopyrightCheckStatus_builder) Build() *CopyrightCheckStatus {
 	m0 := &CopyrightCheckStatus{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.MatchesFound = b.MatchesFound
-	x.Status = b.Status
+	if b.MatchesFound != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_MatchesFound = *b.MatchesFound
+	}
+	if b.Status != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Status = b.Status
+	}
 	return m0
 }
 
 // InstagramFieldContainerResponse represents an Instagram container for media publication
 type InstagramFieldContainerResponse struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The copyright check status for the container (if applicable)
-	CopyrightCheckStatus *CopyrightCheckStatus `protobuf:"bytes,1,opt,name=copyright_check_status,json=copyrightCheckStatus" json:"copyright_check_status,omitempty"`
-	// The identifier of the Instagram container
-	Id *string `protobuf:"bytes,2,opt,name=id" json:"id,omitempty"`
-	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
-	Payload []byte `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
-	// Publication status. If status_code is ERROR, this value will be an error subcode
-	Status *string `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
-	// The publication status code of the container.
-	// Possible values: EXPIRED, ERROR, FINISHED, IN_PROGRESS, PUBLISHED
-	StatusCode    *string `protobuf:"bytes,5,opt,name=status_code,json=statusCode" json:"status_code,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                           protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_CopyrightCheckStatus *CopyrightCheckStatus  `protobuf:"bytes,1,opt,name=copyright_check_status,json=copyrightCheckStatus"`
+	xxx_hidden_Id                   *string                `protobuf:"bytes,2,opt,name=id"`
+	xxx_hidden_Payload              []byte                 `protobuf:"bytes,3,opt,name=payload"`
+	xxx_hidden_Status               *string                `protobuf:"bytes,4,opt,name=status"`
+	xxx_hidden_StatusCode           *string                `protobuf:"bytes,5,opt,name=status_code,json=statusCode"`
+	XXX_raceDetectHookData          protoimpl.RaceDetectHookData
+	XXX_presence                    [1]uint32
+	unknownFields                   protoimpl.UnknownFields
+	sizeCache                       protoimpl.SizeCache
 }
 
 func (x *InstagramFieldContainerResponse) Reset() {
@@ -167,115 +174,132 @@ func (x *InstagramFieldContainerResponse) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramFieldContainerResponse) GetCopyrightCheckStatus() *CopyrightCheckStatus {
 	if x != nil {
-		return x.CopyrightCheckStatus
+		return x.xxx_hidden_CopyrightCheckStatus
 	}
 	return nil
 }
 
 func (x *InstagramFieldContainerResponse) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramFieldContainerResponse) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *InstagramFieldContainerResponse) GetStatus() string {
-	if x != nil && x.Status != nil {
-		return *x.Status
+	if x != nil {
+		if x.xxx_hidden_Status != nil {
+			return *x.xxx_hidden_Status
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramFieldContainerResponse) GetStatusCode() string {
-	if x != nil && x.StatusCode != nil {
-		return *x.StatusCode
+	if x != nil {
+		if x.xxx_hidden_StatusCode != nil {
+			return *x.xxx_hidden_StatusCode
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramFieldContainerResponse) SetCopyrightCheckStatus(v *CopyrightCheckStatus) {
-	x.CopyrightCheckStatus = v
+	x.xxx_hidden_CopyrightCheckStatus = v
 }
 
 func (x *InstagramFieldContainerResponse) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
 func (x *InstagramFieldContainerResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *InstagramFieldContainerResponse) SetStatus(v string) {
-	x.Status = &v
+	x.xxx_hidden_Status = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
 }
 
 func (x *InstagramFieldContainerResponse) SetStatusCode(v string) {
-	x.StatusCode = &v
+	x.xxx_hidden_StatusCode = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *InstagramFieldContainerResponse) HasCopyrightCheckStatus() bool {
 	if x == nil {
 		return false
 	}
-	return x.CopyrightCheckStatus != nil
+	return x.xxx_hidden_CopyrightCheckStatus != nil
 }
 
 func (x *InstagramFieldContainerResponse) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *InstagramFieldContainerResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *InstagramFieldContainerResponse) HasStatus() bool {
 	if x == nil {
 		return false
 	}
-	return x.Status != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *InstagramFieldContainerResponse) HasStatusCode() bool {
 	if x == nil {
 		return false
 	}
-	return x.StatusCode != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *InstagramFieldContainerResponse) ClearCopyrightCheckStatus() {
-	x.CopyrightCheckStatus = nil
+	x.xxx_hidden_CopyrightCheckStatus = nil
 }
 
 func (x *InstagramFieldContainerResponse) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *InstagramFieldContainerResponse) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
 }
 
 func (x *InstagramFieldContainerResponse) ClearStatus() {
-	x.Status = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Status = nil
 }
 
 func (x *InstagramFieldContainerResponse) ClearStatusCode() {
-	x.StatusCode = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_StatusCode = nil
 }
 
 type InstagramFieldContainerResponse_builder struct {
@@ -298,11 +322,23 @@ func (b0 InstagramFieldContainerResponse_builder) Build() *InstagramFieldContain
 	m0 := &InstagramFieldContainerResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.CopyrightCheckStatus = b.CopyrightCheckStatus
-	x.Id = b.Id
-	x.Payload = b.Payload
-	x.Status = b.Status
-	x.StatusCode = b.StatusCode
+	x.xxx_hidden_CopyrightCheckStatus = b.CopyrightCheckStatus
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Payload = b.Payload
+	}
+	if b.Status != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_Status = b.Status
+	}
+	if b.StatusCode != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_StatusCode = b.StatusCode
+	}
 	return m0
 }
 

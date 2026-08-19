@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_welcome_message_flows.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,11 +24,10 @@ const (
 
 // WelcomeMessageFlowItem represents a single welcome message flow item
 type WelcomeMessageFlowItem struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The message with text and quick reply options
-	Message       *WelcomeMessageFlowItem_Message `protobuf:"bytes,1,opt,name=message" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState          `protogen:"opaque.v1"`
+	xxx_hidden_Message *WelcomeMessageFlowItem_Message `protobuf:"bytes,1,opt,name=message"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *WelcomeMessageFlowItem) Reset() {
@@ -60,24 +57,24 @@ func (x *WelcomeMessageFlowItem) ProtoReflect() protoreflect.Message {
 
 func (x *WelcomeMessageFlowItem) GetMessage() *WelcomeMessageFlowItem_Message {
 	if x != nil {
-		return x.Message
+		return x.xxx_hidden_Message
 	}
 	return nil
 }
 
 func (x *WelcomeMessageFlowItem) SetMessage(v *WelcomeMessageFlowItem_Message) {
-	x.Message = v
+	x.xxx_hidden_Message = v
 }
 
 func (x *WelcomeMessageFlowItem) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.Message != nil
+	return x.xxx_hidden_Message != nil
 }
 
 func (x *WelcomeMessageFlowItem) ClearMessage() {
-	x.Message = nil
+	x.xxx_hidden_Message = nil
 }
 
 type WelcomeMessageFlowItem_builder struct {
@@ -91,21 +88,20 @@ func (b0 WelcomeMessageFlowItem_builder) Build() *WelcomeMessageFlowItem {
 	m0 := &WelcomeMessageFlowItem{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Message = b.Message
+	x.xxx_hidden_Message = b.Message
 	return m0
 }
 
 // InstagramWelcomeMessageFlows represents the welcome message flows configuration for Instagram
 type InstagramWelcomeMessageFlows struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The eligible platforms for this welcome message flow
-	EligiblePlatforms []string `protobuf:"bytes,1,rep,name=eligible_platforms,json=eligiblePlatforms" json:"eligible_platforms,omitempty"`
-	// The name of the welcome message flow
-	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	// Array of welcome message flow items (typically contains 1 item)
-	WelcomeMessageFlow []*WelcomeMessageFlowItem `protobuf:"bytes,3,rep,name=welcome_message_flow,json=welcomeMessageFlow" json:"welcome_message_flow,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state                         protoimpl.MessageState     `protogen:"opaque.v1"`
+	xxx_hidden_EligiblePlatforms  []string                   `protobuf:"bytes,1,rep,name=eligible_platforms,json=eligiblePlatforms"`
+	xxx_hidden_Name               *string                    `protobuf:"bytes,2,opt,name=name"`
+	xxx_hidden_WelcomeMessageFlow *[]*WelcomeMessageFlowItem `protobuf:"bytes,3,rep,name=welcome_message_flow,json=welcomeMessageFlow"`
+	XXX_raceDetectHookData        protoimpl.RaceDetectHookData
+	XXX_presence                  [1]uint32
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
 }
 
 func (x *InstagramWelcomeMessageFlows) Reset() {
@@ -135,46 +131,53 @@ func (x *InstagramWelcomeMessageFlows) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramWelcomeMessageFlows) GetEligiblePlatforms() []string {
 	if x != nil {
-		return x.EligiblePlatforms
+		return x.xxx_hidden_EligiblePlatforms
 	}
 	return nil
 }
 
 func (x *InstagramWelcomeMessageFlows) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramWelcomeMessageFlows) GetWelcomeMessageFlow() []*WelcomeMessageFlowItem {
 	if x != nil {
-		return x.WelcomeMessageFlow
+		if x.xxx_hidden_WelcomeMessageFlow != nil {
+			return *x.xxx_hidden_WelcomeMessageFlow
+		}
 	}
 	return nil
 }
 
 func (x *InstagramWelcomeMessageFlows) SetEligiblePlatforms(v []string) {
-	x.EligiblePlatforms = v
+	x.xxx_hidden_EligiblePlatforms = v
 }
 
 func (x *InstagramWelcomeMessageFlows) SetName(v string) {
-	x.Name = &v
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *InstagramWelcomeMessageFlows) SetWelcomeMessageFlow(v []*WelcomeMessageFlowItem) {
-	x.WelcomeMessageFlow = v
+	x.xxx_hidden_WelcomeMessageFlow = &v
 }
 
 func (x *InstagramWelcomeMessageFlows) HasName() bool {
 	if x == nil {
 		return false
 	}
-	return x.Name != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *InstagramWelcomeMessageFlows) ClearName() {
-	x.Name = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Name = nil
 }
 
 type InstagramWelcomeMessageFlows_builder struct {
@@ -192,21 +195,24 @@ func (b0 InstagramWelcomeMessageFlows_builder) Build() *InstagramWelcomeMessageF
 	m0 := &InstagramWelcomeMessageFlows{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.EligiblePlatforms = b.EligiblePlatforms
-	x.Name = b.Name
-	x.WelcomeMessageFlow = b.WelcomeMessageFlow
+	x.xxx_hidden_EligiblePlatforms = b.EligiblePlatforms
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Name = b.Name
+	}
+	x.xxx_hidden_WelcomeMessageFlow = &b.WelcomeMessageFlow
 	return m0
 }
 
 // Message contains the text and quick reply options for the welcome message
 type WelcomeMessageFlowItem_Message struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The welcome message text
-	Text *string `protobuf:"bytes,1,opt,name=text" json:"text,omitempty"`
-	// Array of quick reply options for the welcome message (maximum 10)
-	QuickReplies  []*QuickReply `protobuf:"bytes,2,rep,name=quick_replies,json=quickReplies" json:"quick_replies,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Text         *string                `protobuf:"bytes,1,opt,name=text"`
+	xxx_hidden_QuickReplies *[]*QuickReply         `protobuf:"bytes,2,rep,name=quick_replies,json=quickReplies"`
+	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
+	XXX_presence            [1]uint32
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *WelcomeMessageFlowItem_Message) Reset() {
@@ -235,36 +241,43 @@ func (x *WelcomeMessageFlowItem_Message) ProtoReflect() protoreflect.Message {
 }
 
 func (x *WelcomeMessageFlowItem_Message) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *WelcomeMessageFlowItem_Message) GetQuickReplies() []*QuickReply {
 	if x != nil {
-		return x.QuickReplies
+		if x.xxx_hidden_QuickReplies != nil {
+			return *x.xxx_hidden_QuickReplies
+		}
 	}
 	return nil
 }
 
 func (x *WelcomeMessageFlowItem_Message) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *WelcomeMessageFlowItem_Message) SetQuickReplies(v []*QuickReply) {
-	x.QuickReplies = v
+	x.xxx_hidden_QuickReplies = &v
 }
 
 func (x *WelcomeMessageFlowItem_Message) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *WelcomeMessageFlowItem_Message) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Text = nil
 }
 
 type WelcomeMessageFlowItem_Message_builder struct {
@@ -280,8 +293,11 @@ func (b0 WelcomeMessageFlowItem_Message_builder) Build() *WelcomeMessageFlowItem
 	m0 := &WelcomeMessageFlowItem_Message{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Text = b.Text
-	x.QuickReplies = b.QuickReplies
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Text = b.Text
+	}
+	x.xxx_hidden_QuickReplies = &b.QuickReplies
 	return m0
 }
 
