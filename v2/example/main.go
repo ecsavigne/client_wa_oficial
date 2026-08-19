@@ -174,10 +174,10 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 
 func testIg(client clientpack.Client, rr response.Responser) {
 	fmt.Println(strings.Repeat(".", 25), " Test Client IG ", strings.Repeat(".", 25))
-	client = examplemessage.NewClientIG()                                                                        // fmt.Printf("Response Client IG: %s\n", client)
-	rr = examplemessage.SendMessageText(client, "2014023525994448", "Habla test ok, prueba de mensaje de texto") // 948876401474591
+	client = examplemessage.NewClientIG() // fmt.Printf("Response Client IG: %s\n", client)
+	// rr = examplemessage.SendMessageText(client, "2014023525994448", "Habla test ok, prueba de mensaje de texto") // 948876401474591
 	// fmt.Printf("Response: %s\n", rr)
-	// rr = examplemessage.SendMessageImage(client, "2014023525994448", "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTNvcThmcG85OTRlMTF5MTZueWk4ZGMxcDRkMHcxMXA1Z2oxNzZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O3wIKp4DlubUl1Bezt/giphy.gif", "") // 948876401474591
+	rr = examplemessage.SendMessageImage(client, "2014023525994448", "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTNvcThmcG85OTRlMTF5MTZueWk4ZGMxcDRkMHcxMXA1Z2oxNzZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O3wIKp4DlubUl1Bezt/giphy.gif", "") // 948876401474591
 	// rr = examplemessage.SendMessageImageCollage(client, "2014023525994448", []string{}, []string{"948876401474591", "948876401474591", "948876401474591", "1131758486677092", "1295230589210858", "1314539007200675"}) // 948876401474591
 	// rr = examplemessage.SendMessageAudio(client, "2014023525994448", "https://oficial.crmsocialhub.com.br/static/test.aac", "817700310893199") //2741747206192358
 	// rr = examplemessage.SendMessageVideo(client, "2014023525994448", "https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4", "1942160596402518")
