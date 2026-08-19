@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_text_message.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package igpbv1
 
@@ -26,11 +26,12 @@ const (
 
 // TextMessage contains the text content to be sent
 type TextMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The text of the message to be sent to the recipient
-	Text          *string `protobuf:"bytes,1,opt,name=text" json:"text,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Text        *string                `protobuf:"bytes,1,opt,name=text"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *TextMessage) Reset() {
@@ -59,25 +60,30 @@ func (x *TextMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *TextMessage) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TextMessage) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *TextMessage) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *TextMessage) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Text = nil
 }
 
 type TextMessage_builder struct {
@@ -91,19 +97,20 @@ func (b0 TextMessage_builder) Build() *TextMessage {
 	m0 := &TextMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Text = b.Text
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Text = b.Text
+	}
 	return m0
 }
 
 // InstagramTextMessage is the main message structure for sending text messages via Instagram
 type InstagramTextMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The recipient who will receive the message
-	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
-	// The message content
-	Message       *TextMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Recipient *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
+	xxx_hidden_Message   *TextMessage           `protobuf:"bytes,2,opt,name=message"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *InstagramTextMessage) Reset() {
@@ -133,46 +140,46 @@ func (x *InstagramTextMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramTextMessage) GetRecipient() *Recipient {
 	if x != nil {
-		return x.Recipient
+		return x.xxx_hidden_Recipient
 	}
 	return nil
 }
 
 func (x *InstagramTextMessage) GetMessage() *TextMessage {
 	if x != nil {
-		return x.Message
+		return x.xxx_hidden_Message
 	}
 	return nil
 }
 
 func (x *InstagramTextMessage) SetRecipient(v *Recipient) {
-	x.Recipient = v
+	x.xxx_hidden_Recipient = v
 }
 
 func (x *InstagramTextMessage) SetMessage(v *TextMessage) {
-	x.Message = v
+	x.xxx_hidden_Message = v
 }
 
 func (x *InstagramTextMessage) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.Recipient != nil
+	return x.xxx_hidden_Recipient != nil
 }
 
 func (x *InstagramTextMessage) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.Message != nil
+	return x.xxx_hidden_Message != nil
 }
 
 func (x *InstagramTextMessage) ClearRecipient() {
-	x.Recipient = nil
+	x.xxx_hidden_Recipient = nil
 }
 
 func (x *InstagramTextMessage) ClearMessage() {
-	x.Message = nil
+	x.xxx_hidden_Message = nil
 }
 
 type InstagramTextMessage_builder struct {
@@ -188,8 +195,8 @@ func (b0 InstagramTextMessage_builder) Build() *InstagramTextMessage {
 	m0 := &InstagramTextMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Recipient = b.Recipient
-	x.Message = b.Message
+	x.xxx_hidden_Recipient = b.Recipient
+	x.xxx_hidden_Message = b.Message
 	return m0
 }
 

@@ -174,8 +174,8 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 
 func testIg(client clientpack.Client, rr response.Responser) {
 	fmt.Println(strings.Repeat(".", 25), " Test Client IG ", strings.Repeat(".", 25))
-	client = examplemessage.NewClientIG() // fmt.Printf("Response Client IG: %s\n", client)
-	// rr = examplemessage.SendMessageText(client, "2014023525994448", "Habla test ok, prueba de mensaje de texto") // 948876401474591
+	client = examplemessage.NewClientIG()                                                                        // fmt.Printf("Response Client IG: %s\n", client)
+	rr = examplemessage.SendMessageText(client, "2014023525994448", "Habla test ok, prueba de mensaje de texto") // 948876401474591
 	// fmt.Printf("Response: %s\n", rr)
 	// rr = examplemessage.SendMessageImage(client, "2014023525994448", "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTNvcThmcG85OTRlMTF5MTZueWk4ZGMxcDRkMHcxMXA1Z2oxNzZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O3wIKp4DlubUl1Bezt/giphy.gif", "") // 948876401474591
 	// rr = examplemessage.SendMessageImageCollage(client, "2014023525994448", []string{}, []string{"948876401474591", "948876401474591", "948876401474591", "1131758486677092", "1295230589210858", "1314539007200675"}) // 948876401474591
@@ -227,7 +227,7 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	// rr = examplemessage.GetConversations(client)
 	// rr = examplemessage.GetUserConversation(client, "2014023525994448")
 	// rr = examplemessage.GetMessagesOfConversation(client, "aWdfZAG06MzQwMjgyMzY2ODQxNzEwMzAxMjQ0Mjc2MjQ0OTY3MjE0NjQ3MzQz")
-	rr = examplemessage.GetMessageInfo(client, "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4MTgyMjA5NjMwOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjI0NDk2NzIxNDY0NzM0MzozMjY5MDUxNjYwMjgzNDE1MjI2MzAwNTk0OTk2MzI3MjE5MgZDZD")
+	// rr = examplemessage.GetMessageInfo(client, "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4MTgyMjA5NjMwOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjI0NDk2NzIxNDY0NzM0MzozMjY5MDUxNjYwMjgzNDE1MjI2MzAwNTk0OTk2MzI3MjE5MgZDZD")
 	fmt.Printf("Response: %v\n", rr)
 
 	fmt.Println(strings.Repeat(".", 25), " Fin testing Client IG ", strings.Repeat(".", 25))

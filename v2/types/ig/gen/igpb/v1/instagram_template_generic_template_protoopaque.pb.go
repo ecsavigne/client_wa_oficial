@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_template_generic_template.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package igpbv1
 
@@ -26,11 +26,10 @@ const (
 
 // Message represents the message content with attachment
 type Message struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The template attachment object
-	Attachment    *TemplateAttachment `protobuf:"bytes,1,opt,name=attachment" json:"attachment,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                 protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Attachment *TemplateAttachment    `protobuf:"bytes,1,opt,name=attachment"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *Message) Reset() {
@@ -60,24 +59,24 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 
 func (x *Message) GetAttachment() *TemplateAttachment {
 	if x != nil {
-		return x.Attachment
+		return x.xxx_hidden_Attachment
 	}
 	return nil
 }
 
 func (x *Message) SetAttachment(v *TemplateAttachment) {
-	x.Attachment = v
+	x.xxx_hidden_Attachment = v
 }
 
 func (x *Message) HasAttachment() bool {
 	if x == nil {
 		return false
 	}
-	return x.Attachment != nil
+	return x.xxx_hidden_Attachment != nil
 }
 
 func (x *Message) ClearAttachment() {
-	x.Attachment = nil
+	x.xxx_hidden_Attachment = nil
 }
 
 type Message_builder struct {
@@ -91,19 +90,17 @@ func (b0 Message_builder) Build() *Message {
 	m0 := &Message{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Attachment = b.Attachment
+	x.xxx_hidden_Attachment = b.Attachment
 	return m0
 }
 
 // InstagramTemplateGenericTemplate represents a generic template message for Instagram
 type InstagramTemplateGenericTemplate struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The recipient of the message
-	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
-	// The message content with the generic template attachment
-	Message       *Message `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Recipient *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
+	xxx_hidden_Message   *Message               `protobuf:"bytes,2,opt,name=message"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *InstagramTemplateGenericTemplate) Reset() {
@@ -133,46 +130,46 @@ func (x *InstagramTemplateGenericTemplate) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramTemplateGenericTemplate) GetRecipient() *Recipient {
 	if x != nil {
-		return x.Recipient
+		return x.xxx_hidden_Recipient
 	}
 	return nil
 }
 
 func (x *InstagramTemplateGenericTemplate) GetMessage() *Message {
 	if x != nil {
-		return x.Message
+		return x.xxx_hidden_Message
 	}
 	return nil
 }
 
 func (x *InstagramTemplateGenericTemplate) SetRecipient(v *Recipient) {
-	x.Recipient = v
+	x.xxx_hidden_Recipient = v
 }
 
 func (x *InstagramTemplateGenericTemplate) SetMessage(v *Message) {
-	x.Message = v
+	x.xxx_hidden_Message = v
 }
 
 func (x *InstagramTemplateGenericTemplate) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.Recipient != nil
+	return x.xxx_hidden_Recipient != nil
 }
 
 func (x *InstagramTemplateGenericTemplate) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.Message != nil
+	return x.xxx_hidden_Message != nil
 }
 
 func (x *InstagramTemplateGenericTemplate) ClearRecipient() {
-	x.Recipient = nil
+	x.xxx_hidden_Recipient = nil
 }
 
 func (x *InstagramTemplateGenericTemplate) ClearMessage() {
-	x.Message = nil
+	x.xxx_hidden_Message = nil
 }
 
 type InstagramTemplateGenericTemplate_builder struct {
@@ -188,8 +185,8 @@ func (b0 InstagramTemplateGenericTemplate_builder) Build() *InstagramTemplateGen
 	m0 := &InstagramTemplateGenericTemplate{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Recipient = b.Recipient
-	x.Message = b.Message
+	x.xxx_hidden_Recipient = b.Recipient
+	x.xxx_hidden_Message = b.Message
 	return m0
 }
 

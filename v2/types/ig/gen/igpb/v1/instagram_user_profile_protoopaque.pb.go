@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_user_profile.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package igpbv1
 
@@ -26,19 +26,16 @@ const (
 
 // UserProfileInfo represents the public profile information of an Instagram user
 type UserProfileInfo struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The display name of the user
-	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	// The Instagram username (handle)
-	Username *string `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
-	// The URL of the user's profile picture
-	ProfilePictureUrl *string `protobuf:"bytes,3,opt,name=profile_picture_url,json=profilePictureUrl" json:"profile_picture_url,omitempty"`
-	// The number of followers the user has
-	FollowersCount *int64 `protobuf:"varint,4,opt,name=followers_count,json=followersCount" json:"followers_count,omitempty"`
-	// The unique identifier of the Instagram user
-	Id            *string `protobuf:"bytes,5,opt,name=id" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                        protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Name              *string                `protobuf:"bytes,1,opt,name=name"`
+	xxx_hidden_Username          *string                `protobuf:"bytes,2,opt,name=username"`
+	xxx_hidden_ProfilePictureUrl *string                `protobuf:"bytes,3,opt,name=profile_picture_url,json=profilePictureUrl"`
+	xxx_hidden_FollowersCount    int64                  `protobuf:"varint,4,opt,name=followers_count,json=followersCount"`
+	xxx_hidden_Id                *string                `protobuf:"bytes,5,opt,name=id"`
+	XXX_raceDetectHookData       protoimpl.RaceDetectHookData
+	XXX_presence                 [1]uint32
+	unknownFields                protoimpl.UnknownFields
+	sizeCache                    protoimpl.SizeCache
 }
 
 func (x *UserProfileInfo) Reset() {
@@ -67,113 +64,135 @@ func (x *UserProfileInfo) ProtoReflect() protoreflect.Message {
 }
 
 func (x *UserProfileInfo) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *UserProfileInfo) GetUsername() string {
-	if x != nil && x.Username != nil {
-		return *x.Username
+	if x != nil {
+		if x.xxx_hidden_Username != nil {
+			return *x.xxx_hidden_Username
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *UserProfileInfo) GetProfilePictureUrl() string {
-	if x != nil && x.ProfilePictureUrl != nil {
-		return *x.ProfilePictureUrl
+	if x != nil {
+		if x.xxx_hidden_ProfilePictureUrl != nil {
+			return *x.xxx_hidden_ProfilePictureUrl
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *UserProfileInfo) GetFollowersCount() int64 {
-	if x != nil && x.FollowersCount != nil {
-		return *x.FollowersCount
+	if x != nil {
+		return x.xxx_hidden_FollowersCount
 	}
 	return 0
 }
 
 func (x *UserProfileInfo) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *UserProfileInfo) SetName(v string) {
-	x.Name = &v
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
 }
 
 func (x *UserProfileInfo) SetUsername(v string) {
-	x.Username = &v
+	x.xxx_hidden_Username = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
 func (x *UserProfileInfo) SetProfilePictureUrl(v string) {
-	x.ProfilePictureUrl = &v
+	x.xxx_hidden_ProfilePictureUrl = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *UserProfileInfo) SetFollowersCount(v int64) {
-	x.FollowersCount = &v
+	x.xxx_hidden_FollowersCount = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
 }
 
 func (x *UserProfileInfo) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *UserProfileInfo) HasName() bool {
 	if x == nil {
 		return false
 	}
-	return x.Name != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *UserProfileInfo) HasUsername() bool {
 	if x == nil {
 		return false
 	}
-	return x.Username != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *UserProfileInfo) HasProfilePictureUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.ProfilePictureUrl != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *UserProfileInfo) HasFollowersCount() bool {
 	if x == nil {
 		return false
 	}
-	return x.FollowersCount != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *UserProfileInfo) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *UserProfileInfo) ClearName() {
-	x.Name = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Name = nil
 }
 
 func (x *UserProfileInfo) ClearUsername() {
-	x.Username = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Username = nil
 }
 
 func (x *UserProfileInfo) ClearProfilePictureUrl() {
-	x.ProfilePictureUrl = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_ProfilePictureUrl = nil
 }
 
 func (x *UserProfileInfo) ClearFollowersCount() {
-	x.FollowersCount = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_FollowersCount = 0
 }
 
 func (x *UserProfileInfo) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Id = nil
 }
 
 type UserProfileInfo_builder struct {
@@ -195,11 +214,26 @@ func (b0 UserProfileInfo_builder) Build() *UserProfileInfo {
 	m0 := &UserProfileInfo{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Name = b.Name
-	x.Username = b.Username
-	x.ProfilePictureUrl = b.ProfilePictureUrl
-	x.FollowersCount = b.FollowersCount
-	x.Id = b.Id
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		x.xxx_hidden_Name = b.Name
+	}
+	if b.Username != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_Username = b.Username
+	}
+	if b.ProfilePictureUrl != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_ProfilePictureUrl = b.ProfilePictureUrl
+	}
+	if b.FollowersCount != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_FollowersCount = *b.FollowersCount
+	}
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_Id = b.Id
+	}
 	return m0
 }
 

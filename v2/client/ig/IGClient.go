@@ -11,8 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/centrifugal/centrifuge-go"
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/ecsavigne/client_wa_oficial/v2/client"
 	"github.com/ecsavigne/client_wa_oficial/v2/types"
 	generalpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1"
@@ -25,14 +23,13 @@ import (
 	"github.com/ecsavigne/client_wa_oficial/v2/types/ig"
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/ig/response/event"
-	"github.com/pusher/pusher-websocket-go"
 	"github.com/spf13/viper"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-type Config[C client.ClientReceiver, D client.Deserializer] struct {
+type Config struct {
 	token  string
 	userID string
 	// Path del archivo .env incluyendo el nombre del archivo sin la extensión ej: file: /.../../config_env.env -> EnvFilePath: /.../../config_env
@@ -43,97 +40,93 @@ type Config[C client.ClientReceiver, D client.Deserializer] struct {
 	baseUrlIG       string    // https://graph.instagram.com
 	appId           string
 	appSecret       string
-	// allow receive messages from webhook server via pusher, centrifugo or kafka protocol
-	clientReceiver C
-	// Deserializer only for Kafka it can be nil,
-	deserializer D
 }
 
-func (self *Config[C, D]) GetType() client.TYPE_CONFIG          { return client.TYPE_CONFIG_IG }
-func (self *Config[C, D]) SetToken(token string)                { self.token = token }
-func (self *Config[C, D]) GetToken() string                     { return self.token }
-func (self *Config[C, D]) SetUserID(userID string)              { self.userID = userID }
-func (self Config[C, D]) GetUserID() string                     { return self.userID }
-func (self *Config[C, D]) SetEnvFilePath(envFilePath string)    { self.envFilePath = envFilePath }
-func (self Config[C, D]) GetEnvFilePath() string                { return self.envFilePath }
-func (self *Config[C, D]) SetEventHandle(eventHandle func(any)) { self.eventHandle = eventHandle }
-func (self Config[C, D]) GetEventHandle() func(any)             { return self.eventHandle }
-func (self *Config[C, D]) SetVersion(version string)            { self.version = version }
-func (self *Config[C, D]) GetVersion() string                   { return self.version }
-func (self *Config[C, D]) SetBaseUrlFacebook(baseUrlFacebook string) {
+func (self *Config) GetType() client.TYPE_CONFIG          { return client.TYPE_CONFIG_IG }
+func (self *Config) SetToken(token string)                { self.token = token }
+func (self *Config) GetToken() string                     { return self.token }
+func (self *Config) SetUserID(userID string)              { self.userID = userID }
+func (self Config) GetUserID() string                     { return self.userID }
+func (self *Config) SetEnvFilePath(envFilePath string)    { self.envFilePath = envFilePath }
+func (self Config) GetEnvFilePath() string                { return self.envFilePath }
+func (self *Config) SetEventHandle(eventHandle func(any)) { self.eventHandle = eventHandle }
+func (self Config) GetEventHandle() func(any)             { return self.eventHandle }
+func (self *Config) SetVersion(version string)            { self.version = version }
+func (self *Config) GetVersion() string                   { return self.version }
+func (self *Config) SetBaseUrlFacebook(baseUrlFacebook string) {
 	self.baseUrlFacebook = baseUrlFacebook
 }
-func (self Config[C, D]) GetBaseUrlFacebook() string     { return self.baseUrlFacebook }
-func (self *Config[C, D]) SetBaseUrlIG(baseUrlIG string) { self.baseUrlIG = baseUrlIG }
-func (self Config[C, D]) GetBaseUrlIG() string           { return self.baseUrlIG }
-func (self *Config[C, D]) SetBaseUrl(baseUrl string)     { self.baseUrlIG = baseUrl }
-func (self *Config[C, D]) GetBaseUrl() string            { return self.baseUrlIG }
-func (self *Config[C, D]) SetAppId(appID string)         { self.appId = appID }
-func (self Config[C, D]) GetAppId() string               { return self.appId }
-func (self *Config[C, D]) SetAppSecret(appSecret string) { self.appSecret = appSecret }
-func (self Config[C, D]) GetAppSecret() string           { return self.appSecret }
-func (self Config[C, D]) String() string {
+func (self Config) GetBaseUrlFacebook() string     { return self.baseUrlFacebook }
+func (self *Config) SetBaseUrlIG(baseUrlIG string) { self.baseUrlIG = baseUrlIG }
+func (self Config) GetBaseUrlIG() string           { return self.baseUrlIG }
+func (self *Config) SetBaseUrl(baseUrl string)     { self.baseUrlIG = baseUrl }
+func (self *Config) GetBaseUrl() string            { return self.baseUrlIG }
+func (self *Config) SetAppId(appID string)         { self.appId = appID }
+func (self Config) GetAppId() string               { return self.appId }
+func (self *Config) SetAppSecret(appSecret string) { self.appSecret = appSecret }
+func (self Config) GetAppSecret() string           { return self.appSecret }
+func (self Config) String() string {
 	return fmt.Sprintf("Config{token: %s, userID: %s, envFilePath: %s, version: %s, baseUrlFacebook: %s, baseUrlIG: %s, appId: %s, appSecret: %s}",
 		self.token, self.userID, self.envFilePath, self.version, self.baseUrlFacebook, self.baseUrlIG, self.appId, self.appSecret)
 }
 
-type OptionsClientIG[C client.ClientReceiver, D client.Deserializer] func(*Config[C, D]) // Opts
+type OptionsClientIG func(*Config) // Opts
 
-func WithToken[C client.ClientReceiver, D client.Deserializer](token string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithToken(token string) OptionsClientIG {
+	return func(c *Config) {
 		c.token = token
 	}
 }
 
-func WithUserID[C client.ClientReceiver, D client.Deserializer](userID string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithUserID(userID string) OptionsClientIG {
+	return func(c *Config) {
 		c.userID = userID
 	}
 }
 
-func WithEnvFilePath[C client.ClientReceiver, D client.Deserializer](envFilePath string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithEnvFilePath(envFilePath string) OptionsClientIG {
+	return func(c *Config) {
 		c.envFilePath = envFilePath
 	}
 }
 
-func WithEventHandle[C client.ClientReceiver, D client.Deserializer](eventHandle func(any)) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithEventHandle(eventHandle func(any)) OptionsClientIG {
+	return func(c *Config) {
 		c.eventHandle = eventHandle
 	}
 }
 
-func WithVersion[C client.ClientReceiver, D client.Deserializer](version string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithVersion(version string) OptionsClientIG {
+	return func(c *Config) {
 		c.version = version
 	}
 }
 
-func WithBaseUrlFacebook[C client.ClientReceiver, D client.Deserializer](baseUrl string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithBaseUrlFacebook(baseUrl string) OptionsClientIG {
+	return func(c *Config) {
 		c.baseUrlFacebook = baseUrl
 	}
 }
 
-func WithBaseUrlIG[C client.ClientReceiver, D client.Deserializer](baseUrl string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithBaseUrlIG(baseUrl string) OptionsClientIG {
+	return func(c *Config) {
 		c.baseUrlIG = baseUrl
 	}
 }
 
-func WithAppId[C client.ClientReceiver, D client.Deserializer](appID string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithAppId(appID string) OptionsClientIG {
+	return func(c *Config) {
 		c.appId = appID
 	}
 }
 
-func WithAppSecret[C client.ClientReceiver, D client.Deserializer](appSecret string) OptionsClientIG[C, D] {
-	return func(c *Config[C, D]) {
+func WithAppSecret(appSecret string) OptionsClientIG {
+	return func(c *Config) {
 		c.appSecret = appSecret
 	}
 }
 
-func setEnv[C client.ClientReceiver, D client.Deserializer](c *Config[C, D]) error {
+func setEnv(c *Config) error {
 	var envPath string = c.envFilePath
 	pathDir := path.Dir(envPath)
 	envName := path.Base(envPath)
@@ -165,8 +158,8 @@ func setEnv[C client.ClientReceiver, D client.Deserializer](c *Config[C, D]) err
 	return nil
 }
 
-func defaultConfig[C client.ClientReceiver, D client.Deserializer]() *Config[C, D] {
-	c := &Config[C, D]{
+func defaultConfig() *Config {
+	c := &Config{
 		token:           "",
 		userID:          "",
 		envFilePath:     "",
@@ -181,14 +174,19 @@ func defaultConfig[C client.ClientReceiver, D client.Deserializer]() *Config[C, 
 	return c
 }
 
-type ClientIG[C client.ClientReceiver, D client.Deserializer] struct {
-	config     *Config[C, D]
+type ClientIG struct {
+	config     *Config
 	typeClient client.CLIENT_TYPE
 	url        *url.URL
 }
 
-func NewClientIG[C client.ClientReceiver, D client.Deserializer](opts ...OptionsClientIG[C, D]) (*ClientIG[C, D], error) {
-	c := defaultConfig[C, D]()
+func (self *ClientIG) defaultConfigClient() {
+	self.typeClient = client.CLIENT_IG
+	self.url = nil
+}
+
+func NewClientIG(opts ...OptionsClientIG) (*ClientIG, error) {
+	c := defaultConfig()
 
 	for _, opt := range opts {
 		opt(c)
@@ -199,40 +197,20 @@ func NewClientIG[C client.ClientReceiver, D client.Deserializer](opts ...Options
 		return nil, err
 	}
 
-	cl := &ClientIG[C, D]{
-		config:     c,
-		typeClient: client.CLIENT_IG,
-	}
-
-	cl.listenWebHook()
+	cl := &ClientIG{config: c}
+	cl.defaultConfigClient()
 
 	return cl, nil
 }
 
-func (self *ClientIG[C, D]) listenWebHook() {
-	switch c := any(self.config.clientReceiver).(type) {
-	case client.NotTyp:
-		fmt.Println("Not implemte received message from webhook")
-	case *centrifuge.Client:
-		fmt.Println("implemte received message from webhook via centrifuge")
-	case *pusher.Client:
-		fmt.Println("implemte received message from webhook via pusher")
-	case *kafka.Consumer:
-		fmt.Println("implemte received message from webhook via kafka")
-	default:
-		_ = c
-		fmt.Println("received not recognized message from webhook")
-	}
-}
-
-func (self *ClientIG[C, D]) MessageIsForMe(webHookData []byte) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
+func (self *ClientIG) MessageIsForMe(webHookData []byte) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
 	webHookMsg := new(igpbv1.InstagramWebhookEvent)
 	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(webHookData, webHookMsg)
 
 	return true, evt_types.ParseTypeNotificationWebhook(webHookMsg.GetObject())
 }
 
-func (self *ClientIG[C, D]) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string) {
+func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string) {
 	defer func() {
 		if r := recover(); r != nil {
 			typ = ""
@@ -243,7 +221,7 @@ func (self *ClientIG[C, D]) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (t
 	return "msg.Entry[0].Changes[0].Value.Messages[0].Type"
 }
 
-func (self *ClientIG[C, D]) IsVailidStatusMessage(status string) bool {
+func (self *ClientIG) IsVailidStatusMessage(status string) bool {
 	if status == "read" || status == "delivered" || status == "sent" || status == "failed" ||
 		status == "deleted" || status == "warning" {
 		return true
@@ -252,7 +230,7 @@ func (self *ClientIG[C, D]) IsVailidStatusMessage(status string) bool {
 	return false
 }
 
-func (self *ClientIG[C, D]) GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status string) {
+func (self *ClientIG) GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status string) {
 	defer func() {
 		if r := recover(); r != nil {
 			status = ""
@@ -262,7 +240,7 @@ func (self *ClientIG[C, D]) GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (
 	return " msg.Entry[0].Changes[0].Value.Statuses[0].Status"
 }
 
-func (self *ClientIG[C, D]) Broadcast(data map[string]any) {
+func (self *ClientIG) Broadcast(data map[string]any) {
 	defer func() {
 		if r := recover(); r != nil {
 			return
@@ -286,11 +264,6 @@ func (self *ClientIG[C, D]) Broadcast(data map[string]any) {
 	}
 
 	switch typeNotification {
-	// case len(msg.Entry) != 0 &&
-	// 	len(msg.Entry[0].Changes) != 0 &&
-	// 	len(msg.Entry[0].Changes[0].Value.Messages) != 0 &&
-	// 	msg.Entry[0].Changes[0].Value.Messages[0].Type != ""
-	// :
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
 		switch self.GetTypeMessage(msg) {
 		case "audio":
@@ -378,11 +351,11 @@ func (self *ClientIG[C, D]) Broadcast(data map[string]any) {
 	self.GetConfig().GetEventHandle()(evt)
 }
 
-func (self *ClientIG[C, D]) String() string {
+func (self *ClientIG) String() string {
 	return fmt.Sprintf("ClientIG{config: %s, typeClient: %s, url_base: %s}", self.config.String(), self.typeClient.String(), self.GetConfig().GetBaseUrl())
 }
 
-func (self *ClientIG[C, D]) MultipartRequest(method string, data proto.Message, ePoint string) (*http.Request, error) {
+func (self *ClientIG) MultipartRequest(method string, data proto.Message, ePoint string) (*http.Request, error) {
 	var (
 		// config = self.GetConfig()
 		e error
@@ -396,14 +369,14 @@ func (self *ClientIG[C, D]) MultipartRequest(method string, data proto.Message, 
 	return gralrequest.UtilMultipartRequest(self, data, method, ePoint)
 }
 
-// func (self *ClientIG[C, D]) createUrl() {
+// func (self *ClientIG) createUrl() {
 // 	// return self.typeClient.String()
 // }
 
-func (self *ClientIG[C, D]) GetType() string                { return self.typeClient.String() }
-func (self *ClientIG[C, D]) GetConfig() client.ConfigClient { return self.config }
+func (self *ClientIG) GetType() string                { return self.typeClient.String() }
+func (self *ClientIG) GetConfig() client.ConfigClient { return self.config }
 
-func (self *ClientIG[C, D]) executeRequest(method string, ePoint string, data any, isID bool, resp_ ...gralresponse.ResponseType) gralresponse.Responser {
+func (self *ClientIG) executeRequest(method string, ePoint string, data any, isID bool, resp_ ...gralresponse.ResponseType) gralresponse.Responser {
 	respType := gralresponse.ResponseUnknow
 	if len(resp_) > 0 {
 		respType = resp_[0]
@@ -426,7 +399,7 @@ func (self *ClientIG[C, D]) executeRequest(method string, ePoint string, data an
 	return gralrequest.Do(self, req, respType)
 }
 
-func (self *ClientIG[C, D]) SubscribeWebHook() response.Responser {
+func (self *ClientIG) SubscribeWebHook() response.Responser {
 	data := map[string]any{
 		"subscribed_fields": []string{"messages", "messaging_postbacks", "messaging_seen", "messaging_handover", "messaging_referral", "message_reactions", "standby", "comments", "live_comments", "mentions", "story_insights"},
 	}
@@ -434,22 +407,22 @@ func (self *ClientIG[C, D]) SubscribeWebHook() response.Responser {
 	return self.executeRequest(http.MethodPost, "/subscribed_apps", data, true, gralresponse.ResponseSuccess)
 }
 
-func (self *ClientIG[C, D]) UnsubscribeWebHook() gralresponse.Responser {
+func (self *ClientIG) UnsubscribeWebHook() gralresponse.Responser {
 	return self.executeRequest(http.MethodDelete, "/subscribed_apps", nil, true, gralresponse.ResponseSuccess)
 }
 
-func (self *ClientIG[C, D]) sendTextMessage(msg *igpbv1.InstagramTextMessage) gralresponse.Responser {
+func (self *ClientIG) sendTextMessage(msg *igpbv1.InstagramTextMessage) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 }
 
-func (self *ClientIG[C, D]) sendReactionMessage(msg *igpbv1.InstagramReactionMessage) gralresponse.Responser {
+func (self *ClientIG) sendReactionMessage(msg *igpbv1.InstagramReactionMessage) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 }
 
 // upload media to Meta servers and get media_id if msg.GetFileHeader() exist, upload media to Meta servers and get media_id, then send media message with media_id
 // if msg.GetFileHeader() == nil and exist msg.GetMessageLink() or msg.GetMessage().GetId() != "" then send media message with message link or media id
 // if msg.GetFileHeader() == nil and msg.GetFileHeader() == nil and not exist msg.GetMessageLink() and msg.GetMessage().GetId() == "" then return error response with message "Media file is required for media message"() == "" and msg.GetMessage().GetId() == "" then return error response with message "Media file not found. Please provide a media file or a media link or a media id"
-func (self *ClientIG[C, D]) sendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralresponse.Responser {
+func (self *ClientIG) sendMediaMessage(msg *igpbv1.InstagramMediaMessage) gralresponse.Responser {
 	// if msg.GEtMessage().GetId()
 	if msg.GetMessage().GetAttachment().GetPayload().GetUrl() == "" &&
 		msg.GetMessage().GetAttachment().GetPayload().GetAttachmentId() == "" &&
@@ -484,7 +457,7 @@ func (self *ClientIG[C, D]) sendMediaMessage(msg *igpbv1.InstagramMediaMessage) 
 }
 
 // TODO: Implementar
-func (self *ClientIG[C, D]) sendMediaShareMessage(msg *igpbv1.InstagramMediaShareMessage) gralresponse.Responser {
+func (self *ClientIG) sendMediaShareMessage(msg *igpbv1.InstagramMediaShareMessage) gralresponse.Responser {
 	return nil
 }
 
@@ -494,15 +467,15 @@ func (self *ClientIG[C, D]) sendMediaShareMessage(msg *igpbv1.InstagramMediaShar
 * @param {proto.Message} msg e.g: *igpbv1.InstagramQuickRepliesMessage
 * @return gralresponse.Responser
  */
-func (self *ClientIG[C, D]) sendInstagramQuickRepliesMessage(msg *igpbv1.InstagramQuickRepliesMessage) gralresponse.Responser {
+func (self *ClientIG) sendInstagramQuickRepliesMessage(msg *igpbv1.InstagramQuickRepliesMessage) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 }
 
-func (self *ClientIG[C, D]) sendInstagramPersistentMenu(msg *igpbv1.InstagramPersistentMenuMessage) gralresponse.Responser {
+func (self *ClientIG) sendInstagramPersistentMenu(msg *igpbv1.InstagramPersistentMenuMessage) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, "/messenger_profile", msg, true)
 }
 
-func (self *ClientIG[C, D]) sendButtonGenericTemplateMessage(msg *igpbv1.InstagramTemplateButtonTemplate) gralresponse.Responser {
+func (self *ClientIG) sendButtonGenericTemplateMessage(msg *igpbv1.InstagramTemplateButtonTemplate) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, "/me/messages", msg, false, gralresponse.SentMessageResponse)
 }
 
@@ -513,7 +486,7 @@ func (self *ClientIG[C, D]) sendButtonGenericTemplateMessage(msg *igpbv1.Instagr
 * @param {string} action the action to send. Can be "typing_on",  "typing_off" or "mark_seen"
 * @return gralresponse.Responser
  */
-func (self *ClientIG[C, D]) sendAction(scope_id, action string) gralresponse.Responser {
+func (self *ClientIG) sendAction(scope_id, action string) gralresponse.Responser {
 	if action != "typing_on" && action != "typing_off" && action != "mark_seen" {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -535,15 +508,15 @@ func (self *ClientIG[C, D]) sendAction(scope_id, action string) gralresponse.Res
 	// }, gralresponse.ResponseInfoAccountBusiness)
 }
 
-func (self *ClientIG[C, D]) SendPresence(recipient_id, action string) gralresponse.Responser {
+func (self *ClientIG) SendPresence(recipient_id, action string) gralresponse.Responser {
 	return self.sendAction(recipient_id, action)
 }
 
-func (self *ClientIG[C, D]) MarkRead(recipient_id string) gralresponse.Responser {
+func (self *ClientIG) MarkRead(recipient_id string) gralresponse.Responser {
 	return self.sendAction(recipient_id, "mark_seen")
 }
 
-func (self *ClientIG[C, D]) sendInstagramIceBreakersMessage(msg *igpbv1.InstagramIceBreakersMessage) gralresponse.Responser {
+func (self *ClientIG) sendInstagramIceBreakersMessage(msg *igpbv1.InstagramIceBreakersMessage) gralresponse.Responser {
 	resp := self.getInfoAccountBusiness().GetResponse()
 	infoAccount, ok := resp.(*igpbv1.InstagramInfoAccountBusinessResponse)
 	if !ok {
@@ -555,15 +528,15 @@ func (self *ClientIG[C, D]) sendInstagramIceBreakersMessage(msg *igpbv1.Instagra
 
 	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s/%s", infoAccount.GetId(), "messenger_profile"), msg, false)
 }
-func (self *ClientIG[C, D]) createInstagramWelcomeMessageFlows(msg *igpbv1.InstagramWelcomeMessageFlows) gralresponse.Responser {
+func (self *ClientIG) createInstagramWelcomeMessageFlows(msg *igpbv1.InstagramWelcomeMessageFlows) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s/%s", "me", "welcome_message_flows"), msg, false)
 }
 
-func (self *ClientIG[C, D]) sendPrivateReplyMessage(msg *igpbv1.InstagramPrivateReplyMessage) gralresponse.Responser {
+func (self *ClientIG) sendPrivateReplyMessage(msg *igpbv1.InstagramPrivateReplyMessage) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, "/messages", msg, true, gralresponse.SentMessageResponse)
 }
 
-func (self *ClientIG[C, D]) sendInstagramHumanAgentMessage(msg *igpbv1.InstagramHumanAgentMessage) gralresponse.Responser {
+func (self *ClientIG) sendInstagramHumanAgentMessage(msg *igpbv1.InstagramHumanAgentMessage) gralresponse.Responser {
 	return self.executeRequest(http.MethodPost, "/me/messages", msg, false, gralresponse.SentMessageResponse)
 }
 
@@ -573,7 +546,7 @@ func (self *ClientIG[C, D]) sendInstagramHumanAgentMessage(msg *igpbv1.Instagram
 * @param {proto.Message} msg e.g: *igpbv1.InstagramTextMessage, *igpbv1.InstagramMediaMessage, *igpbv1.InstagramMediaShareMessage
 * @return gralresponse.Responser
  */
-func (self *ClientIG[C, D]) SendMessage(msg proto.Message) gralresponse.Responser {
+func (self *ClientIG) SendMessage(msg proto.Message) gralresponse.Responser {
 	switch v := msg.(type) {
 	case *igpbv1.InstagramTextMessage:
 		return self.sendTextMessage(v)
@@ -620,7 +593,7 @@ type resposeVerifyContainer struct {
 	response gralresponse.Responser
 }
 
-func (self *ClientIG[C, D]) verifyContainer(idContainer string, out chan<- resposeVerifyContainer) {
+func (self *ClientIG) verifyContainer(idContainer string, out chan<- resposeVerifyContainer) {
 	// return self.createImagePostContainer(msg)
 	data := types.QueryData{
 		"fields": "status_code",
@@ -652,7 +625,7 @@ func (self *ClientIG[C, D]) verifyContainer(idContainer string, out chan<- respo
 	}
 }
 
-func (self *ClientIG[C, D]) createContainer(imgs, videos []string, mediaType ig.IG_MEDIA_TYPE) string {
+func (self *ClientIG) createContainer(imgs, videos []string, mediaType ig.IG_MEDIA_TYPE) string {
 	msg := new(igpbv1.InstagramContainerMessage)
 
 	if mediaType == ig.IG_MEDIA_TYPE_STORIES {
@@ -691,7 +664,7 @@ type dataWorkerPreparedContainer struct {
 	id_container string
 }
 
-func (self *ClientIG[C, D]) workerPreparedContainer(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
+func (self *ClientIG) workerPreparedContainer(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
 	for el := range in {
 		fmt.Println("<<<<<< workerPreparedContainer >>>>>>  imgs: ", el.imgs, " videos: ", el.videos, " mediaType: ", el.mediaType)
 		id_container := self.createContainer(el.imgs, el.videos, el.mediaType)
@@ -699,7 +672,7 @@ func (self *ClientIG[C, D]) workerPreparedContainer(in <-chan dataWorkerPrepared
 	}
 }
 
-func (self *ClientIG[C, D]) workerVerifyContainers(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
+func (self *ClientIG) workerVerifyContainers(in <-chan dataWorkerPreparedContainer, out chan<- dataWorkerPreparedContainer) {
 	for el := range in {
 		ch := make(chan resposeVerifyContainer, 1)
 		go self.verifyContainer(el.id_container, ch)
@@ -713,7 +686,7 @@ func (self *ClientIG[C, D]) workerVerifyContainers(in <-chan dataWorkerPreparedC
 
 }
 
-func (self *ClientIG[C, D]) verifyContainers(cointainers_id []string) []string {
+func (self *ClientIG) verifyContainers(cointainers_id []string) []string {
 	var (
 		cantEl                = len(cointainers_id)
 		in                    = make(chan dataWorkerPreparedContainer, cantEl)
@@ -752,7 +725,7 @@ func (self *ClientIG[C, D]) verifyContainers(cointainers_id []string) []string {
 	return container_id_verified
 }
 
-func (self *ClientIG[C, D]) createCaruselContainer(ids []string, caption string) (container_id string) {
+func (self *ClientIG) createCaruselContainer(ids []string, caption string) (container_id string) {
 	data := new(igpbv1.InstagramContainerMessage)
 	data.SetMediaType("CAROUSEL")
 	data.SetChildren(ids)
@@ -770,7 +743,7 @@ func (self *ClientIG[C, D]) createCaruselContainer(ids []string, caption string)
 	return contResp.GetId()
 }
 
-func (self *ClientIG[C, D]) preparedCaruselContainer(imgs, videos []string, mediaType ig.IG_MEDIA_TYPE, caption string) (container_id string) {
+func (self *ClientIG) preparedCaruselContainer(imgs, videos []string, mediaType ig.IG_MEDIA_TYPE, caption string) (container_id string) {
 	var (
 		cantEl = len(imgs) + len(videos)
 		in     = make(chan dataWorkerPreparedContainer, cantEl)
@@ -814,7 +787,7 @@ func (self *ClientIG[C, D]) preparedCaruselContainer(imgs, videos []string, medi
 	return self.createCaruselContainer(arrContainerIDTemp, caption)
 }
 
-func (self *ClientIG[C, D]) createInstagramPostHistory(dataParam map[string]any, mediaType ig.IG_MEDIA_TYPE) gralresponse.Responser {
+func (self *ClientIG) createInstagramPostHistory(dataParam map[string]any, mediaType ig.IG_MEDIA_TYPE) gralresponse.Responser {
 	if len(dataParam) == 0 {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -912,7 +885,7 @@ func (self *ClientIG[C, D]) createInstagramPostHistory(dataParam map[string]any,
 		"ig_media_id": "string", // id do post, stories or midia
 	}
 */
-func (self *ClientIG[C, D]) createComment(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) createComment(data map[string]any) gralresponse.Responser {
 	if data["message"] == nil || data["ig_media_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -951,7 +924,7 @@ func (self *ClientIG[C, D]) createComment(data map[string]any) gralresponse.Resp
 		"ig_comment_id": "string", // id do comment
 	}
 */
-func (self *ClientIG[C, D]) replyComment(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) replyComment(data map[string]any) gralresponse.Responser {
 	if data["message"] == nil || data["ig_comment_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -990,7 +963,7 @@ func (self *ClientIG[C, D]) replyComment(data map[string]any) gralresponse.Respo
 		"hide": bool, // true to hide comment, false to show comment
 	}
 */
-func (self *ClientIG[C, D]) hideShowComment(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) hideShowComment(data map[string]any) gralresponse.Responser {
 	if data["hide"] == nil || data["ig_comment_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1029,7 +1002,7 @@ func (self *ClientIG[C, D]) hideShowComment(data map[string]any) gralresponse.Re
 		"comment_enabled": bool, // true to enable comment, false to disable comment
 	}
 */
-func (self *ClientIG[C, D]) enableComment(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) enableComment(data map[string]any) gralresponse.Responser {
 	if data["comment_enabled"] == nil || data["ig_media_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1060,7 +1033,7 @@ func (self *ClientIG[C, D]) enableComment(data map[string]any) gralresponse.Resp
 	return self.executeRequest(http.MethodPost, fmt.Sprintf("/%s", igMediaID), queryData, false, gralresponse.ResponseSuccess)
 }
 
-func (self *ClientIG[C, D]) Create(typeCreate ig.IG_CREATE_TYPE, data ...map[string]any) gralresponse.Responser {
+func (self *ClientIG) Create(typeCreate ig.IG_CREATE_TYPE, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 	if len(data) > 0 {
 		dataParam = data[0]
@@ -1088,25 +1061,25 @@ func (self *ClientIG[C, D]) Create(typeCreate ig.IG_CREATE_TYPE, data ...map[str
 }
 
 // Gets
-func (self *ClientIG[C, D]) getInfoAccountBusiness() gralresponse.Responser {
+func (self *ClientIG) getInfoAccountBusiness() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/", types.QueryData{
 		"fields": "id,user_id,media_count,account_type,name,username,followers_count,follows_count,profile_picture_url",
 	}, true, gralresponse.InfoAccountBusinessResponse)
 }
 
-func (self *ClientIG[C, D]) getInstagramPersistentMenu() gralresponse.Responser {
+func (self *ClientIG) getInstagramPersistentMenu() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/messenger_profile", types.QueryData{
 		"fields": "persistent_menu",
 	}, true)
 }
 
-func (self *ClientIG[C, D]) getInstagramIceBreakers() gralresponse.Responser {
+func (self *ClientIG) getInstagramIceBreakers() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/messenger_profile", types.QueryData{
 		"fields": "ice_breakers",
 	}, true)
 }
 
-func (self *ClientIG[C, D]) getInstagramLink() gralresponse.Responser {
+func (self *ClientIG) getInstagramLink() gralresponse.Responser {
 	resp := self.getInfoAccountBusiness().GetResponse()
 	infoAccount, ok := resp.(*igpbv1.InstagramInfoAccountBusinessResponse)
 	if !ok {
@@ -1125,7 +1098,7 @@ func (self *ClientIG[C, D]) getInstagramLink() gralresponse.Responser {
 	return gralresponse.NewResponse(unknow, gralresponse.ResponseUnknow)
 }
 
-func (self *ClientIG[C, D]) getWelcomeMessageFlowsADS() gralresponse.Responser {
+func (self *ClientIG) getWelcomeMessageFlowsADS() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/me/welcome_message_flows", types.QueryData{}, false)
 }
 
@@ -1138,7 +1111,7 @@ func (self *ClientIG[C, D]) getWelcomeMessageFlowsADS() gralresponse.Responser {
 
 @return: list of replies comments of the comment with from,text,timestamp,user,username,replies,parent_id,like_count,hidden
 */
-func (self *ClientIG[C, D]) getComments(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) getComments(data map[string]any) gralresponse.Responser {
 	if data["ig_media_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1169,7 +1142,7 @@ func (self *ClientIG[C, D]) getComments(data map[string]any) gralresponse.Respon
 
 @return: list of replies comments of the comment with text,timestamp,from,user,username
 */
-func (self *ClientIG[C, D]) getRepliesComments(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) getRepliesComments(data map[string]any) gralresponse.Responser {
 	if data["ig_comment_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1191,7 +1164,7 @@ func (self *ClientIG[C, D]) getRepliesComments(data map[string]any) gralresponse
 	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s/replies", igCommentID), dataQuery, false, gralresponse.InstagramCommentResponse)
 }
 
-func (self *ClientIG[C, D]) getSubscibeWebhookField() gralresponse.Responser {
+func (self *ClientIG) getSubscibeWebhookField() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/subscribed_apps", nil, true, gralresponse.ResponseUnknow)
 }
 
@@ -1201,7 +1174,7 @@ IG_GET_METRICS_MIDIA              IG_GET_INFO_TYPE = "metrics_midia"
 	IG_GET_METRICS_MIDIA_INSIGHT      IG_GET_INFO_TYPE = "metrics_midia_insight"
 	IG_GET_METRICS_USER_INSIGHT
 */
-func (self *ClientIG[C, D]) getMetricsMedia(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) getMetricsMedia(data map[string]any) gralresponse.Responser {
 	if data["ig_media_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1223,7 +1196,7 @@ func (self *ClientIG[C, D]) getMetricsMedia(data map[string]any) gralresponse.Re
 	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", igMediaID), dataQuery, false, gralresponse.InstagramMetricResponse)
 }
 
-func (self *ClientIG[C, D]) getMetricsUserInsight() gralresponse.Responser {
+func (self *ClientIG) getMetricsUserInsight() gralresponse.Responser {
 	dataQuery := types.QueryData{
 		"metric": "reach,follower_count,website_clicks,profile_views,online_followers,accounts_engaged,total_interactions,likes,comments,shares,saves,replies,engaged_audience_demographics,reached_audience_demographics,follower_demographics,follows_and_unfollows,profile_links_taps,views,threads_likes,threads_replies,reposts,quotes,threads_followers,threads_follower_demographics,content_views,threads_views,threads_clicks,threads_reposts",
 		"period": "day",
@@ -1232,7 +1205,7 @@ func (self *ClientIG[C, D]) getMetricsUserInsight() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/insights", dataQuery, true, gralresponse.InstagramMetricInsightResponse)
 }
 
-func (self *ClientIG[C, D]) getMetricsMediaInsight(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) getMetricsMediaInsight(data map[string]any) gralresponse.Responser {
 	if data["ig_media_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1255,7 +1228,7 @@ func (self *ClientIG[C, D]) getMetricsMediaInsight(data map[string]any) gralresp
 	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s/insights", igMediaID), dataQuery, false, gralresponse.InstagramMetricInsightResponse)
 }
 
-func (self *ClientIG[C, D]) getListConversation() gralresponse.Responser {
+func (self *ClientIG) getListConversation() gralresponse.Responser {
 	dataQuery := types.QueryData{
 		"platform": "INSTAGRAM",
 	}
@@ -1263,7 +1236,7 @@ func (self *ClientIG[C, D]) getListConversation() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/me/conversations", dataQuery, false, gralresponse.InstagramListConversationResponse)
 }
 
-func (self *ClientIG[C, D]) getConversationWithUser(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) getConversationWithUser(data map[string]any) gralresponse.Responser {
 	if data["ig_user_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1286,7 +1259,7 @@ func (self *ClientIG[C, D]) getConversationWithUser(data map[string]any) gralres
 	return self.executeRequest(http.MethodGet, "/me/conversations", dataQuery, false, gralresponse.InstagramListConversationResponse)
 }
 
-func (self *ClientIG[C, D]) getMessagesOfConversation(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) getMessagesOfConversation(data map[string]any) gralresponse.Responser {
 	if data["conversation_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1309,7 +1282,7 @@ func (self *ClientIG[C, D]) getMessagesOfConversation(data map[string]any) gralr
 	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", conversation_id), dataQuery, false, gralresponse.InstagramConversationMessageResponse)
 }
 
-func (self *ClientIG[C, D]) getInfoAboutMessage(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) getInfoAboutMessage(data map[string]any) gralresponse.Responser {
 	if data["message_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1332,7 +1305,7 @@ func (self *ClientIG[C, D]) getInfoAboutMessage(data map[string]any) gralrespons
 	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", message_id), dataQuery, false, gralresponse.ConversationMessageResponse)
 }
 
-func (self *ClientIG[C, D]) Get(type_info ig.IG_GET_INFO_TYPE, data ...map[string]any) gralresponse.Responser {
+func (self *ClientIG) Get(type_info ig.IG_GET_INFO_TYPE, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 	if len(data) > 0 {
 		dataParam = data[0]
@@ -1378,19 +1351,19 @@ func (self *ClientIG[C, D]) Get(type_info ig.IG_GET_INFO_TYPE, data ...map[strin
 }
 
 // Deletes
-func (self *ClientIG[C, D]) deletePersistentMenu() gralresponse.Responser {
+func (self *ClientIG) deletePersistentMenu() gralresponse.Responser {
 	return self.executeRequest(http.MethodDelete, "/messenger_profile", types.QueryData{
 		"fields": []string{"persistent_menu"},
 	}, true)
 }
 
-func (self *ClientIG[C, D]) deleteIceBreakers() gralresponse.Responser {
+func (self *ClientIG) deleteIceBreakers() gralresponse.Responser {
 	return self.executeRequest(http.MethodDelete, "/messenger_profile", types.QueryData{
 		"fields": []string{"ice_breakers"},
 	}, true)
 }
 
-func (self *ClientIG[C, D]) deleteWelcomeMessageFlowsADS(data types.QueryData) gralresponse.Responser {
+func (self *ClientIG) deleteWelcomeMessageFlowsADS(data types.QueryData) gralresponse.Responser {
 	if id, ok := data["flow_id"]; ok && id != "" {
 		id = fmt.Sprintf("%c%s", '?', data.String())
 		return self.executeRequest(http.MethodDelete, fmt.Sprintf("/me/welcome_message_flows%s", id), types.QueryData{}, false)
@@ -1409,7 +1382,7 @@ func (self *ClientIG[C, D]) deleteWelcomeMessageFlowsADS(data types.QueryData) g
 		"ig_comment_id": "string", // id do comment to delete
 	}
 */
-func (self *ClientIG[C, D]) deleteComment(data map[string]any) gralresponse.Responser {
+func (self *ClientIG) deleteComment(data map[string]any) gralresponse.Responser {
 	if data["ig_comment_id"] == nil {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1428,7 +1401,7 @@ func (self *ClientIG[C, D]) deleteComment(data map[string]any) gralresponse.Resp
 	return self.executeRequest(http.MethodDelete, fmt.Sprintf("/%s", igCommentID), nil, false, gralresponse.ResponseSuccess)
 }
 
-func (self *ClientIG[C, D]) Delete(typeDelete ig.IG_DELETE_TYPE, data ...map[string]any) gralresponse.Responser {
+func (self *ClientIG) Delete(typeDelete ig.IG_DELETE_TYPE, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 	if len(data) > 0 {
 		dataParam = data[0]
@@ -1452,7 +1425,7 @@ func (self *ClientIG[C, D]) Delete(typeDelete ig.IG_DELETE_TYPE, data ...map[str
 }
 
 // Updates
-func (self *ClientIG[C, D]) updateWelcomeMessageFlowsADS(data types.QueryData) gralresponse.Responser {
+func (self *ClientIG) updateWelcomeMessageFlowsADS(data types.QueryData) gralresponse.Responser {
 	if len(data) == 0 {
 		errorResponse := &gralpbv1.ResponseError{}
 		errorResponse.SetCode(401)
@@ -1494,7 +1467,7 @@ func (self *ClientIG[C, D]) updateWelcomeMessageFlowsADS(data types.QueryData) g
 	return gralresponse.NewResponse(errorResponse, gralresponse.ResponseError)
 }
 
-func (self *ClientIG[C, D]) Update(typeUpdate string, data ...map[string]any) gralresponse.Responser {
+func (self *ClientIG) Update(typeUpdate string, data ...map[string]any) gralresponse.Responser {
 	dataParam := make(map[string]any)
 
 	if len(data) > 0 {
