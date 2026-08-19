@@ -10,7 +10,6 @@ type MessageEvent struct {
 }
 
 // func (*MessageEvent) GetType() igpbv1.EventType { return igpbv1.EventTypeMessage }
-
 // func (m *MessageEvent) String() string { return response.Val(m) }
 
 type IGStatusMessageEvent struct {
