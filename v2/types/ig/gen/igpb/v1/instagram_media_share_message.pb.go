@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_media_share_message.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -25,12 +27,11 @@ const (
 
 // MediaSharePayload contains the ID of the media post being shared
 type MediaSharePayload struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The unique identifier of the media post being shared
+	Id            *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *MediaSharePayload) Reset() {
@@ -59,30 +60,25 @@ func (x *MediaSharePayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MediaSharePayload) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
 
 func (x *MediaSharePayload) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+	x.Id = &v
 }
 
 func (x *MediaSharePayload) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Id != nil
 }
 
 func (x *MediaSharePayload) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Id = nil
+	x.Id = nil
 }
 
 type MediaSharePayload_builder struct {
@@ -96,22 +92,19 @@ func (b0 MediaSharePayload_builder) Build() *MediaSharePayload {
 	m0 := &MediaSharePayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Id = b.Id
-	}
+	x.Id = b.Id
 	return m0
 }
 
 // MediaShareAttachment represents a shared media post from Instagram
 type MediaShareAttachment struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
-	xxx_hidden_Payload     *MediaSharePayload     `protobuf:"bytes,2,opt,name=payload"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The type of attachment (MEDIA_SHARE for shared posts)
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
+	// The payload containing the media post ID
+	Payload       *MediaSharePayload `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *MediaShareAttachment) Reset() {
@@ -140,52 +133,47 @@ func (x *MediaShareAttachment) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MediaShareAttachment) GetType() string {
-	if x != nil {
-		if x.xxx_hidden_Type != nil {
-			return *x.xxx_hidden_Type
-		}
-		return ""
+	if x != nil && x.Type != nil {
+		return *x.Type
 	}
 	return ""
 }
 
 func (x *MediaShareAttachment) GetPayload() *MediaSharePayload {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *MediaShareAttachment) SetType(v string) {
-	x.xxx_hidden_Type = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.Type = &v
 }
 
 func (x *MediaShareAttachment) SetPayload(v *MediaSharePayload) {
-	x.xxx_hidden_Payload = v
+	x.Payload = v
 }
 
 func (x *MediaShareAttachment) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Type != nil
 }
 
 func (x *MediaShareAttachment) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Payload != nil
+	return x.Payload != nil
 }
 
 func (x *MediaShareAttachment) ClearType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Type = nil
+	x.Type = nil
 }
 
 func (x *MediaShareAttachment) ClearPayload() {
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 type MediaShareAttachment_builder struct {
@@ -201,20 +189,18 @@ func (b0 MediaShareAttachment_builder) Build() *MediaShareAttachment {
 	m0 := &MediaShareAttachment{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Type != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Type = b.Type
-	}
-	x.xxx_hidden_Payload = b.Payload
+	x.Type = b.Type
+	x.Payload = b.Payload
 	return m0
 }
 
 // MediaShareMessage contains a shared media post attachment
 type MediaShareMessage struct {
-	state                 protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Attachment *MediaShareAttachment  `protobuf:"bytes,1,opt,name=attachment"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The media share attachment
+	Attachment    *MediaShareAttachment `protobuf:"bytes,1,opt,name=attachment" json:"attachment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *MediaShareMessage) Reset() {
@@ -244,24 +230,24 @@ func (x *MediaShareMessage) ProtoReflect() protoreflect.Message {
 
 func (x *MediaShareMessage) GetAttachment() *MediaShareAttachment {
 	if x != nil {
-		return x.xxx_hidden_Attachment
+		return x.Attachment
 	}
 	return nil
 }
 
 func (x *MediaShareMessage) SetAttachment(v *MediaShareAttachment) {
-	x.xxx_hidden_Attachment = v
+	x.Attachment = v
 }
 
 func (x *MediaShareMessage) HasAttachment() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Attachment != nil
+	return x.Attachment != nil
 }
 
 func (x *MediaShareMessage) ClearAttachment() {
-	x.xxx_hidden_Attachment = nil
+	x.Attachment = nil
 }
 
 type MediaShareMessage_builder struct {
@@ -275,18 +261,21 @@ func (b0 MediaShareMessage_builder) Build() *MediaShareMessage {
 	m0 := &MediaShareMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Attachment = b.Attachment
+	x.Attachment = b.Attachment
 	return m0
 }
 
 // InstagramMediaShareMessage is the main message structure for sending messages with published posts
 type InstagramMediaShareMessage struct {
-	state                 protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Recipient  *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
-	xxx_hidden_Message    *MediaShareMessage     `protobuf:"bytes,2,opt,name=message"`
-	xxx_hidden_FileHeader *v1.FileHeader         `protobuf:"bytes,3,opt,name=file_header,json=fileHeader"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The recipient who will receive the message
+	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
+	// The message content with the shared media post
+	Message *MediaShareMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
+	// Optional file header metadata for the uploaded media file
+	FileHeader    *v1.FileHeader `protobuf:"bytes,3,opt,name=file_header,json=fileHeader" json:"file_header,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramMediaShareMessage) Reset() {
@@ -316,68 +305,68 @@ func (x *InstagramMediaShareMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramMediaShareMessage) GetRecipient() *Recipient {
 	if x != nil {
-		return x.xxx_hidden_Recipient
+		return x.Recipient
 	}
 	return nil
 }
 
 func (x *InstagramMediaShareMessage) GetMessage() *MediaShareMessage {
 	if x != nil {
-		return x.xxx_hidden_Message
+		return x.Message
 	}
 	return nil
 }
 
 func (x *InstagramMediaShareMessage) GetFileHeader() *v1.FileHeader {
 	if x != nil {
-		return x.xxx_hidden_FileHeader
+		return x.FileHeader
 	}
 	return nil
 }
 
 func (x *InstagramMediaShareMessage) SetRecipient(v *Recipient) {
-	x.xxx_hidden_Recipient = v
+	x.Recipient = v
 }
 
 func (x *InstagramMediaShareMessage) SetMessage(v *MediaShareMessage) {
-	x.xxx_hidden_Message = v
+	x.Message = v
 }
 
 func (x *InstagramMediaShareMessage) SetFileHeader(v *v1.FileHeader) {
-	x.xxx_hidden_FileHeader = v
+	x.FileHeader = v
 }
 
 func (x *InstagramMediaShareMessage) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Recipient != nil
+	return x.Recipient != nil
 }
 
 func (x *InstagramMediaShareMessage) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Message != nil
+	return x.Message != nil
 }
 
 func (x *InstagramMediaShareMessage) HasFileHeader() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_FileHeader != nil
+	return x.FileHeader != nil
 }
 
 func (x *InstagramMediaShareMessage) ClearRecipient() {
-	x.xxx_hidden_Recipient = nil
+	x.Recipient = nil
 }
 
 func (x *InstagramMediaShareMessage) ClearMessage() {
-	x.xxx_hidden_Message = nil
+	x.Message = nil
 }
 
 func (x *InstagramMediaShareMessage) ClearFileHeader() {
-	x.xxx_hidden_FileHeader = nil
+	x.FileHeader = nil
 }
 
 type InstagramMediaShareMessage_builder struct {
@@ -395,9 +384,9 @@ func (b0 InstagramMediaShareMessage_builder) Build() *InstagramMediaShareMessage
 	m0 := &InstagramMediaShareMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Recipient = b.Recipient
-	x.xxx_hidden_Message = b.Message
-	x.xxx_hidden_FileHeader = b.FileHeader
+	x.Recipient = b.Recipient
+	x.Message = b.Message
+	x.FileHeader = b.FileHeader
 	return m0
 }
 

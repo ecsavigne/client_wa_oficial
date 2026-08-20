@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_subscribed_apps.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,13 +26,13 @@ const (
 
 // SubscribedApp represents a single app subscription entry with its subscribed fields
 type SubscribedApp struct {
-	state                       protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id               *string                `protobuf:"bytes,1,opt,name=id"`
-	xxx_hidden_SubscribedFields []string               `protobuf:"bytes,2,rep,name=subscribed_fields,json=subscribedFields"`
-	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
-	XXX_presence                [1]uint32
-	unknownFields               protoimpl.UnknownFields
-	sizeCache                   protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The unique identifier of the subscribed app
+	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	// The list of webhook fields the app is subscribed to (e.g., "messages")
+	SubscribedFields []string `protobuf:"bytes,2,rep,name=subscribed_fields,json=subscribedFields" json:"subscribed_fields,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *SubscribedApp) Reset() {
@@ -59,41 +61,36 @@ func (x *SubscribedApp) ProtoReflect() protoreflect.Message {
 }
 
 func (x *SubscribedApp) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
 
 func (x *SubscribedApp) GetSubscribedFields() []string {
 	if x != nil {
-		return x.xxx_hidden_SubscribedFields
+		return x.SubscribedFields
 	}
 	return nil
 }
 
 func (x *SubscribedApp) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.Id = &v
 }
 
 func (x *SubscribedApp) SetSubscribedFields(v []string) {
-	x.xxx_hidden_SubscribedFields = v
+	x.SubscribedFields = v
 }
 
 func (x *SubscribedApp) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Id != nil
 }
 
 func (x *SubscribedApp) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Id = nil
+	x.Id = nil
 }
 
 type SubscribedApp_builder struct {
@@ -109,23 +106,20 @@ func (b0 SubscribedApp_builder) Build() *SubscribedApp {
 	m0 := &SubscribedApp{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Id = b.Id
-	}
-	x.xxx_hidden_SubscribedFields = b.SubscribedFields
+	x.Id = b.Id
+	x.SubscribedFields = b.SubscribedFields
 	return m0
 }
 
 // SubscribedAppsResponse represents the API response for subscribed apps
 type SubscribedAppsResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data        *[]*SubscribedApp      `protobuf:"bytes,1,rep,name=data"`
-	xxx_hidden_Payload     []byte                 `protobuf:"bytes,2,opt,name=payload"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The list of subscribed app entries
+	Data []*SubscribedApp `protobuf:"bytes,1,rep,name=data" json:"data,omitempty"`
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload       []byte `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SubscribedAppsResponse) Reset() {
@@ -155,42 +149,38 @@ func (x *SubscribedAppsResponse) ProtoReflect() protoreflect.Message {
 
 func (x *SubscribedAppsResponse) GetData() []*SubscribedApp {
 	if x != nil {
-		if x.xxx_hidden_Data != nil {
-			return *x.xxx_hidden_Data
-		}
+		return x.Data
 	}
 	return nil
 }
 
 func (x *SubscribedAppsResponse) GetPayload() []byte {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *SubscribedAppsResponse) SetData(v []*SubscribedApp) {
-	x.xxx_hidden_Data = &v
+	x.Data = v
 }
 
 func (x *SubscribedAppsResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.xxx_hidden_Payload = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	x.Payload = v
 }
 
 func (x *SubscribedAppsResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.Payload != nil
 }
 
 func (x *SubscribedAppsResponse) ClearPayload() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 type SubscribedAppsResponse_builder struct {
@@ -206,11 +196,8 @@ func (b0 SubscribedAppsResponse_builder) Build() *SubscribedAppsResponse {
 	m0 := &SubscribedAppsResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Data = &b.Data
-	if b.Payload != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Payload = b.Payload
-	}
+	x.Data = b.Data
+	x.Payload = b.Payload
 	return m0
 }
 

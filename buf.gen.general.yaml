@@ -9,7 +9,7 @@ plugins:
     opt:
       - paths=source_relative
       # values: API_OPAQUE, API_HYBRID, API_OPEN
-      - default_api_level=API_OPAQUE
+      - default_api_level=API_HYBRID
       - Mprotoc-gen-openapiv2/options/annotations.proto=github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options
       # - Mmessengerpb/v1/messenger_flow.proto=github.com/ecsavigne/client_wa_oficial/v2/types/messenger/gen/messengerpb/v1
 

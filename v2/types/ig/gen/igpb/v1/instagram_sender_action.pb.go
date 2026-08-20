@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_sender_action.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,13 +26,13 @@ const (
 
 // InstagramSenderAction represents a sender action message (typing indicator)
 type InstagramSenderAction struct {
-	state                   protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Recipient    *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
-	xxx_hidden_SenderAction *string                `protobuf:"bytes,2,opt,name=sender_action,json=senderAction"`
-	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
-	XXX_presence            [1]uint32
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The recipient of the message
+	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
+	// The sender action (typing_on or typing_off)
+	SenderAction  *string `protobuf:"bytes,2,opt,name=sender_action,json=senderAction" json:"sender_action,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramSenderAction) Reset() {
@@ -60,51 +62,46 @@ func (x *InstagramSenderAction) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramSenderAction) GetRecipient() *Recipient {
 	if x != nil {
-		return x.xxx_hidden_Recipient
+		return x.Recipient
 	}
 	return nil
 }
 
 func (x *InstagramSenderAction) GetSenderAction() string {
-	if x != nil {
-		if x.xxx_hidden_SenderAction != nil {
-			return *x.xxx_hidden_SenderAction
-		}
-		return ""
+	if x != nil && x.SenderAction != nil {
+		return *x.SenderAction
 	}
 	return ""
 }
 
 func (x *InstagramSenderAction) SetRecipient(v *Recipient) {
-	x.xxx_hidden_Recipient = v
+	x.Recipient = v
 }
 
 func (x *InstagramSenderAction) SetSenderAction(v string) {
-	x.xxx_hidden_SenderAction = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	x.SenderAction = &v
 }
 
 func (x *InstagramSenderAction) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Recipient != nil
+	return x.Recipient != nil
 }
 
 func (x *InstagramSenderAction) HasSenderAction() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.SenderAction != nil
 }
 
 func (x *InstagramSenderAction) ClearRecipient() {
-	x.xxx_hidden_Recipient = nil
+	x.Recipient = nil
 }
 
 func (x *InstagramSenderAction) ClearSenderAction() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_SenderAction = nil
+	x.SenderAction = nil
 }
 
 type InstagramSenderAction_builder struct {
@@ -120,11 +117,8 @@ func (b0 InstagramSenderAction_builder) Build() *InstagramSenderAction {
 	m0 := &InstagramSenderAction{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Recipient = b.Recipient
-	if b.SenderAction != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_SenderAction = b.SenderAction
-	}
+	x.Recipient = b.Recipient
+	x.SenderAction = b.SenderAction
 	return m0
 }
 

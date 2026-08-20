@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_comment_response.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -23,13 +25,11 @@ const (
 )
 
 type Cursors struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Before      *string                `protobuf:"bytes,1,opt,name=before"`
-	xxx_hidden_After       *string                `protobuf:"bytes,2,opt,name=after"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Before        *string                `protobuf:"bytes,1,opt,name=before" json:"before,omitempty"`
+	After         *string                `protobuf:"bytes,2,opt,name=after" json:"after,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Cursors) Reset() {
@@ -58,57 +58,47 @@ func (x *Cursors) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Cursors) GetBefore() string {
-	if x != nil {
-		if x.xxx_hidden_Before != nil {
-			return *x.xxx_hidden_Before
-		}
-		return ""
+	if x != nil && x.Before != nil {
+		return *x.Before
 	}
 	return ""
 }
 
 func (x *Cursors) GetAfter() string {
-	if x != nil {
-		if x.xxx_hidden_After != nil {
-			return *x.xxx_hidden_After
-		}
-		return ""
+	if x != nil && x.After != nil {
+		return *x.After
 	}
 	return ""
 }
 
 func (x *Cursors) SetBefore(v string) {
-	x.xxx_hidden_Before = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.Before = &v
 }
 
 func (x *Cursors) SetAfter(v string) {
-	x.xxx_hidden_After = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	x.After = &v
 }
 
 func (x *Cursors) HasBefore() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Before != nil
 }
 
 func (x *Cursors) HasAfter() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.After != nil
 }
 
 func (x *Cursors) ClearBefore() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Before = nil
+	x.Before = nil
 }
 
 func (x *Cursors) ClearAfter() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_After = nil
+	x.After = nil
 }
 
 type Cursors_builder struct {
@@ -122,22 +112,16 @@ func (b0 Cursors_builder) Build() *Cursors {
 	m0 := &Cursors{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Before != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Before = b.Before
-	}
-	if b.After != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_After = b.After
-	}
+	x.Before = b.Before
+	x.After = b.After
 	return m0
 }
 
 type Paging struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Cursors *Cursors               `protobuf:"bytes,1,opt,name=cursors"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Cursors       *Cursors               `protobuf:"bytes,1,opt,name=cursors" json:"cursors,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Paging) Reset() {
@@ -167,24 +151,24 @@ func (x *Paging) ProtoReflect() protoreflect.Message {
 
 func (x *Paging) GetCursors() *Cursors {
 	if x != nil {
-		return x.xxx_hidden_Cursors
+		return x.Cursors
 	}
 	return nil
 }
 
 func (x *Paging) SetCursors(v *Cursors) {
-	x.xxx_hidden_Cursors = v
+	x.Cursors = v
 }
 
 func (x *Paging) HasCursors() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Cursors != nil
+	return x.Cursors != nil
 }
 
 func (x *Paging) ClearCursors() {
-	x.xxx_hidden_Cursors = nil
+	x.Cursors = nil
 }
 
 type Paging_builder struct {
@@ -197,17 +181,15 @@ func (b0 Paging_builder) Build() *Paging {
 	m0 := &Paging{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Cursors = b.Cursors
+	x.Cursors = b.Cursors
 	return m0
 }
 
 type ReplyItem struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id            *string                `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ReplyItem) Reset() {
@@ -236,30 +218,25 @@ func (x *ReplyItem) ProtoReflect() protoreflect.Message {
 }
 
 func (x *ReplyItem) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
 
 func (x *ReplyItem) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+	x.Id = &v
 }
 
 func (x *ReplyItem) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Id != nil
 }
 
 func (x *ReplyItem) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Id = nil
+	x.Id = nil
 }
 
 type ReplyItem_builder struct {
@@ -272,19 +249,16 @@ func (b0 ReplyItem_builder) Build() *ReplyItem {
 	m0 := &ReplyItem{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Id = b.Id
-	}
+	x.Id = b.Id
 	return m0
 }
 
 type Replies struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data   *[]*ReplyItem          `protobuf:"bytes,1,rep,name=data"`
-	xxx_hidden_Paging *Paging                `protobuf:"bytes,2,opt,name=paging"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Data          []*ReplyItem           `protobuf:"bytes,1,rep,name=data" json:"data,omitempty"`
+	Paging        *Paging                `protobuf:"bytes,2,opt,name=paging" json:"paging,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Replies) Reset() {
@@ -314,37 +288,35 @@ func (x *Replies) ProtoReflect() protoreflect.Message {
 
 func (x *Replies) GetData() []*ReplyItem {
 	if x != nil {
-		if x.xxx_hidden_Data != nil {
-			return *x.xxx_hidden_Data
-		}
+		return x.Data
 	}
 	return nil
 }
 
 func (x *Replies) GetPaging() *Paging {
 	if x != nil {
-		return x.xxx_hidden_Paging
+		return x.Paging
 	}
 	return nil
 }
 
 func (x *Replies) SetData(v []*ReplyItem) {
-	x.xxx_hidden_Data = &v
+	x.Data = v
 }
 
 func (x *Replies) SetPaging(v *Paging) {
-	x.xxx_hidden_Paging = v
+	x.Paging = v
 }
 
 func (x *Replies) HasPaging() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Paging != nil
+	return x.Paging != nil
 }
 
 func (x *Replies) ClearPaging() {
-	x.xxx_hidden_Paging = nil
+	x.Paging = nil
 }
 
 type Replies_builder struct {
@@ -358,20 +330,18 @@ func (b0 Replies_builder) Build() *Replies {
 	m0 := &Replies{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Data = &b.Data
-	x.xxx_hidden_Paging = b.Paging
+	x.Data = b.Data
+	x.Paging = b.Paging
 	return m0
 }
 
 type CommentUser struct {
-	state                     protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Id             *string                `protobuf:"bytes,1,opt,name=id"`
-	xxx_hidden_Username       *string                `protobuf:"bytes,2,opt,name=username"`
-	xxx_hidden_SelfIgScopedId *string                `protobuf:"bytes,3,opt,name=self_ig_scoped_id,json=selfIgScopedId"`
-	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
-	XXX_presence              [1]uint32
-	unknownFields             protoimpl.UnknownFields
-	sizeCache                 protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id             *string                `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Username       *string                `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
+	SelfIgScopedId *string                `protobuf:"bytes,3,opt,name=self_ig_scoped_id,json=selfIgScopedId" json:"self_ig_scoped_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CommentUser) Reset() {
@@ -400,84 +370,69 @@ func (x *CommentUser) ProtoReflect() protoreflect.Message {
 }
 
 func (x *CommentUser) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
 
 func (x *CommentUser) GetUsername() string {
-	if x != nil {
-		if x.xxx_hidden_Username != nil {
-			return *x.xxx_hidden_Username
-		}
-		return ""
+	if x != nil && x.Username != nil {
+		return *x.Username
 	}
 	return ""
 }
 
 func (x *CommentUser) GetSelfIgScopedId() string {
-	if x != nil {
-		if x.xxx_hidden_SelfIgScopedId != nil {
-			return *x.xxx_hidden_SelfIgScopedId
-		}
-		return ""
+	if x != nil && x.SelfIgScopedId != nil {
+		return *x.SelfIgScopedId
 	}
 	return ""
 }
 
 func (x *CommentUser) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+	x.Id = &v
 }
 
 func (x *CommentUser) SetUsername(v string) {
-	x.xxx_hidden_Username = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	x.Username = &v
 }
 
 func (x *CommentUser) SetSelfIgScopedId(v string) {
-	x.xxx_hidden_SelfIgScopedId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	x.SelfIgScopedId = &v
 }
 
 func (x *CommentUser) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Id != nil
 }
 
 func (x *CommentUser) HasUsername() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.Username != nil
 }
 
 func (x *CommentUser) HasSelfIgScopedId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.SelfIgScopedId != nil
 }
 
 func (x *CommentUser) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Id = nil
+	x.Id = nil
 }
 
 func (x *CommentUser) ClearUsername() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Username = nil
+	x.Username = nil
 }
 
 func (x *CommentUser) ClearSelfIgScopedId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_SelfIgScopedId = nil
+	x.SelfIgScopedId = nil
 }
 
 type CommentUser_builder struct {
@@ -492,37 +447,26 @@ func (b0 CommentUser_builder) Build() *CommentUser {
 	m0 := &CommentUser{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_Id = b.Id
-	}
-	if b.Username != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_Username = b.Username
-	}
-	if b.SelfIgScopedId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_SelfIgScopedId = b.SelfIgScopedId
-	}
+	x.Id = b.Id
+	x.Username = b.Username
+	x.SelfIgScopedId = b.SelfIgScopedId
 	return m0
 }
 
 type Comment struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_From        *CommentUser           `protobuf:"bytes,1,opt,name=from"`
-	xxx_hidden_Text        *string                `protobuf:"bytes,2,opt,name=text"`
-	xxx_hidden_Timestamp   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=timestamp"`
-	xxx_hidden_ParentId    *string                `protobuf:"bytes,4,opt,name=parent_id,json=parentId"`
-	xxx_hidden_LikeCount   int32                  `protobuf:"varint,5,opt,name=like_count,json=likeCount"`
-	xxx_hidden_Hidden      bool                   `protobuf:"varint,6,opt,name=hidden"`
-	xxx_hidden_Id          *string                `protobuf:"bytes,7,opt,name=id"`
-	xxx_hidden_User        *CommentUser           `protobuf:"bytes,8,opt,name=user"`
-	xxx_hidden_Username    *string                `protobuf:"bytes,9,opt,name=username"`
-	xxx_hidden_Replies     *Replies               `protobuf:"bytes,10,opt,name=replies"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	From          *CommentUser           `protobuf:"bytes,1,opt,name=from" json:"from,omitempty"`
+	Text          *string                `protobuf:"bytes,2,opt,name=text" json:"text,omitempty"`
+	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=timestamp" json:"timestamp,omitempty"`
+	ParentId      *string                `protobuf:"bytes,4,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
+	LikeCount     *int32                 `protobuf:"varint,5,opt,name=like_count,json=likeCount" json:"like_count,omitempty"`
+	Hidden        *bool                  `protobuf:"varint,6,opt,name=hidden" json:"hidden,omitempty"`
+	Id            *string                `protobuf:"bytes,7,opt,name=id" json:"id,omitempty"`
+	User          *CommentUser           `protobuf:"bytes,8,opt,name=user" json:"user,omitempty"`
+	Username      *string                `protobuf:"bytes,9,opt,name=username" json:"username,omitempty"`
+	Replies       *Replies               `protobuf:"bytes,10,opt,name=replies" json:"replies,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Comment) Reset() {
@@ -552,246 +496,222 @@ func (x *Comment) ProtoReflect() protoreflect.Message {
 
 func (x *Comment) GetFrom() *CommentUser {
 	if x != nil {
-		return x.xxx_hidden_From
+		return x.From
 	}
 	return nil
 }
 
 func (x *Comment) GetText() string {
-	if x != nil {
-		if x.xxx_hidden_Text != nil {
-			return *x.xxx_hidden_Text
-		}
-		return ""
+	if x != nil && x.Text != nil {
+		return *x.Text
 	}
 	return ""
 }
 
 func (x *Comment) GetTimestamp() *timestamppb.Timestamp {
 	if x != nil {
-		return x.xxx_hidden_Timestamp
+		return x.Timestamp
 	}
 	return nil
 }
 
 func (x *Comment) GetParentId() string {
-	if x != nil {
-		if x.xxx_hidden_ParentId != nil {
-			return *x.xxx_hidden_ParentId
-		}
-		return ""
+	if x != nil && x.ParentId != nil {
+		return *x.ParentId
 	}
 	return ""
 }
 
 func (x *Comment) GetLikeCount() int32 {
-	if x != nil {
-		return x.xxx_hidden_LikeCount
+	if x != nil && x.LikeCount != nil {
+		return *x.LikeCount
 	}
 	return 0
 }
 
 func (x *Comment) GetHidden() bool {
-	if x != nil {
-		return x.xxx_hidden_Hidden
+	if x != nil && x.Hidden != nil {
+		return *x.Hidden
 	}
 	return false
 }
 
 func (x *Comment) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
 
 func (x *Comment) GetUser() *CommentUser {
 	if x != nil {
-		return x.xxx_hidden_User
+		return x.User
 	}
 	return nil
 }
 
 func (x *Comment) GetUsername() string {
-	if x != nil {
-		if x.xxx_hidden_Username != nil {
-			return *x.xxx_hidden_Username
-		}
-		return ""
+	if x != nil && x.Username != nil {
+		return *x.Username
 	}
 	return ""
 }
 
 func (x *Comment) GetReplies() *Replies {
 	if x != nil {
-		return x.xxx_hidden_Replies
+		return x.Replies
 	}
 	return nil
 }
 
 func (x *Comment) SetFrom(v *CommentUser) {
-	x.xxx_hidden_From = v
+	x.From = v
 }
 
 func (x *Comment) SetText(v string) {
-	x.xxx_hidden_Text = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 10)
+	x.Text = &v
 }
 
 func (x *Comment) SetTimestamp(v *timestamppb.Timestamp) {
-	x.xxx_hidden_Timestamp = v
+	x.Timestamp = v
 }
 
 func (x *Comment) SetParentId(v string) {
-	x.xxx_hidden_ParentId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 10)
+	x.ParentId = &v
 }
 
 func (x *Comment) SetLikeCount(v int32) {
-	x.xxx_hidden_LikeCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 10)
+	x.LikeCount = &v
 }
 
 func (x *Comment) SetHidden(v bool) {
-	x.xxx_hidden_Hidden = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 10)
+	x.Hidden = &v
 }
 
 func (x *Comment) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 10)
+	x.Id = &v
 }
 
 func (x *Comment) SetUser(v *CommentUser) {
-	x.xxx_hidden_User = v
+	x.User = v
 }
 
 func (x *Comment) SetUsername(v string) {
-	x.xxx_hidden_Username = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 10)
+	x.Username = &v
 }
 
 func (x *Comment) SetReplies(v *Replies) {
-	x.xxx_hidden_Replies = v
+	x.Replies = v
 }
 
 func (x *Comment) HasFrom() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_From != nil
+	return x.From != nil
 }
 
 func (x *Comment) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.Text != nil
 }
 
 func (x *Comment) HasTimestamp() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Timestamp != nil
+	return x.Timestamp != nil
 }
 
 func (x *Comment) HasParentId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return x.ParentId != nil
 }
 
 func (x *Comment) HasLikeCount() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+	return x.LikeCount != nil
 }
 
 func (x *Comment) HasHidden() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+	return x.Hidden != nil
 }
 
 func (x *Comment) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+	return x.Id != nil
 }
 
 func (x *Comment) HasUser() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_User != nil
+	return x.User != nil
 }
 
 func (x *Comment) HasUsername() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return x.Username != nil
 }
 
 func (x *Comment) HasReplies() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Replies != nil
+	return x.Replies != nil
 }
 
 func (x *Comment) ClearFrom() {
-	x.xxx_hidden_From = nil
+	x.From = nil
 }
 
 func (x *Comment) ClearText() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Text = nil
+	x.Text = nil
 }
 
 func (x *Comment) ClearTimestamp() {
-	x.xxx_hidden_Timestamp = nil
+	x.Timestamp = nil
 }
 
 func (x *Comment) ClearParentId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_ParentId = nil
+	x.ParentId = nil
 }
 
 func (x *Comment) ClearLikeCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_LikeCount = 0
+	x.LikeCount = nil
 }
 
 func (x *Comment) ClearHidden() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
-	x.xxx_hidden_Hidden = false
+	x.Hidden = nil
 }
 
 func (x *Comment) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
-	x.xxx_hidden_Id = nil
+	x.Id = nil
 }
 
 func (x *Comment) ClearUser() {
-	x.xxx_hidden_User = nil
+	x.User = nil
 }
 
 func (x *Comment) ClearUsername() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
-	x.xxx_hidden_Username = nil
+	x.Username = nil
 }
 
 func (x *Comment) ClearReplies() {
-	x.xxx_hidden_Replies = nil
+	x.Replies = nil
 }
 
 type Comment_builder struct {
@@ -813,46 +733,27 @@ func (b0 Comment_builder) Build() *Comment {
 	m0 := &Comment{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_From = b.From
-	if b.Text != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 10)
-		x.xxx_hidden_Text = b.Text
-	}
-	x.xxx_hidden_Timestamp = b.Timestamp
-	if b.ParentId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 10)
-		x.xxx_hidden_ParentId = b.ParentId
-	}
-	if b.LikeCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 10)
-		x.xxx_hidden_LikeCount = *b.LikeCount
-	}
-	if b.Hidden != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 10)
-		x.xxx_hidden_Hidden = *b.Hidden
-	}
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 10)
-		x.xxx_hidden_Id = b.Id
-	}
-	x.xxx_hidden_User = b.User
-	if b.Username != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 10)
-		x.xxx_hidden_Username = b.Username
-	}
-	x.xxx_hidden_Replies = b.Replies
+	x.From = b.From
+	x.Text = b.Text
+	x.Timestamp = b.Timestamp
+	x.ParentId = b.ParentId
+	x.LikeCount = b.LikeCount
+	x.Hidden = b.Hidden
+	x.Id = b.Id
+	x.User = b.User
+	x.Username = b.Username
+	x.Replies = b.Replies
 	return m0
 }
 
 type InstagramCommentResponseMessage struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data        *[]*Comment            `protobuf:"bytes,1,rep,name=data"`
-	xxx_hidden_Paging      *Paging                `protobuf:"bytes,2,opt,name=paging"`
-	xxx_hidden_Payload     []byte                 `protobuf:"bytes,3,opt,name=payload"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state  protoimpl.MessageState `protogen:"hybrid.v1"`
+	Data   []*Comment             `protobuf:"bytes,1,rep,name=data" json:"data,omitempty"`
+	Paging *Paging                `protobuf:"bytes,2,opt,name=paging" json:"paging,omitempty"`
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload       []byte `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramCommentResponseMessage) Reset() {
@@ -882,64 +783,60 @@ func (x *InstagramCommentResponseMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramCommentResponseMessage) GetData() []*Comment {
 	if x != nil {
-		if x.xxx_hidden_Data != nil {
-			return *x.xxx_hidden_Data
-		}
+		return x.Data
 	}
 	return nil
 }
 
 func (x *InstagramCommentResponseMessage) GetPaging() *Paging {
 	if x != nil {
-		return x.xxx_hidden_Paging
+		return x.Paging
 	}
 	return nil
 }
 
 func (x *InstagramCommentResponseMessage) GetPayload() []byte {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *InstagramCommentResponseMessage) SetData(v []*Comment) {
-	x.xxx_hidden_Data = &v
+	x.Data = v
 }
 
 func (x *InstagramCommentResponseMessage) SetPaging(v *Paging) {
-	x.xxx_hidden_Paging = v
+	x.Paging = v
 }
 
 func (x *InstagramCommentResponseMessage) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.xxx_hidden_Payload = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	x.Payload = v
 }
 
 func (x *InstagramCommentResponseMessage) HasPaging() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Paging != nil
+	return x.Paging != nil
 }
 
 func (x *InstagramCommentResponseMessage) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.Payload != nil
 }
 
 func (x *InstagramCommentResponseMessage) ClearPaging() {
-	x.xxx_hidden_Paging = nil
+	x.Paging = nil
 }
 
 func (x *InstagramCommentResponseMessage) ClearPayload() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 type InstagramCommentResponseMessage_builder struct {
@@ -955,12 +852,9 @@ func (b0 InstagramCommentResponseMessage_builder) Build() *InstagramCommentRespo
 	m0 := &InstagramCommentResponseMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Data = &b.Data
-	x.xxx_hidden_Paging = b.Paging
-	if b.Payload != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Payload = b.Payload
-	}
+	x.Data = b.Data
+	x.Paging = b.Paging
+	x.Payload = b.Payload
 	return m0
 }
 

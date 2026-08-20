@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_media_message.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -25,14 +27,15 @@ const (
 
 // AttachmentPayload contains the URL or attachment ID of the attachment
 type AttachmentPayload struct {
-	state                   protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Url          *string                `protobuf:"bytes,1,opt,name=url"`
-	xxx_hidden_AttachmentId *string                `protobuf:"bytes,2,opt,name=attachment_id,json=attachmentId"`
-	xxx_hidden_IsReusable   bool                   `protobuf:"varint,3,opt,name=is_reusable,json=isReusable"`
-	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
-	XXX_presence            [1]uint32
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The URL of the attachment (image, video, audio, like_heart(sticker))
+	Url *string `protobuf:"bytes,1,opt,name=url" json:"url,omitempty"`
+	// The attachment ID of the pre-uploaded attachment (image, video, audio, like_heart(sticker))
+	AttachmentId *string `protobuf:"bytes,2,opt,name=attachment_id,json=attachmentId" json:"attachment_id,omitempty"`
+	// Whether the attachment can be reused after sending
+	IsReusable    *bool `protobuf:"varint,3,opt,name=is_reusable,json=isReusable" json:"is_reusable,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AttachmentPayload) Reset() {
@@ -61,81 +64,69 @@ func (x *AttachmentPayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *AttachmentPayload) GetUrl() string {
-	if x != nil {
-		if x.xxx_hidden_Url != nil {
-			return *x.xxx_hidden_Url
-		}
-		return ""
+	if x != nil && x.Url != nil {
+		return *x.Url
 	}
 	return ""
 }
 
 func (x *AttachmentPayload) GetAttachmentId() string {
-	if x != nil {
-		if x.xxx_hidden_AttachmentId != nil {
-			return *x.xxx_hidden_AttachmentId
-		}
-		return ""
+	if x != nil && x.AttachmentId != nil {
+		return *x.AttachmentId
 	}
 	return ""
 }
 
 func (x *AttachmentPayload) GetIsReusable() bool {
-	if x != nil {
-		return x.xxx_hidden_IsReusable
+	if x != nil && x.IsReusable != nil {
+		return *x.IsReusable
 	}
 	return false
 }
 
 func (x *AttachmentPayload) SetUrl(v string) {
-	x.xxx_hidden_Url = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+	x.Url = &v
 }
 
 func (x *AttachmentPayload) SetAttachmentId(v string) {
-	x.xxx_hidden_AttachmentId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	x.AttachmentId = &v
 }
 
 func (x *AttachmentPayload) SetIsReusable(v bool) {
-	x.xxx_hidden_IsReusable = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	x.IsReusable = &v
 }
 
 func (x *AttachmentPayload) HasUrl() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Url != nil
 }
 
 func (x *AttachmentPayload) HasAttachmentId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.AttachmentId != nil
 }
 
 func (x *AttachmentPayload) HasIsReusable() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.IsReusable != nil
 }
 
 func (x *AttachmentPayload) ClearUrl() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Url = nil
+	x.Url = nil
 }
 
 func (x *AttachmentPayload) ClearAttachmentId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_AttachmentId = nil
+	x.AttachmentId = nil
 }
 
 func (x *AttachmentPayload) ClearIsReusable() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_IsReusable = false
+	x.IsReusable = nil
 }
 
 type AttachmentPayload_builder struct {
@@ -153,30 +144,21 @@ func (b0 AttachmentPayload_builder) Build() *AttachmentPayload {
 	m0 := &AttachmentPayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Url != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_Url = b.Url
-	}
-	if b.AttachmentId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_AttachmentId = b.AttachmentId
-	}
-	if b.IsReusable != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_IsReusable = *b.IsReusable
-	}
+	x.Url = b.Url
+	x.AttachmentId = b.AttachmentId
+	x.IsReusable = b.IsReusable
 	return m0
 }
 
 // Attachment represents media content (image, video, audio, like_heart(sticker), etc.)
 type Attachment struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
-	xxx_hidden_Payload     *AttachmentPayload     `protobuf:"bytes,2,opt,name=payload"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The type of attachment (e.g., image, video, audio, like_heart(sticker))
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
+	// The payload containing the attachment data
+	Payload       *AttachmentPayload `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Attachment) Reset() {
@@ -205,52 +187,47 @@ func (x *Attachment) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Attachment) GetType() string {
-	if x != nil {
-		if x.xxx_hidden_Type != nil {
-			return *x.xxx_hidden_Type
-		}
-		return ""
+	if x != nil && x.Type != nil {
+		return *x.Type
 	}
 	return ""
 }
 
 func (x *Attachment) GetPayload() *AttachmentPayload {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *Attachment) SetType(v string) {
-	x.xxx_hidden_Type = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.Type = &v
 }
 
 func (x *Attachment) SetPayload(v *AttachmentPayload) {
-	x.xxx_hidden_Payload = v
+	x.Payload = v
 }
 
 func (x *Attachment) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Type != nil
 }
 
 func (x *Attachment) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Payload != nil
+	return x.Payload != nil
 }
 
 func (x *Attachment) ClearType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Type = nil
+	x.Type = nil
 }
 
 func (x *Attachment) ClearPayload() {
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 type Attachment_builder struct {
@@ -266,21 +243,20 @@ func (b0 Attachment_builder) Build() *Attachment {
 	m0 := &Attachment{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Type != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Type = b.Type
-	}
-	x.xxx_hidden_Payload = b.Payload
+	x.Type = b.Type
+	x.Payload = b.Payload
 	return m0
 }
 
 // MediaMessage contains media attachments to be sent
 type MediaMessage struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Attachment  *Attachment            `protobuf:"bytes,1,opt,name=attachment"`
-	xxx_hidden_Attachments *[]*Attachment         `protobuf:"bytes,2,rep,name=attachments"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// Single attachment for audio, video, or file types
+	Attachment *Attachment `protobuf:"bytes,1,opt,name=attachment" json:"attachment,omitempty"`
+	// Multiple attachments for image types (collection)
+	Attachments   []*Attachment `protobuf:"bytes,2,rep,name=attachments" json:"attachments,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *MediaMessage) Reset() {
@@ -310,37 +286,35 @@ func (x *MediaMessage) ProtoReflect() protoreflect.Message {
 
 func (x *MediaMessage) GetAttachment() *Attachment {
 	if x != nil {
-		return x.xxx_hidden_Attachment
+		return x.Attachment
 	}
 	return nil
 }
 
 func (x *MediaMessage) GetAttachments() []*Attachment {
 	if x != nil {
-		if x.xxx_hidden_Attachments != nil {
-			return *x.xxx_hidden_Attachments
-		}
+		return x.Attachments
 	}
 	return nil
 }
 
 func (x *MediaMessage) SetAttachment(v *Attachment) {
-	x.xxx_hidden_Attachment = v
+	x.Attachment = v
 }
 
 func (x *MediaMessage) SetAttachments(v []*Attachment) {
-	x.xxx_hidden_Attachments = &v
+	x.Attachments = v
 }
 
 func (x *MediaMessage) HasAttachment() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Attachment != nil
+	return x.Attachment != nil
 }
 
 func (x *MediaMessage) ClearAttachment() {
-	x.xxx_hidden_Attachment = nil
+	x.Attachment = nil
 }
 
 type MediaMessage_builder struct {
@@ -356,19 +330,22 @@ func (b0 MediaMessage_builder) Build() *MediaMessage {
 	m0 := &MediaMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Attachment = b.Attachment
-	x.xxx_hidden_Attachments = &b.Attachments
+	x.Attachment = b.Attachment
+	x.Attachments = b.Attachments
 	return m0
 }
 
 // InstagramMediaMessage is the main message structure for sending media messages via Instagram
 type InstagramMediaMessage struct {
-	state                     protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Recipient      *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
-	xxx_hidden_Message        *MediaMessage          `protobuf:"bytes,2,opt,name=message"`
-	xxx_hidden_FileDescriptor *v1.FileDescriptor     `protobuf:"bytes,3,opt,name=file_descriptor,json=fileDescriptor"`
-	unknownFields             protoimpl.UnknownFields
-	sizeCache                 protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The recipient who will receive the message
+	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
+	// The message content with attachment
+	Message *MediaMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
+	// Raw file data for direct upload (replaces pre-uploaded URL/attachment_id flow)
+	FileDescriptor *v1.FileDescriptor `protobuf:"bytes,3,opt,name=file_descriptor,json=fileDescriptor" json:"file_descriptor,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *InstagramMediaMessage) Reset() {
@@ -398,68 +375,68 @@ func (x *InstagramMediaMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramMediaMessage) GetRecipient() *Recipient {
 	if x != nil {
-		return x.xxx_hidden_Recipient
+		return x.Recipient
 	}
 	return nil
 }
 
 func (x *InstagramMediaMessage) GetMessage() *MediaMessage {
 	if x != nil {
-		return x.xxx_hidden_Message
+		return x.Message
 	}
 	return nil
 }
 
 func (x *InstagramMediaMessage) GetFileDescriptor() *v1.FileDescriptor {
 	if x != nil {
-		return x.xxx_hidden_FileDescriptor
+		return x.FileDescriptor
 	}
 	return nil
 }
 
 func (x *InstagramMediaMessage) SetRecipient(v *Recipient) {
-	x.xxx_hidden_Recipient = v
+	x.Recipient = v
 }
 
 func (x *InstagramMediaMessage) SetMessage(v *MediaMessage) {
-	x.xxx_hidden_Message = v
+	x.Message = v
 }
 
 func (x *InstagramMediaMessage) SetFileDescriptor(v *v1.FileDescriptor) {
-	x.xxx_hidden_FileDescriptor = v
+	x.FileDescriptor = v
 }
 
 func (x *InstagramMediaMessage) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Recipient != nil
+	return x.Recipient != nil
 }
 
 func (x *InstagramMediaMessage) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Message != nil
+	return x.Message != nil
 }
 
 func (x *InstagramMediaMessage) HasFileDescriptor() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_FileDescriptor != nil
+	return x.FileDescriptor != nil
 }
 
 func (x *InstagramMediaMessage) ClearRecipient() {
-	x.xxx_hidden_Recipient = nil
+	x.Recipient = nil
 }
 
 func (x *InstagramMediaMessage) ClearMessage() {
-	x.xxx_hidden_Message = nil
+	x.Message = nil
 }
 
 func (x *InstagramMediaMessage) ClearFileDescriptor() {
-	x.xxx_hidden_FileDescriptor = nil
+	x.FileDescriptor = nil
 }
 
 type InstagramMediaMessage_builder struct {
@@ -477,9 +454,9 @@ func (b0 InstagramMediaMessage_builder) Build() *InstagramMediaMessage {
 	m0 := &InstagramMediaMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Recipient = b.Recipient
-	x.xxx_hidden_Message = b.Message
-	x.xxx_hidden_FileDescriptor = b.FileDescriptor
+	x.Recipient = b.Recipient
+	x.Message = b.Message
+	x.FileDescriptor = b.FileDescriptor
 	return m0
 }
 

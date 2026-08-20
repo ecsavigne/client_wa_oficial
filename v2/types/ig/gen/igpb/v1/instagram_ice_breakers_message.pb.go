@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_ice_breakers_message.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,13 +26,13 @@ const (
 
 // IceBreakersItem represents ice breakers configuration for a specific locale
 type IceBreakersItem struct {
-	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Locale        *string                `protobuf:"bytes,1,opt,name=locale"`
-	xxx_hidden_CallToActions *[]*CallToAction       `protobuf:"bytes,2,rep,name=call_to_actions,json=callToActions"`
-	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
-	XXX_presence             [1]uint32
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The locale for the ice breakers (e.g., default, zh_CN)
+	Locale *string `protobuf:"bytes,1,opt,name=locale" json:"locale,omitempty"`
+	// The call to action questions (array of ice breaker items, maximum 3)
+	CallToActions []*CallToAction `protobuf:"bytes,2,rep,name=call_to_actions,json=callToActions" json:"call_to_actions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *IceBreakersItem) Reset() {
@@ -59,43 +61,36 @@ func (x *IceBreakersItem) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IceBreakersItem) GetLocale() string {
-	if x != nil {
-		if x.xxx_hidden_Locale != nil {
-			return *x.xxx_hidden_Locale
-		}
-		return ""
+	if x != nil && x.Locale != nil {
+		return *x.Locale
 	}
 	return ""
 }
 
 func (x *IceBreakersItem) GetCallToActions() []*CallToAction {
 	if x != nil {
-		if x.xxx_hidden_CallToActions != nil {
-			return *x.xxx_hidden_CallToActions
-		}
+		return x.CallToActions
 	}
 	return nil
 }
 
 func (x *IceBreakersItem) SetLocale(v string) {
-	x.xxx_hidden_Locale = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.Locale = &v
 }
 
 func (x *IceBreakersItem) SetCallToActions(v []*CallToAction) {
-	x.xxx_hidden_CallToActions = &v
+	x.CallToActions = v
 }
 
 func (x *IceBreakersItem) HasLocale() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Locale != nil
 }
 
 func (x *IceBreakersItem) ClearLocale() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Locale = nil
+	x.Locale = nil
 }
 
 type IceBreakersItem_builder struct {
@@ -111,23 +106,20 @@ func (b0 IceBreakersItem_builder) Build() *IceBreakersItem {
 	m0 := &IceBreakersItem{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Locale != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Locale = b.Locale
-	}
-	x.xxx_hidden_CallToActions = &b.CallToActions
+	x.Locale = b.Locale
+	x.CallToActions = b.CallToActions
 	return m0
 }
 
 // InstagramIceBreakersMessage represents ice breakers configuration for Instagram
 type InstagramIceBreakersMessage struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Platform    *string                `protobuf:"bytes,1,opt,name=platform"`
-	xxx_hidden_IceBreakers *[]*IceBreakersItem    `protobuf:"bytes,2,rep,name=ice_breakers,json=iceBreakers"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The platform identifier
+	Platform *string `protobuf:"bytes,1,opt,name=platform" json:"platform,omitempty"`
+	// The ice breakers array (configuration per locale)
+	IceBreakers   []*IceBreakersItem `protobuf:"bytes,2,rep,name=ice_breakers,json=iceBreakers" json:"ice_breakers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramIceBreakersMessage) Reset() {
@@ -156,43 +148,36 @@ func (x *InstagramIceBreakersMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *InstagramIceBreakersMessage) GetPlatform() string {
-	if x != nil {
-		if x.xxx_hidden_Platform != nil {
-			return *x.xxx_hidden_Platform
-		}
-		return ""
+	if x != nil && x.Platform != nil {
+		return *x.Platform
 	}
 	return ""
 }
 
 func (x *InstagramIceBreakersMessage) GetIceBreakers() []*IceBreakersItem {
 	if x != nil {
-		if x.xxx_hidden_IceBreakers != nil {
-			return *x.xxx_hidden_IceBreakers
-		}
+		return x.IceBreakers
 	}
 	return nil
 }
 
 func (x *InstagramIceBreakersMessage) SetPlatform(v string) {
-	x.xxx_hidden_Platform = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.Platform = &v
 }
 
 func (x *InstagramIceBreakersMessage) SetIceBreakers(v []*IceBreakersItem) {
-	x.xxx_hidden_IceBreakers = &v
+	x.IceBreakers = v
 }
 
 func (x *InstagramIceBreakersMessage) HasPlatform() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Platform != nil
 }
 
 func (x *InstagramIceBreakersMessage) ClearPlatform() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Platform = nil
+	x.Platform = nil
 }
 
 type InstagramIceBreakersMessage_builder struct {
@@ -208,11 +193,8 @@ func (b0 InstagramIceBreakersMessage_builder) Build() *InstagramIceBreakersMessa
 	m0 := &InstagramIceBreakersMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Platform != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Platform = b.Platform
-	}
-	x.xxx_hidden_IceBreakers = &b.IceBreakers
+	x.Platform = b.Platform
+	x.IceBreakers = b.IceBreakers
 	return m0
 }
 

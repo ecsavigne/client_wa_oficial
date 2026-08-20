@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_human_agent_message.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,12 +26,11 @@ const (
 
 // HumanAgentMessage contains the text content to be sent with human agent tag
 type HumanAgentMessage struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Text        *string                `protobuf:"bytes,1,opt,name=text"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The text message to be sent to the recipient
+	Text          *string `protobuf:"bytes,1,opt,name=text" json:"text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *HumanAgentMessage) Reset() {
@@ -58,30 +59,25 @@ func (x *HumanAgentMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *HumanAgentMessage) GetText() string {
-	if x != nil {
-		if x.xxx_hidden_Text != nil {
-			return *x.xxx_hidden_Text
-		}
-		return ""
+	if x != nil && x.Text != nil {
+		return *x.Text
 	}
 	return ""
 }
 
 func (x *HumanAgentMessage) SetText(v string) {
-	x.xxx_hidden_Text = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+	x.Text = &v
 }
 
 func (x *HumanAgentMessage) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Text != nil
 }
 
 func (x *HumanAgentMessage) ClearText() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Text = nil
+	x.Text = nil
 }
 
 type HumanAgentMessage_builder struct {
@@ -95,23 +91,21 @@ func (b0 HumanAgentMessage_builder) Build() *HumanAgentMessage {
 	m0 := &HumanAgentMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Text != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Text = b.Text
-	}
+	x.Text = b.Text
 	return m0
 }
 
 // InstagramHumanAgentMessage is the main message structure for sending messages tagged with HUMAN_AGENT
 type InstagramHumanAgentMessage struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Recipient   *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
-	xxx_hidden_Message     *HumanAgentMessage     `protobuf:"bytes,2,opt,name=message"`
-	xxx_hidden_Tag         *string                `protobuf:"bytes,3,opt,name=tag"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The recipient who will receive the message
+	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
+	// The message content
+	Message *HumanAgentMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
+	// The message tag indicating this is from a human agent
+	Tag           *string `protobuf:"bytes,3,opt,name=tag" json:"tag,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramHumanAgentMessage) Reset() {
@@ -141,73 +135,68 @@ func (x *InstagramHumanAgentMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramHumanAgentMessage) GetRecipient() *Recipient {
 	if x != nil {
-		return x.xxx_hidden_Recipient
+		return x.Recipient
 	}
 	return nil
 }
 
 func (x *InstagramHumanAgentMessage) GetMessage() *HumanAgentMessage {
 	if x != nil {
-		return x.xxx_hidden_Message
+		return x.Message
 	}
 	return nil
 }
 
 func (x *InstagramHumanAgentMessage) GetTag() string {
-	if x != nil {
-		if x.xxx_hidden_Tag != nil {
-			return *x.xxx_hidden_Tag
-		}
-		return ""
+	if x != nil && x.Tag != nil {
+		return *x.Tag
 	}
 	return ""
 }
 
 func (x *InstagramHumanAgentMessage) SetRecipient(v *Recipient) {
-	x.xxx_hidden_Recipient = v
+	x.Recipient = v
 }
 
 func (x *InstagramHumanAgentMessage) SetMessage(v *HumanAgentMessage) {
-	x.xxx_hidden_Message = v
+	x.Message = v
 }
 
 func (x *InstagramHumanAgentMessage) SetTag(v string) {
-	x.xxx_hidden_Tag = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	x.Tag = &v
 }
 
 func (x *InstagramHumanAgentMessage) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Recipient != nil
+	return x.Recipient != nil
 }
 
 func (x *InstagramHumanAgentMessage) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Message != nil
+	return x.Message != nil
 }
 
 func (x *InstagramHumanAgentMessage) HasTag() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.Tag != nil
 }
 
 func (x *InstagramHumanAgentMessage) ClearRecipient() {
-	x.xxx_hidden_Recipient = nil
+	x.Recipient = nil
 }
 
 func (x *InstagramHumanAgentMessage) ClearMessage() {
-	x.xxx_hidden_Message = nil
+	x.Message = nil
 }
 
 func (x *InstagramHumanAgentMessage) ClearTag() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Tag = nil
+	x.Tag = nil
 }
 
 type InstagramHumanAgentMessage_builder struct {
@@ -225,12 +214,9 @@ func (b0 InstagramHumanAgentMessage_builder) Build() *InstagramHumanAgentMessage
 	m0 := &InstagramHumanAgentMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Recipient = b.Recipient
-	x.xxx_hidden_Message = b.Message
-	if b.Tag != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Tag = b.Tag
-	}
+	x.Recipient = b.Recipient
+	x.Message = b.Message
+	x.Tag = b.Tag
 	return m0
 }
 

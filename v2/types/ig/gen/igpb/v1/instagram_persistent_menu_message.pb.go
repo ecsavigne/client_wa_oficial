@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_persistent_menu_message.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -75,17 +77,21 @@ func (x WebviewHeightRatio) Number() protoreflect.EnumNumber {
 
 // CallToAction represents a menu item action in the persistent menu or ice breakers
 type CallToAction struct {
-	state                         protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Type               *string                `protobuf:"bytes,1,opt,name=type"`
-	xxx_hidden_Title              *string                `protobuf:"bytes,2,opt,name=title"`
-	xxx_hidden_Payload            *string                `protobuf:"bytes,3,opt,name=payload"`
-	xxx_hidden_Url                *string                `protobuf:"bytes,4,opt,name=url"`
-	xxx_hidden_WebviewHeightRatio *string                `protobuf:"bytes,5,opt,name=webview_height_ratio,json=webviewHeightRatio"`
-	xxx_hidden_Question           *string                `protobuf:"bytes,6,opt,name=question"`
-	XXX_raceDetectHookData        protoimpl.RaceDetectHookData
-	XXX_presence                  [1]uint32
-	unknownFields                 protoimpl.UnknownFields
-	sizeCache                     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The type of button (postback or web_url) - used in persistent menu context
+	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
+	// The title text displayed on the button - used in persistent menu context
+	Title *string `protobuf:"bytes,2,opt,name=title" json:"title,omitempty"`
+	// The payload string sent as postback for postback buttons or ice breakers
+	Payload *string `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
+	// The URL to open for web_url buttons - used in persistent menu context
+	Url *string `protobuf:"bytes,4,opt,name=url" json:"url,omitempty"`
+	// The height ratio for web_url button webviews (full, tall, or compact) - used in persistent menu context
+	WebviewHeightRatio *string `protobuf:"bytes,5,opt,name=webview_height_ratio,json=webviewHeightRatio" json:"webview_height_ratio,omitempty"`
+	// The question text for ice breakers - used in ice breakers context only
+	Question      *string `protobuf:"bytes,6,opt,name=question" json:"question,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CallToAction) Reset() {
@@ -114,165 +120,135 @@ func (x *CallToAction) ProtoReflect() protoreflect.Message {
 }
 
 func (x *CallToAction) GetType() string {
-	if x != nil {
-		if x.xxx_hidden_Type != nil {
-			return *x.xxx_hidden_Type
-		}
-		return ""
+	if x != nil && x.Type != nil {
+		return *x.Type
 	}
 	return ""
 }
 
 func (x *CallToAction) GetTitle() string {
-	if x != nil {
-		if x.xxx_hidden_Title != nil {
-			return *x.xxx_hidden_Title
-		}
-		return ""
+	if x != nil && x.Title != nil {
+		return *x.Title
 	}
 	return ""
 }
 
 func (x *CallToAction) GetPayload() string {
-	if x != nil {
-		if x.xxx_hidden_Payload != nil {
-			return *x.xxx_hidden_Payload
-		}
-		return ""
+	if x != nil && x.Payload != nil {
+		return *x.Payload
 	}
 	return ""
 }
 
 func (x *CallToAction) GetUrl() string {
-	if x != nil {
-		if x.xxx_hidden_Url != nil {
-			return *x.xxx_hidden_Url
-		}
-		return ""
+	if x != nil && x.Url != nil {
+		return *x.Url
 	}
 	return ""
 }
 
 func (x *CallToAction) GetWebviewHeightRatio() string {
-	if x != nil {
-		if x.xxx_hidden_WebviewHeightRatio != nil {
-			return *x.xxx_hidden_WebviewHeightRatio
-		}
-		return ""
+	if x != nil && x.WebviewHeightRatio != nil {
+		return *x.WebviewHeightRatio
 	}
 	return ""
 }
 
 func (x *CallToAction) GetQuestion() string {
-	if x != nil {
-		if x.xxx_hidden_Question != nil {
-			return *x.xxx_hidden_Question
-		}
-		return ""
+	if x != nil && x.Question != nil {
+		return *x.Question
 	}
 	return ""
 }
 
 func (x *CallToAction) SetType(v string) {
-	x.xxx_hidden_Type = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 6)
+	x.Type = &v
 }
 
 func (x *CallToAction) SetTitle(v string) {
-	x.xxx_hidden_Title = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 6)
+	x.Title = &v
 }
 
 func (x *CallToAction) SetPayload(v string) {
-	x.xxx_hidden_Payload = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
+	x.Payload = &v
 }
 
 func (x *CallToAction) SetUrl(v string) {
-	x.xxx_hidden_Url = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
+	x.Url = &v
 }
 
 func (x *CallToAction) SetWebviewHeightRatio(v string) {
-	x.xxx_hidden_WebviewHeightRatio = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
+	x.WebviewHeightRatio = &v
 }
 
 func (x *CallToAction) SetQuestion(v string) {
-	x.xxx_hidden_Question = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
+	x.Question = &v
 }
 
 func (x *CallToAction) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Type != nil
 }
 
 func (x *CallToAction) HasTitle() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.Title != nil
 }
 
 func (x *CallToAction) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.Payload != nil
 }
 
 func (x *CallToAction) HasUrl() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return x.Url != nil
 }
 
 func (x *CallToAction) HasWebviewHeightRatio() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+	return x.WebviewHeightRatio != nil
 }
 
 func (x *CallToAction) HasQuestion() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+	return x.Question != nil
 }
 
 func (x *CallToAction) ClearType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Type = nil
+	x.Type = nil
 }
 
 func (x *CallToAction) ClearTitle() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Title = nil
+	x.Title = nil
 }
 
 func (x *CallToAction) ClearPayload() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 func (x *CallToAction) ClearUrl() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Url = nil
+	x.Url = nil
 }
 
 func (x *CallToAction) ClearWebviewHeightRatio() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_WebviewHeightRatio = nil
+	x.WebviewHeightRatio = nil
 }
 
 func (x *CallToAction) ClearQuestion() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
-	x.xxx_hidden_Question = nil
+	x.Question = nil
 }
 
 type CallToAction_builder struct {
@@ -296,42 +272,24 @@ func (b0 CallToAction_builder) Build() *CallToAction {
 	m0 := &CallToAction{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Type != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 6)
-		x.xxx_hidden_Type = b.Type
-	}
-	if b.Title != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 6)
-		x.xxx_hidden_Title = b.Title
-	}
-	if b.Payload != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
-		x.xxx_hidden_Payload = b.Payload
-	}
-	if b.Url != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
-		x.xxx_hidden_Url = b.Url
-	}
-	if b.WebviewHeightRatio != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
-		x.xxx_hidden_WebviewHeightRatio = b.WebviewHeightRatio
-	}
-	if b.Question != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
-		x.xxx_hidden_Question = b.Question
-	}
+	x.Type = b.Type
+	x.Title = b.Title
+	x.Payload = b.Payload
+	x.Url = b.Url
+	x.WebviewHeightRatio = b.WebviewHeightRatio
+	x.Question = b.Question
 	return m0
 }
 
 // PersistentMenuItem represents a menu section in the persistent menu
 type PersistentMenuItem struct {
-	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Locale        *string                `protobuf:"bytes,1,opt,name=locale"`
-	xxx_hidden_CallToActions *[]*CallToAction       `protobuf:"bytes,2,rep,name=call_to_actions,json=callToActions"`
-	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
-	XXX_presence             [1]uint32
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The locale for the menu (default or specific locale)
+	Locale *string `protobuf:"bytes,1,opt,name=locale" json:"locale,omitempty"`
+	// The call to action buttons (array of menu items, maximum 3)
+	CallToActions []*CallToAction `protobuf:"bytes,2,rep,name=call_to_actions,json=callToActions" json:"call_to_actions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PersistentMenuItem) Reset() {
@@ -360,43 +318,36 @@ func (x *PersistentMenuItem) ProtoReflect() protoreflect.Message {
 }
 
 func (x *PersistentMenuItem) GetLocale() string {
-	if x != nil {
-		if x.xxx_hidden_Locale != nil {
-			return *x.xxx_hidden_Locale
-		}
-		return ""
+	if x != nil && x.Locale != nil {
+		return *x.Locale
 	}
 	return ""
 }
 
 func (x *PersistentMenuItem) GetCallToActions() []*CallToAction {
 	if x != nil {
-		if x.xxx_hidden_CallToActions != nil {
-			return *x.xxx_hidden_CallToActions
-		}
+		return x.CallToActions
 	}
 	return nil
 }
 
 func (x *PersistentMenuItem) SetLocale(v string) {
-	x.xxx_hidden_Locale = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.Locale = &v
 }
 
 func (x *PersistentMenuItem) SetCallToActions(v []*CallToAction) {
-	x.xxx_hidden_CallToActions = &v
+	x.CallToActions = v
 }
 
 func (x *PersistentMenuItem) HasLocale() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Locale != nil
 }
 
 func (x *PersistentMenuItem) ClearLocale() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Locale = nil
+	x.Locale = nil
 }
 
 type PersistentMenuItem_builder struct {
@@ -412,20 +363,18 @@ func (b0 PersistentMenuItem_builder) Build() *PersistentMenuItem {
 	m0 := &PersistentMenuItem{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Locale != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Locale = b.Locale
-	}
-	x.xxx_hidden_CallToActions = &b.CallToActions
+	x.Locale = b.Locale
+	x.CallToActions = b.CallToActions
 	return m0
 }
 
 // InstagramPersistentMenuMessage represents a persistent menu configuration for Instagram
 type InstagramPersistentMenuMessage struct {
-	state                     protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_PersistentMenu *[]*PersistentMenuItem `protobuf:"bytes,1,rep,name=persistent_menu,json=persistentMenu"`
-	unknownFields             protoimpl.UnknownFields
-	sizeCache                 protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The persistent menu array (maximum 1 menu per locale, typically only 1 default menu)
+	PersistentMenu []*PersistentMenuItem `protobuf:"bytes,1,rep,name=persistent_menu,json=persistentMenu" json:"persistent_menu,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *InstagramPersistentMenuMessage) Reset() {
@@ -455,15 +404,13 @@ func (x *InstagramPersistentMenuMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramPersistentMenuMessage) GetPersistentMenu() []*PersistentMenuItem {
 	if x != nil {
-		if x.xxx_hidden_PersistentMenu != nil {
-			return *x.xxx_hidden_PersistentMenu
-		}
+		return x.PersistentMenu
 	}
 	return nil
 }
 
 func (x *InstagramPersistentMenuMessage) SetPersistentMenu(v []*PersistentMenuItem) {
-	x.xxx_hidden_PersistentMenu = &v
+	x.PersistentMenu = v
 }
 
 type InstagramPersistentMenuMessage_builder struct {
@@ -477,7 +424,7 @@ func (b0 InstagramPersistentMenuMessage_builder) Build() *InstagramPersistentMen
 	m0 := &InstagramPersistentMenuMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_PersistentMenu = &b.PersistentMenu
+	x.PersistentMenu = b.PersistentMenu
 	return m0
 }
 

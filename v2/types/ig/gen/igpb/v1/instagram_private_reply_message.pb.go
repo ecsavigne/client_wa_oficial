@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_private_reply_message.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,12 +26,11 @@ const (
 
 // CommentRecipient represents a comment recipient for private replies
 type CommentRecipient struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_CommentId   *string                `protobuf:"bytes,1,opt,name=comment_id,json=commentId"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The comment ID to reply to
+	CommentId     *string `protobuf:"bytes,1,opt,name=comment_id,json=commentId" json:"comment_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CommentRecipient) Reset() {
@@ -58,30 +59,25 @@ func (x *CommentRecipient) ProtoReflect() protoreflect.Message {
 }
 
 func (x *CommentRecipient) GetCommentId() string {
-	if x != nil {
-		if x.xxx_hidden_CommentId != nil {
-			return *x.xxx_hidden_CommentId
-		}
-		return ""
+	if x != nil && x.CommentId != nil {
+		return *x.CommentId
 	}
 	return ""
 }
 
 func (x *CommentRecipient) SetCommentId(v string) {
-	x.xxx_hidden_CommentId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+	x.CommentId = &v
 }
 
 func (x *CommentRecipient) HasCommentId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.CommentId != nil
 }
 
 func (x *CommentRecipient) ClearCommentId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_CommentId = nil
+	x.CommentId = nil
 }
 
 type CommentRecipient_builder struct {
@@ -95,21 +91,17 @@ func (b0 CommentRecipient_builder) Build() *CommentRecipient {
 	m0 := &CommentRecipient{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.CommentId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_CommentId = b.CommentId
-	}
+	x.CommentId = b.CommentId
 	return m0
 }
 
 // PrivateReplyMessage contains the text to be sent as a private reply
 type PrivateReplyMessage struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Text        *string                `protobuf:"bytes,1,opt,name=text"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The text of the private reply
+	Text          *string `protobuf:"bytes,1,opt,name=text" json:"text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PrivateReplyMessage) Reset() {
@@ -138,30 +130,25 @@ func (x *PrivateReplyMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *PrivateReplyMessage) GetText() string {
-	if x != nil {
-		if x.xxx_hidden_Text != nil {
-			return *x.xxx_hidden_Text
-		}
-		return ""
+	if x != nil && x.Text != nil {
+		return *x.Text
 	}
 	return ""
 }
 
 func (x *PrivateReplyMessage) SetText(v string) {
-	x.xxx_hidden_Text = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+	x.Text = &v
 }
 
 func (x *PrivateReplyMessage) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.Text != nil
 }
 
 func (x *PrivateReplyMessage) ClearText() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Text = nil
+	x.Text = nil
 }
 
 type PrivateReplyMessage_builder struct {
@@ -175,20 +162,19 @@ func (b0 PrivateReplyMessage_builder) Build() *PrivateReplyMessage {
 	m0 := &PrivateReplyMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Text != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_Text = b.Text
-	}
+	x.Text = b.Text
 	return m0
 }
 
 // InstagramPrivateReplyMessage is the main message structure for sending private replies to comments
 type InstagramPrivateReplyMessage struct {
-	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Recipient *CommentRecipient      `protobuf:"bytes,1,opt,name=recipient"`
-	xxx_hidden_Message   *PrivateReplyMessage   `protobuf:"bytes,2,opt,name=message"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The comment recipient for the private reply
+	Recipient *CommentRecipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
+	// The private reply message content
+	Message       *PrivateReplyMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramPrivateReplyMessage) Reset() {
@@ -218,46 +204,46 @@ func (x *InstagramPrivateReplyMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramPrivateReplyMessage) GetRecipient() *CommentRecipient {
 	if x != nil {
-		return x.xxx_hidden_Recipient
+		return x.Recipient
 	}
 	return nil
 }
 
 func (x *InstagramPrivateReplyMessage) GetMessage() *PrivateReplyMessage {
 	if x != nil {
-		return x.xxx_hidden_Message
+		return x.Message
 	}
 	return nil
 }
 
 func (x *InstagramPrivateReplyMessage) SetRecipient(v *CommentRecipient) {
-	x.xxx_hidden_Recipient = v
+	x.Recipient = v
 }
 
 func (x *InstagramPrivateReplyMessage) SetMessage(v *PrivateReplyMessage) {
-	x.xxx_hidden_Message = v
+	x.Message = v
 }
 
 func (x *InstagramPrivateReplyMessage) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Recipient != nil
+	return x.Recipient != nil
 }
 
 func (x *InstagramPrivateReplyMessage) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Message != nil
+	return x.Message != nil
 }
 
 func (x *InstagramPrivateReplyMessage) ClearRecipient() {
-	x.xxx_hidden_Recipient = nil
+	x.Recipient = nil
 }
 
 func (x *InstagramPrivateReplyMessage) ClearMessage() {
-	x.xxx_hidden_Message = nil
+	x.Message = nil
 }
 
 type InstagramPrivateReplyMessage_builder struct {
@@ -273,8 +259,8 @@ func (b0 InstagramPrivateReplyMessage_builder) Build() *InstagramPrivateReplyMes
 	m0 := &InstagramPrivateReplyMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Recipient = b.Recipient
-	x.xxx_hidden_Message = b.Message
+	x.Recipient = b.Recipient
+	x.Message = b.Message
 	return m0
 }
 

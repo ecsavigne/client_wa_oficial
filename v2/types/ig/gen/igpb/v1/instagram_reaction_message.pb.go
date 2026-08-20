@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_reaction_message.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,13 +26,13 @@ const (
 
 // ReactionPayload contains the reaction details for a message
 type ReactionPayload struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_MessageId   *string                `protobuf:"bytes,1,opt,name=message_id,json=messageId"`
-	xxx_hidden_Reaction    *string                `protobuf:"bytes,2,opt,name=reaction"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The ID of the message to react to
+	MessageId *string `protobuf:"bytes,1,opt,name=message_id,json=messageId" json:"message_id,omitempty"`
+	// The type of reaction to be sent (e.g., love, like, haha, wow, sad, angry)
+	Reaction      *string `protobuf:"bytes,2,opt,name=reaction" json:"reaction,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ReactionPayload) Reset() {
@@ -59,57 +61,47 @@ func (x *ReactionPayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *ReactionPayload) GetMessageId() string {
-	if x != nil {
-		if x.xxx_hidden_MessageId != nil {
-			return *x.xxx_hidden_MessageId
-		}
-		return ""
+	if x != nil && x.MessageId != nil {
+		return *x.MessageId
 	}
 	return ""
 }
 
 func (x *ReactionPayload) GetReaction() string {
-	if x != nil {
-		if x.xxx_hidden_Reaction != nil {
-			return *x.xxx_hidden_Reaction
-		}
-		return ""
+	if x != nil && x.Reaction != nil {
+		return *x.Reaction
 	}
 	return ""
 }
 
 func (x *ReactionPayload) SetMessageId(v string) {
-	x.xxx_hidden_MessageId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.MessageId = &v
 }
 
 func (x *ReactionPayload) SetReaction(v string) {
-	x.xxx_hidden_Reaction = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+	x.Reaction = &v
 }
 
 func (x *ReactionPayload) HasMessageId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.MessageId != nil
 }
 
 func (x *ReactionPayload) HasReaction() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.Reaction != nil
 }
 
 func (x *ReactionPayload) ClearMessageId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_MessageId = nil
+	x.MessageId = nil
 }
 
 func (x *ReactionPayload) ClearReaction() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Reaction = nil
+	x.Reaction = nil
 }
 
 type ReactionPayload_builder struct {
@@ -125,27 +117,22 @@ func (b0 ReactionPayload_builder) Build() *ReactionPayload {
 	m0 := &ReactionPayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.MessageId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_MessageId = b.MessageId
-	}
-	if b.Reaction != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Reaction = b.Reaction
-	}
+	x.MessageId = b.MessageId
+	x.Reaction = b.Reaction
 	return m0
 }
 
 // InstagramReactionMessage is the main message structure for reacting to or unreacting from messages
 type InstagramReactionMessage struct {
-	state                   protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Recipient    *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
-	xxx_hidden_SenderAction *string                `protobuf:"bytes,2,opt,name=sender_action,json=senderAction"`
-	xxx_hidden_Payload      *ReactionPayload       `protobuf:"bytes,3,opt,name=payload"`
-	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
-	XXX_presence            [1]uint32
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The recipient of the message
+	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
+	// The sender action (react or unreact)
+	SenderAction *string `protobuf:"bytes,2,opt,name=sender_action,json=senderAction" json:"sender_action,omitempty"`
+	// The reaction payload containing message_id and reaction type
+	Payload       *ReactionPayload `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramReactionMessage) Reset() {
@@ -175,73 +162,68 @@ func (x *InstagramReactionMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramReactionMessage) GetRecipient() *Recipient {
 	if x != nil {
-		return x.xxx_hidden_Recipient
+		return x.Recipient
 	}
 	return nil
 }
 
 func (x *InstagramReactionMessage) GetSenderAction() string {
-	if x != nil {
-		if x.xxx_hidden_SenderAction != nil {
-			return *x.xxx_hidden_SenderAction
-		}
-		return ""
+	if x != nil && x.SenderAction != nil {
+		return *x.SenderAction
 	}
 	return ""
 }
 
 func (x *InstagramReactionMessage) GetPayload() *ReactionPayload {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *InstagramReactionMessage) SetRecipient(v *Recipient) {
-	x.xxx_hidden_Recipient = v
+	x.Recipient = v
 }
 
 func (x *InstagramReactionMessage) SetSenderAction(v string) {
-	x.xxx_hidden_SenderAction = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	x.SenderAction = &v
 }
 
 func (x *InstagramReactionMessage) SetPayload(v *ReactionPayload) {
-	x.xxx_hidden_Payload = v
+	x.Payload = v
 }
 
 func (x *InstagramReactionMessage) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Recipient != nil
+	return x.Recipient != nil
 }
 
 func (x *InstagramReactionMessage) HasSenderAction() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.SenderAction != nil
 }
 
 func (x *InstagramReactionMessage) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Payload != nil
+	return x.Payload != nil
 }
 
 func (x *InstagramReactionMessage) ClearRecipient() {
-	x.xxx_hidden_Recipient = nil
+	x.Recipient = nil
 }
 
 func (x *InstagramReactionMessage) ClearSenderAction() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_SenderAction = nil
+	x.SenderAction = nil
 }
 
 func (x *InstagramReactionMessage) ClearPayload() {
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 type InstagramReactionMessage_builder struct {
@@ -259,12 +241,9 @@ func (b0 InstagramReactionMessage_builder) Build() *InstagramReactionMessage {
 	m0 := &InstagramReactionMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Recipient = b.Recipient
-	if b.SenderAction != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_SenderAction = b.SenderAction
-	}
-	x.xxx_hidden_Payload = b.Payload
+	x.Recipient = b.Recipient
+	x.SenderAction = b.SenderAction
+	x.Payload = b.Payload
 	return m0
 }
 

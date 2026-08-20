@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_info_account_business_response.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,21 +26,29 @@ const (
 
 // InstagramInfoAccountBusinessResponse contains detailed information about an Instagram business account
 type InstagramInfoAccountBusinessResponse struct {
-	state                        protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_AccountType       *string                `protobuf:"bytes,1,opt,name=account_type,json=accountType"`
-	xxx_hidden_FollowersCount    int64                  `protobuf:"varint,2,opt,name=followers_count,json=followersCount"`
-	xxx_hidden_FollowsCount      int64                  `protobuf:"varint,3,opt,name=follows_count,json=followsCount"`
-	xxx_hidden_Id                *string                `protobuf:"bytes,4,opt,name=id"`
-	xxx_hidden_MediaCount        int64                  `protobuf:"varint,5,opt,name=media_count,json=mediaCount"`
-	xxx_hidden_Name              *string                `protobuf:"bytes,6,opt,name=name"`
-	xxx_hidden_Payload           []byte                 `protobuf:"bytes,7,opt,name=payload"`
-	xxx_hidden_ProfilePictureUrl *string                `protobuf:"bytes,8,opt,name=profile_picture_url,json=profilePictureUrl"`
-	xxx_hidden_UserId            *string                `protobuf:"bytes,9,opt,name=user_id,json=userId"`
-	xxx_hidden_Username          *string                `protobuf:"bytes,10,opt,name=username"`
-	XXX_raceDetectHookData       protoimpl.RaceDetectHookData
-	XXX_presence                 [1]uint32
-	unknownFields                protoimpl.UnknownFields
-	sizeCache                    protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The app user's account type (Business or Media_Creator)
+	AccountType *string `protobuf:"bytes,1,opt,name=account_type,json=accountType" json:"account_type,omitempty"`
+	// The number of followers of the app user's Instagram professional account
+	FollowersCount *int64 `protobuf:"varint,2,opt,name=followers_count,json=followersCount" json:"followers_count,omitempty"`
+	// The number of Instagram accounts the app user's Instagram professional account follows
+	FollowsCount *int64 `protobuf:"varint,3,opt,name=follows_count,json=followsCount" json:"follows_count,omitempty"`
+	// The app user's app-scoped ID
+	Id *string `protobuf:"bytes,4,opt,name=id" json:"id,omitempty"`
+	// The number of Media objects on the User
+	MediaCount *int64 `protobuf:"varint,5,opt,name=media_count,json=mediaCount" json:"media_count,omitempty"`
+	// The app user's name
+	Name *string `protobuf:"bytes,6,opt,name=name" json:"name,omitempty"`
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte `protobuf:"bytes,7,opt,name=payload" json:"payload,omitempty"`
+	// The URL for the app user's profile picture
+	ProfilePictureUrl *string `protobuf:"bytes,8,opt,name=profile_picture_url,json=profilePictureUrl" json:"profile_picture_url,omitempty"`
+	// The Instagram professional account ID (IG_ID)
+	UserId *string `protobuf:"bytes,9,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	// The app user's Instagram username
+	Username      *string `protobuf:"bytes,10,opt,name=username" json:"username,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramInfoAccountBusinessResponse) Reset() {
@@ -67,264 +77,226 @@ func (x *InstagramInfoAccountBusinessResponse) ProtoReflect() protoreflect.Messa
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetAccountType() string {
-	if x != nil {
-		if x.xxx_hidden_AccountType != nil {
-			return *x.xxx_hidden_AccountType
-		}
-		return ""
+	if x != nil && x.AccountType != nil {
+		return *x.AccountType
 	}
 	return ""
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetFollowersCount() int64 {
-	if x != nil {
-		return x.xxx_hidden_FollowersCount
+	if x != nil && x.FollowersCount != nil {
+		return *x.FollowersCount
 	}
 	return 0
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetFollowsCount() int64 {
-	if x != nil {
-		return x.xxx_hidden_FollowsCount
+	if x != nil && x.FollowsCount != nil {
+		return *x.FollowsCount
 	}
 	return 0
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetMediaCount() int64 {
-	if x != nil {
-		return x.xxx_hidden_MediaCount
+	if x != nil && x.MediaCount != nil {
+		return *x.MediaCount
 	}
 	return 0
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetName() string {
-	if x != nil {
-		if x.xxx_hidden_Name != nil {
-			return *x.xxx_hidden_Name
-		}
-		return ""
+	if x != nil && x.Name != nil {
+		return *x.Name
 	}
 	return ""
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetPayload() []byte {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetProfilePictureUrl() string {
-	if x != nil {
-		if x.xxx_hidden_ProfilePictureUrl != nil {
-			return *x.xxx_hidden_ProfilePictureUrl
-		}
-		return ""
+	if x != nil && x.ProfilePictureUrl != nil {
+		return *x.ProfilePictureUrl
 	}
 	return ""
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetUserId() string {
-	if x != nil {
-		if x.xxx_hidden_UserId != nil {
-			return *x.xxx_hidden_UserId
-		}
-		return ""
+	if x != nil && x.UserId != nil {
+		return *x.UserId
 	}
 	return ""
 }
 
 func (x *InstagramInfoAccountBusinessResponse) GetUsername() string {
-	if x != nil {
-		if x.xxx_hidden_Username != nil {
-			return *x.xxx_hidden_Username
-		}
-		return ""
+	if x != nil && x.Username != nil {
+		return *x.Username
 	}
 	return ""
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetAccountType(v string) {
-	x.xxx_hidden_AccountType = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 10)
+	x.AccountType = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetFollowersCount(v int64) {
-	x.xxx_hidden_FollowersCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 10)
+	x.FollowersCount = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetFollowsCount(v int64) {
-	x.xxx_hidden_FollowsCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 10)
+	x.FollowsCount = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 10)
+	x.Id = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetMediaCount(v int64) {
-	x.xxx_hidden_MediaCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 10)
+	x.MediaCount = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetName(v string) {
-	x.xxx_hidden_Name = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 10)
+	x.Name = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.xxx_hidden_Payload = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 10)
+	x.Payload = v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetProfilePictureUrl(v string) {
-	x.xxx_hidden_ProfilePictureUrl = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 10)
+	x.ProfilePictureUrl = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetUserId(v string) {
-	x.xxx_hidden_UserId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 10)
+	x.UserId = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) SetUsername(v string) {
-	x.xxx_hidden_Username = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 10)
+	x.Username = &v
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasAccountType() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.AccountType != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasFollowersCount() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.FollowersCount != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasFollowsCount() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.FollowsCount != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return x.Id != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasMediaCount() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+	return x.MediaCount != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasName() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+	return x.Name != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+	return x.Payload != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasProfilePictureUrl() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return x.ProfilePictureUrl != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasUserId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
+	return x.UserId != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) HasUsername() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+	return x.Username != nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearAccountType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_AccountType = nil
+	x.AccountType = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearFollowersCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_FollowersCount = 0
+	x.FollowersCount = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearFollowsCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_FollowsCount = 0
+	x.FollowsCount = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_Id = nil
+	x.Id = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearMediaCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_MediaCount = 0
+	x.MediaCount = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearName() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
-	x.xxx_hidden_Name = nil
+	x.Name = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearPayload() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearProfilePictureUrl() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
-	x.xxx_hidden_ProfilePictureUrl = nil
+	x.ProfilePictureUrl = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearUserId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
-	x.xxx_hidden_UserId = nil
+	x.UserId = nil
 }
 
 func (x *InstagramInfoAccountBusinessResponse) ClearUsername() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
-	x.xxx_hidden_Username = nil
+	x.Username = nil
 }
 
 type InstagramInfoAccountBusinessResponse_builder struct {
@@ -356,46 +328,16 @@ func (b0 InstagramInfoAccountBusinessResponse_builder) Build() *InstagramInfoAcc
 	m0 := &InstagramInfoAccountBusinessResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.AccountType != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 10)
-		x.xxx_hidden_AccountType = b.AccountType
-	}
-	if b.FollowersCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 10)
-		x.xxx_hidden_FollowersCount = *b.FollowersCount
-	}
-	if b.FollowsCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 10)
-		x.xxx_hidden_FollowsCount = *b.FollowsCount
-	}
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 10)
-		x.xxx_hidden_Id = b.Id
-	}
-	if b.MediaCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 10)
-		x.xxx_hidden_MediaCount = *b.MediaCount
-	}
-	if b.Name != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 10)
-		x.xxx_hidden_Name = b.Name
-	}
-	if b.Payload != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 10)
-		x.xxx_hidden_Payload = b.Payload
-	}
-	if b.ProfilePictureUrl != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 10)
-		x.xxx_hidden_ProfilePictureUrl = b.ProfilePictureUrl
-	}
-	if b.UserId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 10)
-		x.xxx_hidden_UserId = b.UserId
-	}
-	if b.Username != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 10)
-		x.xxx_hidden_Username = b.Username
-	}
+	x.AccountType = b.AccountType
+	x.FollowersCount = b.FollowersCount
+	x.FollowsCount = b.FollowsCount
+	x.Id = b.Id
+	x.MediaCount = b.MediaCount
+	x.Name = b.Name
+	x.Payload = b.Payload
+	x.ProfilePictureUrl = b.ProfilePictureUrl
+	x.UserId = b.UserId
+	x.Username = b.Username
 	return m0
 }
 

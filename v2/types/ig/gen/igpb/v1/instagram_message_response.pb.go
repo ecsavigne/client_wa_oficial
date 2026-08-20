@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_message_response.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -24,15 +26,17 @@ const (
 
 // InstagramMessageResponse is the response after sending any message via Instagram
 type InstagramMessageResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_MediaId     *string                `protobuf:"bytes,1,opt,name=media_id,json=mediaId"`
-	xxx_hidden_MessageId   *string                `protobuf:"bytes,2,opt,name=message_id,json=messageId"`
-	xxx_hidden_Payload     []byte                 `protobuf:"bytes,3,opt,name=payload"`
-	xxx_hidden_RecipientId *string                `protobuf:"bytes,4,opt,name=recipient_id,json=recipientId"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The ID of the media file stored on Meta servers (only present when a media message was sent)
+	MediaId *string `protobuf:"bytes,1,opt,name=media_id,json=mediaId" json:"media_id,omitempty"`
+	// The unique ID of the sent message
+	MessageId *string `protobuf:"bytes,2,opt,name=message_id,json=messageId" json:"message_id,omitempty"`
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload []byte `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
+	// The ID of the chat where the message was sent
+	RecipientId   *string `protobuf:"bytes,4,opt,name=recipient_id,json=recipientId" json:"recipient_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramMessageResponse) Reset() {
@@ -61,111 +65,94 @@ func (x *InstagramMessageResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *InstagramMessageResponse) GetMediaId() string {
-	if x != nil {
-		if x.xxx_hidden_MediaId != nil {
-			return *x.xxx_hidden_MediaId
-		}
-		return ""
+	if x != nil && x.MediaId != nil {
+		return *x.MediaId
 	}
 	return ""
 }
 
 func (x *InstagramMessageResponse) GetMessageId() string {
-	if x != nil {
-		if x.xxx_hidden_MessageId != nil {
-			return *x.xxx_hidden_MessageId
-		}
-		return ""
+	if x != nil && x.MessageId != nil {
+		return *x.MessageId
 	}
 	return ""
 }
 
 func (x *InstagramMessageResponse) GetPayload() []byte {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *InstagramMessageResponse) GetRecipientId() string {
-	if x != nil {
-		if x.xxx_hidden_RecipientId != nil {
-			return *x.xxx_hidden_RecipientId
-		}
-		return ""
+	if x != nil && x.RecipientId != nil {
+		return *x.RecipientId
 	}
 	return ""
 }
 
 func (x *InstagramMessageResponse) SetMediaId(v string) {
-	x.xxx_hidden_MediaId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
+	x.MediaId = &v
 }
 
 func (x *InstagramMessageResponse) SetMessageId(v string) {
-	x.xxx_hidden_MessageId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+	x.MessageId = &v
 }
 
 func (x *InstagramMessageResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.xxx_hidden_Payload = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+	x.Payload = v
 }
 
 func (x *InstagramMessageResponse) SetRecipientId(v string) {
-	x.xxx_hidden_RecipientId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+	x.RecipientId = &v
 }
 
 func (x *InstagramMessageResponse) HasMediaId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.MediaId != nil
 }
 
 func (x *InstagramMessageResponse) HasMessageId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.MessageId != nil
 }
 
 func (x *InstagramMessageResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.Payload != nil
 }
 
 func (x *InstagramMessageResponse) HasRecipientId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return x.RecipientId != nil
 }
 
 func (x *InstagramMessageResponse) ClearMediaId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_MediaId = nil
+	x.MediaId = nil
 }
 
 func (x *InstagramMessageResponse) ClearMessageId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_MessageId = nil
+	x.MessageId = nil
 }
 
 func (x *InstagramMessageResponse) ClearPayload() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 func (x *InstagramMessageResponse) ClearRecipientId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_RecipientId = nil
+	x.RecipientId = nil
 }
 
 type InstagramMessageResponse_builder struct {
@@ -185,22 +172,10 @@ func (b0 InstagramMessageResponse_builder) Build() *InstagramMessageResponse {
 	m0 := &InstagramMessageResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.MediaId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
-		x.xxx_hidden_MediaId = b.MediaId
-	}
-	if b.MessageId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
-		x.xxx_hidden_MessageId = b.MessageId
-	}
-	if b.Payload != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
-		x.xxx_hidden_Payload = b.Payload
-	}
-	if b.RecipientId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
-		x.xxx_hidden_RecipientId = b.RecipientId
-	}
+	x.MediaId = b.MediaId
+	x.MessageId = b.MessageId
+	x.Payload = b.Payload
+	x.RecipientId = b.RecipientId
 	return m0
 }
 

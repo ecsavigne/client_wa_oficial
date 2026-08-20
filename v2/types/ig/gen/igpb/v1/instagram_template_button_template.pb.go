@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_template_button_template.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -23,10 +25,11 @@ const (
 
 // ButtonMessage represents the message content with button template attachment
 type ButtonMessage struct {
-	state                 protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Attachment *TemplateAttachment    `protobuf:"bytes,1,opt,name=attachment"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The template attachment object (same structure as generic templates)
+	Attachment    *TemplateAttachment `protobuf:"bytes,1,opt,name=attachment" json:"attachment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ButtonMessage) Reset() {
@@ -56,24 +59,24 @@ func (x *ButtonMessage) ProtoReflect() protoreflect.Message {
 
 func (x *ButtonMessage) GetAttachment() *TemplateAttachment {
 	if x != nil {
-		return x.xxx_hidden_Attachment
+		return x.Attachment
 	}
 	return nil
 }
 
 func (x *ButtonMessage) SetAttachment(v *TemplateAttachment) {
-	x.xxx_hidden_Attachment = v
+	x.Attachment = v
 }
 
 func (x *ButtonMessage) HasAttachment() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Attachment != nil
+	return x.Attachment != nil
 }
 
 func (x *ButtonMessage) ClearAttachment() {
-	x.xxx_hidden_Attachment = nil
+	x.Attachment = nil
 }
 
 type ButtonMessage_builder struct {
@@ -87,17 +90,19 @@ func (b0 ButtonMessage_builder) Build() *ButtonMessage {
 	m0 := &ButtonMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Attachment = b.Attachment
+	x.Attachment = b.Attachment
 	return m0
 }
 
 // InstagramTemplateButtonTemplate represents a button template message for Instagram
 type InstagramTemplateButtonTemplate struct {
-	state                protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Recipient *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
-	xxx_hidden_Message   *ButtonMessage         `protobuf:"bytes,2,opt,name=message"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// The recipient of the message
+	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
+	// The message content with the button template attachment
+	Message       *ButtonMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramTemplateButtonTemplate) Reset() {
@@ -127,46 +132,46 @@ func (x *InstagramTemplateButtonTemplate) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramTemplateButtonTemplate) GetRecipient() *Recipient {
 	if x != nil {
-		return x.xxx_hidden_Recipient
+		return x.Recipient
 	}
 	return nil
 }
 
 func (x *InstagramTemplateButtonTemplate) GetMessage() *ButtonMessage {
 	if x != nil {
-		return x.xxx_hidden_Message
+		return x.Message
 	}
 	return nil
 }
 
 func (x *InstagramTemplateButtonTemplate) SetRecipient(v *Recipient) {
-	x.xxx_hidden_Recipient = v
+	x.Recipient = v
 }
 
 func (x *InstagramTemplateButtonTemplate) SetMessage(v *ButtonMessage) {
-	x.xxx_hidden_Message = v
+	x.Message = v
 }
 
 func (x *InstagramTemplateButtonTemplate) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Recipient != nil
+	return x.Recipient != nil
 }
 
 func (x *InstagramTemplateButtonTemplate) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Message != nil
+	return x.Message != nil
 }
 
 func (x *InstagramTemplateButtonTemplate) ClearRecipient() {
-	x.xxx_hidden_Recipient = nil
+	x.Recipient = nil
 }
 
 func (x *InstagramTemplateButtonTemplate) ClearMessage() {
-	x.xxx_hidden_Message = nil
+	x.Message = nil
 }
 
 type InstagramTemplateButtonTemplate_builder struct {
@@ -182,8 +187,8 @@ func (b0 InstagramTemplateButtonTemplate_builder) Build() *InstagramTemplateButt
 	m0 := &InstagramTemplateButtonTemplate{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.xxx_hidden_Recipient = b.Recipient
-	x.xxx_hidden_Message = b.Message
+	x.Recipient = b.Recipient
+	x.Message = b.Message
 	return m0
 }
 

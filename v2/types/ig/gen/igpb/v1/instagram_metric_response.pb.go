@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_metric_response.proto
 
+//go:build !protoopaque
+
 package igpbv1
 
 import (
@@ -22,16 +24,15 @@ const (
 )
 
 type InstagramMetricResponse struct {
-	state                    protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_CommentsCount int64                  `protobuf:"varint,1,opt,name=comments_count,json=commentsCount"`
-	xxx_hidden_Id            *string                `protobuf:"bytes,2,opt,name=id"`
-	xxx_hidden_LikeCount     int64                  `protobuf:"varint,3,opt,name=like_count,json=likeCount"`
-	xxx_hidden_MediaType     *string                `protobuf:"bytes,4,opt,name=media_type,json=mediaType"`
-	xxx_hidden_Payload       []byte                 `protobuf:"bytes,5,opt,name=payload"`
-	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
-	XXX_presence             [1]uint32
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	CommentsCount *int64                 `protobuf:"varint,1,opt,name=comments_count,json=commentsCount" json:"comments_count,omitempty"`
+	Id            *string                `protobuf:"bytes,2,opt,name=id" json:"id,omitempty"`
+	LikeCount     *int64                 `protobuf:"varint,3,opt,name=like_count,json=likeCount" json:"like_count,omitempty"`
+	MediaType     *string                `protobuf:"bytes,4,opt,name=media_type,json=mediaType" json:"media_type,omitempty"`
+	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
+	Payload       []byte `protobuf:"bytes,5,opt,name=payload" json:"payload,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *InstagramMetricResponse) Reset() {
@@ -60,132 +61,116 @@ func (x *InstagramMetricResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *InstagramMetricResponse) GetCommentsCount() int64 {
-	if x != nil {
-		return x.xxx_hidden_CommentsCount
+	if x != nil && x.CommentsCount != nil {
+		return *x.CommentsCount
 	}
 	return 0
 }
 
 func (x *InstagramMetricResponse) GetId() string {
-	if x != nil {
-		if x.xxx_hidden_Id != nil {
-			return *x.xxx_hidden_Id
-		}
-		return ""
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return ""
 }
 
 func (x *InstagramMetricResponse) GetLikeCount() int64 {
-	if x != nil {
-		return x.xxx_hidden_LikeCount
+	if x != nil && x.LikeCount != nil {
+		return *x.LikeCount
 	}
 	return 0
 }
 
 func (x *InstagramMetricResponse) GetMediaType() string {
-	if x != nil {
-		if x.xxx_hidden_MediaType != nil {
-			return *x.xxx_hidden_MediaType
-		}
-		return ""
+	if x != nil && x.MediaType != nil {
+		return *x.MediaType
 	}
 	return ""
 }
 
 func (x *InstagramMetricResponse) GetPayload() []byte {
 	if x != nil {
-		return x.xxx_hidden_Payload
+		return x.Payload
 	}
 	return nil
 }
 
 func (x *InstagramMetricResponse) SetCommentsCount(v int64) {
-	x.xxx_hidden_CommentsCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
+	x.CommentsCount = &v
 }
 
 func (x *InstagramMetricResponse) SetId(v string) {
-	x.xxx_hidden_Id = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+	x.Id = &v
 }
 
 func (x *InstagramMetricResponse) SetLikeCount(v int64) {
-	x.xxx_hidden_LikeCount = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
+	x.LikeCount = &v
 }
 
 func (x *InstagramMetricResponse) SetMediaType(v string) {
-	x.xxx_hidden_MediaType = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+	x.MediaType = &v
 }
 
 func (x *InstagramMetricResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.xxx_hidden_Payload = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
+	x.Payload = v
 }
 
 func (x *InstagramMetricResponse) HasCommentsCount() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+	return x.CommentsCount != nil
 }
 
 func (x *InstagramMetricResponse) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+	return x.Id != nil
 }
 
 func (x *InstagramMetricResponse) HasLikeCount() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+	return x.LikeCount != nil
 }
 
 func (x *InstagramMetricResponse) HasMediaType() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+	return x.MediaType != nil
 }
 
 func (x *InstagramMetricResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+	return x.Payload != nil
 }
 
 func (x *InstagramMetricResponse) ClearCommentsCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_CommentsCount = 0
+	x.CommentsCount = nil
 }
 
 func (x *InstagramMetricResponse) ClearId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Id = nil
+	x.Id = nil
 }
 
 func (x *InstagramMetricResponse) ClearLikeCount() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_LikeCount = 0
+	x.LikeCount = nil
 }
 
 func (x *InstagramMetricResponse) ClearMediaType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
-	x.xxx_hidden_MediaType = nil
+	x.MediaType = nil
 }
 
 func (x *InstagramMetricResponse) ClearPayload() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
-	x.xxx_hidden_Payload = nil
+	x.Payload = nil
 }
 
 type InstagramMetricResponse_builder struct {
@@ -203,26 +188,11 @@ func (b0 InstagramMetricResponse_builder) Build() *InstagramMetricResponse {
 	m0 := &InstagramMetricResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.CommentsCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
-		x.xxx_hidden_CommentsCount = *b.CommentsCount
-	}
-	if b.Id != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
-		x.xxx_hidden_Id = b.Id
-	}
-	if b.LikeCount != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
-		x.xxx_hidden_LikeCount = *b.LikeCount
-	}
-	if b.MediaType != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
-		x.xxx_hidden_MediaType = b.MediaType
-	}
-	if b.Payload != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
-		x.xxx_hidden_Payload = b.Payload
-	}
+	x.CommentsCount = b.CommentsCount
+	x.Id = b.Id
+	x.LikeCount = b.LikeCount
+	x.MediaType = b.MediaType
+	x.Payload = b.Payload
 	return m0
 }
 
