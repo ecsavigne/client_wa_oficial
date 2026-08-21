@@ -1,7 +1,6 @@
 package ig
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
 	"net/http"
@@ -180,6 +179,8 @@ type ClientIG struct {
 	url        *url.URL
 }
 
+var _ client.Client = (*ClientIG)(nil)
+
 func (self *ClientIG) defaultConfigClient() {
 	self.typeClient = client.CLIENT_IG
 	self.url = nil
@@ -203,11 +204,8 @@ func NewClientIG(opts ...OptionsClientIG) (*ClientIG, error) {
 	return cl, nil
 }
 
-func (self *ClientIG) MessageIsForMe(webHookData []byte) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
-	webHookMsg := new(igpbv1.InstagramWebhookEvent)
-	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(webHookData, webHookMsg)
-
-	return true, evt_types.ParseTypeNotificationWebhook(webHookMsg.GetObject())
+func (self *ClientIG) MessageIsForMe(webHookData *igpbv1.InstagramWebhookEvent) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
+	return true, evt_types.ParseTypeNotificationWebhook(webHookData.GetObject())
 }
 
 func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string) {
@@ -240,7 +238,7 @@ func (self *ClientIG) GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status
 	return " msg.Entry[0].Changes[0].Value.Statuses[0].Status"
 }
 
-func (self *ClientIG) Broadcast(data map[string]any) {
+func (self *ClientIG) Broadcast(data []byte) {
 	defer func() {
 		if r := recover(); r != nil {
 			return
@@ -250,15 +248,15 @@ func (self *ClientIG) Broadcast(data map[string]any) {
 	var evt gralevt.EventInterface
 
 	// Listener message of the server way WebHook
-	dataBytes, err := json.Marshal(data)
-	if err != nil {
-		return
-	}
+	// dataBytes, err := json.Marshal(data)
+	// if err != nil {
+	// 	return
+	// }
 
 	// msg := codeWebHook(message)
-	msg := new(igpbv1.InstagramWebhookEvent)
-	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(dataBytes, msg)
-	isForme, typeNotification := self.MessageIsForMe(dataBytes)
+	msg := &igpbv1.InstagramWebhookEvent{}
+	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, msg)
+	isForme, typeNotification := self.MessageIsForMe(msg)
 	if !isForme {
 		return
 	}
