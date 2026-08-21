@@ -287,7 +287,7 @@ func defaultConfig() *Config {
 		wabaID:            "",
 		businessID:        "",
 		phoneID:           "",
-		cLOUD_API_VERSION: "v24.0",
+		cLOUD_API_VERSION: "v26.0",
 	}
 }
 

@@ -164,7 +164,7 @@ func defaultConfig() *Config {
 		userID:          "",
 		envFilePath:     "",
 		eventHandle:     nil,
-		version:         "v25.0",
+		version:         "v26.0",
 		baseUrlFacebook: "https://graph.facebook.com",
 		baseUrlIG:       "https://graph.instagram.com",
 		appId:           "",
