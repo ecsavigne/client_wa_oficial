@@ -3918,7 +3918,7 @@ type IGWebhookMessageEdit struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
 	xxx_hidden_Text        *string                `protobuf:"bytes,2,opt,name=text"`
-	xxx_hidden_NumEdit     *string                `protobuf:"bytes,3,opt,name=num_edit,json=numEdit"`
+	xxx_hidden_NumEdit     int32                  `protobuf:"varint,3,opt,name=num_edit,json=numEdit"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -3970,14 +3970,11 @@ func (x *IGWebhookMessageEdit) GetText() string {
 	return ""
 }
 
-func (x *IGWebhookMessageEdit) GetNumEdit() string {
+func (x *IGWebhookMessageEdit) GetNumEdit() int32 {
 	if x != nil {
-		if x.xxx_hidden_NumEdit != nil {
-			return *x.xxx_hidden_NumEdit
-		}
-		return ""
+		return x.xxx_hidden_NumEdit
 	}
-	return ""
+	return 0
 }
 
 func (x *IGWebhookMessageEdit) SetMid(v string) {
@@ -3990,8 +3987,8 @@ func (x *IGWebhookMessageEdit) SetText(v string) {
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
-func (x *IGWebhookMessageEdit) SetNumEdit(v string) {
-	x.xxx_hidden_NumEdit = &v
+func (x *IGWebhookMessageEdit) SetNumEdit(v int32) {
+	x.xxx_hidden_NumEdit = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
@@ -4028,7 +4025,7 @@ func (x *IGWebhookMessageEdit) ClearText() {
 
 func (x *IGWebhookMessageEdit) ClearNumEdit() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_NumEdit = nil
+	x.xxx_hidden_NumEdit = 0
 }
 
 type IGWebhookMessageEdit_builder struct {
@@ -4039,7 +4036,7 @@ type IGWebhookMessageEdit_builder struct {
 	// Edited message text.
 	Text *string
 	// Number of times the message has been edited.
-	NumEdit *string
+	NumEdit *int32
 }
 
 func (b0 IGWebhookMessageEdit_builder) Build() *IGWebhookMessageEdit {
@@ -4056,7 +4053,7 @@ func (b0 IGWebhookMessageEdit_builder) Build() *IGWebhookMessageEdit {
 	}
 	if b.NumEdit != nil {
 		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_NumEdit = b.NumEdit
+		x.xxx_hidden_NumEdit = *b.NumEdit
 	}
 	return m0
 }
@@ -4423,7 +4420,7 @@ const file_igpb_v1_instagram_webhook_proto_rawDesc = "" +
 	"\x14IGWebhookMessageEdit\x12\x10\n" +
 	"\x03mid\x18\x01 \x01(\tR\x03mid\x12\x12\n" +
 	"\x04text\x18\x02 \x01(\tR\x04text\x12\x19\n" +
-	"\bnum_edit\x18\x03 \x01(\tR\anumEdit\"U\n" +
+	"\bnum_edit\x18\x03 \x01(\x05R\anumEdit\"U\n" +
 	"\x11IGWebhookPostback\x12\x10\n" +
 	"\x03mid\x18\x01 \x01(\tR\x03mid\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +

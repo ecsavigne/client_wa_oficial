@@ -2,7 +2,6 @@ edition = "2023";
 
 package igpb.v1;
 
-import "buf/validate/validate.proto";
 import "google/api/field_behavior.proto";
 import "igpb/v1/instagram_recipient.proto";
 import "igpb/v1/instagram_template_common.proto";

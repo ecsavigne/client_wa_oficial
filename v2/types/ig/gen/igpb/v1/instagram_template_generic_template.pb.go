@@ -9,7 +9,6 @@
 package igpbv1
 
 import (
-	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -197,7 +196,7 @@ var File_igpb_v1_instagram_template_generic_template_proto protoreflect.FileDesc
 
 const file_igpb_v1_instagram_template_generic_template_proto_rawDesc = "" +
 	"\n" +
-	"1igpb/v1/instagram_template_generic_template.proto\x12\aigpb.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a!igpb/v1/instagram_recipient.proto\x1a'igpb/v1/instagram_template_common.proto\"K\n" +
+	"1igpb/v1/instagram_template_generic_template.proto\x12\aigpb.v1\x1a\x1fgoogle/api/field_behavior.proto\x1a!igpb/v1/instagram_recipient.proto\x1a'igpb/v1/instagram_template_common.proto\"K\n" +
 	"\aMessage\x12@\n" +
 	"\n" +
 	"attachment\x18\x01 \x01(\v2\x1b.igpb.v1.TemplateAttachmentB\x03\xe0A\x02R\n" +

@@ -4,18 +4,15 @@ inputs:
 plugins:
   # Plugin: Protocol Buffers para Go
   # Genera definiciones de mensajes proto para Go
-  # remote: buf.build/protocolbuffers/go
-  - local: protoc-gen-go
+  - remote: buf.build/protocolbuffers/go
     out: v2/types/ig/gen
     opt:
       - paths=source_relative
       # values: API_OPAQUE, API_HYBRID, API_OPEN
       - default_api_level=API_HYBRID
       - Mprotoc-gen-openapiv2/options/annotations.proto=github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options
-      # - Mgeneralpb/v1/general_file_header.proto=github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1
-      # - Mgeneralpb/v1/general_file_descriptor.proto=github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1
-      # - Mgeneralpb/v1/general_messenger_flows.proto=github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1
-      # - Mmessengerpb/v1/messenger_flow.proto=github.com/ecsavigne/client_wa_oficial/v2/types/messenger/gen/messengerpb/v1
+      - Mgeneralpb/v1/general_file_header.proto=github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1
+      - Mgeneralpb/v1/general_file_descriptor.proto=github.com/ecsavigne/client_wa_oficial/v2/types/general/gen/generalpb/v1
 
 managed:
   enabled: true

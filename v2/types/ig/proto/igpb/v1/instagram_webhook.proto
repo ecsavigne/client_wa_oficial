@@ -367,7 +367,7 @@ message IGWebhookMessageEdit {
   string text = 2;
 
   // Number of times the message has been edited.
-  string num_edit = 3;
+  int32 num_edit = 3;
 }
 
 // IGWebhookPostback represents a user-selected CTA or icebreaker response.
