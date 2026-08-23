@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: generalpb/v1/general_unknown.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package generalpbv1
 
@@ -26,13 +26,13 @@ const (
 
 // UnknownResponse represents a response with unknown or dynamic structure
 type UnknownResponse struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Dynamic key-value data with arbitrary value types
-	Data *structpb.Value `protobuf:"bytes,1,opt,name=data" json:"data,omitempty"`
-	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
-	Payload       []byte `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *structpb.Value        `protobuf:"bytes,1,opt,name=data"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,2,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *UnknownResponse) Reset() {
@@ -62,49 +62,51 @@ func (x *UnknownResponse) ProtoReflect() protoreflect.Message {
 
 func (x *UnknownResponse) GetData() *structpb.Value {
 	if x != nil {
-		return x.Data
+		return x.xxx_hidden_Data
 	}
 	return nil
 }
 
 func (x *UnknownResponse) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *UnknownResponse) SetData(v *structpb.Value) {
-	x.Data = v
+	x.xxx_hidden_Data = v
 }
 
 func (x *UnknownResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *UnknownResponse) HasData() bool {
 	if x == nil {
 		return false
 	}
-	return x.Data != nil
+	return x.xxx_hidden_Data != nil
 }
 
 func (x *UnknownResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *UnknownResponse) ClearData() {
-	x.Data = nil
+	x.xxx_hidden_Data = nil
 }
 
 func (x *UnknownResponse) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Payload = nil
 }
 
 type UnknownResponse_builder struct {
@@ -120,8 +122,11 @@ func (b0 UnknownResponse_builder) Build() *UnknownResponse {
 	m0 := &UnknownResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Data = b.Data
-	x.Payload = b.Payload
+	x.xxx_hidden_Data = b.Data
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 

@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: generalpb/v1/general_messenger_flows.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package generalpbv1
 
@@ -27,13 +27,13 @@ const (
 
 // Cursors represents pagination cursors for navigating through results
 type Cursors struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The cursor to fetch the previous page of results
-	Before *string `protobuf:"bytes,1,opt,name=before" json:"before,omitempty"`
-	// The cursor to fetch the next page of results
-	After         *string `protobuf:"bytes,2,opt,name=after" json:"after,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Before      *string                `protobuf:"bytes,1,opt,name=before"`
+	xxx_hidden_After       *string                `protobuf:"bytes,2,opt,name=after"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *Cursors) Reset() {
@@ -62,47 +62,57 @@ func (x *Cursors) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Cursors) GetBefore() string {
-	if x != nil && x.Before != nil {
-		return *x.Before
+	if x != nil {
+		if x.xxx_hidden_Before != nil {
+			return *x.xxx_hidden_Before
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Cursors) GetAfter() string {
-	if x != nil && x.After != nil {
-		return *x.After
+	if x != nil {
+		if x.xxx_hidden_After != nil {
+			return *x.xxx_hidden_After
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Cursors) SetBefore(v string) {
-	x.Before = &v
+	x.xxx_hidden_Before = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *Cursors) SetAfter(v string) {
-	x.After = &v
+	x.xxx_hidden_After = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *Cursors) HasBefore() bool {
 	if x == nil {
 		return false
 	}
-	return x.Before != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *Cursors) HasAfter() bool {
 	if x == nil {
 		return false
 	}
-	return x.After != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *Cursors) ClearBefore() {
-	x.Before = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Before = nil
 }
 
 func (x *Cursors) ClearAfter() {
-	x.After = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_After = nil
 }
 
 type Cursors_builder struct {
@@ -118,18 +128,23 @@ func (b0 Cursors_builder) Build() *Cursors {
 	m0 := &Cursors{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Before = b.Before
-	x.After = b.After
+	if b.Before != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Before = b.Before
+	}
+	if b.After != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_After = b.After
+	}
 	return m0
 }
 
 // Paging contains pagination information for the response
 type Paging struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The cursors for navigating through pages
-	Cursors       *Cursors `protobuf:"bytes,1,opt,name=cursors" json:"cursors,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Cursors *Cursors               `protobuf:"bytes,1,opt,name=cursors"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Paging) Reset() {
@@ -159,24 +174,24 @@ func (x *Paging) ProtoReflect() protoreflect.Message {
 
 func (x *Paging) GetCursors() *Cursors {
 	if x != nil {
-		return x.Cursors
+		return x.xxx_hidden_Cursors
 	}
 	return nil
 }
 
 func (x *Paging) SetCursors(v *Cursors) {
-	x.Cursors = v
+	x.xxx_hidden_Cursors = v
 }
 
 func (x *Paging) HasCursors() bool {
 	if x == nil {
 		return false
 	}
-	return x.Cursors != nil
+	return x.xxx_hidden_Cursors != nil
 }
 
 func (x *Paging) ClearCursors() {
-	x.Cursors = nil
+	x.xxx_hidden_Cursors = nil
 }
 
 type Paging_builder struct {
@@ -190,21 +205,20 @@ func (b0 Paging_builder) Build() *Paging {
 	m0 := &Paging{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Cursors = b.Cursors
+	x.xxx_hidden_Cursors = b.Cursors
 	return m0
 }
 
 // MessengerFlowsResponse represents the response containing a list of messenger flows
 type MessengerFlowsResponse struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Array of messenger flows
-	Data []*v1.MessengerFlow `protobuf:"bytes,1,rep,name=data" json:"data,omitempty"`
-	// Pagination information for navigating through multiple pages
-	Paging *Paging `protobuf:"bytes,2,opt,name=paging" json:"paging,omitempty"`
-	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
-	Payload       []byte `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *[]*v1.MessengerFlow   `protobuf:"bytes,1,rep,name=data"`
+	xxx_hidden_Paging      *Paging                `protobuf:"bytes,2,opt,name=paging"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,3,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *MessengerFlowsResponse) Reset() {
@@ -234,60 +248,64 @@ func (x *MessengerFlowsResponse) ProtoReflect() protoreflect.Message {
 
 func (x *MessengerFlowsResponse) GetData() []*v1.MessengerFlow {
 	if x != nil {
-		return x.Data
+		if x.xxx_hidden_Data != nil {
+			return *x.xxx_hidden_Data
+		}
 	}
 	return nil
 }
 
 func (x *MessengerFlowsResponse) GetPaging() *Paging {
 	if x != nil {
-		return x.Paging
+		return x.xxx_hidden_Paging
 	}
 	return nil
 }
 
 func (x *MessengerFlowsResponse) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *MessengerFlowsResponse) SetData(v []*v1.MessengerFlow) {
-	x.Data = v
+	x.xxx_hidden_Data = &v
 }
 
 func (x *MessengerFlowsResponse) SetPaging(v *Paging) {
-	x.Paging = v
+	x.xxx_hidden_Paging = v
 }
 
 func (x *MessengerFlowsResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *MessengerFlowsResponse) HasPaging() bool {
 	if x == nil {
 		return false
 	}
-	return x.Paging != nil
+	return x.xxx_hidden_Paging != nil
 }
 
 func (x *MessengerFlowsResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *MessengerFlowsResponse) ClearPaging() {
-	x.Paging = nil
+	x.xxx_hidden_Paging = nil
 }
 
 func (x *MessengerFlowsResponse) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
 }
 
 type MessengerFlowsResponse_builder struct {
@@ -305,9 +323,12 @@ func (b0 MessengerFlowsResponse_builder) Build() *MessengerFlowsResponse {
 	m0 := &MessengerFlowsResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Data = b.Data
-	x.Paging = b.Paging
-	x.Payload = b.Payload
+	x.xxx_hidden_Data = &b.Data
+	x.xxx_hidden_Paging = b.Paging
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 

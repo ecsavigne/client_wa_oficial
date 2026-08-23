@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: generalpb/v1/general_success.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package generalpbv1
 
@@ -25,13 +25,13 @@ const (
 
 // SuccessResponse represents a generic success response
 type SuccessResponse struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
-	Payload []byte `protobuf:"bytes,1,opt,name=payload" json:"payload,omitempty"`
-	// Whether the operation was successful
-	Success       *bool `protobuf:"varint,2,opt,name=success" json:"success,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,1,opt,name=payload"`
+	xxx_hidden_Success     bool                   `protobuf:"varint,2,opt,name=success"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *SuccessResponse) Reset() {
@@ -61,14 +61,14 @@ func (x *SuccessResponse) ProtoReflect() protoreflect.Message {
 
 func (x *SuccessResponse) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *SuccessResponse) GetSuccess() bool {
-	if x != nil && x.Success != nil {
-		return *x.Success
+	if x != nil {
+		return x.xxx_hidden_Success
 	}
 	return false
 }
@@ -77,33 +77,37 @@ func (x *SuccessResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *SuccessResponse) SetSuccess(v bool) {
-	x.Success = &v
+	x.xxx_hidden_Success = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *SuccessResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *SuccessResponse) HasSuccess() bool {
 	if x == nil {
 		return false
 	}
-	return x.Success != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *SuccessResponse) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Payload = nil
 }
 
 func (x *SuccessResponse) ClearSuccess() {
-	x.Success = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Success = false
 }
 
 type SuccessResponse_builder struct {
@@ -119,8 +123,14 @@ func (b0 SuccessResponse_builder) Build() *SuccessResponse {
 	m0 := &SuccessResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Payload = b.Payload
-	x.Success = b.Success
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Payload = b.Payload
+	}
+	if b.Success != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Success = *b.Success
+	}
 	return m0
 }
 

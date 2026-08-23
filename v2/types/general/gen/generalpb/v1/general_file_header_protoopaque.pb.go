@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: generalpb/v1/general_file_header.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package generalpbv1
 
@@ -26,17 +26,15 @@ const (
 
 // FileHeader describes a file to be uploaded
 type FileHeader struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The raw file bytes
-	Content []byte `protobuf:"bytes,1,opt,name=content" json:"content,omitempty"`
-	// The name of the file (without extension)
-	Name *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	// The file extension (e.g. "png", "pdf")
-	Ext *string `protobuf:"bytes,3,opt,name=ext" json:"ext,omitempty"`
-	// The MIME type of the file (e.g. "image/png")
-	MimeType      *string `protobuf:"bytes,4,opt,name=mime_type,json=mimeType" json:"mime_type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Content     []byte                 `protobuf:"bytes,1,opt,name=content"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,2,opt,name=name"`
+	xxx_hidden_Ext         *string                `protobuf:"bytes,3,opt,name=ext"`
+	xxx_hidden_MimeType    *string                `protobuf:"bytes,4,opt,name=mime_type,json=mimeType"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *FileHeader) Reset() {
@@ -66,28 +64,37 @@ func (x *FileHeader) ProtoReflect() protoreflect.Message {
 
 func (x *FileHeader) GetContent() []byte {
 	if x != nil {
-		return x.Content
+		return x.xxx_hidden_Content
 	}
 	return nil
 }
 
 func (x *FileHeader) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *FileHeader) GetExt() string {
-	if x != nil && x.Ext != nil {
-		return *x.Ext
+	if x != nil {
+		if x.xxx_hidden_Ext != nil {
+			return *x.xxx_hidden_Ext
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *FileHeader) GetMimeType() string {
-	if x != nil && x.MimeType != nil {
-		return *x.MimeType
+	if x != nil {
+		if x.xxx_hidden_MimeType != nil {
+			return *x.xxx_hidden_MimeType
+		}
+		return ""
 	}
 	return ""
 }
@@ -96,63 +103,71 @@ func (x *FileHeader) SetContent(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Content = v
+	x.xxx_hidden_Content = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *FileHeader) SetName(v string) {
-	x.Name = &v
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *FileHeader) SetExt(v string) {
-	x.Ext = &v
+	x.xxx_hidden_Ext = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
 func (x *FileHeader) SetMimeType(v string) {
-	x.MimeType = &v
+	x.xxx_hidden_MimeType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
 }
 
 func (x *FileHeader) HasContent() bool {
 	if x == nil {
 		return false
 	}
-	return x.Content != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *FileHeader) HasName() bool {
 	if x == nil {
 		return false
 	}
-	return x.Name != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *FileHeader) HasExt() bool {
 	if x == nil {
 		return false
 	}
-	return x.Ext != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *FileHeader) HasMimeType() bool {
 	if x == nil {
 		return false
 	}
-	return x.MimeType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *FileHeader) ClearContent() {
-	x.Content = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Content = nil
 }
 
 func (x *FileHeader) ClearName() {
-	x.Name = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Name = nil
 }
 
 func (x *FileHeader) ClearExt() {
-	x.Ext = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Ext = nil
 }
 
 func (x *FileHeader) ClearMimeType() {
-	x.MimeType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_MimeType = nil
 }
 
 type FileHeader_builder struct {
@@ -172,10 +187,22 @@ func (b0 FileHeader_builder) Build() *FileHeader {
 	m0 := &FileHeader{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Content = b.Content
-	x.Name = b.Name
-	x.Ext = b.Ext
-	x.MimeType = b.MimeType
+	if b.Content != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Content = b.Content
+	}
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_Name = b.Name
+	}
+	if b.Ext != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_Ext = b.Ext
+	}
+	if b.MimeType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_MimeType = b.MimeType
+	}
 	return m0
 }
 

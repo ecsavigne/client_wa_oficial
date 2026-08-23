@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: generalpb/v1/general_error.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package generalpbv1
 
@@ -25,27 +25,20 @@ const (
 
 // ResponseError represents a generic error response
 type ResponseError struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The numeric error code (e.g. 404, 400, 401)
-	Code *int64 `protobuf:"varint,1,opt,name=code" json:"code,omitempty"`
-	// Secondary error subcode for more granular classification
-	ErrorSubcode *int64 `protobuf:"varint,2,opt,name=error_subcode,json=errorSubcode" json:"error_subcode,omitempty"`
-	// Detailed message shown to the end user
-	ErrorUserMsg *string `protobuf:"bytes,3,opt,name=error_user_msg,json=errorUserMsg" json:"error_user_msg,omitempty"`
-	// Short title shown to the end user
-	ErrorUserTitle *string `protobuf:"bytes,4,opt,name=error_user_title,json=errorUserTitle" json:"error_user_title,omitempty"`
-	// Facebook trace ID for debugging
-	FbtraceId *string `protobuf:"bytes,5,opt,name=fbtrace_id,json=fbtraceId" json:"fbtrace_id,omitempty"`
-	// Whether the error is transient and the request can be retried
-	IsTransient *bool `protobuf:"varint,6,opt,name=is_transient,json=isTransient" json:"is_transient,omitempty"`
-	// Human-readable error message
-	Message *string `protobuf:"bytes,7,opt,name=message" json:"message,omitempty"`
-	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
-	Payload []byte `protobuf:"bytes,8,opt,name=payload" json:"payload,omitempty"`
-	// The error type identifier (e.g. "url_not_found", "bad_request")
-	Type          *string `protobuf:"bytes,9,opt,name=type" json:"type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Code           int64                  `protobuf:"varint,1,opt,name=code"`
+	xxx_hidden_ErrorSubcode   int64                  `protobuf:"varint,2,opt,name=error_subcode,json=errorSubcode"`
+	xxx_hidden_ErrorUserMsg   *string                `protobuf:"bytes,3,opt,name=error_user_msg,json=errorUserMsg"`
+	xxx_hidden_ErrorUserTitle *string                `protobuf:"bytes,4,opt,name=error_user_title,json=errorUserTitle"`
+	xxx_hidden_FbtraceId      *string                `protobuf:"bytes,5,opt,name=fbtrace_id,json=fbtraceId"`
+	xxx_hidden_IsTransient    bool                   `protobuf:"varint,6,opt,name=is_transient,json=isTransient"`
+	xxx_hidden_Message        *string                `protobuf:"bytes,7,opt,name=message"`
+	xxx_hidden_Payload        []byte                 `protobuf:"bytes,8,opt,name=payload"`
+	xxx_hidden_Type           *string                `protobuf:"bytes,9,opt,name=type"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *ResponseError) Reset() {
@@ -74,204 +67,237 @@ func (x *ResponseError) ProtoReflect() protoreflect.Message {
 }
 
 func (x *ResponseError) GetCode() int64 {
-	if x != nil && x.Code != nil {
-		return *x.Code
+	if x != nil {
+		return x.xxx_hidden_Code
 	}
 	return 0
 }
 
 func (x *ResponseError) GetErrorSubcode() int64 {
-	if x != nil && x.ErrorSubcode != nil {
-		return *x.ErrorSubcode
+	if x != nil {
+		return x.xxx_hidden_ErrorSubcode
 	}
 	return 0
 }
 
 func (x *ResponseError) GetErrorUserMsg() string {
-	if x != nil && x.ErrorUserMsg != nil {
-		return *x.ErrorUserMsg
+	if x != nil {
+		if x.xxx_hidden_ErrorUserMsg != nil {
+			return *x.xxx_hidden_ErrorUserMsg
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ResponseError) GetErrorUserTitle() string {
-	if x != nil && x.ErrorUserTitle != nil {
-		return *x.ErrorUserTitle
+	if x != nil {
+		if x.xxx_hidden_ErrorUserTitle != nil {
+			return *x.xxx_hidden_ErrorUserTitle
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ResponseError) GetFbtraceId() string {
-	if x != nil && x.FbtraceId != nil {
-		return *x.FbtraceId
+	if x != nil {
+		if x.xxx_hidden_FbtraceId != nil {
+			return *x.xxx_hidden_FbtraceId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ResponseError) GetIsTransient() bool {
-	if x != nil && x.IsTransient != nil {
-		return *x.IsTransient
+	if x != nil {
+		return x.xxx_hidden_IsTransient
 	}
 	return false
 }
 
 func (x *ResponseError) GetMessage() string {
-	if x != nil && x.Message != nil {
-		return *x.Message
+	if x != nil {
+		if x.xxx_hidden_Message != nil {
+			return *x.xxx_hidden_Message
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ResponseError) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *ResponseError) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ResponseError) SetCode(v int64) {
-	x.Code = &v
+	x.xxx_hidden_Code = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 9)
 }
 
 func (x *ResponseError) SetErrorSubcode(v int64) {
-	x.ErrorSubcode = &v
+	x.xxx_hidden_ErrorSubcode = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 9)
 }
 
 func (x *ResponseError) SetErrorUserMsg(v string) {
-	x.ErrorUserMsg = &v
+	x.xxx_hidden_ErrorUserMsg = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 9)
 }
 
 func (x *ResponseError) SetErrorUserTitle(v string) {
-	x.ErrorUserTitle = &v
+	x.xxx_hidden_ErrorUserTitle = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 9)
 }
 
 func (x *ResponseError) SetFbtraceId(v string) {
-	x.FbtraceId = &v
+	x.xxx_hidden_FbtraceId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 9)
 }
 
 func (x *ResponseError) SetIsTransient(v bool) {
-	x.IsTransient = &v
+	x.xxx_hidden_IsTransient = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 9)
 }
 
 func (x *ResponseError) SetMessage(v string) {
-	x.Message = &v
+	x.xxx_hidden_Message = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 9)
 }
 
 func (x *ResponseError) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 9)
 }
 
 func (x *ResponseError) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 9)
 }
 
 func (x *ResponseError) HasCode() bool {
 	if x == nil {
 		return false
 	}
-	return x.Code != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *ResponseError) HasErrorSubcode() bool {
 	if x == nil {
 		return false
 	}
-	return x.ErrorSubcode != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *ResponseError) HasErrorUserMsg() bool {
 	if x == nil {
 		return false
 	}
-	return x.ErrorUserMsg != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *ResponseError) HasErrorUserTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.ErrorUserTitle != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *ResponseError) HasFbtraceId() bool {
 	if x == nil {
 		return false
 	}
-	return x.FbtraceId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *ResponseError) HasIsTransient() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsTransient != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *ResponseError) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.Message != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
 }
 
 func (x *ResponseError) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
 }
 
 func (x *ResponseError) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *ResponseError) ClearCode() {
-	x.Code = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Code = 0
 }
 
 func (x *ResponseError) ClearErrorSubcode() {
-	x.ErrorSubcode = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_ErrorSubcode = 0
 }
 
 func (x *ResponseError) ClearErrorUserMsg() {
-	x.ErrorUserMsg = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_ErrorUserMsg = nil
 }
 
 func (x *ResponseError) ClearErrorUserTitle() {
-	x.ErrorUserTitle = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_ErrorUserTitle = nil
 }
 
 func (x *ResponseError) ClearFbtraceId() {
-	x.FbtraceId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_FbtraceId = nil
 }
 
 func (x *ResponseError) ClearIsTransient() {
-	x.IsTransient = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_IsTransient = false
 }
 
 func (x *ResponseError) ClearMessage() {
-	x.Message = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_Message = nil
 }
 
 func (x *ResponseError) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	x.xxx_hidden_Payload = nil
 }
 
 func (x *ResponseError) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	x.xxx_hidden_Type = nil
 }
 
 type ResponseError_builder struct {
@@ -301,15 +327,42 @@ func (b0 ResponseError_builder) Build() *ResponseError {
 	m0 := &ResponseError{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Code = b.Code
-	x.ErrorSubcode = b.ErrorSubcode
-	x.ErrorUserMsg = b.ErrorUserMsg
-	x.ErrorUserTitle = b.ErrorUserTitle
-	x.FbtraceId = b.FbtraceId
-	x.IsTransient = b.IsTransient
-	x.Message = b.Message
-	x.Payload = b.Payload
-	x.Type = b.Type
+	if b.Code != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 9)
+		x.xxx_hidden_Code = *b.Code
+	}
+	if b.ErrorSubcode != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 9)
+		x.xxx_hidden_ErrorSubcode = *b.ErrorSubcode
+	}
+	if b.ErrorUserMsg != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 9)
+		x.xxx_hidden_ErrorUserMsg = b.ErrorUserMsg
+	}
+	if b.ErrorUserTitle != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 9)
+		x.xxx_hidden_ErrorUserTitle = b.ErrorUserTitle
+	}
+	if b.FbtraceId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 9)
+		x.xxx_hidden_FbtraceId = b.FbtraceId
+	}
+	if b.IsTransient != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 9)
+		x.xxx_hidden_IsTransient = *b.IsTransient
+	}
+	if b.Message != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 9)
+		x.xxx_hidden_Message = b.Message
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 9)
+		x.xxx_hidden_Payload = b.Payload
+	}
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 9)
+		x.xxx_hidden_Type = b.Type
+	}
 	return m0
 }
 

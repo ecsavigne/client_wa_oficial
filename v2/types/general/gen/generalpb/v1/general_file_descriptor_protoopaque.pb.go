@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: generalpb/v1/general_file_descriptor.proto
 
-//go:build !protoopaque
+//go:build protoopaque
 
 package generalpbv1
 
@@ -26,17 +26,15 @@ const (
 
 // FileDescriptor holds raw file data for direct upload to any platform
 type FileDescriptor struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The filename (e.g. "photo.jpg")
-	Filename *string `protobuf:"bytes,1,opt,name=filename" json:"filename,omitempty"`
-	// The MIME type of the file (e.g. "image/jpeg")
-	MimeType *string `protobuf:"bytes,2,opt,name=mime_type,json=mimeType" json:"mime_type,omitempty"`
-	// The size of the file in bytes
-	Size *int64 `protobuf:"varint,3,opt,name=size" json:"size,omitempty"`
-	// The raw file bytes
-	Content       []byte `protobuf:"bytes,4,opt,name=content" json:"content,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Filename    *string                `protobuf:"bytes,1,opt,name=filename"`
+	xxx_hidden_MimeType    *string                `protobuf:"bytes,2,opt,name=mime_type,json=mimeType"`
+	xxx_hidden_Size        int64                  `protobuf:"varint,3,opt,name=size"`
+	xxx_hidden_Content     []byte                 `protobuf:"bytes,4,opt,name=content"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *FileDescriptor) Reset() {
@@ -65,94 +63,108 @@ func (x *FileDescriptor) ProtoReflect() protoreflect.Message {
 }
 
 func (x *FileDescriptor) GetFilename() string {
-	if x != nil && x.Filename != nil {
-		return *x.Filename
+	if x != nil {
+		if x.xxx_hidden_Filename != nil {
+			return *x.xxx_hidden_Filename
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *FileDescriptor) GetMimeType() string {
-	if x != nil && x.MimeType != nil {
-		return *x.MimeType
+	if x != nil {
+		if x.xxx_hidden_MimeType != nil {
+			return *x.xxx_hidden_MimeType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *FileDescriptor) GetSize() int64 {
-	if x != nil && x.Size != nil {
-		return *x.Size
+	if x != nil {
+		return x.xxx_hidden_Size
 	}
 	return 0
 }
 
 func (x *FileDescriptor) GetContent() []byte {
 	if x != nil {
-		return x.Content
+		return x.xxx_hidden_Content
 	}
 	return nil
 }
 
 func (x *FileDescriptor) SetFilename(v string) {
-	x.Filename = &v
+	x.xxx_hidden_Filename = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *FileDescriptor) SetMimeType(v string) {
-	x.MimeType = &v
+	x.xxx_hidden_MimeType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *FileDescriptor) SetSize(v int64) {
-	x.Size = &v
+	x.xxx_hidden_Size = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
 func (x *FileDescriptor) SetContent(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Content = v
+	x.xxx_hidden_Content = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
 }
 
 func (x *FileDescriptor) HasFilename() bool {
 	if x == nil {
 		return false
 	}
-	return x.Filename != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *FileDescriptor) HasMimeType() bool {
 	if x == nil {
 		return false
 	}
-	return x.MimeType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *FileDescriptor) HasSize() bool {
 	if x == nil {
 		return false
 	}
-	return x.Size != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *FileDescriptor) HasContent() bool {
 	if x == nil {
 		return false
 	}
-	return x.Content != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *FileDescriptor) ClearFilename() {
-	x.Filename = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Filename = nil
 }
 
 func (x *FileDescriptor) ClearMimeType() {
-	x.MimeType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_MimeType = nil
 }
 
 func (x *FileDescriptor) ClearSize() {
-	x.Size = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Size = 0
 }
 
 func (x *FileDescriptor) ClearContent() {
-	x.Content = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Content = nil
 }
 
 type FileDescriptor_builder struct {
@@ -172,10 +184,22 @@ func (b0 FileDescriptor_builder) Build() *FileDescriptor {
 	m0 := &FileDescriptor{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Filename = b.Filename
-	x.MimeType = b.MimeType
-	x.Size = b.Size
-	x.Content = b.Content
+	if b.Filename != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Filename = b.Filename
+	}
+	if b.MimeType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_MimeType = b.MimeType
+	}
+	if b.Size != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_Size = *b.Size
+	}
+	if b.Content != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_Content = b.Content
+	}
 	return m0
 }
 
