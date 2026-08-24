@@ -33,13 +33,13 @@ func (m *IGMessageAudioEvent) GetMessageAudio() *igpbv1.InstagramWebhookEvent {
 	return m.InstagramWebhookEvent
 }
 
-type IGMessageDocumentEvent struct {
+type IGMessageFileEvent struct {
 	*igpbv1.InstagramWebhookEvent
 }
 
-func (*IGMessageDocumentEvent) GetType() string  { return IGEventTypeMessageDocument }
-func (m *IGMessageDocumentEvent) String() string { return response.Val(m) }
-func (m *IGMessageDocumentEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+func (*IGMessageFileEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageFileEvent) String() string { return response.Val(m) }
+func (m *IGMessageFileEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
 	return m.InstagramWebhookEvent
 }
 
@@ -170,5 +170,155 @@ type IGMessageTemplateEvent struct {
 func (*IGMessageTemplateEvent) GetType() string  { return IGEventTypeTemplateMessage }
 func (m *IGMessageTemplateEvent) String() string { return response.Val(m) }
 func (m *IGMessageTemplateEvent) GetMessageTemplate() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageMediaEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageMediaEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageMediaEvent) String() string { return response.Val(m) }
+func (m *IGMessageMediaEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageShareEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageShareEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageShareEvent) String() string { return response.Val(m) }
+func (m *IGMessageShareEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageIGPostEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageIGPostEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageIGPostEvent) String() string { return response.Val(m) }
+func (m *IGMessageIGPostEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageStoryMentionEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageStoryMentionEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageStoryMentionEvent) String() string { return response.Val(m) }
+func (m *IGMessageStoryMentionEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageIGReelEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageIGReelEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageIGReelEvent) String() string { return response.Val(m) }
+func (m *IGMessageIGReelEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageReelEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageReelEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageReelEvent) String() string { return response.Val(m) }
+func (m *IGMessageReelEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageStoryEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageStoryEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageStoryEvent) String() string { return response.Val(m) }
+func (m *IGMessageStoryEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageIGStoryEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageIGStoryEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageIGStoryEvent) String() string { return response.Val(m) }
+func (m *IGMessageIGStoryEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageEditEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageEditEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageEditEvent) String() string { return response.Val(m) }
+func (m *IGMessageEditEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessageEphemeralEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessageEphemeralEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessageEphemeralEvent) String() string { return response.Val(m) }
+func (m *IGMessageEphemeralEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessagingPostbacksEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessagingPostbacksEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessagingPostbacksEvent) String() string { return response.Val(m) }
+func (m *IGMessagingPostbacksEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMessagingReferralEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMessagingReferralEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMessagingReferralEvent) String() string { return response.Val(m) }
+func (m *IGMessagingReferralEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGCommentsEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGCommentsEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGCommentsEvent) String() string { return response.Val(m) }
+func (m *IGCommentsEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGLiveCommentsEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGLiveCommentsEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGLiveCommentsEvent) String() string { return response.Val(m) }
+func (m *IGLiveCommentsEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
+	return m.InstagramWebhookEvent
+}
+
+type IGMentionsEvent struct {
+	*igpbv1.InstagramWebhookEvent
+}
+
+func (*IGMentionsEvent) GetType() string  { return IGEventTypeMessageDocument }
+func (m *IGMentionsEvent) String() string { return response.Val(m) }
+func (m *IGMentionsEvent) GetMessageDocument() *igpbv1.InstagramWebhookEvent {
 	return m.InstagramWebhookEvent
 }

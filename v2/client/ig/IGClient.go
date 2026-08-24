@@ -225,14 +225,22 @@ func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ str
 		}
 	}()
 
-	// webhookMsgProto := msg.GetEntry()[0].GetMessaging()[0].GetMessage()
+	msgProto := msg.GetEntry()[0].GetMessaging()[0].GetMessage()
+	attachments := msgProto.GetAttachments()
 
-	// if webhookMsgProto.Get == nil {
-	// 	return ""
-	// }
+	switch {
+	case attachments == nil && msgProto.GetText() != "":
+		fmt.Println("TEXT ----------------------------------")
+		return "text"
+	case attachments != nil:
+		fmt.Println("OTHER ----------------------------------")
+		return attachments[0].GetType()
+	default:
+		fmt.Println("OTHER 2 ----------------------------------")
+		return "unknown"
+	}
 
-	// return msg.GetEntry()[0].GetChanges()[0].GetValue().
-	return "msg.Entry[0].Changes[0].Value.Messages[0].Type"
+	// return "msg.Entry[0].Changes[0].Value.Messages[0].Type"
 }
 
 func (self *ClientIG) IsVailidStatusMessage(status string) bool {
@@ -290,79 +298,119 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 			evt = &event.IGMessageAudioEvent{
 				InstagramWebhookEvent: msg,
 			}
-		case "button":
-			evt = &event.IGMessageButtonEvent{
-				InstagramWebhookEvent: msg,
-			}
-		case "document":
-			evt = &event.IGMessageDocumentEvent{
+		// case "button":
+		// 	evt = &event.IGMessageButtonEvent{
+		// 		InstagramWebhookEvent: msg,
+		// 	}
+		case "file":
+			evt = &event.IGMessageFileEvent{
 				InstagramWebhookEvent: msg,
 			}
 		case "text":
 			evt = &event.IGMessageTextEvent{
 				InstagramWebhookEvent: msg,
 			}
+			fmt.Println("TEXT ---------------------------------- 111111111111")
 		case "image":
 			evt = &event.IGMessageImageEvent{
 				InstagramWebhookEvent: msg,
 			}
-		case "interactive":
-			evt = &event.IGMessageInteractiveEvent{
-				InstagramWebhookEvent: msg,
-			}
-		case "order":
-			evt = &event.IGMessageOrderEvent{
-				InstagramWebhookEvent: msg,
-			}
+		// case "interactive":
+		// 	evt = &event.IGMessageInteractiveEvent{
+		// 		InstagramWebhookEvent: msg,
+		// 	}
+		// case "order":
+		// 	evt = &event.IGMessageOrderEvent{
+		// 		InstagramWebhookEvent: msg,
+		// 	}
 		case "sticker":
 			evt = &event.IGMessageStickerEvent{
 				InstagramWebhookEvent: msg,
 			}
-		case "system":
-			evt = &event.IGMessageSystemEvent{
-				InstagramWebhookEvent: msg,
-			}
+		// case "system":
+		// 	evt = &event.IGMessageSystemEvent{
+		// 		InstagramWebhookEvent: msg,
+		// 	}
 		case "video":
 			evt = &event.IGMessageVideoEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "media":
+			evt = &event.IGMessageMediaEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "share":
+			evt = &event.IGMessageShareEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "ig_post":
+			evt = &event.IGMessageIGPostEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "story_mention":
+			evt = &event.IGMessageStoryMentionEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "story":
+			evt = &event.IGMessageStoryEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "ig_story":
+			evt = &event.IGMessageIGStoryEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "reel":
+			evt = &event.IGMessageReelEvent{
+				InstagramWebhookEvent: msg,
+			}
+		case "ig_reel":
+			evt = &event.IGMessageIGReelEvent{
 				InstagramWebhookEvent: msg,
 			}
 		case "reaction":
 			evt = &event.IGMessageReactionEvent{
 				InstagramWebhookEvent: msg,
 			}
-		case "location":
-			evt = &event.IGMessageLocationEvent{
+		case "ephemeral":
+			evt = &event.IGMessageEphemeralEvent{
 				InstagramWebhookEvent: msg,
 			}
-		case "contacts":
-			evt = &event.IGMessageContactEvent{
-				InstagramWebhookEvent: msg,
-			}
+		// case "location":
+		// 	evt = &event.IGMessageLocationEvent{
+		// 		InstagramWebhookEvent: msg,
+		// 	}
+		// case "contacts":
+		// 	evt = &event.IGMessageContactEvent{
+		// 		InstagramWebhookEvent: msg,
+		// 	}
 		case "unknown":
 			evt = &event.IGMessageUnknownEvent{
 				InstagramWebhookEvent: msg,
 			}
 		default:
-			// can be status message or another notification about message
-			status := self.GetSatusMessage(msg)
-
-			switch {
-			case status != "":
-				if self.IsVailidStatusMessage(status) {
-					evt = &event.IGStatusMessageEvent{
-						InstagramWebhookEvent: msg,
-					}
-				}
-			default:
-				self.GetConfig().GetEventHandle()(msg)
+			evt = &event.IGMessageUnknownEvent{
+				InstagramWebhookEvent: msg,
 			}
+			// can be status message or another notification about message
+			// status := self.GetSatusMessage(msg)
+
+			// switch {
+			// case status != "":
+			// 	if self.IsVailidStatusMessage(status) {
+			// 		evt = &event.IGStatusMessageEvent{
+			// 			InstagramWebhookEvent: msg,
+			// 		}
+			// 	}
+			// default:
+			// 	self.GetConfig().GetEventHandle()(msg)
+			// }
 		}
 
-	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE,
-		evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_STATUS_UPDATE:
-		evt = &event.IGMessageTemplateEvent{
-			InstagramWebhookEvent: msg,
-		}
+	// case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE,
+	// 	evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_STATUS_UPDATE:
+	// 	evt = &event.IGMessageTemplateEvent{
+	// 		InstagramWebhookEvent: msg,
+	// 	}
 	default:
 		self.GetConfig().GetEventHandle()(msg)
 		return nil
