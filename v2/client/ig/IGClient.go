@@ -211,11 +211,40 @@ func (self *ClientIG) MessageIsForMe(webHookData *igpbv1.InstagramWebhookEvent) 
 	msg := messaging.GetMessage()
 	isForMe = messaging.GetRecipient().GetId() == self.config.userID
 
-	if isForMe && msg != nil {
-		return isForMe, evt_types.WEBHOOK_NOTIFICATION_MESSAGE
+	var typNotification evt_types.TYPE_NOTIFICATION_WEBHOOK
+
+	switch {
+	case field != "":
+		typNotification = evt_types.ParseTypeNotificationWebhook(field)
+	case msg != nil:
+		typNotification = evt_types.WEBHOOK_NOTIFICATION_MESSAGE
+	case messaging.GetReaction() != nil:
+		typNotification = evt_types.WEBHOOK_NOTIFICATION_MESSAGE_REACTIONS
+	case messaging.GetPostback() != nil:
+		typNotification = evt_types.WEBHOOK_NOTIFICATION_MESSAGING_POSTBACKS
+	case messaging.GetReferral() != nil:
+		typNotification = evt_types.WEBHOOK_NOTIFICATION_MESSAGING_REFERRAL
+	case messaging.GetRead() != nil:
+		typNotification = evt_types.WEBHOOK_NOTIFICATION_MESSAGING_SEEN
+	case messaging.GetMessageEdit() != nil:
+		typNotification = evt_types.WEBHOOK_NOTIFICATION_MESSAGE_EDIT
+	default:
+		typNotification = evt_types.WEBHOOK_NOTIFICATION_UNKNOWN
 	}
 
-	return isForMe, evt_types.ParseTypeNotificationWebhook(field)
+	/*
+		WEBHOOK_NOTIFICATION_MESSAGE_ECHOES
+		WEBHOOK_NOTIFICATION_MESSAGING_HANDOVER
+		WEBHOOK_NOTIFICATION_MESSAGING_OPTINS
+		WEBHOOK_NOTIFICATION_MESSAGING_POLICY_ENFORCEMENT
+		WEBHOOK_NOTIFICATION_RESPONSE_FEEDBACK
+		WEBHOOK_NOTIFICATION_STANDBY
+		WEBHOOK_NOTIFICATION_STORY_INSIGHTS (going to postback)
+	*/
+
+	return isForMe, typNotification
+
+	// return isForMe, evt_types.ParseTypeNotificationWebhook(field)
 }
 
 func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string) {
@@ -225,22 +254,18 @@ func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ str
 		}
 	}()
 
-	msgProto := msg.GetEntry()[0].GetMessaging()[0].GetMessage()
+	messaging := msg.GetEntry()[0].GetMessaging()[0]
+	msgProto := messaging.GetMessage()
 	attachments := msgProto.GetAttachments()
 
 	switch {
 	case attachments == nil && msgProto.GetText() != "":
-		fmt.Println("TEXT ----------------------------------")
 		return "text"
 	case attachments != nil:
-		fmt.Println("OTHER ----------------------------------")
 		return attachments[0].GetType()
 	default:
-		fmt.Println("OTHER 2 ----------------------------------")
 		return "unknown"
 	}
-
-	// return "msg.Entry[0].Changes[0].Value.Messages[0].Type"
 }
 
 func (self *ClientIG) IsVailidStatusMessage(status string) bool {
@@ -259,7 +284,7 @@ func (self *ClientIG) GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status
 		}
 	}()
 
-	return " msg.Entry[0].Changes[0].Value.Statuses[0].Status"
+	return "not implmented in IG client"
 }
 
 func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
@@ -270,12 +295,6 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 	}()
 
 	var evt gralevt.EventInterface
-
-	// Listener message of the server way WebHook
-	// dataBytes, err := json.Marshal(data)
-	// if err != nil {
-	// 	return
-	// }
 
 	// msg := codeWebHook(message)
 	msg, ok := msg_webhook.(*igpbv1.InstagramWebhookEvent)
@@ -288,8 +307,6 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 	if !isForme {
 		return errors.New("error message is not for me")
 	}
-
-	fmt.Printf("typeNotification: %s, msg: %s\n", typeNotification, msg.String())
 
 	switch typeNotification {
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
@@ -310,19 +327,10 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 			evt = &event.IGMessageTextEvent{
 				InstagramWebhookEvent: msg,
 			}
-			fmt.Println("TEXT ---------------------------------- 111111111111")
 		case "image":
 			evt = &event.IGMessageImageEvent{
 				InstagramWebhookEvent: msg,
 			}
-		// case "interactive":
-		// 	evt = &event.IGMessageInteractiveEvent{
-		// 		InstagramWebhookEvent: msg,
-		// 	}
-		// case "order":
-		// 	evt = &event.IGMessageOrderEvent{
-		// 		InstagramWebhookEvent: msg,
-		// 	}
 		case "sticker":
 			evt = &event.IGMessageStickerEvent{
 				InstagramWebhookEvent: msg,
@@ -367,10 +375,6 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 			evt = &event.IGMessageIGReelEvent{
 				InstagramWebhookEvent: msg,
 			}
-		case "reaction":
-			evt = &event.IGMessageReactionEvent{
-				InstagramWebhookEvent: msg,
-			}
 		case "ephemeral":
 			evt = &event.IGMessageEphemeralEvent{
 				InstagramWebhookEvent: msg,
@@ -391,29 +395,53 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 			evt = &event.IGMessageUnknownEvent{
 				InstagramWebhookEvent: msg,
 			}
-			// can be status message or another notification about message
-			// status := self.GetSatusMessage(msg)
-
-			// switch {
-			// case status != "":
-			// 	if self.IsVailidStatusMessage(status) {
-			// 		evt = &event.IGStatusMessageEvent{
-			// 			InstagramWebhookEvent: msg,
-			// 		}
-			// 	}
-			// default:
-			// 	self.GetConfig().GetEventHandle()(msg)
-			// }
 		}
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE_REACTIONS:
+		evt = &event.IGMessageReactionEvent{
+			InstagramWebhookEvent: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_UNKNOWN:
+		evt = &event.IGMessageUnknownEvent{
+			InstagramWebhookEvent: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_COMMENTS:
+		evt = &event.IGCommentsEvent{
+			InstagramWebhookEvent: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_LIVE_COMMENTS:
+		evt = &event.IGLiveCommentsEvent{
+			InstagramWebhookEvent: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGING_POSTBACKS:
+		evt = &event.IGMessagingPostbacksEvent{
+			InstagramWebhookEvent: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGING_REFERRAL:
+		evt = &event.IGMessagingReferralEvent{
+			InstagramWebhookEvent: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGING_SEEN:
+		evt = &event.IGStatusMessageEvent{
+			InstagramWebhookEvent: msg,
+		}
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE_EDIT:
+		evt = &event.IGMessageEditEvent{
+			InstagramWebhookEvent: msg,
+		}
+	/*
 
-	// case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE,
-	// 	evt_types.WEBHOOK_NOTIFICATION_MESSAGE_TEMPLATE_STATUS_UPDATE:
-	// 	evt = &event.IGMessageTemplateEvent{
-	// 		InstagramWebhookEvent: msg,
-	// 	}
+		WEBHOOK_NOTIFICATION_MESSAGE_REACTIONS
+		WEBHOOK_NOTIFICATION_MESSAGING_HANDOVER
+		WEBHOOK_NOTIFICATION_MESSAGING_OPTINS
+		WEBHOOK_NOTIFICATION_MESSAGING_POLICY_ENFORCEMENT
+		WEBHOOK_NOTIFICATION_RESPONSE_FEEDBACK
+		WEBHOOK_NOTIFICATION_STANDBY
+		WEBHOOK_NOTIFICATION_STORY_INSIGHTS (going to postback)
+	*/
 	default:
-		self.GetConfig().GetEventHandle()(msg)
-		return nil
+		evt = &event.IGMessageUnknownEvent{
+			InstagramWebhookEvent: msg,
+		}
 	}
 
 	self.GetConfig().GetEventHandle()(evt)

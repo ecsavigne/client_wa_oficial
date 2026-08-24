@@ -137,6 +137,7 @@ const (
 	WEBHOOK_NOTIFICATION_MENTIONS
 	WEBHOOK_NOTIFICATION_MESSAGE_ECHOES
 	WEBHOOK_NOTIFICATION_MESSAGE_REACTIONS
+	WEBHOOK_NOTIFICATION_MESSAGE_EDIT
 	WEBHOOK_NOTIFICATION_MESSAGING_HANDOVER
 	WEBHOOK_NOTIFICATION_MESSAGING_OPTINS
 	WEBHOOK_NOTIFICATION_MESSAGING_POLICY_ENFORCEMENT
@@ -169,12 +170,13 @@ var type_NOTIFICATION_WEBHOOK = map[string]TYPE_NOTIFICATION_WEBHOOK{
 	"smb_message_echoes":                 WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES,
 	"template_category_update":           WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE,
 	"user_preferences":                   WEBHOOK_NOTIFICATION_USER_PREFERENCES,
-	//field ig
+	//field ig and type notification
 	"comments":                     WEBHOOK_NOTIFICATION_COMMENTS,
 	"live_comments":                WEBHOOK_NOTIFICATION_LIVE_COMMENTS,
 	"mentions":                     WEBHOOK_NOTIFICATION_MENTIONS,
 	"message_echoes":               WEBHOOK_NOTIFICATION_MESSAGE_ECHOES,
 	"message_reactions":            WEBHOOK_NOTIFICATION_MESSAGE_REACTIONS,
+	"message_edit":                 WEBHOOK_NOTIFICATION_MESSAGE_EDIT,
 	"messaging_handover":           WEBHOOK_NOTIFICATION_MESSAGING_HANDOVER,
 	"messaging_optins":             WEBHOOK_NOTIFICATION_MESSAGING_OPTINS,
 	"messaging_policy_enforcement": WEBHOOK_NOTIFICATION_MESSAGING_POLICY_ENFORCEMENT,
@@ -187,7 +189,7 @@ var type_NOTIFICATION_WEBHOOK = map[string]TYPE_NOTIFICATION_WEBHOOK{
 }
 
 func (t TYPE_NOTIFICATION_WEBHOOK) Enum() string {
-	return []string{"unknown", "messages", "template_category_update", "message_template_status_update", "comments", "live_comments", "mentions", "message_echoes", "message_reactions", "messaging_handover", "messaging_optins", "messaging_policy_enforcement", "messaging_postbacks", "messaging_referral", "messaging_seen", "response_feedback", "standby", "story_insights"}[t]
+	return []string{"unknown", "messages", "template_category_update", "message_template_status_update", "comments", "live_comments", "mentions", "message_echoes", "message_reactions", "messaging_handover", "messaging_optins", "messaging_policy_enforcement", "messaging_postbacks", "messaging_referral", "messaging_seen", "response_feedback", "standby", "story_insights", "message_edit"}[t]
 }
 
 func (t TYPE_NOTIFICATION_WEBHOOK) String() string {
