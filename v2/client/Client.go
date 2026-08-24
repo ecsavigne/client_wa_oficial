@@ -39,7 +39,7 @@ type Client interface {
 	GetConfig() ConfigClient
 	SendMessage(msg proto.Message) response.Responser
 	String() string
-	Broadcast(data []byte)
+	Broadcast(msg_webhook proto.Message) error
 	MessageIsForMe(message *igpbv1.InstagramWebhookEvent) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK)
 	GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string)
 	GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status string)

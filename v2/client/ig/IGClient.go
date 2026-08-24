@@ -1,6 +1,7 @@
 package ig
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"net/http"
@@ -23,7 +24,6 @@ import (
 	igpbv1 "github.com/ecsavigne/client_wa_oficial/v2/types/ig/gen/igpb/v1"
 	"github.com/ecsavigne/client_wa_oficial/v2/types/ig/response/event"
 	"github.com/spf13/viper"
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -131,6 +131,7 @@ func setEnv(c *Config) error {
 	envName := path.Base(envPath)
 	viper.AddConfigPath(pathDir)
 	viper.SetConfigType("env")
+	fmt.Println("Path: ", pathDir)
 	viper.SetConfigName(fmt.Sprintf("%s.env", envName))
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("\033[31mError: No encontrado archivo app.env ni .cobraToml de tipo (toml) en\033[30m %s\n", pathDir)
@@ -205,7 +206,16 @@ func NewClientIG(opts ...OptionsClientIG) (*ClientIG, error) {
 }
 
 func (self *ClientIG) MessageIsForMe(webHookData *igpbv1.InstagramWebhookEvent) (isForMe bool, typeNotification evt_types.TYPE_NOTIFICATION_WEBHOOK) {
-	return true, evt_types.ParseTypeNotificationWebhook(webHookData.GetObject())
+	messaging := webHookData.GetEntry()[0].GetMessaging()[0]
+	field := webHookData.GetEntry()[0].GetField()
+	msg := messaging.GetMessage()
+	isForMe = messaging.GetRecipient().GetId() == self.config.userID
+
+	if isForMe && msg != nil {
+		return isForMe, evt_types.WEBHOOK_NOTIFICATION_MESSAGE
+	}
+
+	return isForMe, evt_types.ParseTypeNotificationWebhook(field)
 }
 
 func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ string) {
@@ -214,6 +224,12 @@ func (self *ClientIG) GetTypeMessage(msg *igpbv1.InstagramWebhookEvent) (typ str
 			typ = ""
 		}
 	}()
+
+	// webhookMsgProto := msg.GetEntry()[0].GetMessaging()[0].GetMessage()
+
+	// if webhookMsgProto.Get == nil {
+	// 	return ""
+	// }
 
 	// return msg.GetEntry()[0].GetChanges()[0].GetValue().
 	return "msg.Entry[0].Changes[0].Value.Messages[0].Type"
@@ -238,7 +254,7 @@ func (self *ClientIG) GetSatusMessage(msg *igpbv1.InstagramWebhookEvent) (status
 	return " msg.Entry[0].Changes[0].Value.Statuses[0].Status"
 }
 
-func (self *ClientIG) Broadcast(data []byte) {
+func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 	defer func() {
 		if r := recover(); r != nil {
 			return
@@ -254,12 +270,18 @@ func (self *ClientIG) Broadcast(data []byte) {
 	// }
 
 	// msg := codeWebHook(message)
-	msg := &igpbv1.InstagramWebhookEvent{}
-	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, msg)
+	msg, ok := msg_webhook.(*igpbv1.InstagramWebhookEvent)
+	if !ok {
+		return errors.New("error type message is not event IG webhook")
+	}
+	/*&igpbv1.InstagramWebhookEvent{}
+	_ = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, msg)*/
 	isForme, typeNotification := self.MessageIsForMe(msg)
 	if !isForme {
-		return
+		return errors.New("error message is not for me")
 	}
+
+	fmt.Printf("typeNotification: %s, msg: %s\n", typeNotification, msg.String())
 
 	switch typeNotification {
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
@@ -343,10 +365,11 @@ func (self *ClientIG) Broadcast(data []byte) {
 		}
 	default:
 		self.GetConfig().GetEventHandle()(msg)
-		return
+		return nil
 	}
 
 	self.GetConfig().GetEventHandle()(evt)
+	return nil
 }
 
 func (self *ClientIG) String() string {
