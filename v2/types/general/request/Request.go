@@ -205,22 +205,24 @@ func Do(cl clientoficial.Client, req *http.Request, responseType generalresponse
 
 	switch res.StatusCode {
 	case 400:
-		log := fmt.Sprintf("Error in function Do. Code: %d, Status: %s, MetaError: %s, BodyError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"), string(b))
 		errorMsg.SetType(types.TypeErrorBadRequest)
 		errorMsg.SetCode(types.CodeErrorBadRequest)
-		errorMsg.SetMessage(log)
+		errorMsg.SetMessage(string(b))
 		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	case 401:
-		log := fmt.Sprintf("Error in function Do. Code: %d, Message: %s, MetaError: %s, BodyError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"), string(b))
 		errorMsg.SetType(types.TypeErrorUnauthorized)
 		errorMsg.SetCode(types.CodeErrorUnauthorized)
-		errorMsg.SetMessage(log)
+		errorMsg.SetMessage(string(b))
+		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
+	case 403:
+		errorMsg.SetType(types.TypeErrorForbidden)
+		errorMsg.SetCode(types.CodeErrorForbidden)
+		errorMsg.SetMessage(string(b))
 		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	case 404:
-		log := fmt.Sprintf("Error in function Do. Code: %d, Message: %s, MetaError: %s, BodyError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"), string(b))
 		errorMsg.SetType(types.TypeErrorUrlNotFound)
 		errorMsg.SetCode(types.CodeErrorUrlNotFound)
-		errorMsg.SetMessage(log)
+		errorMsg.SetMessage(string(b))
 		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	case 200:
 		switch cl.GetType() {
@@ -232,10 +234,9 @@ func Do(cl clientoficial.Client, req *http.Request, responseType generalresponse
 			return nil
 		}
 	default:
-		log := fmt.Sprintf("Error in function Do. Code: %d, Message: %s, MetaError: %s, BodyError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"), string(b))
 		errorMsg.SetType(types.TypeErrorInRequest)
 		errorMsg.SetCode(types.CodeErrorInRequest)
-		errorMsg.SetMessage(log)
+		errorMsg.SetMessage(string(b))
 		return generalresponse.NewResponse(errorMsg, generalresponse.ResponseError)
 	}
 }

@@ -2398,6 +2398,11 @@ func (c *ClientWA) GetAllTplFromWaba(waba_id string) response.Responser {
 	q := append([]QueryData{}, QueryData{})
 	if res.GetResponseError() == nil {
 		t := res.GetTemplateResponse()
+
+		if t.Paging == nil {
+			return t
+		}
+
 		pag := t.Paging
 		afterValue := pag.Cursors.After
 
