@@ -209,7 +209,10 @@ func (self *ClientIG) MessageIsForMe(webHookData *igpbv1.InstagramWebhookEvent) 
 	messaging := webHookData.GetEntry()[0].GetMessaging()[0]
 	field := webHookData.GetEntry()[0].GetField()
 	msg := messaging.GetMessage()
-	isForMe = messaging.GetRecipient().GetId() == self.config.userID
+
+	if messaging.GetRecipient().GetId() == self.config.userID || messaging.GetSender().GetId() == self.config.userID {
+		isForMe = true
+	}
 
 	var typNotification evt_types.TYPE_NOTIFICATION_WEBHOOK
 
@@ -314,6 +317,7 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 		case "audio":
 			evt = &event.IGMessageAudioEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		// case "button":
 		// 	evt = &event.IGMessageButtonEvent{
@@ -322,111 +326,138 @@ func (self *ClientIG) Broadcast(msg_webhook proto.Message) error {
 		case "file":
 			evt = &event.IGMessageFileEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "text":
 			evt = &event.IGMessageTextEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "image":
 			evt = &event.IGMessageImageEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "sticker":
 			evt = &event.IGMessageStickerEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		// case "system":
 		// 	evt = &event.IGMessageSystemEvent{
 		// 		InstagramWebhookEvent: msg,
+		// IGAccountID:           self.config.userID,
 		// 	}
 		case "video":
 			evt = &event.IGMessageVideoEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "media":
 			evt = &event.IGMessageMediaEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "share":
 			evt = &event.IGMessageShareEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "ig_post":
 			evt = &event.IGMessageIGPostEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "story_mention":
 			evt = &event.IGMessageStoryMentionEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "story":
 			evt = &event.IGMessageStoryEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "ig_story":
 			evt = &event.IGMessageIGStoryEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "reel":
 			evt = &event.IGMessageReelEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "ig_reel":
 			evt = &event.IGMessageIGReelEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		case "ephemeral":
 			evt = &event.IGMessageEphemeralEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		// case "location":
 		// 	evt = &event.IGMessageLocationEvent{
 		// 		InstagramWebhookEvent: msg,
+		// IGAccountID:           self.config.userID,
 		// 	}
 		// case "contacts":
 		// 	evt = &event.IGMessageContactEvent{
 		// 		InstagramWebhookEvent: msg,
+		// IGAccountID:           self.config.userID,
 		// 	}
 		case "unknown":
 			evt = &event.IGMessageUnknownEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		default:
 			evt = &event.IGMessageUnknownEvent{
 				InstagramWebhookEvent: msg,
+				IGAccountID:           self.config.userID,
 			}
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE_REACTIONS:
 		evt = &event.IGMessageReactionEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_UNKNOWN:
 		evt = &event.IGMessageUnknownEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_COMMENTS:
 		evt = &event.IGCommentsEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_LIVE_COMMENTS:
 		evt = &event.IGLiveCommentsEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGING_POSTBACKS:
 		evt = &event.IGMessagingPostbacksEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGING_REFERRAL:
 		evt = &event.IGMessagingReferralEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGING_SEEN:
 		evt = &event.IGStatusMessageEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE_EDIT:
 		evt = &event.IGMessageEditEvent{
 			InstagramWebhookEvent: msg,
+			IGAccountID:           self.config.userID,
 		}
 	/*
 
