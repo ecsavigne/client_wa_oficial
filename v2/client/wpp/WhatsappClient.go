@@ -2948,3 +2948,131 @@ func (c *ClientWA) UnregisterNumber(phone_id uint) response.Responser {
 
 	return response.JsonWrapperResponseRequest(b, response.ResponseSuccess)
 }
+
+/*
+@app_id: string id app required
+@q
+
+	query: {
+		"file_name": "file_name", // Required
+		"file_size": "file_size", // Required
+		"file_type": "file_type" // Required
+	}
+
+return id session upload
+*/
+func (c *ClientWA) CreateSessionUpload(app_id string, q QueryData) (upload_session_id string, err error) {
+	_, _, err = defaultRequest(http.MethodPost, fmt.Sprintf("/%s/uploads", app_id), c.Config, RequestWithQueryVersion, q)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return "", err
+		}
+
+		return "", response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: err.Error(),
+		})
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		if err, ok := err.(*response.Error); ok {
+			return "", err
+		}
+
+		return "", response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: err.Error(),
+		})
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return "", response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: err.Error(),
+		})
+	}
+
+	mapData := map[string]any{}
+	err = json.Unmarshal(b, &mapData)
+	if err != nil {
+		return "", response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: err.Error(),
+		})
+	}
+
+	upload_session_id = mapData["id"].(string)
+	return upload_session_id, nil
+}
+
+/*
+@upload_session_id: string id session upload required
+@file: file required
+*/
+func (c *ClientWA) UploadFileFromSession(upload_session_id string, file *os.File) (headerHandler string, err error) {
+	urlPath, e := url.Parse(fmt.Sprintf("%s%s", c.pathVersion, fmt.Sprintf("/%s", upload_session_id)))
+	if e != nil {
+		return "", response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: e.Error(),
+		})
+	}
+
+	urlPath = c.BaseUrl.ResolveReference(urlPath)
+
+	// create request
+	req, err := http.NewRequest(http.MethodPost, urlPath.String(), file)
+	if err != nil {
+		return "", response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: err.Error(),
+		})
+	}
+
+	// set header
+	req.Header.Set("Authorization", fmt.Sprintf("OAuth %s", c.Token))
+	req.Header.Set("file_offset", "0")
+	req.Header.Set("Content-Type", "application/octet-stream")
+
+	// get file extension
+	client := createClientHttp2(60)
+
+	// do request
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", response.NewError(&response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: err.Error(),
+		})
+	}
+
+	// process response
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("leer respuesta: %w", err)
+	}
+
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return "", &response.Error{
+			Type:    response.ResponseError,
+			Code:    types.CodeErrorUnrecognized,
+			Message: string(body),
+		}
+	}
+
+	return string(body), nil
+}

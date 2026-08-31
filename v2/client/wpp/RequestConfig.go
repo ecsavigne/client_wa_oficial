@@ -103,7 +103,7 @@ func resetError(c *Config) {
 // The second parameter (if present) is used to construct the query string if the first parameter is a TypeRequest.
 // The third parameter (if present) is used to construct the request body if the first parameter is a message.Messager.
 // The function returns the created request, a cancel function, and an error (if any).
-func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*http.Request, context.CancelFunc, error) {
+func defaultRequest(method string, ePoint string, c *Config, params ...any) (*http.Request, context.CancelFunc, error) {
 	resetError(c)
 	var (
 		e              error
@@ -128,7 +128,7 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		switch v := params[0].(type) {
 		case message.Messager:
 			msg = v
-			c.request, e = http.NewRequest(methoth, urlPath.String(), msg.ToJSONReader())
+			c.request, e = http.NewRequest(method, urlPath.String(), msg.ToJSONReader())
 		case map[string]any:
 			b, err := json.Marshal(v)
 			if err != nil {
@@ -139,17 +139,17 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 				})
 			}
 			formData = bytes.NewBuffer(b)
-			c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
+			c.request, e = http.NewRequest(method, urlPath.String(), formData)
 		case TypeRequest:
 			switch v {
 			case RequestGetMessageInfo, RequestDeleteMedia, RequestWithVersion:
 				urlPath, _ = url.Parse(fmt.Sprintf("%s%s", c.pathVersion, ePoint))
 				urlPath = c.BaseUrl.ResolveReference(urlPath)
-				c.request, e = http.NewRequest(methoth, urlPath.String(), nil)
+				c.request, e = http.NewRequest(method, urlPath.String(), nil)
 			case RequestChangeUrlFull:
 				urlAlternative = strings.TrimPrefix(ePoint, "/")
 				ctx, cancel = context.WithTimeout(context.Background(), 60*time.Second)
-				c.request, e = http.NewRequestWithContext(ctx, methoth, urlAlternative, nil)
+				c.request, e = http.NewRequestWithContext(ctx, method, urlAlternative, nil)
 			}
 		}
 	} else { // len(params) > 1
@@ -209,7 +209,9 @@ func defaultRequest(methoth string, ePoint string, c *Config, params ...any) (*h
 		}
 
 		urlPath = c.BaseUrl.ResolveReference(urlPath)
-		c.request, e = http.NewRequest(methoth, urlPath.String(), formData)
+		c.request, e = http.NewRequest(method, urlPath.String(), formData)
+
+		fmt.Println("Method: ", method, "URL: ", c.request.URL.String())
 	}
 
 	if e != nil {

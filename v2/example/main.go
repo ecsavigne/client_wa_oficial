@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -163,11 +162,33 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	// rr := my_client.UnregisterNumber(94571)
 	// rr := my_client.GetNumberInfo("1039657755908145")
 	// rr := my_client.GetWabaInfo("2075632806348397")
-	rr := my_client.GetBusinessInfo("991179623372311")
-	byt, _ := json.MarshalIndent(rr, "", "  ")
+	// rr := my_client.GetBusinessInfo("991179623372311")
+	// byt, _ := json.MarshalIndent(rr, "", "  ")
+
+	upload_session_id, err := my_client.CreateSessionUpload("765398235585526", map[string]any{
+		"file_name": "header.jpg",
+		"file_size": 123456,
+		"file_type": "image/jpeg",
+	})
+
+	fmt.Printf("%s, error: %v\n", upload_session_id, err)
+	if err != nil {
+		return
+	}
+
+	fmt.Println("PART 22")
+	file, e := os.Open("../../IMG_3631.jpeg")
+	if e != nil {
+		fmt.Println("error open file: ", e)
+		return
+	}
+
+	upload_session_id, e = my_client.UploadFileFromSession(upload_session_id, file)
+	// byt, _ := json.MarshalIndent(rr, "", "  ")
+	fmt.Printf("%s, error: %v\n", upload_session_id, e)
 
 	// fmt.Printf("Response: %s\n", rr)
-	fmt.Printf("Response: %s\n", string(byt))
+	// fmt.Printf("Response: %s\n", string(byt))
 	// fmt.Println("Permitions: ", types.GetPermission().Get("whatsapp_business_management", "Label"), "description: ", types.GetPermission().Get("whatsapp_business_management", "Description"))
 	fmt.Println(strings.Repeat(".", 25), " Fin testing Client WhatsApp ", strings.Repeat(".", 25))
 }
@@ -239,8 +260,8 @@ func main() {
 		rr     response.Responser
 	)
 
-	// testWpp(client, rr)
-	testIg(client, rr)
+	testWpp(client, rr)
+	// testIg(client, rr)
 
 	fmt.Println("Press Ctrl+C to exit...")
 	c := make(chan os.Signal, 1)
