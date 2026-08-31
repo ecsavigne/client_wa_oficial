@@ -3074,5 +3074,10 @@ func (c *ClientWA) UploadFileFromSession(upload_session_id string, file *os.File
 		}
 	}
 
-	return string(body), nil
+	var r struct {
+		H string `json:"h"`
+	}
+	json.Unmarshal(body, &r)
+
+	return r.H, nil
 }
