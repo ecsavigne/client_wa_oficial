@@ -44,12 +44,17 @@ func NewQueryData() QueryData {
 }
 
 func (q QueryData) String() string {
-	query := ""
-	for k, v := range q {
-		query += fmt.Sprintf("%s=%v&", k, v)
+	values := url.Values{}
+
+	for key, value := range q {
+		if value == nil {
+			continue
+		}
+
+		values.Set(key, fmt.Sprint(value))
 	}
-	query = strings.TrimSuffix(query, "&")
-	return query
+
+	return values.Encode()
 }
 
 func (q *QueryData) SetValue(key string, value any) {
