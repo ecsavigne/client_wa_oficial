@@ -62,6 +62,7 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	my_client := wpp.NewClientWA(
 		// wpp.WithEnvFilePath("../config_env"),
 		wpp.WithEnvFilePath("../../config_env"),
+		wpp.WithPhoneID("638511662674208"),
 		// wpp.WithWebhookSocket("wss://webhooks.xxx.com/wa_official/ws"),
 		// wpp.WithEventHandle(EventHandler),
 		// wpp.WithWabaID(""),
@@ -165,27 +166,33 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	// rr := my_client.GetBusinessInfo("991179623372311")
 	// byt, _ := json.MarshalIndent(rr, "", "  ")
 
-	upload_session_id, err := my_client.CreateSessionUpload("765398235585526", map[string]any{
-		"file_name": "header.jpg",
-		"file_size": 123456,
-		"file_type": "image/jpeg",
-	})
+	// upload_session_id, err := my_client.CreateSessionUpload("765398235585526", map[string]any{
+	// 	"file_name": "header.jpg",
+	// 	"file_size": 123456,
+	// 	"file_type": "image/jpeg",
+	// })
 
-	fmt.Printf("%s, error: %v\n", upload_session_id, err)
-	if err != nil {
-		return
-	}
+	// fmt.Printf("%s, error: %v\n", upload_session_id, err)
+	// if err != nil {
+	// 	return
+	// }
 
-	fmt.Println("PART 22")
-	file, e := os.Open("../../IMG_3631.jpeg")
-	if e != nil {
-		fmt.Println("error open file: ", e)
-		return
-	}
-
-	upload_session_id, e = my_client.UploadFileFromSession(upload_session_id, file)
+	// fmt.Println("PART 22")
+	// file, e := os.Open("../../11.jpeg")
+	// if e != nil {
+	// 	fmt.Println("error open file: ", e)
+	// 	return
+	// }
+	// upload_session_id, e = my_client.UploadFileFromSession(upload_session_id, file)
 	// byt, _ := json.MarshalIndent(rr, "", "  ")
-	fmt.Printf("%s, error: %v\n", upload_session_id, e)
+	// fmt.Printf("%s, error: %v\n", upload_session_id, e)
+
+	// media_id, err := my_client.UploadFileToMetaServer(file)
+
+	// fmt.Println("media_id: ", media_id, " error: ", err)
+	// fmt.Printf("response error: %v\n", my_client.DeleteMediaFromMetaServer("1043194001823282"))
+	url, err := my_client.GetUrlMediaFromMetaServer("3933476390293054")
+	fmt.Println("url: ", url, " error: ", err)
 
 	// fmt.Printf("Response: %s\n", rr)
 	// fmt.Printf("Response: %s\n", string(byt))

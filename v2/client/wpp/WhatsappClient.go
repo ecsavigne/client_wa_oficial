@@ -6,13 +6,18 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
+	"mime"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"slices"
 	"strings"
 	str "strings"
@@ -392,93 +397,85 @@ func doRequest(req *http.Request, c *ClientWA) (*http.Response, error) {
 	c.clientHttp.Client = createClientHttp2(30)
 	res, err := c.clientHttp.Do(req)
 	if err != nil {
-		log := fmt.Sprintf("Error in function doRequest when do HTTP request to server with Do. Error is: %s", err.Error())
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBadRequest,
 			Code:    types.CodeErrorBadRequest,
-			Message: log,
+			Message: err.Error(),
 		})
 		return nil, c.Config.Error
 	}
 
+	var (
+		msgError string
+		errByt   []byte
+	)
+	if res.StatusCode != http.StatusOK {
+		if res.Header.Get("Www-Authenticate") != "" {
+			msgError = res.Header.Get("Www-Authenticate")
+		} else {
+			errByt, _ = io.ReadAll(res.Body)
+			res.Body.Close()
+
+			msgError = string(errByt)
+		}
+	}
 	switch res.StatusCode {
 	case 200:
 		return res, nil
 	case 400:
-		// if e := response.GetResponseRequest(res.Body, "doRequest", "400").GetResponseError(); e != nil {
-		// 	c.Config.Error = e
-		// 	return nil, e
-		// }
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorBadRequest,
 			Code:    types.CodeErrorBadRequest,
-			Message: log,
+			Message: msgError,
 		})
 		return nil, c.Config.Error
 	case 401:
-		// if e := response.GetResponseRequest(res.Body, "doRequest", "401").GetResponseError(); e != nil {
-		// 	c.Config.Error = e
-		// 	return nil, e
-		// }
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorUnauthorized,
 			Code:    types.CodeErrorUnauthorized,
-			Message: log,
+			Message: msgError,
 		})
 		return nil, c.Config.Error
 	case 403:
-		// if e := response.GetResponseRequest(res.Body, "doRequest", "403").GetResponseError(); e != nil {
-		// 	c.Config.Error = e
-		// 	return nil, e
-		// }
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorForbidden,
 			Code:    types.CodeErrorForbidden,
-			Message: log,
+			Message: msgError,
 		})
 		return nil, c.Config.Error
 	case 404:
-		// if e := response.GetResponseRequest(res.Body, "doRequest", "404").GetResponseError(); e != nil {
-		// 	c.Config.Error = e
-		// 	return nil, e
-		// }
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorUrlNotFound,
 			Code:    types.CodeErrorUrlNotFound,
-			Message: log,
+			Message: msgError,
 		})
+
 		return nil, c.Config.Error
 	case 422:
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorEntityUnprocessable,
 			Code:    types.CodeErrorEntityUnprocessable,
-			Message: log,
+			Message: msgError,
 		})
+
 		return nil, c.Config.Error
 	case 500:
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorInternalServer,
 			Code:    types.CodeErrorInternalServer,
-			Message: log,
+			Message: msgError,
 		})
+
 		return nil, c.Config.Error
 	default:
-		log := fmt.Sprintf("Error in function doRequest. Code: %d, Message: %s, MetaError: %s.", res.StatusCode, res.Status, res.Header.Get("Www-Authenticate"))
 		c.Config.Error = response.NewError(&response.Error{
 			Type:    types.TypeErrorUnrecognized,
 			Code:    types.CodeErrorUnrecognized,
-			Message: log,
+			Message: msgError,
 		})
 
 		return nil, c.Config.Error
 	}
-	// return res, nil
 }
 
 func (c *ClientWA) doRequest(req *http.Request) (response.Responser, error) {
@@ -3080,4 +3077,162 @@ func (c *ClientWA) UploadFileFromSession(upload_session_id string, file *os.File
 	json.Unmarshal(body, &r)
 
 	return r.H, nil
+}
+
+// upload file to Meta server and get media_id
+func (c *ClientWA) UploadFileToMetaServer(file *os.File) (media_id string, err error) {
+	if file == nil {
+		return "", errors.New("file is nil")
+	}
+
+	errBase := &response.Error{Type: response.ResponseError, Code: types.CodeErrorUnrecognized}
+
+	mimeType := mime.TypeByExtension(filepath.Ext(file.Name()))
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+	writer.WriteField("messaging_product", "whatsapp")
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition", multipart.FileContentDisposition("file", filepath.Base(file.Name())))
+	h.Set("Content-Type", mimeType)
+	part, err := writer.CreatePart(h)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+
+	_, err = io.Copy(part, file)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+	err = writer.Close()
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+
+	// create request
+	urlPath, _ := url.Parse(fmt.Sprintf("%s%s", c.pathPhone, "/media"))
+	urlPath = c.BaseUrl.ResolveReference(urlPath)
+	req, err := http.NewRequest(http.MethodPost, urlPath.String(), payload)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+	c.Config.request = req
+
+	multiparHeader(c.Config, writer.FormDataContentType())
+
+	// do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		return "", err
+	}
+
+	// get media_id from response
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+
+	os.Remove(file.Name())
+
+	var r struct {
+		MediaID string `json:"id"`
+	}
+	json.Unmarshal(body, &r)
+
+	return r.MediaID, err
+}
+
+// Delete media from Meta server by media_id
+func (c *ClientWA) DeleteMediaFromMetaServer(media_id string) error {
+	errBase := &response.Error{Type: response.ResponseError, Code: types.CodeErrorUnrecognized}
+
+	if media_id == "" {
+		errBase.Message = "media_id is empty"
+		return response.NewError(errBase)
+	}
+
+	q := QueryData{"phone_number_id": c.phoneID}
+	_, _, err := defaultRequest(http.MethodDelete, fmt.Sprintf("/%s?%s", media_id, q.String()), c.Config, RequestWithVersion, nil)
+	if err != nil {
+		errBase.Message = err.Error()
+		return errBase
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		errBase.Message = err.Error()
+		return errBase
+	}
+
+	// get media_id from response
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		errBase.Message = err.Error()
+		return response.NewError(errBase)
+	}
+
+	var r struct {
+		Success bool `json:"success"`
+	}
+	json.Unmarshal(body, &r)
+
+	if !r.Success {
+		errBase.Message = "failed to delete media"
+		return response.NewError(errBase)
+	}
+
+	fmt.Println("Response:", string(body))
+
+	return nil
+}
+
+// Get url of media from Meta server by media_id
+func (c *ClientWA) GetUrlMediaFromMetaServer(media_id string) (url string, err error) {
+	errBase := &response.Error{Type: response.ResponseError, Code: types.CodeErrorUnrecognized}
+
+	if media_id == "" {
+		errBase.Message = "media_id is empty"
+		return "", response.NewError(errBase)
+	}
+
+	q := QueryData{"phone_number_id": c.phoneID}
+	_, _, err = defaultRequest(http.MethodGet, fmt.Sprintf("/%s?%s", media_id, q.String()), c.Config, RequestWithVersion, nil)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+
+	// get media_id from response
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+
+	var r struct {
+		ID               string `json:"id"`
+		MessagingProduct string `json:"messaging_product"`
+		Url              string `json:"url"`
+		MimeType         string `json:"mime_type"`
+		Sha256           string `json:"sha256"`
+		FileSize         int    `json:"file_size"`
+	}
+	json.Unmarshal(body, &r)
+
+	return r.Url, nil
 }
