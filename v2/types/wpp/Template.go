@@ -374,12 +374,12 @@ const (
 	TTPL_MULTI_PRODUCTS TYPE_TEMPLATE = "MULTI_PRODUCTS"
 )
 
-func (tpl MockupTemplate) GetHeader() *MockupComponent {
-	if len(tpl.Components) == 0 {
+func (self MockupTemplate) GetHeader() *MockupComponent {
+	if len(self.Components) == 0 {
 		return nil
 	}
 
-	for _, component := range tpl.Components {
+	for _, component := range self.Components {
 		if strings.ToUpper(component.Type) == TC_HEADER {
 			c := component
 			return &c
@@ -388,12 +388,12 @@ func (tpl MockupTemplate) GetHeader() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) GetBody() *MockupComponent {
-	if len(tpl.Components) == 0 {
+func (self MockupTemplate) GetBody() *MockupComponent {
+	if len(self.Components) == 0 {
 		return nil
 	}
 
-	for _, component := range tpl.Components {
+	for _, component := range self.Components {
 		if strings.ToUpper(component.Type) == TC_BODY {
 			c := component
 			return &c
@@ -402,12 +402,12 @@ func (tpl MockupTemplate) GetBody() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) GetFooter() *MockupComponent {
-	if len(tpl.Components) == 0 {
+func (self MockupTemplate) GetFooter() *MockupComponent {
+	if len(self.Components) == 0 {
 		return nil
 	}
 
-	for _, component := range tpl.Components {
+	for _, component := range self.Components {
 		if strings.ToUpper(component.Type) == TC_FOOTER {
 			c := component
 			return &c
@@ -416,8 +416,8 @@ func (tpl MockupTemplate) GetFooter() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) getButtons() *MockupComponent {
-	for _, component := range tpl.Components {
+func (self MockupTemplate) getButtons() *MockupComponent {
+	for _, component := range self.Components {
 		if strings.ToUpper(component.Type) == TC_BUTTONS {
 			c := component
 			return &c
@@ -426,8 +426,8 @@ func (tpl MockupTemplate) getButtons() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) getCarusel() *MockupComponent {
-	for _, component := range tpl.Components {
+func (self MockupTemplate) getCarusel() *MockupComponent {
+	for _, component := range self.Components {
 		if strings.ToUpper(component.Type) == TC_CAROUSEL {
 			c := component
 			return &c
@@ -436,13 +436,13 @@ func (tpl MockupTemplate) getCarusel() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) getLimitedTimeOffer() *MockupComponent {
-	if len(tpl.Components) == 0 {
+func (self MockupTemplate) getLimitedTimeOffer() *MockupComponent {
+	if len(self.Components) == 0 {
 		return nil
 	}
 
-	for _, component := range tpl.Components {
-		if str.ToUpper(component.Type) == TC_LIMITED_TIME_OFFER {
+	for _, component := range self.Components {
+		if strings.ToUpper(component.Type) == TC_LIMITED_TIME_OFFER {
 			c := component
 			return &c
 		}
@@ -450,12 +450,12 @@ func (tpl MockupTemplate) getLimitedTimeOffer() *MockupComponent {
 	return nil
 }
 
-func (tpl MockupTemplate) getProductsButtons() bool {
-	if len(tpl.Components) == 0 {
+func (self MockupTemplate) getProductsButtons() bool {
+	if len(self.Components) == 0 {
 		return false
 	}
 
-	btns := tpl.getButtons()
+	btns := self.getButtons()
 	if btns == nil {
 		return false
 	}
@@ -470,30 +470,30 @@ func (tpl MockupTemplate) getProductsButtons() bool {
 	return false
 }
 
-func (tpl MockupTemplate) hasComponents() bool {
-	return len(tpl.Components) != 0
+func (self MockupTemplate) hasComponents() bool {
+	return len(self.Components) != 0
 
 }
 
 // isText.
-func (tpl MockupTemplate) isText() bool {
-	if tpl.isAuth() {
+func (self MockupTemplate) isText() bool {
+	if self.isAuth() {
 		return false
 	}
 
-	h := tpl.GetHeader()
-	b := tpl.GetBody()
-	f := tpl.GetFooter()
+	h := self.GetHeader()
+	b := self.GetBody()
+	f := self.GetFooter()
 
-	if !tpl.hasComponents() {
-		if tpl.TemplateLibrary != nil && tpl.TemplateLibrary.ArrayButton == nil {
+	if !self.hasComponents() {
+		if self.TemplateLibrary != nil && self.TemplateLibrary.ArrayButton == nil {
 			return true
 		}
 
 		return false
 	}
 
-	if len(tpl.Components) == 3 {
+	if len(self.Components) == 3 {
 		if h != nil && h.Format != FT_TEXT {
 			return false
 		}
@@ -502,7 +502,7 @@ func (tpl MockupTemplate) isText() bool {
 			return false
 		}
 	} else {
-		if len(tpl.Components) == 2 {
+		if len(self.Components) == 2 {
 			if h != nil {
 				if h.Format != FT_TEXT {
 					return false
@@ -519,14 +519,14 @@ func (tpl MockupTemplate) isText() bool {
 }
 
 // isMedia
-func (tpl MockupTemplate) isMedia() bool {
+func (self MockupTemplate) isMedia() bool {
 	typeMedia := []string{FT_DOCUMENT, FT_IMAGE, FT_VIDEO, FT_GIF}
-	return tpl.GetHeader() != nil && slices.Contains(typeMedia, str.ToUpper(tpl.GetHeader().Format))
+	return self.GetHeader() != nil && slices.Contains(typeMedia, strings.ToUpper(self.GetHeader().Format))
 }
 
 // isButton
-func (tpl MockupTemplate) isButton() bool {
-	btns := tpl.getButtons()
+func (self MockupTemplate) isButton() bool {
+	btns := self.getButtons()
 	if btns == nil {
 		return false
 	}
@@ -535,55 +535,68 @@ func (tpl MockupTemplate) isButton() bool {
 }
 
 // isInteractive
-func (tpl MockupTemplate) isInteractive() bool {
-	if !tpl.hasComponents() {
-		if tpl.TemplateLibrary != nil && tpl.TemplateLibrary.ArrayButton != nil {
+func (self MockupTemplate) isInteractive() bool {
+	if !self.hasComponents() {
+		if self.TemplateLibrary != nil && self.TemplateLibrary.ArrayButton != nil {
 			return true
 		}
 
 		return false
 	}
 
-	return tpl.isButton()
+	return self.isButton()
 }
 
 // isLocation
-func (tpl MockupTemplate) isLocation() bool {
-	return tpl.GetHeader() != nil && str.ToUpper(tpl.GetHeader().Format) == FT_LOCATION
+func (self MockupTemplate) isLocation() bool {
+	return self.GetHeader() != nil && strings.ToUpper(self.GetHeader().Format) == FT_LOCATION
 }
 
 // isAuth
-func (tpl MockupTemplate) isAuth() bool {
-	return str.ToUpper(tpl.Category) == C_AUTHENTICATION
+func (self MockupTemplate) isAuth() bool {
+	return strings.ToUpper(self.Category) == C_AUTHENTICATION
 }
 
 // isProducts
-func (tpl MockupTemplate) isProducts() bool {
-	if tpl.getCarusel() != nil {
+func (self MockupTemplate) isProducts() bool {
+	if self.getCarusel() != nil {
 		return true
 	}
 
-	return tpl.getProductsButtons()
+	return self.getProductsButtons()
 }
 
 // type MockupTemplate are (text, media, interactive msg, location, authentication and products various message )
-func (tpl MockupTemplate) GetTypeTpl() string {
+func (self MockupTemplate) GetTypeTpl() string {
 	switch {
-	case tpl.isText():
+	case self.isText():
 		return TTPL_TEXT
-	case tpl.isMedia():
+	case self.isMedia():
 		return TTPL_MEDIA
-	case tpl.isLocation():
+	case self.isLocation():
 		return TTPL_LOCATION
-	case tpl.isAuth():
+	case self.isAuth():
 		return TTPL_AUTH
-	case tpl.isProducts():
+	case self.isProducts():
 		return TTPL_MULTI_PRODUCTS
-	case tpl.isInteractive():
+	case self.isInteractive():
 		return TTPL_INTERACTIVE
 	default:
 		return "UNKNOWN"
 	}
+}
+
+func (self MockupTemplate) GetContentHeaderHandle() (content string) {
+	h := self.GetHeader()
+	if h == nil {
+		return content
+	}
+
+	if len(h.HeaderHandle) > 0 {
+		return h.HeaderHandle[0]
+	}
+
+	return content
 }
 
 const (
@@ -591,8 +604,8 @@ const (
 	LOCATE_WABA_TEMPLATE     = "WABA_TEMPLATE"
 )
 
-func (tpl MockupTemplate) GetLocatedTpl() string {
-	if tpl.Components != nil {
+func (self MockupTemplate) GetLocatedTpl() string {
+	if self.Components != nil {
 		return LOCATE_WABA_TEMPLATE
 	}
 
