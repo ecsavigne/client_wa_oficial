@@ -3088,18 +3088,20 @@ func (c *ClientWA) UploadFileToMetaServer(file *os.File, remove_file ...bool) (m
 		return "", errors.New("file is nil")
 	}
 
-	errBase := &response.Error{Type: response.ResponseError, Code: types.CodeErrorUnrecognized}
+	errBase := &response.Error{Type: response.ResponseError}
 
+	file.Seek(0, io.SeekStart)
 	byts := make([]byte, 512)
-	_, err = file.Read(byts)
-	if err != nil {
+	n, err := file.Read(byts)
+	if err != nil && err != io.EOF {
 		errBase.Message = err.Error()
+		errBase.Code = 1
 		return "", response.NewError(errBase)
 	}
 
 	file.Seek(0, io.SeekStart)
 	http.DetectContentType(byts)
-	mimeType := http.DetectContentType(byts)
+	mimeType := http.DetectContentType(byts[:n])
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
 	writer.WriteField("messaging_product", "whatsapp")
@@ -3109,17 +3111,20 @@ func (c *ClientWA) UploadFileToMetaServer(file *os.File, remove_file ...bool) (m
 	part, err := writer.CreatePart(h)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 2
 		return "", response.NewError(errBase)
 	}
 
 	_, err = io.Copy(part, file)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 3
 		return "", response.NewError(errBase)
 	}
 	err = writer.Close()
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 4
 		return "", response.NewError(errBase)
 	}
 
@@ -3129,6 +3134,7 @@ func (c *ClientWA) UploadFileToMetaServer(file *os.File, remove_file ...bool) (m
 	req, err := http.NewRequest(http.MethodPost, urlPath.String(), payload)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 5
 		return "", response.NewError(errBase)
 	}
 	c.Config.request = req
@@ -3138,7 +3144,9 @@ func (c *ClientWA) UploadFileToMetaServer(file *os.File, remove_file ...bool) (m
 	// do request
 	resp, err := doRequest(c.request, c)
 	if err != nil {
-		return "", err
+		errBase.Code = 6
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
 	}
 
 	// get media_id from response
@@ -3146,13 +3154,16 @@ func (c *ClientWA) UploadFileToMetaServer(file *os.File, remove_file ...bool) (m
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 7
 		return "", response.NewError(errBase)
 	}
 
 	if len(remove_file) > 0 && remove_file[0] {
 		err = os.Remove(file.Name())
 		if err != nil {
-			return "", err
+			errBase.Message = err.Error()
+			errBase.Code = 8
+			return "", response.NewError(errBase)
 		}
 	}
 
@@ -3166,10 +3177,11 @@ func (c *ClientWA) UploadFileToMetaServer(file *os.File, remove_file ...bool) (m
 
 // Delete media from Meta server by media_id
 func (c *ClientWA) DeleteMediaFromMetaServer(media_id string) error {
-	errBase := &response.Error{Type: response.ResponseError, Code: types.CodeErrorUnrecognized}
+	errBase := &response.Error{Type: response.ResponseError}
 
 	if media_id == "" {
 		errBase.Message = "media_id is empty"
+		errBase.Code = 1
 		return response.NewError(errBase)
 	}
 
@@ -3177,6 +3189,7 @@ func (c *ClientWA) DeleteMediaFromMetaServer(media_id string) error {
 	_, _, err := defaultRequest(http.MethodDelete, fmt.Sprintf("/%s?%s", media_id, q.String()), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 2
 		return errBase
 	}
 
@@ -3184,6 +3197,7 @@ func (c *ClientWA) DeleteMediaFromMetaServer(media_id string) error {
 	resp, err := doRequest(c.request, c)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 3
 		return errBase
 	}
 
@@ -3192,6 +3206,7 @@ func (c *ClientWA) DeleteMediaFromMetaServer(media_id string) error {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 4
 		return response.NewError(errBase)
 	}
 
@@ -3202,6 +3217,7 @@ func (c *ClientWA) DeleteMediaFromMetaServer(media_id string) error {
 
 	if !r.Success {
 		errBase.Message = "failed to delete media"
+		errBase.Code = 5
 		return response.NewError(errBase)
 	}
 
@@ -3212,10 +3228,11 @@ func (c *ClientWA) DeleteMediaFromMetaServer(media_id string) error {
 
 // Get url of media from Meta server by media_id
 func (c *ClientWA) GetUrlMediaFromMetaServer(media_id string) (url string, err error) {
-	errBase := &response.Error{Type: response.ResponseError, Code: types.CodeErrorUnrecognized}
+	errBase := &response.Error{Type: response.ResponseError}
 
 	if media_id == "" {
 		errBase.Message = "media_id is empty"
+		errBase.Code = 1
 		return "", response.NewError(errBase)
 	}
 
@@ -3223,6 +3240,7 @@ func (c *ClientWA) GetUrlMediaFromMetaServer(media_id string) (url string, err e
 	_, _, err = defaultRequest(http.MethodGet, fmt.Sprintf("/%s?%s", media_id, q.String()), c.Config, RequestWithVersion, nil)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 2
 		return "", response.NewError(errBase)
 	}
 
@@ -3230,6 +3248,7 @@ func (c *ClientWA) GetUrlMediaFromMetaServer(media_id string) (url string, err e
 	resp, err := doRequest(c.request, c)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 3
 		return "", response.NewError(errBase)
 	}
 
@@ -3238,6 +3257,7 @@ func (c *ClientWA) GetUrlMediaFromMetaServer(media_id string) (url string, err e
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		errBase.Message = err.Error()
+		errBase.Code = 4
 		return "", response.NewError(errBase)
 	}
 
