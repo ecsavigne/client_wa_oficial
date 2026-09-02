@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"mime"
+	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 
 	clientpack "github.com/ecsavigne/client_wa_oficial/v2/client"
@@ -178,21 +182,21 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	// }
 
 	// fmt.Println("PART 22")
-	// file, e := os.Open("../../11.jpeg")
-	// if e != nil {
-	// 	fmt.Println("error open file: ", e)
-	// 	return
-	// }
+	file, e := os.Open("../../11.jpeg")
+	if e != nil {
+		fmt.Println("error open file: ", e)
+		return
+	}
 	// upload_session_id, e = my_client.UploadFileFromSession(upload_session_id, file)
 	// byt, _ := json.MarshalIndent(rr, "", "  ")
 	// fmt.Printf("%s, error: %v\n", upload_session_id, e)
 
-	// media_id, err := my_client.UploadFileToMetaServer(file)
+	media_id, err := my_client.UploadFileToMetaServer(file, false)
 
-	// fmt.Println("media_id: ", media_id, " error: ", err)
+	fmt.Println("media_id: ", media_id, " error: ", err)
 	// fmt.Printf("response error: %v\n", my_client.DeleteMediaFromMetaServer("1043194001823282"))
-	url, err := my_client.GetUrlMediaFromMetaServer("3933476390293054")
-	fmt.Println("url: ", url, " error: ", err)
+	// url, err := my_client.GetUrlMediaFromMetaServer("3933476390293054")
+	// fmt.Println("url: ", url, " error: ", err)
 
 	// fmt.Printf("Response: %s\n", rr)
 	// fmt.Printf("Response: %s\n", string(byt))
@@ -261,11 +265,51 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	fmt.Println(strings.Repeat(".", 25), " Fin testing Client IG ", strings.Repeat(".", 25))
 }
 
+func testUpload() {
+	// url := "https://scontent.whatsapp.net/v/t61.29466-34/567329221_4468883090019957_2483293185793085782_n.jpg?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=a0feXpfdjRsQ7kNvwEQwYPP&_nc_oc=Adrvpxrq3w1nCyz2vA8O78SBxI9x-wFcCwABZSQNTqRNNgcMbXZdC-rcMmvz2tDJUFQ&_nc_zt=3&_nc_ht=scontent.whatsapp.net&edm=AIJs65cEAAAA&_nc_gid=i3h4j4cIzEtmJlVYXKFP4w&_nc_tpa=Q5bMBQKK-LIiKMzUhPCdEw61aeUK8glzn-dAnnKfbFVQDTeg69Q_xDqr9PFi40kBSdqEnQtrHdQgN-yB&oh=01_Q5Aa5QG2ttbhkPVqewWE664_QG_ZJeyApyoDq6e20jNQKMWr8w&oe=6ABD167F"
+	url := "https://mimesniff.spec.whatwg.org/"
+	_ = url
+	// httpClient := &http.Client{}
+	// resp, err := httpClient.Get(url)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer resp.Body.Close()
+
+	// byt, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	file, err := os.Open("../../11.mpg")
+	if err != nil {
+		fmt.Println("Error al abrir el archivo:", err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	byt, err := io.ReadAll(file)
+
+	contentType := http.DetectContentType(byt)
+	extension, err := mime.ExtensionsByType(contentType)
+	if err != nil {
+		fmt.Println("Error al obtener la extensión:", err)
+		os.Exit(1)
+	}
+	mimeType := mime.TypeByExtension(filepath.Ext(file.Name()))
+
+	fmt.Println("contentType: ", contentType)
+	fmt.Println("extension: ", extension)
+	fmt.Println("mimeType: ", mimeType)
+}
+
 func main() {
 	var (
 		client clientpack.Client
 		rr     response.Responser
 	)
+
+	// testUpload()
+	// return
 
 	testWpp(client, rr)
 	// testIg(client, rr)

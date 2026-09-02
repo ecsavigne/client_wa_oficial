@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"io"
 	"maps"
-	"mime"
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
@@ -3080,14 +3079,27 @@ func (c *ClientWA) UploadFileFromSession(upload_session_id string, file *os.File
 }
 
 // upload file to Meta server and get media_id
-func (c *ClientWA) UploadFileToMetaServer(file *os.File) (media_id string, err error) {
+/*
+@file upload file
+@remove_file: if true, remove file after upload, default is true
+*/
+func (c *ClientWA) UploadFileToMetaServer(file *os.File, remove_file ...bool) (media_id string, err error) {
 	if file == nil {
 		return "", errors.New("file is nil")
 	}
 
 	errBase := &response.Error{Type: response.ResponseError, Code: types.CodeErrorUnrecognized}
 
-	mimeType := mime.TypeByExtension(filepath.Ext(file.Name()))
+	byts := make([]byte, 512)
+	_, err = file.Read(byts)
+	if err != nil {
+		errBase.Message = err.Error()
+		return "", response.NewError(errBase)
+	}
+
+	file.Seek(0, io.SeekStart)
+	http.DetectContentType(byts)
+	mimeType := http.DetectContentType(byts)
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
 	writer.WriteField("messaging_product", "whatsapp")
@@ -3137,7 +3149,12 @@ func (c *ClientWA) UploadFileToMetaServer(file *os.File) (media_id string, err e
 		return "", response.NewError(errBase)
 	}
 
-	os.Remove(file.Name())
+	if len(remove_file) > 0 && remove_file[0] {
+		err = os.Remove(file.Name())
+		if err != nil {
+			return "", err
+		}
+	}
 
 	var r struct {
 		MediaID string `json:"id"`
