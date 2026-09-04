@@ -2779,55 +2779,6 @@ func (c *ClientWA) DeleteTemplate(p ParamDelete) response.Responser {
 	return response.GetResponseRequest(resp.Body, "CreateTemplate", "ClientWA")
 }
 
-// Get permissions of a token.
-func (c *ClientWA) DebugToken(token string) response.Responser {
-	if token == "" {
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: Token is empty"),
-		})
-	}
-
-	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "debug_token"), c.Config, RequestWithQueryVersion, QueryData{"input_token": token})
-	if err != nil {
-		if err, ok := err.(*response.Error); ok {
-			return err
-		}
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error()),
-		})
-	}
-
-	// Do request
-	resp, err := doRequest(c.request, c)
-	if err != nil {
-		if err, ok := err.(*response.Error); ok {
-			return err
-		}
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error()),
-		})
-	}
-
-	// prepare response
-	b, err := io.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	if err != nil {
-		return response.NewError(&response.Error{
-			Type:    response.ResponseError,
-			Code:    types.CodeErrorUnrecognized,
-			Message: fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error()),
-		})
-	}
-
-	return response.JsonWrapperResponseRequest(b, response.ResponseDebugToken)
-}
-
 // GetLimiteMsg makes a GET call to the WhatsApp API to get the
 // limit of messages that can be sent from a WhatsApp Business
 // Account. It returns a ResponserRequest with the response data in
@@ -3272,4 +3223,54 @@ func (c *ClientWA) GetUrlMediaFromMetaServer(media_id string) (url string, err e
 	json.Unmarshal(body, &r)
 
 	return r.Url, nil
+}
+
+/*
+DebugToken returns the debug token for a given app token.
+*/
+/*
+@appToken: the app token is used for the request
+*/
+/*
+@debugToken: the debug token to use
+*/
+func (c *ClientWA) DebugToken(appToken, debugToken string) response.Responser {
+	baseError := &response.Error{Type: response.ResponseError}
+
+	if debugToken == "" || appToken == "" {
+		baseError.Code = 1
+		baseError.Message = fmt.Sprintln("Error in DebugToken request of ClientWA. error is: Token is empty")
+		return response.NewError(baseError)
+	}
+
+	c.Config.Token = appToken
+
+	q := QueryData{
+		"input_token": debugToken,
+	}
+	_, _, err := defaultRequest(http.MethodGet, fmt.Sprintf("/%s", "debug_token"), c.Config, RequestWithQueryVersion, q)
+	if err != nil {
+		baseError.Code = 2
+		baseError.Message = fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error())
+		return response.NewError(baseError)
+	}
+
+	// Do request
+	resp, err := doRequest(c.request, c)
+	if err != nil {
+		baseError.Code = 3
+		baseError.Message = fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error())
+		return response.NewError(baseError)
+	}
+
+	// prepare response
+	b, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		baseError.Code = 4
+		baseError.Message = fmt.Sprintln("Error in DebugToken request of ClientWA. error is: ", err.Error())
+		return response.NewError(baseError)
+	}
+
+	return response.JsonWrapperResponseRequest(b, response.ResponseDebugToken)
 }
