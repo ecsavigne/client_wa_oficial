@@ -161,7 +161,7 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	// rr := my_client.UnSubscribedWaba("1415160156667406")
 	// rr := my_client.RegisterForUseApi("984286011433245")
 	// token := ""
-	// rr := my_client.DebugToken(token)
+	rr := my_client.DebugToken("765398235585526|s5fnSgp2klGH91tqzMUOmepZ9_I", "EAAK4ICnxmZCYBSbhAyxtbIwLHX8wFKqvCuJkOX5u8wTkV624YGZB1NFfckJEM4ZAvMGy1NGoUR6zzGFsCdkyNie4E1O7DucEhsc71hpXSdk9VAUQDsQDZBCmbxtBazij5i0gU1wjTs7NYa35tO3muZAyi01edDhhHowKrd5KSnLyjNjtZCb3gsWyLNiPCAOfLTd7t4LvLvOwZAFzkXO7K2TXSJf3liZAuAapEk1ky1kE5sqOb0PJd9WxGiXbbzfX7SYhOx8nmYGhdo3G32gO1zWNetImJDSonOyhRA3KJ0jqmaYMgrsFhCGPuDYYV1NA6MJRuweYbn4EICXmLj8e1NlS")
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.UnregisterNumber(94571)
@@ -182,23 +182,23 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	// }
 
 	// fmt.Println("PART 22")
-	file, e := os.Open("../../11.jpeg")
-	if e != nil {
-		fmt.Println("error open file: ", e)
-		return
-	}
+	// file, e := os.Open("../../11.jpeg")
+	// if e != nil {
+	// 	fmt.Println("error open file: ", e)
+	// 	return
+	// }
 	// upload_session_id, e = my_client.UploadFileFromSession(upload_session_id, file)
 	// byt, _ := json.MarshalIndent(rr, "", "  ")
 	// fmt.Printf("%s, error: %v\n", upload_session_id, e)
 
-	media_id, err := my_client.UploadFileToMetaServer(file, false)
+	// media_id, err := my_client.UploadFileToMetaServer(file, false)
 
-	fmt.Println("media_id: ", media_id, " error: ", err)
+	// fmt.Println("media_id: ", media_id, " error: ", err)
 	// fmt.Printf("response error: %v\n", my_client.DeleteMediaFromMetaServer("1043194001823282"))
 	// url, err := my_client.GetUrlMediaFromMetaServer("3933476390293054")
 	// fmt.Println("url: ", url, " error: ", err)
 
-	// fmt.Printf("Response: %s\n", rr)
+	fmt.Printf("Response: %s\n", rr)
 	// fmt.Printf("Response: %s\n", string(byt))
 	// fmt.Println("Permitions: ", types.GetPermission().Get("whatsapp_business_management", "Label"), "description: ", types.GetPermission().Get("whatsapp_business_management", "Description"))
 	fmt.Println(strings.Repeat(".", 25), " Fin testing Client WhatsApp ", strings.Repeat(".", 25))
