@@ -24,6 +24,9 @@ type Contact struct {
 	*Profile `json:"profile,omitempty"`
 }
 
+func (self Contact) GetWaID() string   { return self.WaId }
+func (self Contact) GetUserId() string { return self.UserId }
+
 type ErrorData struct {
 	MessagingProduct string `json:"messaging_product,omitempty"` // "whatsapp",
 	Details          string `json:"details,omitempty"`
@@ -635,6 +638,7 @@ func (self *Components) GetMessageID() (vMessageID string) {
 	}
 }
 
+// Get Form
 func (self *Components) GetSenderMessage() (vMessageID string) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -654,6 +658,40 @@ func (self *Components) GetSenderMessage() (vMessageID string) {
 	} else {
 		panic("this is not a message")
 	}
+}
+
+func (self *Components) GetMessageTimestamp() (timestamp string) {
+	defer func() {
+		if r := recover(); r != nil {
+			timestamp = ""
+		}
+	}()
+
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Timestamp
+		case []MessageEchoes:
+			return v[0].Timestamp
+		default:
+			return ""
+		}
+	} else {
+		panic("this is not a message")
+	}
+}
+
+// Phone number of whatsapp business
+func (self *Components) GetDisplayPhoneNumber() (phoneNumber string) {
+	return self.GetValue().GetMetadata().GetDisplayPhoneNumber()
+}
+
+func (self *Components) GetContactPhoneNumber() (phoneNumber string) {
+	return self.GetValue().GetContacts()[0].GetWaID()
+}
+
+func (self *Components) GetContactUserID() (phoneNumber string) {
+	return self.GetValue().GetContacts()[0].GetUserId()
 }
 
 func (self *Components) GetAudioMessage() (vAudio *Audio) {
