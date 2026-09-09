@@ -99,20 +99,30 @@ type Edit struct {
 	*TypeMessage `json:",omitempty"`
 }
 
+type TypeMessageArray struct {
+	Contacts []message.Contact `json:"contacts,omitempty"`
+	Errors   []ErrorMessage    `json:"errors,omitempty"`
+}
+
 type TypeMessage struct {
-	*Audio        `json:"audio,omitempty"`
-	*Contact      `json:"contact,omitempty"`
-	*Document     `json:"document,omitempty"`
-	*ErrorMessage `json:"error,omitempty"`
-	*Image        `json:"image,omitempty"`
-	*Interactive  `json:"interactive,omitempty"`
-	*Location     `json:",omitempty"`
-	*Sticker      `json:"sticker,omitempty"`
-	*Text         `json:"text,omitempty"`
-	*Revoke       `json:"revoke,omitempty"`
-	*Reaction     `json:"reaction,omitempty"`
-	*Video        `json:"video,omitempty"`
-	*Edit         `json:"edit,omitempty"`
+	*Revoke           `json:"revoke,omitempty"`
+	*Edit             `json:"edit,omitempty"`
+	*Audio            `json:"audio,omitempty"`
+	*Button           `json:"button,omitempty"`
+	*TypeMessageArray `json:",omitempty"`
+	*Context          `json:"context,omitempty"`
+	*Document         `json:"document,omitempty"`
+	*Identity         `json:"identity,omitempty"`
+	*Image            `json:"image,omitempty"`
+	*Interactive      `json:"interactive,omitempty"`
+	*Location         `json:"location,omitempty"`
+	*Reaction         `json:"reaction,omitempty"`
+	*Order            `json:"order,omitempty"`
+	*Referral         `json:"referral,omitempty"`
+	*Sticker          `json:"sticker,omitempty"`
+	*System           `json:"system,omitempty"`
+	*Text             `json:"text,omitempty"`
+	*Video            `json:"video,omitempty"`
 }
 
 type Context struct {
@@ -226,27 +236,12 @@ type Document struct {
 }
 
 type Message struct {
-	From        string            `json:"from,omitempty"`
-	ID          string            `json:"id,omitempty"`
-	Type        string            `json:"type,omitempty"`
-	Timestamp   string            `json:"timestamp,omitempty"`
-	Text        *Text             `json:"text,omitempty"`
-	Reaction    *Reaction         `json:"reaction,omitempty"`
-	Image       *Image            `json:"image,omitempty"`
-	Audio       *Audio            `json:"audio,omitempty"`
-	Video       *Video            `json:"video,omitempty"`
-	Document    *Document         `json:"document,omitempty"`
-	Sticker     *Sticker          `json:"sticker,omitempty"`
-	Location    *Location         `json:"location,omitempty"`
-	Context     *Context          `json:"context,omitempty"`
-	Button      *Button           `json:"button,omitempty"`
-	Order       *Order            `json:"order,omitempty"`
-	System      *System           `json:"system,omitempty"`
-	Referral    *Referral         `json:"referral,omitempty"`
-	Identity    *Identity         `json:"identity,omitempty"`
-	Interactive *Interactive      `json:"interactive,omitempty"`
-	Contacts    []message.Contact `json:"contacts,omitempty"`
-	Errors      []ErrorMessage    `json:"errors,omitempty"`
+	From         string `json:"from,omitempty"`
+	To           string `json:"to,omitempty"`
+	ID           string `json:"id,omitempty"`
+	Timestamp    string `json:"timestamp,omitempty"`
+	Type         string `json:"type,omitempty"`
+	*TypeMessage `json:",omitempty"`
 }
 
 type Pricing struct {
@@ -456,6 +451,34 @@ func (self *Value) GetMessages() []Message {
 	return self.Messages
 }
 
+func (self *Value) GetMessagesEchoes() []MessageEchoes {
+	return self.MessageEchoes
+}
+
+// GetMessages() or GetMessagesEchoes()
+func (self *Value) GetMessage() any {
+	if len(self.GetMessages()) > 0 {
+		return self.GetMessages()
+	}
+
+	if len(self.GetMessagesEchoes()) > 0 {
+		return self.GetMessagesEchoes()
+	}
+
+	return nil
+}
+
+func (self *Value) GetTypeMessage() string {
+	switch v := self.GetMessage().(type) {
+	case []Message:
+		return v[0].Type
+	case []MessageEchoes:
+		return v[0].Type
+	default:
+		return ""
+	}
+}
+
 func (self *Value) GetStatuses() []Statuse {
 	return self.Statuses
 }
@@ -529,7 +552,8 @@ func (self *Components) GetTypeMessage() (typ string) {
 		}
 	}()
 
-	return self.Entry[0].Changes[0].Value.Messages[0].Type
+	v := self.Entry[0].Changes[0].Value
+	return v.GetTypeMessage()
 }
 
 func (self *Components) GetNotificationType() (vNotification string) {
@@ -574,22 +598,19 @@ func (self *Components) GetValue() (vVal *Value) {
 }
 
 /*
-msgAud.Entry[0].Changes[0].Value.Messages[0].ID = GetMessageID() // type msg
-msgAud.Entry[0].Changes[0].Value.Messages[0].From = GetSenderMessage() // who send the message, fotr type message
-msgAud.GetEntry()[0].GetChange()[0].GetValue().GetMessages()[0].Audio = GetAudio()
+Return []Message, []MessageEchoes or nil
 */
-
-func (self *Components) GetMessages() (vMsg []Message) {
+func (self *Components) GetMessages() (vMsg any) {
 	defer func() {
 		if r := recover(); r != nil {
 			vMsg = []Message{}
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetValue().GetMessages()
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		return self.GetValue().GetMessage()
 	} else {
-		panic("this is not a message")
+		return nil
 	}
 }
 
@@ -600,8 +621,15 @@ func (self *Components) GetMessageID() (vMessageID string) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].ID
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].ID
+		case []MessageEchoes:
+			return v[0].ID
+		default:
+			return ""
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -614,8 +642,15 @@ func (self *Components) GetSenderMessage() (vMessageID string) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].From
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].From
+		case []MessageEchoes:
+			return v[0].From
+		default:
+			return ""
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -628,8 +663,15 @@ func (self *Components) GetAudioMessage() (vAudio *Audio) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Audio
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Audio
+		case []MessageEchoes:
+			return v[0].Audio
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -642,8 +684,15 @@ func (self *Components) GetVideoMessage() (vVideo *Video) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Video
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Video
+		case []MessageEchoes:
+			return v[0].Video
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -656,8 +705,15 @@ func (self *Components) GetImageMessage() (vImage *Image) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Image
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Image
+		case []MessageEchoes:
+			return v[0].Image
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -670,8 +726,15 @@ func (self *Components) GetDocumentMessage() (vDocument *Document) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Document
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Document
+		case []MessageEchoes:
+			return v[0].Document
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -684,8 +747,15 @@ func (self *Components) GetStickerMessage() (vSticker *Sticker) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Sticker
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Sticker
+		case []MessageEchoes:
+			return v[0].Sticker
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -698,8 +768,15 @@ func (self *Components) GetLocationMessage() (vLocation *Location) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Location
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Location
+		case []MessageEchoes:
+			return v[0].Location
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -712,8 +789,15 @@ func (self *Components) GetContactMessage() (vContact []message.Contact) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Contacts
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Contacts
+		case []MessageEchoes:
+			return v[0].Contacts
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -726,8 +810,15 @@ func (self *Components) GetTextMessage() (vText *Text) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Text
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Text
+		case []MessageEchoes:
+			return v[0].Text
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -740,8 +831,15 @@ func (self *Components) GetOrderMessage() (vOrder *Order) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Order
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Order
+		case []MessageEchoes:
+			return v[0].Order
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -754,8 +852,15 @@ func (self *Components) GetSystemMessage() (vSystem *System) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].System
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].System
+		case []MessageEchoes:
+			return v[0].System
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -768,8 +873,15 @@ func (self *Components) GetReferralMessage() (vReferral *Referral) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Referral
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Referral
+		case []MessageEchoes:
+			return v[0].Referral
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -782,8 +894,15 @@ func (self *Components) GetErrors() (vErrors []ErrorMessage) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Errors
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Errors
+		case []MessageEchoes:
+			return v[0].Errors
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -796,8 +915,15 @@ func (self *Components) GetButton() (vButtons *Button) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Button
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Button
+		case []MessageEchoes:
+			return v[0].Button
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -810,8 +936,15 @@ func (self *Components) GetInteractive() (vInteractive *Interactive) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Interactive
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Interactive
+		case []MessageEchoes:
+			return v[0].Interactive
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -824,8 +957,15 @@ func (self *Components) GetIdentity() (vIdentity *Identity) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Identity
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Identity
+		case []MessageEchoes:
+			return v[0].Identity
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -838,8 +978,15 @@ func (self *Components) GetContext() (vContext *Context) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Context
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Context
+		case []MessageEchoes:
+			return v[0].Context
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}
@@ -852,8 +999,15 @@ func (self *Components) GetReactionMessage() (vReaction *Reaction) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() {
-		return self.GetMessages()[0].Reaction
+	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+		switch v := self.GetMessages().(type) {
+		case []Message:
+			return v[0].Reaction
+		case []MessageEchoes:
+			return v[0].Reaction
+		default:
+			return nil
+		}
 	} else {
 		panic("this is not a message")
 	}

@@ -151,7 +151,7 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 			Components: msg,
 		}
 
-	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE:
+	case evt_types.WEBHOOK_NOTIFICATION_MESSAGE, evt_types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES:
 		// switch getTypeMessage(msg) {
 		switch msg.GetTypeMessage() {
 		case "audio":
@@ -261,10 +261,6 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_SMB_APP_STATE_SYNC:
 		evt = &event.SmbAppStateSyncEvent{
-			Components: msg,
-		}
-	case evt_types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES:
-		evt = &event.SmbMessageEchoesEvent{
 			Components: msg,
 		}
 	case evt_types.WEBHOOK_NOTIFICATION_TEMPLATE_CATEGORY_UPDATE:
