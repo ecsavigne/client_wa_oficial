@@ -18,19 +18,25 @@ type Profile struct {
 	Name string `json:"name,omitempty"` //  The customer's name.
 }
 
+func (self Profile) GetName() string { return self.Name }
+
 type Contact struct {
 	WaId     string `json:"wa_id,omitempty"`
 	UserId   string `json:"user_id,omitempty"` // Additional unique, alphanumeric identifier for a WhatsApp user.
 	*Profile `json:"profile,omitempty"`
 }
 
-func (self Contact) GetWaID() string   { return self.WaId }
-func (self Contact) GetUserId() string { return self.UserId }
+func (self Contact) GetWaID() string      { return self.WaId }
+func (self Contact) GetUserId() string    { return self.UserId }
+func (self Contact) GetProfile() *Profile { return self.Profile }
 
 type ErrorData struct {
 	MessagingProduct string `json:"messaging_product,omitempty"` // "whatsapp",
 	Details          string `json:"details,omitempty"`
 }
+
+func (self ErrorData) GetMessagingProduct() string { return self.MessagingProduct }
+func (self ErrorData) GetDetails() string          { return self.Details }
 
 type Error struct {
 	Message      string     `json:"message,omitempty"` // Combination of the error code and title. ej: (#130429) Rate limit hit.
@@ -43,14 +49,28 @@ type Error struct {
 	Href         string     `json:"href,omitempty"`
 }
 
+func (self Error) GetMessage() string       { return self.Message }
+func (self Error) GetType() string          { return self.Type }
+func (self Error) GetCode() int64           { return self.Code }
+func (self Error) GetErrorData() *ErrorData { return self.ErrorData }
+func (self Error) GetTitle() string         { return self.Title }
+func (self Error) GetErrorSubcode() int64   { return self.ErrorSubcode }
+func (self Error) GetFbtraceID() string     { return self.FbtraceID }
+func (self Error) GetHref() string          { return self.Href }
+
 type Text struct {
 	Body string `json:"body,omitempty"`
 }
+
+func (self Text) GetText() string { return self.Body }
 
 type Reaction struct {
 	MessageID string `json:"message_id,omitempty"`
 	Emoji     string `json:"emoji,omitempty"`
 }
+
+func (self Reaction) GetMessageID() string { return self.MessageID }
+func (self Reaction) GetEmoji() string     { return self.Emoji }
 
 type InfoMedia struct {
 	MIMEType string `json:"mime_type,omitempty"`
@@ -60,20 +80,42 @@ type InfoMedia struct {
 	Url      string `json:"url,omitempty"`
 }
 
+func (self InfoMedia) GetMimeType() string { return self.MIMEType }
+func (self InfoMedia) GetID() string       { return self.ID }
+func (self InfoMedia) GetCaption() string  { return self.Caption }
+func (self InfoMedia) GetSha256() string   { return self.Sha256 }
+func (self InfoMedia) GetURL() string      { return self.Url }
+
 type Image struct {
 	*InfoMedia `json:",omitempty"`
 }
+
+func (v Image) GetCaption() string  { return v.InfoMedia.Caption }
+func (v Image) GetID() string       { return v.InfoMedia.ID }
+func (v Image) GetSha256() string   { return v.InfoMedia.Sha256 }
+func (v Image) GetURL() string      { return v.InfoMedia.Url }
+func (v Image) GetMimeType() string { return v.InfoMedia.MIMEType }
 
 type Sticker struct {
 	*InfoMedia `json:",omitempty"`
 	Animated   bool `json:"animated,omitempty"`
 }
 
+func (v Sticker) GetCaption() string  { return v.InfoMedia.Caption }
+func (v Sticker) GetID() string       { return v.InfoMedia.ID }
+func (v Sticker) GetSha256() string   { return v.InfoMedia.Sha256 }
+func (v Sticker) GetURL() string      { return v.InfoMedia.Url }
+func (v Sticker) GetMimeType() string { return v.InfoMedia.MIMEType }
+
 type ErrorMessage struct {
 	Code    int64  `json:"code,omitempty"`
 	Details string `json:"details,omitempty"`
 	Title   string `json:"title,omitempty"`
 }
+
+func (self ErrorMessage) GetCode() int64     { return self.Code }
+func (self ErrorMessage) GetDetails() string { return self.Details }
+func (self ErrorMessage) GetTitle() string   { return self.Title }
 
 type Location struct {
 	Latitude  float64 `json:"latitude"`
@@ -82,14 +124,24 @@ type Location struct {
 	Address   string  `json:"address"`
 }
 
+func (self Location) GetLatitude() float64  { return self.Latitude }
+func (self Location) GetLongitude() float64 { return self.Longitude }
+func (self Location) GetName() string       { return self.Name }
+func (self Location) GetAddress() string    { return self.Address }
+
 type ReferredProduct struct {
 	CatalogId         string `json:"catalog_id"`          // Unique identifier of the Meta catalog linked to the WhatsApp Business Account.
 	ProductRetailerId string `json:"product_retailer_id"` // Unique identifier of the product in a catalog.
 }
 
+func (self ReferredProduct) GetCatalogId() string         { return self.CatalogId }
+func (self ReferredProduct) GetProductRetailerId() string { return self.ProductRetailerId }
+
 type Revoke struct {
 	OriginalMessageId string `json:"original_message_id"`
 }
+
+func (self Revoke) GetOriginalMessageId() string { return self.OriginalMessageId }
 
 type Edit struct {
 	OriginalMessageId string `json:"original_message_id"`
@@ -102,10 +154,24 @@ type Edit struct {
 	*TypeMessage `json:",omitempty"`
 }
 
+func (self Edit) GetOriginalMessageId() string { return self.OriginalMessageId }
+func (self Edit) GetType() string              { return self.Type }
+func (self Edit) GetTypeMessage() *TypeMessage { return self.TypeMessage }
+func (self Edit) GetMessage() *struct {
+	Context *struct {
+		ID string `json:"id,omitempty"`
+	} `json:"context,omitempty"`
+} {
+	return self.Message
+}
+
 type TypeMessageArray struct {
 	Contacts []message.Contact `json:"contacts,omitempty"`
 	Errors   []ErrorMessage    `json:"errors,omitempty"`
 }
+
+func (self TypeMessageArray) GetContacts() []message.Contact { return self.Contacts }
+func (self TypeMessageArray) GetErrors() []ErrorMessage      { return self.Errors }
 
 type TypeMessage struct {
 	*Revoke           `json:"revoke,omitempty"`
@@ -128,6 +194,25 @@ type TypeMessage struct {
 	*Video            `json:"video,omitempty"`
 }
 
+func (self TypeMessage) GetRevoke() *Revoke                     { return self.Revoke }
+func (self TypeMessage) GetEdit() *Edit                         { return self.Edit }
+func (self TypeMessage) GetAudio() *Audio                       { return self.Audio }
+func (self TypeMessage) GetButton() *Button                     { return self.Button }
+func (self TypeMessage) GetTypeMessageArray() *TypeMessageArray { return self.TypeMessageArray }
+func (self TypeMessage) GetContext() *Context                   { return self.Context }
+func (self TypeMessage) GetDocument() *Document                 { return self.Document }
+func (self TypeMessage) GetIdentity() *Identity                 { return self.Identity }
+func (self TypeMessage) GetImage() *Image                       { return self.Image }
+func (self TypeMessage) GetInteractive() *Interactive           { return self.Interactive }
+func (self TypeMessage) GetLocation() *Location                 { return self.Location }
+func (self TypeMessage) GetReaction() *Reaction                 { return self.Reaction }
+func (self TypeMessage) GetOrder() *Order                       { return self.Order }
+func (self TypeMessage) GetReferral() *Referral                 { return self.Referral }
+func (self TypeMessage) GetSticker() *Sticker                   { return self.Sticker }
+func (self TypeMessage) GetSystem() *System                     { return self.System }
+func (self TypeMessage) GetText() *Text                         { return self.Text }
+func (self TypeMessage) GetVideo() *Video                       { return self.Video }
+
 type Context struct {
 	Forwarded           bool            `json:"forwarded"`            //Set to true if the message received by the business has been forwarded.
 	FrequentlyForwarded bool            `json:"frequently_forwarded"` //Set to true if the message received by the business has been forwarded more than 5 times.
@@ -136,29 +221,12 @@ type Context struct {
 	ReferredProduct     ReferredProduct `json:"referred_product"`
 }
 
-func (ctx Context) GetForwarded() bool {
-	return ctx.Forwarded
-}
-
-func (ctx Context) GetFrequentlyForwarded() bool {
-	return ctx.FrequentlyForwarded
-}
-
-func (ctx Context) GetFrom() string {
-	return ctx.From
-}
-
-func (ctx Context) GetID() string {
-	return ctx.ID
-}
-
-func (ctx Context) GetReferredProduct() ReferredProduct {
-	return ctx.ReferredProduct
-}
-
-func (ctx Context) String() string {
-	return internal.ConvertStr(&ctx)
-}
+func (ctx Context) GetForwarded() bool                  { return ctx.Forwarded }
+func (ctx Context) GetFrequentlyForwarded() bool        { return ctx.FrequentlyForwarded }
+func (ctx Context) GetFrom() string                     { return ctx.From }
+func (ctx Context) GetID() string                       { return ctx.ID }
+func (ctx Context) GetReferredProduct() ReferredProduct { return ctx.ReferredProduct }
+func (ctx Context) String() string                      { return internal.ConvertStr(&ctx) }
 
 type Button struct {
 	Text    string `json:"text,omitempty"`
@@ -171,8 +239,8 @@ type InteractiveCommon struct {
 }
 
 type ListReply struct {
-	*InteractiveCommon
-	Description string `json:"description,omitempty"`
+	*InteractiveCommon `json:",omitempty"`
+	Description        string `json:"description,omitempty"`
 }
 
 type ButtonReply struct {
@@ -197,6 +265,17 @@ type Referral struct {
 	ThumbnailURL string `json:"thumbnail_url,omitempty"`
 	CtwaClid     string `json:"ctwa_clid,omitempty"`
 }
+
+func (r Referral) GetSourceURL() string    { return r.SourceURL }
+func (r Referral) GetSourceId() string     { return r.SourceID }
+func (r Referral) GetSourceType() string   { return r.SourceType }
+func (r Referral) GetHeadline() string     { return r.Headline }
+func (r Referral) GetBody() string         { return r.Body }
+func (r Referral) GetMediaType() string    { return r.MediaType }
+func (r Referral) GetImageURL() string     { return r.ImageURL }
+func (r Referral) GetVideoURL() string     { return r.VideoURL }
+func (r Referral) GetThumbnailURL() string { return r.ThumbnailURL }
+func (r Referral) GetCtwaClid() string     { return r.CtwaClid }
 
 type ProductItem struct {
 	ProductRetailerID string  `json:"product_retailer_id,omitempty"`
@@ -229,13 +308,36 @@ type Identity struct {
 type Audio struct {
 	*InfoMedia `json:",omitempty"`
 }
+
+func (v Audio) GetCaption() string  { return v.InfoMedia.Caption }
+func (v Audio) GetID() string       { return v.InfoMedia.ID }
+func (v Audio) GetSha256() string   { return v.InfoMedia.Sha256 }
+func (v Audio) GetURL() string      { return v.InfoMedia.Url }
+func (v Audio) GetMimeType() string { return v.InfoMedia.MIMEType }
+
 type Video struct {
 	*InfoMedia `json:",omitempty"`
 }
 
+func (v Video) GetCaption() string  { return v.InfoMedia.Caption }
+func (v Video) GetID() string       { return v.InfoMedia.ID }
+func (v Video) GetSha256() string   { return v.InfoMedia.Sha256 }
+func (v Video) GetURL() string      { return v.InfoMedia.Url }
+func (v Video) GetMimeType() string { return v.InfoMedia.MIMEType }
+
 type Document struct {
 	*InfoMedia `json:",omitempty"`
 	Filename   string `json:"filename,omitempty"`
+}
+
+func (v Document) GetCaption() string  { return v.InfoMedia.Caption }
+func (v Document) GetID() string       { return v.InfoMedia.ID }
+func (v Document) GetSha256() string   { return v.InfoMedia.Sha256 }
+func (v Document) GetURL() string      { return v.InfoMedia.Url }
+func (v Document) GetMimeType() string { return v.InfoMedia.MIMEType }
+
+func (v Document) GetFilename() string {
+	return v.Filename
 }
 
 type Message struct {
@@ -342,29 +444,12 @@ type WabaInfo struct {
 	SolutionPartnerBusinessIDs []string `json:"solution_partner_business_ids,omitempty"`
 }
 
-func (self WabaInfo) GetWabaID() string {
-	return self.WabaID
-}
-
-func (self WabaInfo) GetOwnerBusinessID() string {
-	return self.OwnerBusinessID
-}
-
-func (self WabaInfo) GetSolutionID() string {
-	return self.SolutionID
-}
-
-func (self WabaInfo) GetSolutionPartnerBusinessIDs() []string {
-	return self.SolutionPartnerBusinessIDs
-}
-
-func (self WabaInfo) GetAdAccountLinked() string {
-	return self.AdAccountLinked
-}
-
-func (self WabaInfo) GetPartnerAppID() string {
-	return self.PartnerAppID
-}
+func (self WabaInfo) GetWabaID() string                       { return self.WabaID }
+func (self WabaInfo) GetOwnerBusinessID() string              { return self.OwnerBusinessID }
+func (self WabaInfo) GetSolutionID() string                   { return self.SolutionID }
+func (self WabaInfo) GetSolutionPartnerBusinessIDs() []string { return self.SolutionPartnerBusinessIDs }
+func (self WabaInfo) GetAdAccountLinked() string              { return self.AdAccountLinked }
+func (self WabaInfo) GetPartnerAppID() string                 { return self.PartnerAppID }
 
 type ViolationInfo struct {
 	ViolationType string `json:"violation_type,omitempty"`
@@ -438,25 +523,11 @@ type Value struct {
 	VolumeTierInfo                   *VolumeTierInfo                 `json:"volume_tier_info,omitempty"`
 }
 
-func (self *Value) GetMessagingProduct() string {
-	return self.MessagingProduct
-}
-
-func (self *Value) GetMetadata() *Metadata {
-	return self.Metadata
-}
-
-func (self *Value) GetContacts() []Contact {
-	return self.Contacts
-}
-
-func (self *Value) GetMessages() []Message {
-	return self.Messages
-}
-
-func (self *Value) GetMessagesEchoes() []MessageEchoes {
-	return self.MessageEchoes
-}
+func (self *Value) GetMessagingProduct() string        { return self.MessagingProduct }
+func (self *Value) GetMetadata() *Metadata             { return self.Metadata }
+func (self *Value) GetContacts() []Contact             { return self.Contacts }
+func (self *Value) GetMessages() []Message             { return self.Messages }
+func (self *Value) GetMessagesEchoes() []MessageEchoes { return self.MessageEchoes }
 
 // GetMessages() or GetMessagesEchoes()
 func (self *Value) GetMessage() any {
@@ -482,9 +553,7 @@ func (self *Value) GetTypeMessage() string {
 	}
 }
 
-func (self *Value) GetStatuses() []Statuse {
-	return self.Statuses
-}
+func (self *Value) GetStatuses() []Statuse { return self.Statuses }
 
 type Change struct {
 	Value *Value `json:"value,omitempty"`
@@ -530,13 +599,8 @@ type Components struct {
 	Entry  []Entry `json:"entry,omitempty"`
 }
 
-func (self *Components) GetObject() string {
-	return self.Object
-}
-
-func (self *Components) GetEntry() []Entry {
-	return self.Entry
-}
+func (self *Components) GetObject() string { return self.Object }
+func (self *Components) GetEntry() []Entry { return self.Entry }
 
 func (self *Components) GetSatusMessage() (status string) {
 	defer func() {
@@ -685,15 +749,12 @@ func (self *Components) GetMessageTimestamp() (timestamp string) {
 func (self *Components) GetDisplayPhoneNumber() (phoneNumber string) {
 	return self.GetValue().GetMetadata().GetDisplayPhoneNumber()
 }
-
 func (self *Components) GetContactPhoneNumber() (phoneNumber string) {
 	return self.GetValue().GetContacts()[0].GetWaID()
 }
-
 func (self *Components) GetContactUserID() (phoneNumber string) {
 	return self.GetValue().GetContacts()[0].GetUserId()
 }
-
 func (self *Components) GetAudioMessage() (vAudio *Audio) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -715,10 +776,10 @@ func (self *Components) GetAudioMessage() (vAudio *Audio) {
 	}
 }
 
-func (self *Components) GetVideoMessage() (vVideo *Video) {
+func (self *Components) GetVideoMessage() (v *Video) {
 	defer func() {
 		if r := recover(); r != nil {
-			vVideo = nil
+			v = nil
 		}
 	}()
 
