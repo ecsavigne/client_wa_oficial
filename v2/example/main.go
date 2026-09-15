@@ -161,7 +161,7 @@ func testWpp(client clientpack.Client, rr_ response.Responser) {
 	// rr := my_client.UnSubscribedWaba("1415160156667406")
 	// rr := my_client.RegisterForUseApi("984286011433245")
 	// token := ""
-	rr := my_client.DebugToken("765398235585526|s5fnSgp2klGH91tqzMUOmepZ9_I", "EAAK4ICnxmZCYBSbhAyxtbIwLHX8wFKqvCuJkOX5u8wTkV624YGZB1NFfckJEM4ZAvMGy1NGoUR6zzGFsCdkyNie4E1O7DucEhsc71hpXSdk9VAUQDsQDZBCmbxtBazij5i0gU1wjTs7NYa35tO3muZAyi01edDhhHowKrd5KSnLyjNjtZCb3gsWyLNiPCAOfLTd7t4LvLvOwZAFzkXO7K2TXSJf3liZAuAapEk1ky1kE5sqOb0PJd9WxGiXbbzfX7SYhOx8nmYGhdo3G32gO1zWNetImJDSonOyhRA3KJ0jqmaYMgrsFhCGPuDYYV1NA6MJRuweYbn4EICXmLj8e1NlS")
+	rr := my_client.DebugToken("765398235585526|s5fnSgp2klGH91tqzMUOmepZ9_I", "")
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.GetLimiteMsg(143390)
 	// rr := my_client.UnregisterNumber(94571)
