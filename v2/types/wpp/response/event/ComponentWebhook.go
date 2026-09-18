@@ -376,6 +376,15 @@ type Statuse struct {
 	Errors                []Error       `json:"errors,omitempty"`
 }
 
+func (v Statuse) GetID() string                    { return v.ID }
+func (v Statuse) GetBizOpaqueCallbackData() string { return v.BizOpaqueCallbackData }
+func (v Statuse) GetStatus() string                { return v.Status }
+func (v Statuse) GetTimestamp() string             { return v.Timestamp }
+func (v Statuse) GetRecipientID() string           { return v.RecipientID }
+func (v Statuse) GetConversation() *Conversation   { return v.Conversation }
+func (v Statuse) GetPricing() *Pricing             { return v.Pricing }
+func (v Statuse) GetErrors() []Error               { return v.Errors }
+
 type MessageTemplateButton struct {
 	MessageTemplateButtonType        string `json:"message_template_button_type,omitempty"`
 	MessageTemplateButtonText        string `json:"message_template_button_text,omitempty"`
@@ -602,14 +611,24 @@ type Components struct {
 func (self *Components) GetObject() string { return self.Object }
 func (self *Components) GetEntry() []Entry { return self.Entry }
 
-func (self *Components) GetSatusMessage() (status string) {
+func (self *Components) GetStatuses() (status *Statuse) {
+	defer func() {
+		if r := recover(); r != nil {
+			status = nil
+		}
+	}()
+
+	return &self.GetEntry()[0].GetChange()[0].GetValue().GetStatuses()[0]
+}
+
+func (self *Components) GetStatuseType() (status string) {
 	defer func() {
 		if r := recover(); r != nil {
 			status = ""
 		}
 	}()
 
-	return self.GetEntry()[0].GetChange()[0].GetValue().GetStatuses()[0].Status
+	return self.GetStatuses().GetStatus()
 }
 
 func (self *Components) GetTypeMessage() (typ string) {

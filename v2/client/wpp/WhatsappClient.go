@@ -213,7 +213,7 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 		default:
 			// can be status message or another notification about message
 			// status := getSatusMessage(msg)
-			status := msg.GetSatusMessage()
+			status := msg.GetStatuseType()
 
 			switch {
 			case status != "":
