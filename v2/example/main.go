@@ -209,14 +209,14 @@ func testIg(client clientpack.Client, rr response.Responser) {
 	client = examplemessage.NewClientIG() // fmt.Printf("Response Client IG: %s\n", client)
 	// rr = examplemessage.SendMessageText(client, "2014023525994448", "Habla test ok, prueba de mensaje de texto") // 948876401474591
 	// fmt.Printf("Response: %s\n", rr)
-	rr = examplemessage.SendMessageImage(client, "2014023525994448", "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTNvcThmcG85OTRlMTF5MTZueWk4ZGMxcDRkMHcxMXA1Z2oxNzZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O3wIKp4DlubUl1Bezt/giphy.gif", "") // 948876401474591
+	// rr = examplemessage.SendMessageImage(client, "2014023525994448", "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTNvcThmcG85OTRlMTF5MTZueWk4ZGMxcDRkMHcxMXA1Z2oxNzZlaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/O3wIKp4DlubUl1Bezt/giphy.gif", "") // 948876401474591
 	// rr = examplemessage.SendMessageImageCollage(client, "2014023525994448", []string{}, []string{"948876401474591", "948876401474591", "948876401474591", "1131758486677092", "1295230589210858", "1314539007200675"}) // 948876401474591
 	// rr = examplemessage.SendMessageAudio(client, "2014023525994448", "https://oficial.crmsocialhub.com.br/static/test.aac", "817700310893199") //2741747206192358
 	// rr = examplemessage.SendMessageVideo(client, "2014023525994448", "https://res.cloudinary.com/dczar4xfh/video/upload/v1776219555/samples/dance-2.mp4", "1942160596402518")
 	// rr = examplemessage.SendMessageStickerLike(client, "2014023525994448")
 	// rr = examplemessage.SendMessagePDFFile(client, "2014023525994448", "https://oficial.crmsocialhub.com.br/static/Fatura%20de%20novembro.pdf", "995658263029909")
 	// rr = examplemessage.SendMessageReaction(client, "2014023525994448", "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4MTgyMjA5NjMwOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjI0NDk2NzIxNDY0NzM0MzozMjc2NTU3MTU2MzMwMTY1NDg5MDI3MzEyMTExOTUwMjMzNgZDZD", "", "unreact")
-	// rr = examplemessage.GetAccountInfoBusiness(client)
+	rr = examplemessage.GetAccountInfoBusiness(client)
 	// rr = examplemessage.SendMessageQuickReplies(client, "2014023525994448")
 	// rr = examplemessage.SendPresence(client, "2014023525994448", "typing_on")
 	// time.Sleep(10 * time.Second)
