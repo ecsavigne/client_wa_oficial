@@ -1159,9 +1159,9 @@ func (self *ClientIG) Create(typeCreate ig.IG_CREATE_TYPE, data ...map[string]an
 
 // Gets
 func (self *ClientIG) getInfoAccountBusiness() gralresponse.Responser {
-	return self.executeRequest(http.MethodGet, "/", types.QueryData{
+	return self.executeRequest(http.MethodGet, "/me", types.QueryData{
 		"fields": "id,user_id,media_count,account_type,name,username,followers_count,follows_count,profile_picture_url",
-	}, true, gralresponse.InfoAccountBusinessResponse)
+	}, false, gralresponse.InfoAccountBusinessResponse)
 }
 
 func (self *ClientIG) getInstagramPersistentMenu() gralresponse.Responser {
