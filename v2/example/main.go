@@ -311,8 +311,8 @@ func main() {
 	// testUpload()
 	// return
 
-	testWpp(client, rr)
-	// testIg(client, rr)
+	// testWpp(client, rr)
+	testIg(client, rr)
 
 	fmt.Println("Press Ctrl+C to exit...")
 	c := make(chan os.Signal, 1)

@@ -693,7 +693,7 @@ func (self *Components) GetMessages() (vMsg any) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		return self.GetValue().GetMessage()
 	} else {
 		return nil
@@ -707,7 +707,7 @@ func (self *Components) GetMessageID() (vMessageID string) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].ID
@@ -729,7 +729,8 @@ func (self *Components) GetSenderMessage() (vMessageID string) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() ||
+		self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].From
@@ -750,7 +751,7 @@ func (self *Components) GetMessageTimestamp() (timestamp string) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Timestamp
@@ -781,7 +782,7 @@ func (self *Components) GetAudioMessage() (vAudio *Audio) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Audio
@@ -802,7 +803,7 @@ func (self *Components) GetVideoMessage() (v *Video) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Video
@@ -823,7 +824,7 @@ func (self *Components) GetImageMessage() (vImage *Image) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Image
@@ -844,7 +845,7 @@ func (self *Components) GetDocumentMessage() (vDocument *Document) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Document
@@ -865,7 +866,7 @@ func (self *Components) GetStickerMessage() (vSticker *Sticker) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Sticker
@@ -886,7 +887,7 @@ func (self *Components) GetLocationMessage() (vLocation *Location) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Location
@@ -907,7 +908,7 @@ func (self *Components) GetContactMessage() (vContact []message.Contact) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Contacts
@@ -928,7 +929,7 @@ func (self *Components) GetTextMessage() (vText *Text) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Text
@@ -949,7 +950,7 @@ func (self *Components) GetOrderMessage() (vOrder *Order) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Order
@@ -970,7 +971,7 @@ func (self *Components) GetSystemMessage() (vSystem *System) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].System
@@ -991,7 +992,7 @@ func (self *Components) GetReferralMessage() (vReferral *Referral) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Referral
@@ -1012,7 +1013,7 @@ func (self *Components) GetErrors() (vErrors []ErrorMessage) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Errors
@@ -1033,7 +1034,7 @@ func (self *Components) GetButton() (vButtons *Button) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Button
@@ -1054,7 +1055,7 @@ func (self *Components) GetInteractive() (vInteractive *Interactive) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Interactive
@@ -1075,7 +1076,7 @@ func (self *Components) GetIdentity() (vIdentity *Identity) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Identity
@@ -1096,7 +1097,7 @@ func (self *Components) GetContext() (vContext *Context) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Context
@@ -1117,7 +1118,7 @@ func (self *Components) GetReactionMessage() (vReaction *Reaction) {
 		}
 	}()
 
-	if self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() != types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
+	if self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_MESSAGE.Enum() || self.GetNotificationType() == types.WEBHOOK_NOTIFICATION_SMB_MESSAGE_ECHOES.Enum() {
 		switch v := self.GetMessages().(type) {
 		case []Message:
 			return v[0].Reaction

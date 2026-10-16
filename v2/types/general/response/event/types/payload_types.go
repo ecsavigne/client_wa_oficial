@@ -153,8 +153,8 @@ var type_NOTIFICATION_WEBHOOK = map[string]TYPE_NOTIFICATION_WEBHOOK{
 	// fields Wpp
 	"unknown":                            WEBHOOK_NOTIFICATION_UNKNOWN,
 	"account_alerts":                     WEBHOOK_NOTIFICATION_ACCOUNT_ALERTS,
-	"account_update":                     WEBHOOK_NOTIFICATION_ACCOUNT_UPDATE,
 	"account_review_update":              WEBHOOK_NOTIFICATION_ACCOUNT_REVIEW_UPDATE,
+	"account_update":                     WEBHOOK_NOTIFICATION_ACCOUNT_UPDATE,
 	"business_capability_update":         WEBHOOK_NOTIFICATION_BUSINESS_CAPABILITY_UPDATE,
 	"history":                            WEBHOOK_NOTIFICATION_HISTORY,
 	"messages":                           WEBHOOK_NOTIFICATION_MESSAGE,
@@ -189,7 +189,12 @@ var type_NOTIFICATION_WEBHOOK = map[string]TYPE_NOTIFICATION_WEBHOOK{
 }
 
 func (t TYPE_NOTIFICATION_WEBHOOK) Enum() string {
-	return []string{"unknown", "messages", "template_category_update", "message_template_status_update", "comments", "live_comments", "mentions", "message_echoes", "message_reactions", "messaging_handover", "messaging_optins", "messaging_policy_enforcement", "messaging_postbacks", "messaging_referral", "messaging_seen", "response_feedback", "standby", "story_insights", "message_edit"}[t]
+	for k, v := range type_NOTIFICATION_WEBHOOK {
+		if v == t {
+			return k
+		}
+	}
+	return ""
 }
 
 func (t TYPE_NOTIFICATION_WEBHOOK) String() string {
