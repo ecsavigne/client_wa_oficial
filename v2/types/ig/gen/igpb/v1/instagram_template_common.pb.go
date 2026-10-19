@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_template_common.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,13 +24,13 @@ const (
 
 // DefaultAction represents the default action executed when the template is tapped
 type DefaultAction struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The type of action (must be web_url for generic templates)
-	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
-	// The URL to open when the template is tapped
-	Url           *string `protobuf:"bytes,2,opt,name=url" json:"url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
+	xxx_hidden_Url         *string                `protobuf:"bytes,2,opt,name=url"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DefaultAction) Reset() {
@@ -61,47 +59,57 @@ func (x *DefaultAction) ProtoReflect() protoreflect.Message {
 }
 
 func (x *DefaultAction) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *DefaultAction) GetUrl() string {
-	if x != nil && x.Url != nil {
-		return *x.Url
+	if x != nil {
+		if x.xxx_hidden_Url != nil {
+			return *x.xxx_hidden_Url
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *DefaultAction) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *DefaultAction) SetUrl(v string) {
-	x.Url = &v
+	x.xxx_hidden_Url = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *DefaultAction) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *DefaultAction) HasUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.Url != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *DefaultAction) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Type = nil
 }
 
 func (x *DefaultAction) ClearUrl() {
-	x.Url = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Url = nil
 }
 
 type DefaultAction_builder struct {
@@ -117,24 +125,28 @@ func (b0 DefaultAction_builder) Build() *DefaultAction {
 	m0 := &DefaultAction{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Type = b.Type
-	x.Url = b.Url
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Type = b.Type
+	}
+	if b.Url != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Url = b.Url
+	}
 	return m0
 }
 
 // TemplateButton represents a button in template messages
 type TemplateButton struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The type of button (web_url or postback)
-	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
-	// The title text displayed on the button (max 20 characters)
-	Title *string `protobuf:"bytes,2,opt,name=title" json:"title,omitempty"`
-	// The URL to open for web_url buttons
-	Url *string `protobuf:"bytes,3,opt,name=url" json:"url,omitempty"`
-	// The payload string sent as postback for postback buttons. The content to be sent in the messaging_postback webhook notification when a postback button is clicked
-	Payload       *string `protobuf:"bytes,4,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
+	xxx_hidden_Title       *string                `protobuf:"bytes,2,opt,name=title"`
+	xxx_hidden_Url         *string                `protobuf:"bytes,3,opt,name=url"`
+	xxx_hidden_Payload     *string                `protobuf:"bytes,4,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *TemplateButton) Reset() {
@@ -163,91 +175,111 @@ func (x *TemplateButton) ProtoReflect() protoreflect.Message {
 }
 
 func (x *TemplateButton) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TemplateButton) GetTitle() string {
-	if x != nil && x.Title != nil {
-		return *x.Title
+	if x != nil {
+		if x.xxx_hidden_Title != nil {
+			return *x.xxx_hidden_Title
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TemplateButton) GetUrl() string {
-	if x != nil && x.Url != nil {
-		return *x.Url
+	if x != nil {
+		if x.xxx_hidden_Url != nil {
+			return *x.xxx_hidden_Url
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TemplateButton) GetPayload() string {
-	if x != nil && x.Payload != nil {
-		return *x.Payload
+	if x != nil {
+		if x.xxx_hidden_Payload != nil {
+			return *x.xxx_hidden_Payload
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TemplateButton) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *TemplateButton) SetTitle(v string) {
-	x.Title = &v
+	x.xxx_hidden_Title = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *TemplateButton) SetUrl(v string) {
-	x.Url = &v
+	x.xxx_hidden_Url = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
 func (x *TemplateButton) SetPayload(v string) {
-	x.Payload = &v
+	x.xxx_hidden_Payload = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
 }
 
 func (x *TemplateButton) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *TemplateButton) HasTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.Title != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *TemplateButton) HasUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.Url != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *TemplateButton) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *TemplateButton) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Type = nil
 }
 
 func (x *TemplateButton) ClearTitle() {
-	x.Title = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Title = nil
 }
 
 func (x *TemplateButton) ClearUrl() {
-	x.Url = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Url = nil
 }
 
 func (x *TemplateButton) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Payload = nil
 }
 
 type TemplateButton_builder struct {
@@ -267,28 +299,37 @@ func (b0 TemplateButton_builder) Build() *TemplateButton {
 	m0 := &TemplateButton{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Type = b.Type
-	x.Title = b.Title
-	x.Url = b.Url
-	x.Payload = b.Payload
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Type = b.Type
+	}
+	if b.Title != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_Title = b.Title
+	}
+	if b.Url != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_Url = b.Url
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
 // Element represents an element in the generic template carousel
 type Element struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The title to display in the template (80 character limit)
-	Title *string `protobuf:"bytes,1,opt,name=title" json:"title,omitempty"`
-	// The subtitle to display in the template (80 character limit)
-	Subtitle *string `protobuf:"bytes,2,opt,name=subtitle" json:"subtitle,omitempty"`
-	// The URL of the image to display in the template
-	ImageUrl *string `protobuf:"bytes,3,opt,name=image_url,json=imageUrl" json:"image_url,omitempty"`
-	// The default action executed when the template is tapped
-	DefaultAction *DefaultAction `protobuf:"bytes,4,opt,name=default_action,json=defaultAction" json:"default_action,omitempty"`
-	// An array of buttons to append to the template (maximum of 3 buttons per element)
-	Buttons       []*TemplateButton `protobuf:"bytes,5,rep,name=buttons" json:"buttons,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Title         *string                `protobuf:"bytes,1,opt,name=title"`
+	xxx_hidden_Subtitle      *string                `protobuf:"bytes,2,opt,name=subtitle"`
+	xxx_hidden_ImageUrl      *string                `protobuf:"bytes,3,opt,name=image_url,json=imageUrl"`
+	xxx_hidden_DefaultAction *DefaultAction         `protobuf:"bytes,4,opt,name=default_action,json=defaultAction"`
+	xxx_hidden_Buttons       *[]*TemplateButton     `protobuf:"bytes,5,rep,name=buttons"`
+	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
+	XXX_presence             [1]uint32
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *Element) Reset() {
@@ -317,102 +358,119 @@ func (x *Element) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Element) GetTitle() string {
-	if x != nil && x.Title != nil {
-		return *x.Title
+	if x != nil {
+		if x.xxx_hidden_Title != nil {
+			return *x.xxx_hidden_Title
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Element) GetSubtitle() string {
-	if x != nil && x.Subtitle != nil {
-		return *x.Subtitle
+	if x != nil {
+		if x.xxx_hidden_Subtitle != nil {
+			return *x.xxx_hidden_Subtitle
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Element) GetImageUrl() string {
-	if x != nil && x.ImageUrl != nil {
-		return *x.ImageUrl
+	if x != nil {
+		if x.xxx_hidden_ImageUrl != nil {
+			return *x.xxx_hidden_ImageUrl
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Element) GetDefaultAction() *DefaultAction {
 	if x != nil {
-		return x.DefaultAction
+		return x.xxx_hidden_DefaultAction
 	}
 	return nil
 }
 
 func (x *Element) GetButtons() []*TemplateButton {
 	if x != nil {
-		return x.Buttons
+		if x.xxx_hidden_Buttons != nil {
+			return *x.xxx_hidden_Buttons
+		}
 	}
 	return nil
 }
 
 func (x *Element) SetTitle(v string) {
-	x.Title = &v
+	x.xxx_hidden_Title = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
 }
 
 func (x *Element) SetSubtitle(v string) {
-	x.Subtitle = &v
+	x.xxx_hidden_Subtitle = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
 func (x *Element) SetImageUrl(v string) {
-	x.ImageUrl = &v
+	x.xxx_hidden_ImageUrl = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *Element) SetDefaultAction(v *DefaultAction) {
-	x.DefaultAction = v
+	x.xxx_hidden_DefaultAction = v
 }
 
 func (x *Element) SetButtons(v []*TemplateButton) {
-	x.Buttons = v
+	x.xxx_hidden_Buttons = &v
 }
 
 func (x *Element) HasTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.Title != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *Element) HasSubtitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.Subtitle != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *Element) HasImageUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.ImageUrl != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *Element) HasDefaultAction() bool {
 	if x == nil {
 		return false
 	}
-	return x.DefaultAction != nil
+	return x.xxx_hidden_DefaultAction != nil
 }
 
 func (x *Element) ClearTitle() {
-	x.Title = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Title = nil
 }
 
 func (x *Element) ClearSubtitle() {
-	x.Subtitle = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Subtitle = nil
 }
 
 func (x *Element) ClearImageUrl() {
-	x.ImageUrl = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_ImageUrl = nil
 }
 
 func (x *Element) ClearDefaultAction() {
-	x.DefaultAction = nil
+	x.xxx_hidden_DefaultAction = nil
 }
 
 type Element_builder struct {
@@ -434,23 +492,32 @@ func (b0 Element_builder) Build() *Element {
 	m0 := &Element{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Title = b.Title
-	x.Subtitle = b.Subtitle
-	x.ImageUrl = b.ImageUrl
-	x.DefaultAction = b.DefaultAction
-	x.Buttons = b.Buttons
+	if b.Title != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		x.xxx_hidden_Title = b.Title
+	}
+	if b.Subtitle != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_Subtitle = b.Subtitle
+	}
+	if b.ImageUrl != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_ImageUrl = b.ImageUrl
+	}
+	x.xxx_hidden_DefaultAction = b.DefaultAction
+	x.xxx_hidden_Buttons = &b.Buttons
 	return m0
 }
 
 // GenericTemplatePayload represents the payload of a generic template
 type GenericTemplatePayload struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Must be "generic"
-	TemplateType *string `protobuf:"bytes,1,opt,name=template_type,json=templateType" json:"template_type,omitempty"`
-	// An array of element objects (maximum of 10 elements per message)
-	Elements      []*Element `protobuf:"bytes,2,rep,name=elements" json:"elements,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_TemplateType *string                `protobuf:"bytes,1,opt,name=template_type,json=templateType"`
+	xxx_hidden_Elements     *[]*Element            `protobuf:"bytes,2,rep,name=elements"`
+	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
+	XXX_presence            [1]uint32
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *GenericTemplatePayload) Reset() {
@@ -479,36 +546,43 @@ func (x *GenericTemplatePayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *GenericTemplatePayload) GetTemplateType() string {
-	if x != nil && x.TemplateType != nil {
-		return *x.TemplateType
+	if x != nil {
+		if x.xxx_hidden_TemplateType != nil {
+			return *x.xxx_hidden_TemplateType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *GenericTemplatePayload) GetElements() []*Element {
 	if x != nil {
-		return x.Elements
+		if x.xxx_hidden_Elements != nil {
+			return *x.xxx_hidden_Elements
+		}
 	}
 	return nil
 }
 
 func (x *GenericTemplatePayload) SetTemplateType(v string) {
-	x.TemplateType = &v
+	x.xxx_hidden_TemplateType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *GenericTemplatePayload) SetElements(v []*Element) {
-	x.Elements = v
+	x.xxx_hidden_Elements = &v
 }
 
 func (x *GenericTemplatePayload) HasTemplateType() bool {
 	if x == nil {
 		return false
 	}
-	return x.TemplateType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *GenericTemplatePayload) ClearTemplateType() {
-	x.TemplateType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_TemplateType = nil
 }
 
 type GenericTemplatePayload_builder struct {
@@ -524,22 +598,24 @@ func (b0 GenericTemplatePayload_builder) Build() *GenericTemplatePayload {
 	m0 := &GenericTemplatePayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.TemplateType = b.TemplateType
-	x.Elements = b.Elements
+	if b.TemplateType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_TemplateType = b.TemplateType
+	}
+	x.xxx_hidden_Elements = &b.Elements
 	return m0
 }
 
 // ButtonTemplatePayload represents the payload of a button template
 type ButtonTemplatePayload struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Must be "button"
-	TemplateType *string `protobuf:"bytes,1,opt,name=template_type,json=templateType" json:"template_type,omitempty"`
-	// The text message to display UTF-8-encoded text of up to 640 characters. Text will appear above the buttons.
-	Text *string `protobuf:"bytes,2,opt,name=text" json:"text,omitempty"`
-	// An array of buttons to display (maximum of 3 buttons)
-	Buttons       []*TemplateButton `protobuf:"bytes,3,rep,name=buttons" json:"buttons,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_TemplateType *string                `protobuf:"bytes,1,opt,name=template_type,json=templateType"`
+	xxx_hidden_Text         *string                `protobuf:"bytes,2,opt,name=text"`
+	xxx_hidden_Buttons      *[]*TemplateButton     `protobuf:"bytes,3,rep,name=buttons"`
+	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
+	XXX_presence            [1]uint32
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *ButtonTemplatePayload) Reset() {
@@ -568,58 +644,70 @@ func (x *ButtonTemplatePayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *ButtonTemplatePayload) GetTemplateType() string {
-	if x != nil && x.TemplateType != nil {
-		return *x.TemplateType
+	if x != nil {
+		if x.xxx_hidden_TemplateType != nil {
+			return *x.xxx_hidden_TemplateType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ButtonTemplatePayload) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *ButtonTemplatePayload) GetButtons() []*TemplateButton {
 	if x != nil {
-		return x.Buttons
+		if x.xxx_hidden_Buttons != nil {
+			return *x.xxx_hidden_Buttons
+		}
 	}
 	return nil
 }
 
 func (x *ButtonTemplatePayload) SetTemplateType(v string) {
-	x.TemplateType = &v
+	x.xxx_hidden_TemplateType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *ButtonTemplatePayload) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *ButtonTemplatePayload) SetButtons(v []*TemplateButton) {
-	x.Buttons = v
+	x.xxx_hidden_Buttons = &v
 }
 
 func (x *ButtonTemplatePayload) HasTemplateType() bool {
 	if x == nil {
 		return false
 	}
-	return x.TemplateType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *ButtonTemplatePayload) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *ButtonTemplatePayload) ClearTemplateType() {
-	x.TemplateType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_TemplateType = nil
 }
 
 func (x *ButtonTemplatePayload) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Text = nil
 }
 
 type ButtonTemplatePayload_builder struct {
@@ -637,24 +725,28 @@ func (b0 ButtonTemplatePayload_builder) Build() *ButtonTemplatePayload {
 	m0 := &ButtonTemplatePayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.TemplateType = b.TemplateType
-	x.Text = b.Text
-	x.Buttons = b.Buttons
+	if b.TemplateType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_TemplateType = b.TemplateType
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Text = b.Text
+	}
+	x.xxx_hidden_Buttons = &b.Buttons
 	return m0
 }
 
 type TemplatePayload struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Value must be button or generic.
-	TemplateType *string `protobuf:"bytes,1,opt,name=template_type,json=templateType" json:"template_type,omitempty"`
-	// UTF-8-encoded text of up to 640 characters. Text will appear above the buttons
-	Text *string `protobuf:"bytes,2,opt,name=text" json:"text,omitempty"`
-	// An array of element objects that describe instances of the generic template to be sent. Specifying multiple elements will send a horizontally scrollable carousel of templates. A maximum of 10 elements is supported.
-	Elements []*Element `protobuf:"bytes,3,rep,name=elements" json:"elements,omitempty"`
-	// Set of 1-3 buttons that appear as call-to-actions.
-	Buttons       []*TemplateButton `protobuf:"bytes,4,rep,name=buttons" json:"buttons,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_TemplateType *string                `protobuf:"bytes,1,opt,name=template_type,json=templateType"`
+	xxx_hidden_Text         *string                `protobuf:"bytes,2,opt,name=text"`
+	xxx_hidden_Elements     *[]*Element            `protobuf:"bytes,3,rep,name=elements"`
+	xxx_hidden_Buttons      *[]*TemplateButton     `protobuf:"bytes,4,rep,name=buttons"`
+	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
+	XXX_presence            [1]uint32
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *TemplatePayload) Reset() {
@@ -683,69 +775,83 @@ func (x *TemplatePayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *TemplatePayload) GetTemplateType() string {
-	if x != nil && x.TemplateType != nil {
-		return *x.TemplateType
+	if x != nil {
+		if x.xxx_hidden_TemplateType != nil {
+			return *x.xxx_hidden_TemplateType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TemplatePayload) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TemplatePayload) GetElements() []*Element {
 	if x != nil {
-		return x.Elements
+		if x.xxx_hidden_Elements != nil {
+			return *x.xxx_hidden_Elements
+		}
 	}
 	return nil
 }
 
 func (x *TemplatePayload) GetButtons() []*TemplateButton {
 	if x != nil {
-		return x.Buttons
+		if x.xxx_hidden_Buttons != nil {
+			return *x.xxx_hidden_Buttons
+		}
 	}
 	return nil
 }
 
 func (x *TemplatePayload) SetTemplateType(v string) {
-	x.TemplateType = &v
+	x.xxx_hidden_TemplateType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *TemplatePayload) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *TemplatePayload) SetElements(v []*Element) {
-	x.Elements = v
+	x.xxx_hidden_Elements = &v
 }
 
 func (x *TemplatePayload) SetButtons(v []*TemplateButton) {
-	x.Buttons = v
+	x.xxx_hidden_Buttons = &v
 }
 
 func (x *TemplatePayload) HasTemplateType() bool {
 	if x == nil {
 		return false
 	}
-	return x.TemplateType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *TemplatePayload) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *TemplatePayload) ClearTemplateType() {
-	x.TemplateType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_TemplateType = nil
 }
 
 func (x *TemplatePayload) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Text = nil
 }
 
 type TemplatePayload_builder struct {
@@ -765,23 +871,29 @@ func (b0 TemplatePayload_builder) Build() *TemplatePayload {
 	m0 := &TemplatePayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.TemplateType = b.TemplateType
-	x.Text = b.Text
-	x.Elements = b.Elements
-	x.Buttons = b.Buttons
+	if b.TemplateType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_TemplateType = b.TemplateType
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_Text = b.Text
+	}
+	x.xxx_hidden_Elements = &b.Elements
+	x.xxx_hidden_Buttons = &b.Buttons
 	return m0
 }
 
 // TemplateAttachment represents a message attachment with a template
 // The payload can be one of several template types using oneof
 type TemplateAttachment struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Must be "template"
-	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
-	// payload of the template.
-	Payload       *TemplatePayload `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,1,opt,name=type"`
+	xxx_hidden_Payload     *TemplatePayload       `protobuf:"bytes,2,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *TemplateAttachment) Reset() {
@@ -810,47 +922,52 @@ func (x *TemplateAttachment) ProtoReflect() protoreflect.Message {
 }
 
 func (x *TemplateAttachment) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *TemplateAttachment) GetPayload() *TemplatePayload {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *TemplateAttachment) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *TemplateAttachment) SetPayload(v *TemplatePayload) {
-	x.Payload = v
+	x.xxx_hidden_Payload = v
 }
 
 func (x *TemplateAttachment) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *TemplateAttachment) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return x.xxx_hidden_Payload != nil
 }
 
 func (x *TemplateAttachment) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Type = nil
 }
 
 func (x *TemplateAttachment) ClearPayload() {
-	x.Payload = nil
+	x.xxx_hidden_Payload = nil
 }
 
 type TemplateAttachment_builder struct {
@@ -866,8 +983,11 @@ func (b0 TemplateAttachment_builder) Build() *TemplateAttachment {
 	m0 := &TemplateAttachment{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Type = b.Type
-	x.Payload = b.Payload
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Type = b.Type
+	}
+	x.xxx_hidden_Payload = b.Payload
 	return m0
 }
 

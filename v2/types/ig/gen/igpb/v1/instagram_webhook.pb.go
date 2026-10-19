@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_webhook.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,13 +24,13 @@ const (
 
 // IGWebhookEvent is the top-level Instagram webhook payload.
 type IGWebhookEvent struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Provider object name. Typically "instagram".
-	Object *string `protobuf:"bytes,1,opt,name=object" json:"object,omitempty"`
-	// Entries included in this webhook notification.
-	Entry         []*IGWebhookEntry `protobuf:"bytes,2,rep,name=entry" json:"entry,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Object      *string                `protobuf:"bytes,1,opt,name=object"`
+	xxx_hidden_Entry       *[]*IGWebhookEntry     `protobuf:"bytes,2,rep,name=entry"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookEvent) Reset() {
@@ -61,36 +59,43 @@ func (x *IGWebhookEvent) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookEvent) GetObject() string {
-	if x != nil && x.Object != nil {
-		return *x.Object
+	if x != nil {
+		if x.xxx_hidden_Object != nil {
+			return *x.xxx_hidden_Object
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookEvent) GetEntry() []*IGWebhookEntry {
 	if x != nil {
-		return x.Entry
+		if x.xxx_hidden_Entry != nil {
+			return *x.xxx_hidden_Entry
+		}
 	}
 	return nil
 }
 
 func (x *IGWebhookEvent) SetObject(v string) {
-	x.Object = &v
+	x.xxx_hidden_Object = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *IGWebhookEvent) SetEntry(v []*IGWebhookEntry) {
-	x.Entry = v
+	x.xxx_hidden_Entry = &v
 }
 
 func (x *IGWebhookEvent) HasObject() bool {
 	if x == nil {
 		return false
 	}
-	return x.Object != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookEvent) ClearObject() {
-	x.Object = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Object = nil
 }
 
 type IGWebhookEvent_builder struct {
@@ -106,30 +111,28 @@ func (b0 IGWebhookEvent_builder) Build() *IGWebhookEvent {
 	m0 := &IGWebhookEvent{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Object = b.Object
-	x.Entry = b.Entry
+	if b.Object != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Object = b.Object
+	}
+	x.xxx_hidden_Entry = &b.Entry
 	return m0
 }
 
 // IGWebhookEntry is an Instagram webhook entry.
 type IGWebhookEntry struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Instagram account identifier related to the entry.
-	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	// Event timestamp in Unix milliseconds.
-	Time *int64 `protobuf:"varint,2,opt,name=time" json:"time,omitempty"`
-	// Name of the field that changed in this notification.
-	Field *string `protobuf:"bytes,3,opt,name=field" json:"field,omitempty"`
-	// Optional user identifier associated with the entry.
-	Uid *string `protobuf:"bytes,4,opt,name=uid" json:"uid,omitempty"`
-	// Payload content for the specific Instagram event.
-	Value *IGWebhookValue `protobuf:"bytes,5,opt,name=value" json:"value,omitempty"`
-	// Message payloads attached to the entry.
-	Messaging []*IGWebhookMessaging `protobuf:"bytes,6,rep,name=messaging" json:"messaging,omitempty"`
-	// Changes included in this entry.
-	Changes       []*IGWebhookChange `protobuf:"bytes,7,rep,name=changes" json:"changes,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_Time        int64                  `protobuf:"varint,2,opt,name=time"`
+	xxx_hidden_Field       *string                `protobuf:"bytes,3,opt,name=field"`
+	xxx_hidden_Uid         *string                `protobuf:"bytes,4,opt,name=uid"`
+	xxx_hidden_Value       *IGWebhookValue        `protobuf:"bytes,5,opt,name=value"`
+	xxx_hidden_Messaging   *[]*IGWebhookMessaging `protobuf:"bytes,6,rep,name=messaging"`
+	xxx_hidden_Changes     *[]*IGWebhookChange    `protobuf:"bytes,7,rep,name=changes"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookEntry) Reset() {
@@ -158,135 +161,156 @@ func (x *IGWebhookEntry) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookEntry) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookEntry) GetTime() int64 {
-	if x != nil && x.Time != nil {
-		return *x.Time
+	if x != nil {
+		return x.xxx_hidden_Time
 	}
 	return 0
 }
 
 func (x *IGWebhookEntry) GetField() string {
-	if x != nil && x.Field != nil {
-		return *x.Field
+	if x != nil {
+		if x.xxx_hidden_Field != nil {
+			return *x.xxx_hidden_Field
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookEntry) GetUid() string {
-	if x != nil && x.Uid != nil {
-		return *x.Uid
+	if x != nil {
+		if x.xxx_hidden_Uid != nil {
+			return *x.xxx_hidden_Uid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookEntry) GetValue() *IGWebhookValue {
 	if x != nil {
-		return x.Value
+		return x.xxx_hidden_Value
 	}
 	return nil
 }
 
 func (x *IGWebhookEntry) GetMessaging() []*IGWebhookMessaging {
 	if x != nil {
-		return x.Messaging
+		if x.xxx_hidden_Messaging != nil {
+			return *x.xxx_hidden_Messaging
+		}
 	}
 	return nil
 }
 
 func (x *IGWebhookEntry) GetChanges() []*IGWebhookChange {
 	if x != nil {
-		return x.Changes
+		if x.xxx_hidden_Changes != nil {
+			return *x.xxx_hidden_Changes
+		}
 	}
 	return nil
 }
 
 func (x *IGWebhookEntry) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 7)
 }
 
 func (x *IGWebhookEntry) SetTime(v int64) {
-	x.Time = &v
+	x.xxx_hidden_Time = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 7)
 }
 
 func (x *IGWebhookEntry) SetField(v string) {
-	x.Field = &v
+	x.xxx_hidden_Field = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 7)
 }
 
 func (x *IGWebhookEntry) SetUid(v string) {
-	x.Uid = &v
+	x.xxx_hidden_Uid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
 }
 
 func (x *IGWebhookEntry) SetValue(v *IGWebhookValue) {
-	x.Value = v
+	x.xxx_hidden_Value = v
 }
 
 func (x *IGWebhookEntry) SetMessaging(v []*IGWebhookMessaging) {
-	x.Messaging = v
+	x.xxx_hidden_Messaging = &v
 }
 
 func (x *IGWebhookEntry) SetChanges(v []*IGWebhookChange) {
-	x.Changes = v
+	x.xxx_hidden_Changes = &v
 }
 
 func (x *IGWebhookEntry) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookEntry) HasTime() bool {
 	if x == nil {
 		return false
 	}
-	return x.Time != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookEntry) HasField() bool {
 	if x == nil {
 		return false
 	}
-	return x.Field != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookEntry) HasUid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Uid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *IGWebhookEntry) HasValue() bool {
 	if x == nil {
 		return false
 	}
-	return x.Value != nil
+	return x.xxx_hidden_Value != nil
 }
 
 func (x *IGWebhookEntry) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *IGWebhookEntry) ClearTime() {
-	x.Time = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Time = 0
 }
 
 func (x *IGWebhookEntry) ClearField() {
-	x.Field = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Field = nil
 }
 
 func (x *IGWebhookEntry) ClearUid() {
-	x.Uid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Uid = nil
 }
 
 func (x *IGWebhookEntry) ClearValue() {
-	x.Value = nil
+	x.xxx_hidden_Value = nil
 }
 
 type IGWebhookEntry_builder struct {
@@ -312,25 +336,37 @@ func (b0 IGWebhookEntry_builder) Build() *IGWebhookEntry {
 	m0 := &IGWebhookEntry{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
-	x.Time = b.Time
-	x.Field = b.Field
-	x.Uid = b.Uid
-	x.Value = b.Value
-	x.Messaging = b.Messaging
-	x.Changes = b.Changes
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 7)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Time != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 7)
+		x.xxx_hidden_Time = *b.Time
+	}
+	if b.Field != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 7)
+		x.xxx_hidden_Field = b.Field
+	}
+	if b.Uid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
+		x.xxx_hidden_Uid = b.Uid
+	}
+	x.xxx_hidden_Value = b.Value
+	x.xxx_hidden_Messaging = &b.Messaging
+	x.xxx_hidden_Changes = &b.Changes
 	return m0
 }
 
 // IGWebhookChange describes a field update in the entry.
 type IGWebhookChange struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Name of the updated field.
-	Field *string `protobuf:"bytes,1,opt,name=field" json:"field,omitempty"`
-	// Updated value payload.
-	Value         *IGWebhookValue `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Field       *string                `protobuf:"bytes,1,opt,name=field"`
+	xxx_hidden_Value       *IGWebhookValue        `protobuf:"bytes,2,opt,name=value"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookChange) Reset() {
@@ -359,47 +395,52 @@ func (x *IGWebhookChange) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookChange) GetField() string {
-	if x != nil && x.Field != nil {
-		return *x.Field
+	if x != nil {
+		if x.xxx_hidden_Field != nil {
+			return *x.xxx_hidden_Field
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookChange) GetValue() *IGWebhookValue {
 	if x != nil {
-		return x.Value
+		return x.xxx_hidden_Value
 	}
 	return nil
 }
 
 func (x *IGWebhookChange) SetField(v string) {
-	x.Field = &v
+	x.xxx_hidden_Field = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *IGWebhookChange) SetValue(v *IGWebhookValue) {
-	x.Value = v
+	x.xxx_hidden_Value = v
 }
 
 func (x *IGWebhookChange) HasField() bool {
 	if x == nil {
 		return false
 	}
-	return x.Field != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookChange) HasValue() bool {
 	if x == nil {
 		return false
 	}
-	return x.Value != nil
+	return x.xxx_hidden_Value != nil
 }
 
 func (x *IGWebhookChange) ClearField() {
-	x.Field = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Field = nil
 }
 
 func (x *IGWebhookChange) ClearValue() {
-	x.Value = nil
+	x.xxx_hidden_Value = nil
 }
 
 type IGWebhookChange_builder struct {
@@ -415,48 +456,37 @@ func (b0 IGWebhookChange_builder) Build() *IGWebhookChange {
 	m0 := &IGWebhookChange{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Field = b.Field
-	x.Value = b.Value
+	if b.Field != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Field = b.Field
+	}
+	x.xxx_hidden_Value = b.Value
 	return m0
 }
 
 // IGWebhookValue contains the concrete payload value for comment-style, mention, update and standby events.
 type IGWebhookValue struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Comment identifier.
-	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	// User who created the comment.
-	From *IGWebhookCommentFromUser `protobuf:"bytes,2,opt,name=from" json:"from,omitempty"`
-	// Comment text.
-	Text *string `protobuf:"bytes,3,opt,name=text" json:"text,omitempty"`
-	// Media associated with the comment.
-	Media *IGWebhookCommentMedia `protobuf:"bytes,4,opt,name=media" json:"media,omitempty"`
-	// Comment ID of the comment with the mention.
-	CommentId *string `protobuf:"bytes,5,opt,name=comment_id,json=commentId" json:"comment_id,omitempty"`
-	// Parent comment ID, included when the comment is nested under another comment.
-	ParentId *string `protobuf:"bytes,6,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
-	// Media identifier for mention-related events.
-	MediaId *string `protobuf:"bytes,7,opt,name=media_id,json=mediaId" json:"media_id,omitempty"`
-	// Poll response metadata for message_update and story_response events.
-	PollResponseInfo *IGWebhookPollResponseInfo `protobuf:"bytes,8,opt,name=poll_response_info,json=pollResponseInfo" json:"poll_response_info,omitempty"`
-	// Sticker type for story response events.
-	StickerType *string `protobuf:"bytes,9,opt,name=sticker_type,json=stickerType" json:"sticker_type,omitempty"`
-	// Sender information for standby events.
-	Sender *IGWebhookUser `protobuf:"bytes,10,opt,name=sender" json:"sender,omitempty"`
-	// Recipient information for standby events.
-	Recipient *IGWebhookUser `protobuf:"bytes,11,opt,name=recipient" json:"recipient,omitempty"`
-	// Standby event timestamp.
-	Timestamp *int64 `protobuf:"varint,12,opt,name=timestamp" json:"timestamp,omitempty"`
-	// Thread control transfer payload for standby events.
-	PassThreadControl *IGWebhookPassThreadControl `protobuf:"bytes,13,opt,name=pass_thread_control,json=passThreadControl" json:"pass_thread_control,omitempty"`
-	// Thread control takeover payload for standby events.
-	TakeThreadControl *IGWebhookTakeThreadControl `protobuf:"bytes,14,opt,name=take_thread_control,json=takeThreadControl" json:"take_thread_control,omitempty"`
-	// Thread control request payload for standby events.
-	RequestThreadControl *IGWebhookRequestThreadControl `protobuf:"bytes,15,opt,name=request_thread_control,json=requestThreadControl" json:"request_thread_control,omitempty"`
-	// Role assignment map for standby events.
-	AppRoles      map[string]*IGWebhookAppRoles `protobuf:"bytes,16,rep,name=app_roles,json=appRoles" json:"app_roles,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                           protoimpl.MessageState         `protogen:"opaque.v1"`
+	xxx_hidden_Id                   *string                        `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_From                 *IGWebhookCommentFromUser      `protobuf:"bytes,2,opt,name=from"`
+	xxx_hidden_Text                 *string                        `protobuf:"bytes,3,opt,name=text"`
+	xxx_hidden_Media                *IGWebhookCommentMedia         `protobuf:"bytes,4,opt,name=media"`
+	xxx_hidden_CommentId            *string                        `protobuf:"bytes,5,opt,name=comment_id,json=commentId"`
+	xxx_hidden_ParentId             *string                        `protobuf:"bytes,6,opt,name=parent_id,json=parentId"`
+	xxx_hidden_MediaId              *string                        `protobuf:"bytes,7,opt,name=media_id,json=mediaId"`
+	xxx_hidden_PollResponseInfo     *IGWebhookPollResponseInfo     `protobuf:"bytes,8,opt,name=poll_response_info,json=pollResponseInfo"`
+	xxx_hidden_StickerType          *string                        `protobuf:"bytes,9,opt,name=sticker_type,json=stickerType"`
+	xxx_hidden_Sender               *IGWebhookUser                 `protobuf:"bytes,10,opt,name=sender"`
+	xxx_hidden_Recipient            *IGWebhookUser                 `protobuf:"bytes,11,opt,name=recipient"`
+	xxx_hidden_Timestamp            int64                          `protobuf:"varint,12,opt,name=timestamp"`
+	xxx_hidden_PassThreadControl    *IGWebhookPassThreadControl    `protobuf:"bytes,13,opt,name=pass_thread_control,json=passThreadControl"`
+	xxx_hidden_TakeThreadControl    *IGWebhookTakeThreadControl    `protobuf:"bytes,14,opt,name=take_thread_control,json=takeThreadControl"`
+	xxx_hidden_RequestThreadControl *IGWebhookRequestThreadControl `protobuf:"bytes,15,opt,name=request_thread_control,json=requestThreadControl"`
+	xxx_hidden_AppRoles             map[string]*IGWebhookAppRoles  `protobuf:"bytes,16,rep,name=app_roles,json=appRoles" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_raceDetectHookData          protoimpl.RaceDetectHookData
+	XXX_presence                    [1]uint32
+	unknownFields                   protoimpl.UnknownFields
+	sizeCache                       protoimpl.SizeCache
 }
 
 func (x *IGWebhookValue) Reset() {
@@ -485,344 +515,376 @@ func (x *IGWebhookValue) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookValue) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookValue) GetFrom() *IGWebhookCommentFromUser {
 	if x != nil {
-		return x.From
+		return x.xxx_hidden_From
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookValue) GetMedia() *IGWebhookCommentMedia {
 	if x != nil {
-		return x.Media
+		return x.xxx_hidden_Media
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetCommentId() string {
-	if x != nil && x.CommentId != nil {
-		return *x.CommentId
+	if x != nil {
+		if x.xxx_hidden_CommentId != nil {
+			return *x.xxx_hidden_CommentId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookValue) GetParentId() string {
-	if x != nil && x.ParentId != nil {
-		return *x.ParentId
+	if x != nil {
+		if x.xxx_hidden_ParentId != nil {
+			return *x.xxx_hidden_ParentId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookValue) GetMediaId() string {
-	if x != nil && x.MediaId != nil {
-		return *x.MediaId
+	if x != nil {
+		if x.xxx_hidden_MediaId != nil {
+			return *x.xxx_hidden_MediaId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookValue) GetPollResponseInfo() *IGWebhookPollResponseInfo {
 	if x != nil {
-		return x.PollResponseInfo
+		return x.xxx_hidden_PollResponseInfo
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetStickerType() string {
-	if x != nil && x.StickerType != nil {
-		return *x.StickerType
+	if x != nil {
+		if x.xxx_hidden_StickerType != nil {
+			return *x.xxx_hidden_StickerType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookValue) GetSender() *IGWebhookUser {
 	if x != nil {
-		return x.Sender
+		return x.xxx_hidden_Sender
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetRecipient() *IGWebhookUser {
 	if x != nil {
-		return x.Recipient
+		return x.xxx_hidden_Recipient
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetTimestamp() int64 {
-	if x != nil && x.Timestamp != nil {
-		return *x.Timestamp
+	if x != nil {
+		return x.xxx_hidden_Timestamp
 	}
 	return 0
 }
 
 func (x *IGWebhookValue) GetPassThreadControl() *IGWebhookPassThreadControl {
 	if x != nil {
-		return x.PassThreadControl
+		return x.xxx_hidden_PassThreadControl
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetTakeThreadControl() *IGWebhookTakeThreadControl {
 	if x != nil {
-		return x.TakeThreadControl
+		return x.xxx_hidden_TakeThreadControl
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetRequestThreadControl() *IGWebhookRequestThreadControl {
 	if x != nil {
-		return x.RequestThreadControl
+		return x.xxx_hidden_RequestThreadControl
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) GetAppRoles() map[string]*IGWebhookAppRoles {
 	if x != nil {
-		return x.AppRoles
+		return x.xxx_hidden_AppRoles
 	}
 	return nil
 }
 
 func (x *IGWebhookValue) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 16)
 }
 
 func (x *IGWebhookValue) SetFrom(v *IGWebhookCommentFromUser) {
-	x.From = v
+	x.xxx_hidden_From = v
 }
 
 func (x *IGWebhookValue) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 16)
 }
 
 func (x *IGWebhookValue) SetMedia(v *IGWebhookCommentMedia) {
-	x.Media = v
+	x.xxx_hidden_Media = v
 }
 
 func (x *IGWebhookValue) SetCommentId(v string) {
-	x.CommentId = &v
+	x.xxx_hidden_CommentId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 16)
 }
 
 func (x *IGWebhookValue) SetParentId(v string) {
-	x.ParentId = &v
+	x.xxx_hidden_ParentId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 16)
 }
 
 func (x *IGWebhookValue) SetMediaId(v string) {
-	x.MediaId = &v
+	x.xxx_hidden_MediaId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 16)
 }
 
 func (x *IGWebhookValue) SetPollResponseInfo(v *IGWebhookPollResponseInfo) {
-	x.PollResponseInfo = v
+	x.xxx_hidden_PollResponseInfo = v
 }
 
 func (x *IGWebhookValue) SetStickerType(v string) {
-	x.StickerType = &v
+	x.xxx_hidden_StickerType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 16)
 }
 
 func (x *IGWebhookValue) SetSender(v *IGWebhookUser) {
-	x.Sender = v
+	x.xxx_hidden_Sender = v
 }
 
 func (x *IGWebhookValue) SetRecipient(v *IGWebhookUser) {
-	x.Recipient = v
+	x.xxx_hidden_Recipient = v
 }
 
 func (x *IGWebhookValue) SetTimestamp(v int64) {
-	x.Timestamp = &v
+	x.xxx_hidden_Timestamp = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 16)
 }
 
 func (x *IGWebhookValue) SetPassThreadControl(v *IGWebhookPassThreadControl) {
-	x.PassThreadControl = v
+	x.xxx_hidden_PassThreadControl = v
 }
 
 func (x *IGWebhookValue) SetTakeThreadControl(v *IGWebhookTakeThreadControl) {
-	x.TakeThreadControl = v
+	x.xxx_hidden_TakeThreadControl = v
 }
 
 func (x *IGWebhookValue) SetRequestThreadControl(v *IGWebhookRequestThreadControl) {
-	x.RequestThreadControl = v
+	x.xxx_hidden_RequestThreadControl = v
 }
 
 func (x *IGWebhookValue) SetAppRoles(v map[string]*IGWebhookAppRoles) {
-	x.AppRoles = v
+	x.xxx_hidden_AppRoles = v
 }
 
 func (x *IGWebhookValue) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookValue) HasFrom() bool {
 	if x == nil {
 		return false
 	}
-	return x.From != nil
+	return x.xxx_hidden_From != nil
 }
 
 func (x *IGWebhookValue) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookValue) HasMedia() bool {
 	if x == nil {
 		return false
 	}
-	return x.Media != nil
+	return x.xxx_hidden_Media != nil
 }
 
 func (x *IGWebhookValue) HasCommentId() bool {
 	if x == nil {
 		return false
 	}
-	return x.CommentId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *IGWebhookValue) HasParentId() bool {
 	if x == nil {
 		return false
 	}
-	return x.ParentId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *IGWebhookValue) HasMediaId() bool {
 	if x == nil {
 		return false
 	}
-	return x.MediaId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
 }
 
 func (x *IGWebhookValue) HasPollResponseInfo() bool {
 	if x == nil {
 		return false
 	}
-	return x.PollResponseInfo != nil
+	return x.xxx_hidden_PollResponseInfo != nil
 }
 
 func (x *IGWebhookValue) HasStickerType() bool {
 	if x == nil {
 		return false
 	}
-	return x.StickerType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 8)
 }
 
 func (x *IGWebhookValue) HasSender() bool {
 	if x == nil {
 		return false
 	}
-	return x.Sender != nil
+	return x.xxx_hidden_Sender != nil
 }
 
 func (x *IGWebhookValue) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.Recipient != nil
+	return x.xxx_hidden_Recipient != nil
 }
 
 func (x *IGWebhookValue) HasTimestamp() bool {
 	if x == nil {
 		return false
 	}
-	return x.Timestamp != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
 }
 
 func (x *IGWebhookValue) HasPassThreadControl() bool {
 	if x == nil {
 		return false
 	}
-	return x.PassThreadControl != nil
+	return x.xxx_hidden_PassThreadControl != nil
 }
 
 func (x *IGWebhookValue) HasTakeThreadControl() bool {
 	if x == nil {
 		return false
 	}
-	return x.TakeThreadControl != nil
+	return x.xxx_hidden_TakeThreadControl != nil
 }
 
 func (x *IGWebhookValue) HasRequestThreadControl() bool {
 	if x == nil {
 		return false
 	}
-	return x.RequestThreadControl != nil
+	return x.xxx_hidden_RequestThreadControl != nil
 }
 
 func (x *IGWebhookValue) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *IGWebhookValue) ClearFrom() {
-	x.From = nil
+	x.xxx_hidden_From = nil
 }
 
 func (x *IGWebhookValue) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Text = nil
 }
 
 func (x *IGWebhookValue) ClearMedia() {
-	x.Media = nil
+	x.xxx_hidden_Media = nil
 }
 
 func (x *IGWebhookValue) ClearCommentId() {
-	x.CommentId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_CommentId = nil
 }
 
 func (x *IGWebhookValue) ClearParentId() {
-	x.ParentId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_ParentId = nil
 }
 
 func (x *IGWebhookValue) ClearMediaId() {
-	x.MediaId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_MediaId = nil
 }
 
 func (x *IGWebhookValue) ClearPollResponseInfo() {
-	x.PollResponseInfo = nil
+	x.xxx_hidden_PollResponseInfo = nil
 }
 
 func (x *IGWebhookValue) ClearStickerType() {
-	x.StickerType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 8)
+	x.xxx_hidden_StickerType = nil
 }
 
 func (x *IGWebhookValue) ClearSender() {
-	x.Sender = nil
+	x.xxx_hidden_Sender = nil
 }
 
 func (x *IGWebhookValue) ClearRecipient() {
-	x.Recipient = nil
+	x.xxx_hidden_Recipient = nil
 }
 
 func (x *IGWebhookValue) ClearTimestamp() {
-	x.Timestamp = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	x.xxx_hidden_Timestamp = 0
 }
 
 func (x *IGWebhookValue) ClearPassThreadControl() {
-	x.PassThreadControl = nil
+	x.xxx_hidden_PassThreadControl = nil
 }
 
 func (x *IGWebhookValue) ClearTakeThreadControl() {
-	x.TakeThreadControl = nil
+	x.xxx_hidden_TakeThreadControl = nil
 }
 
 func (x *IGWebhookValue) ClearRequestThreadControl() {
-	x.RequestThreadControl = nil
+	x.xxx_hidden_RequestThreadControl = nil
 }
 
 type IGWebhookValue_builder struct {
@@ -866,36 +928,56 @@ func (b0 IGWebhookValue_builder) Build() *IGWebhookValue {
 	m0 := &IGWebhookValue{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
-	x.From = b.From
-	x.Text = b.Text
-	x.Media = b.Media
-	x.CommentId = b.CommentId
-	x.ParentId = b.ParentId
-	x.MediaId = b.MediaId
-	x.PollResponseInfo = b.PollResponseInfo
-	x.StickerType = b.StickerType
-	x.Sender = b.Sender
-	x.Recipient = b.Recipient
-	x.Timestamp = b.Timestamp
-	x.PassThreadControl = b.PassThreadControl
-	x.TakeThreadControl = b.TakeThreadControl
-	x.RequestThreadControl = b.RequestThreadControl
-	x.AppRoles = b.AppRoles
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 16)
+		x.xxx_hidden_Id = b.Id
+	}
+	x.xxx_hidden_From = b.From
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 16)
+		x.xxx_hidden_Text = b.Text
+	}
+	x.xxx_hidden_Media = b.Media
+	if b.CommentId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 16)
+		x.xxx_hidden_CommentId = b.CommentId
+	}
+	if b.ParentId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 16)
+		x.xxx_hidden_ParentId = b.ParentId
+	}
+	if b.MediaId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 16)
+		x.xxx_hidden_MediaId = b.MediaId
+	}
+	x.xxx_hidden_PollResponseInfo = b.PollResponseInfo
+	if b.StickerType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 16)
+		x.xxx_hidden_StickerType = b.StickerType
+	}
+	x.xxx_hidden_Sender = b.Sender
+	x.xxx_hidden_Recipient = b.Recipient
+	if b.Timestamp != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 16)
+		x.xxx_hidden_Timestamp = *b.Timestamp
+	}
+	x.xxx_hidden_PassThreadControl = b.PassThreadControl
+	x.xxx_hidden_TakeThreadControl = b.TakeThreadControl
+	x.xxx_hidden_RequestThreadControl = b.RequestThreadControl
+	x.xxx_hidden_AppRoles = b.AppRoles
 	return m0
 }
 
 // IGWebhookPollResponseInfo describes the selected option in a poll response event.
 type IGWebhookPollResponseInfo struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Option number selected by the user.
-	Number *int64 `protobuf:"varint,1,opt,name=number" json:"number,omitempty"`
-	// Text content of the selected option.
-	Text *string `protobuf:"bytes,2,opt,name=text" json:"text,omitempty"`
-	// Ratio of the response option.
-	Ratio         *float64 `protobuf:"fixed64,3,opt,name=ratio" json:"ratio,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Number      int64                  `protobuf:"varint,1,opt,name=number"`
+	xxx_hidden_Text        *string                `protobuf:"bytes,2,opt,name=text"`
+	xxx_hidden_Ratio       float64                `protobuf:"fixed64,3,opt,name=ratio"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookPollResponseInfo) Reset() {
@@ -924,69 +1006,78 @@ func (x *IGWebhookPollResponseInfo) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookPollResponseInfo) GetNumber() int64 {
-	if x != nil && x.Number != nil {
-		return *x.Number
+	if x != nil {
+		return x.xxx_hidden_Number
 	}
 	return 0
 }
 
 func (x *IGWebhookPollResponseInfo) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookPollResponseInfo) GetRatio() float64 {
-	if x != nil && x.Ratio != nil {
-		return *x.Ratio
+	if x != nil {
+		return x.xxx_hidden_Ratio
 	}
 	return 0
 }
 
 func (x *IGWebhookPollResponseInfo) SetNumber(v int64) {
-	x.Number = &v
+	x.xxx_hidden_Number = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookPollResponseInfo) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookPollResponseInfo) SetRatio(v float64) {
-	x.Ratio = &v
+	x.xxx_hidden_Ratio = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookPollResponseInfo) HasNumber() bool {
 	if x == nil {
 		return false
 	}
-	return x.Number != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookPollResponseInfo) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookPollResponseInfo) HasRatio() bool {
 	if x == nil {
 		return false
 	}
-	return x.Ratio != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookPollResponseInfo) ClearNumber() {
-	x.Number = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Number = 0
 }
 
 func (x *IGWebhookPollResponseInfo) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Text = nil
 }
 
 func (x *IGWebhookPollResponseInfo) ClearRatio() {
-	x.Ratio = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Ratio = 0
 }
 
 type IGWebhookPollResponseInfo_builder struct {
@@ -1004,23 +1095,31 @@ func (b0 IGWebhookPollResponseInfo_builder) Build() *IGWebhookPollResponseInfo {
 	m0 := &IGWebhookPollResponseInfo{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Number = b.Number
-	x.Text = b.Text
-	x.Ratio = b.Ratio
+	if b.Number != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Number = *b.Number
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Text = b.Text
+	}
+	if b.Ratio != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Ratio = *b.Ratio
+	}
 	return m0
 }
 
 // IGWebhookPassThreadControl contains the data for a thread control handoff.
 type IGWebhookPassThreadControl struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Previous owner application identifier.
-	PreviousOwnerAppId *string `protobuf:"bytes,1,opt,name=previous_owner_app_id,json=previousOwnerAppId" json:"previous_owner_app_id,omitempty"`
-	// New owner application identifier.
-	NewOwnerAppId *string `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId" json:"new_owner_app_id,omitempty"`
-	// Additional metadata for the transfer.
-	Metadata      *string `protobuf:"bytes,3,opt,name=metadata" json:"metadata,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                         protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_PreviousOwnerAppId *string                `protobuf:"bytes,1,opt,name=previous_owner_app_id,json=previousOwnerAppId"`
+	xxx_hidden_NewOwnerAppId      *string                `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId"`
+	xxx_hidden_Metadata           *string                `protobuf:"bytes,3,opt,name=metadata"`
+	XXX_raceDetectHookData        protoimpl.RaceDetectHookData
+	XXX_presence                  [1]uint32
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
 }
 
 func (x *IGWebhookPassThreadControl) Reset() {
@@ -1049,69 +1148,84 @@ func (x *IGWebhookPassThreadControl) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookPassThreadControl) GetPreviousOwnerAppId() string {
-	if x != nil && x.PreviousOwnerAppId != nil {
-		return *x.PreviousOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_PreviousOwnerAppId != nil {
+			return *x.xxx_hidden_PreviousOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookPassThreadControl) GetNewOwnerAppId() string {
-	if x != nil && x.NewOwnerAppId != nil {
-		return *x.NewOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_NewOwnerAppId != nil {
+			return *x.xxx_hidden_NewOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookPassThreadControl) GetMetadata() string {
-	if x != nil && x.Metadata != nil {
-		return *x.Metadata
+	if x != nil {
+		if x.xxx_hidden_Metadata != nil {
+			return *x.xxx_hidden_Metadata
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookPassThreadControl) SetPreviousOwnerAppId(v string) {
-	x.PreviousOwnerAppId = &v
+	x.xxx_hidden_PreviousOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookPassThreadControl) SetNewOwnerAppId(v string) {
-	x.NewOwnerAppId = &v
+	x.xxx_hidden_NewOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookPassThreadControl) SetMetadata(v string) {
-	x.Metadata = &v
+	x.xxx_hidden_Metadata = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookPassThreadControl) HasPreviousOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.PreviousOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookPassThreadControl) HasNewOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.NewOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookPassThreadControl) HasMetadata() bool {
 	if x == nil {
 		return false
 	}
-	return x.Metadata != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookPassThreadControl) ClearPreviousOwnerAppId() {
-	x.PreviousOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_PreviousOwnerAppId = nil
 }
 
 func (x *IGWebhookPassThreadControl) ClearNewOwnerAppId() {
-	x.NewOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_NewOwnerAppId = nil
 }
 
 func (x *IGWebhookPassThreadControl) ClearMetadata() {
-	x.Metadata = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Metadata = nil
 }
 
 type IGWebhookPassThreadControl_builder struct {
@@ -1129,23 +1243,31 @@ func (b0 IGWebhookPassThreadControl_builder) Build() *IGWebhookPassThreadControl
 	m0 := &IGWebhookPassThreadControl{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.PreviousOwnerAppId = b.PreviousOwnerAppId
-	x.NewOwnerAppId = b.NewOwnerAppId
-	x.Metadata = b.Metadata
+	if b.PreviousOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_PreviousOwnerAppId = b.PreviousOwnerAppId
+	}
+	if b.NewOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_NewOwnerAppId = b.NewOwnerAppId
+	}
+	if b.Metadata != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Metadata = b.Metadata
+	}
 	return m0
 }
 
 // IGWebhookTakeThreadControl contains the data for taking thread control back.
 type IGWebhookTakeThreadControl struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Previous owner application identifier.
-	PreviousOwnerAppId *string `protobuf:"bytes,1,opt,name=previous_owner_app_id,json=previousOwnerAppId" json:"previous_owner_app_id,omitempty"`
-	// New owner application identifier.
-	NewOwnerAppId *string `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId" json:"new_owner_app_id,omitempty"`
-	// Additional metadata for the takeover.
-	Metadata      *string `protobuf:"bytes,3,opt,name=metadata" json:"metadata,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                         protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_PreviousOwnerAppId *string                `protobuf:"bytes,1,opt,name=previous_owner_app_id,json=previousOwnerAppId"`
+	xxx_hidden_NewOwnerAppId      *string                `protobuf:"bytes,2,opt,name=new_owner_app_id,json=newOwnerAppId"`
+	xxx_hidden_Metadata           *string                `protobuf:"bytes,3,opt,name=metadata"`
+	XXX_raceDetectHookData        protoimpl.RaceDetectHookData
+	XXX_presence                  [1]uint32
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
 }
 
 func (x *IGWebhookTakeThreadControl) Reset() {
@@ -1174,69 +1296,84 @@ func (x *IGWebhookTakeThreadControl) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookTakeThreadControl) GetPreviousOwnerAppId() string {
-	if x != nil && x.PreviousOwnerAppId != nil {
-		return *x.PreviousOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_PreviousOwnerAppId != nil {
+			return *x.xxx_hidden_PreviousOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookTakeThreadControl) GetNewOwnerAppId() string {
-	if x != nil && x.NewOwnerAppId != nil {
-		return *x.NewOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_NewOwnerAppId != nil {
+			return *x.xxx_hidden_NewOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookTakeThreadControl) GetMetadata() string {
-	if x != nil && x.Metadata != nil {
-		return *x.Metadata
+	if x != nil {
+		if x.xxx_hidden_Metadata != nil {
+			return *x.xxx_hidden_Metadata
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookTakeThreadControl) SetPreviousOwnerAppId(v string) {
-	x.PreviousOwnerAppId = &v
+	x.xxx_hidden_PreviousOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookTakeThreadControl) SetNewOwnerAppId(v string) {
-	x.NewOwnerAppId = &v
+	x.xxx_hidden_NewOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookTakeThreadControl) SetMetadata(v string) {
-	x.Metadata = &v
+	x.xxx_hidden_Metadata = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookTakeThreadControl) HasPreviousOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.PreviousOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookTakeThreadControl) HasNewOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.NewOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookTakeThreadControl) HasMetadata() bool {
 	if x == nil {
 		return false
 	}
-	return x.Metadata != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookTakeThreadControl) ClearPreviousOwnerAppId() {
-	x.PreviousOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_PreviousOwnerAppId = nil
 }
 
 func (x *IGWebhookTakeThreadControl) ClearNewOwnerAppId() {
-	x.NewOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_NewOwnerAppId = nil
 }
 
 func (x *IGWebhookTakeThreadControl) ClearMetadata() {
-	x.Metadata = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Metadata = nil
 }
 
 type IGWebhookTakeThreadControl_builder struct {
@@ -1254,21 +1391,30 @@ func (b0 IGWebhookTakeThreadControl_builder) Build() *IGWebhookTakeThreadControl
 	m0 := &IGWebhookTakeThreadControl{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.PreviousOwnerAppId = b.PreviousOwnerAppId
-	x.NewOwnerAppId = b.NewOwnerAppId
-	x.Metadata = b.Metadata
+	if b.PreviousOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_PreviousOwnerAppId = b.PreviousOwnerAppId
+	}
+	if b.NewOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_NewOwnerAppId = b.NewOwnerAppId
+	}
+	if b.Metadata != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Metadata = b.Metadata
+	}
 	return m0
 }
 
 // IGWebhookRequestThreadControl contains the data for requesting thread control.
 type IGWebhookRequestThreadControl struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Requested owner application identifier.
-	RequestedOwnerAppId *string `protobuf:"bytes,1,opt,name=requested_owner_app_id,json=requestedOwnerAppId" json:"requested_owner_app_id,omitempty"`
-	// Additional metadata for the request.
-	Metadata      *string `protobuf:"bytes,2,opt,name=metadata" json:"metadata,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                          protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_RequestedOwnerAppId *string                `protobuf:"bytes,1,opt,name=requested_owner_app_id,json=requestedOwnerAppId"`
+	xxx_hidden_Metadata            *string                `protobuf:"bytes,2,opt,name=metadata"`
+	XXX_raceDetectHookData         protoimpl.RaceDetectHookData
+	XXX_presence                   [1]uint32
+	unknownFields                  protoimpl.UnknownFields
+	sizeCache                      protoimpl.SizeCache
 }
 
 func (x *IGWebhookRequestThreadControl) Reset() {
@@ -1297,47 +1443,57 @@ func (x *IGWebhookRequestThreadControl) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookRequestThreadControl) GetRequestedOwnerAppId() string {
-	if x != nil && x.RequestedOwnerAppId != nil {
-		return *x.RequestedOwnerAppId
+	if x != nil {
+		if x.xxx_hidden_RequestedOwnerAppId != nil {
+			return *x.xxx_hidden_RequestedOwnerAppId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookRequestThreadControl) GetMetadata() string {
-	if x != nil && x.Metadata != nil {
-		return *x.Metadata
+	if x != nil {
+		if x.xxx_hidden_Metadata != nil {
+			return *x.xxx_hidden_Metadata
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookRequestThreadControl) SetRequestedOwnerAppId(v string) {
-	x.RequestedOwnerAppId = &v
+	x.xxx_hidden_RequestedOwnerAppId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *IGWebhookRequestThreadControl) SetMetadata(v string) {
-	x.Metadata = &v
+	x.xxx_hidden_Metadata = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *IGWebhookRequestThreadControl) HasRequestedOwnerAppId() bool {
 	if x == nil {
 		return false
 	}
-	return x.RequestedOwnerAppId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookRequestThreadControl) HasMetadata() bool {
 	if x == nil {
 		return false
 	}
-	return x.Metadata != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookRequestThreadControl) ClearRequestedOwnerAppId() {
-	x.RequestedOwnerAppId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_RequestedOwnerAppId = nil
 }
 
 func (x *IGWebhookRequestThreadControl) ClearMetadata() {
-	x.Metadata = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Metadata = nil
 }
 
 type IGWebhookRequestThreadControl_builder struct {
@@ -1353,17 +1509,23 @@ func (b0 IGWebhookRequestThreadControl_builder) Build() *IGWebhookRequestThreadC
 	m0 := &IGWebhookRequestThreadControl{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.RequestedOwnerAppId = b.RequestedOwnerAppId
-	x.Metadata = b.Metadata
+	if b.RequestedOwnerAppId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_RequestedOwnerAppId = b.RequestedOwnerAppId
+	}
+	if b.Metadata != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Metadata = b.Metadata
+	}
 	return m0
 }
 
 // IGWebhookAppRoles contains the list of roles assigned to a user or app in standby events.
 type IGWebhookAppRoles struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Roles         []string               `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Roles []string               `protobuf:"bytes,1,rep,name=roles"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *IGWebhookAppRoles) Reset() {
@@ -1393,13 +1555,13 @@ func (x *IGWebhookAppRoles) ProtoReflect() protoreflect.Message {
 
 func (x *IGWebhookAppRoles) GetRoles() []string {
 	if x != nil {
-		return x.Roles
+		return x.xxx_hidden_Roles
 	}
 	return nil
 }
 
 func (x *IGWebhookAppRoles) SetRoles(v []string) {
-	x.Roles = v
+	x.xxx_hidden_Roles = v
 }
 
 type IGWebhookAppRoles_builder struct {
@@ -1412,21 +1574,20 @@ func (b0 IGWebhookAppRoles_builder) Build() *IGWebhookAppRoles {
 	m0 := &IGWebhookAppRoles{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Roles = b.Roles
+	x.xxx_hidden_Roles = b.Roles
 	return m0
 }
 
 // IGWebhookCommentFromUser describes the Instagram user who created the comment.
 type IGWebhookCommentFromUser struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Instagram-scoped user identifier.
-	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	// Instagram username.
-	Username *string `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
-	// Instagram self-scoped user identifier.
-	SelfIgScopedId *string `protobuf:"bytes,3,opt,name=self_ig_scoped_id,json=selfIgScopedId" json:"self_ig_scoped_id,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id             *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_Username       *string                `protobuf:"bytes,2,opt,name=username"`
+	xxx_hidden_SelfIgScopedId *string                `protobuf:"bytes,3,opt,name=self_ig_scoped_id,json=selfIgScopedId"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *IGWebhookCommentFromUser) Reset() {
@@ -1455,69 +1616,84 @@ func (x *IGWebhookCommentFromUser) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookCommentFromUser) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentFromUser) GetUsername() string {
-	if x != nil && x.Username != nil {
-		return *x.Username
+	if x != nil {
+		if x.xxx_hidden_Username != nil {
+			return *x.xxx_hidden_Username
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentFromUser) GetSelfIgScopedId() string {
-	if x != nil && x.SelfIgScopedId != nil {
-		return *x.SelfIgScopedId
+	if x != nil {
+		if x.xxx_hidden_SelfIgScopedId != nil {
+			return *x.xxx_hidden_SelfIgScopedId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentFromUser) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookCommentFromUser) SetUsername(v string) {
-	x.Username = &v
+	x.xxx_hidden_Username = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookCommentFromUser) SetSelfIgScopedId(v string) {
-	x.SelfIgScopedId = &v
+	x.xxx_hidden_SelfIgScopedId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookCommentFromUser) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookCommentFromUser) HasUsername() bool {
 	if x == nil {
 		return false
 	}
-	return x.Username != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookCommentFromUser) HasSelfIgScopedId() bool {
 	if x == nil {
 		return false
 	}
-	return x.SelfIgScopedId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookCommentFromUser) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *IGWebhookCommentFromUser) ClearUsername() {
-	x.Username = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Username = nil
 }
 
 func (x *IGWebhookCommentFromUser) ClearSelfIgScopedId() {
-	x.SelfIgScopedId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_SelfIgScopedId = nil
 }
 
 type IGWebhookCommentFromUser_builder struct {
@@ -1535,27 +1711,33 @@ func (b0 IGWebhookCommentFromUser_builder) Build() *IGWebhookCommentFromUser {
 	m0 := &IGWebhookCommentFromUser{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
-	x.Username = b.Username
-	x.SelfIgScopedId = b.SelfIgScopedId
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Username != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Username = b.Username
+	}
+	if b.SelfIgScopedId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_SelfIgScopedId = b.SelfIgScopedId
+	}
 	return m0
 }
 
 // IGWebhookCommentMedia describes the media associated with the comment.
 type IGWebhookCommentMedia struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Media identifier.
-	Id *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	// Ad identifier included when the comment is on an ad post.
-	AdId *string `protobuf:"bytes,2,opt,name=ad_id,json=adId" json:"ad_id,omitempty"`
-	// Ad title included when the comment is on an ad post.
-	AdTitle *string `protobuf:"bytes,3,opt,name=ad_title,json=adTitle" json:"ad_title,omitempty"`
-	// Original media identifier included when the comment is on an ad post.
-	OriginalMediaId *string `protobuf:"bytes,4,opt,name=original_media_id,json=originalMediaId" json:"original_media_id,omitempty"`
-	// Product type of the media.
-	MediaProductType *string `protobuf:"bytes,5,opt,name=media_product_type,json=mediaProductType" json:"media_product_type,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id               *string                `protobuf:"bytes,1,opt,name=id"`
+	xxx_hidden_AdId             *string                `protobuf:"bytes,2,opt,name=ad_id,json=adId"`
+	xxx_hidden_AdTitle          *string                `protobuf:"bytes,3,opt,name=ad_title,json=adTitle"`
+	xxx_hidden_OriginalMediaId  *string                `protobuf:"bytes,4,opt,name=original_media_id,json=originalMediaId"`
+	xxx_hidden_MediaProductType *string                `protobuf:"bytes,5,opt,name=media_product_type,json=mediaProductType"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *IGWebhookCommentMedia) Reset() {
@@ -1584,113 +1766,138 @@ func (x *IGWebhookCommentMedia) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookCommentMedia) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentMedia) GetAdId() string {
-	if x != nil && x.AdId != nil {
-		return *x.AdId
+	if x != nil {
+		if x.xxx_hidden_AdId != nil {
+			return *x.xxx_hidden_AdId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentMedia) GetAdTitle() string {
-	if x != nil && x.AdTitle != nil {
-		return *x.AdTitle
+	if x != nil {
+		if x.xxx_hidden_AdTitle != nil {
+			return *x.xxx_hidden_AdTitle
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentMedia) GetOriginalMediaId() string {
-	if x != nil && x.OriginalMediaId != nil {
-		return *x.OriginalMediaId
+	if x != nil {
+		if x.xxx_hidden_OriginalMediaId != nil {
+			return *x.xxx_hidden_OriginalMediaId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentMedia) GetMediaProductType() string {
-	if x != nil && x.MediaProductType != nil {
-		return *x.MediaProductType
+	if x != nil {
+		if x.xxx_hidden_MediaProductType != nil {
+			return *x.xxx_hidden_MediaProductType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookCommentMedia) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
 }
 
 func (x *IGWebhookCommentMedia) SetAdId(v string) {
-	x.AdId = &v
+	x.xxx_hidden_AdId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
 func (x *IGWebhookCommentMedia) SetAdTitle(v string) {
-	x.AdTitle = &v
+	x.xxx_hidden_AdTitle = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *IGWebhookCommentMedia) SetOriginalMediaId(v string) {
-	x.OriginalMediaId = &v
+	x.xxx_hidden_OriginalMediaId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
 }
 
 func (x *IGWebhookCommentMedia) SetMediaProductType(v string) {
-	x.MediaProductType = &v
+	x.xxx_hidden_MediaProductType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
 }
 
 func (x *IGWebhookCommentMedia) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookCommentMedia) HasAdId() bool {
 	if x == nil {
 		return false
 	}
-	return x.AdId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookCommentMedia) HasAdTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.AdTitle != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookCommentMedia) HasOriginalMediaId() bool {
 	if x == nil {
 		return false
 	}
-	return x.OriginalMediaId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *IGWebhookCommentMedia) HasMediaProductType() bool {
 	if x == nil {
 		return false
 	}
-	return x.MediaProductType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *IGWebhookCommentMedia) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *IGWebhookCommentMedia) ClearAdId() {
-	x.AdId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_AdId = nil
 }
 
 func (x *IGWebhookCommentMedia) ClearAdTitle() {
-	x.AdTitle = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_AdTitle = nil
 }
 
 func (x *IGWebhookCommentMedia) ClearOriginalMediaId() {
-	x.OriginalMediaId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_OriginalMediaId = nil
 }
 
 func (x *IGWebhookCommentMedia) ClearMediaProductType() {
-	x.MediaProductType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_MediaProductType = nil
 }
 
 type IGWebhookCommentMedia_builder struct {
@@ -1712,37 +1919,45 @@ func (b0 IGWebhookCommentMedia_builder) Build() *IGWebhookCommentMedia {
 	m0 := &IGWebhookCommentMedia{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
-	x.AdId = b.AdId
-	x.AdTitle = b.AdTitle
-	x.OriginalMediaId = b.OriginalMediaId
-	x.MediaProductType = b.MediaProductType
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.AdId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_AdId = b.AdId
+	}
+	if b.AdTitle != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_AdTitle = b.AdTitle
+	}
+	if b.OriginalMediaId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_OriginalMediaId = b.OriginalMediaId
+	}
+	if b.MediaProductType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_MediaProductType = b.MediaProductType
+	}
 	return m0
 }
 
 // IGWebhookMessaging is the messaging object included in an entry.
 type IGWebhookMessaging struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Sender information.
-	Sender *IGWebhookUser `protobuf:"bytes,1,opt,name=sender" json:"sender,omitempty"`
-	// Recipient information.
-	Recipient *IGWebhookUser `protobuf:"bytes,2,opt,name=recipient" json:"recipient,omitempty"`
-	// Event timestamp in Unix milliseconds.
-	Timestamp *int64 `protobuf:"varint,3,opt,name=timestamp" json:"timestamp,omitempty"`
-	// Message payload included in this messaging event.
-	Message *IGWebhookMessage `protobuf:"bytes,4,opt,name=message" json:"message,omitempty"`
-	// Reaction payload included in this messaging event.
-	Reaction *IGWebhookReaction `protobuf:"bytes,5,opt,name=reaction" json:"reaction,omitempty"`
-	// Postback payload included in this messaging event.
-	Postback *IGWebhookPostback `protobuf:"bytes,6,opt,name=postback" json:"postback,omitempty"`
-	// Referral payload included in this messaging event.
-	Referral *IGWebhookReferralMessage `protobuf:"bytes,7,opt,name=referral" json:"referral,omitempty"`
-	// Read event payload included in this messaging event.
-	Read *IGWebhookRead `protobuf:"bytes,8,opt,name=read" json:"read,omitempty"`
-	// Message edit payload included in this messaging event.
-	MessageEdit   *IGWebhookMessageEdit `protobuf:"bytes,9,opt,name=message_edit,json=messageEdit" json:"message_edit,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState    `protogen:"opaque.v1"`
+	xxx_hidden_Sender      *IGWebhookUser            `protobuf:"bytes,1,opt,name=sender"`
+	xxx_hidden_Recipient   *IGWebhookUser            `protobuf:"bytes,2,opt,name=recipient"`
+	xxx_hidden_Timestamp   int64                     `protobuf:"varint,3,opt,name=timestamp"`
+	xxx_hidden_Message     *IGWebhookMessage         `protobuf:"bytes,4,opt,name=message"`
+	xxx_hidden_Reaction    *IGWebhookReaction        `protobuf:"bytes,5,opt,name=reaction"`
+	xxx_hidden_Postback    *IGWebhookPostback        `protobuf:"bytes,6,opt,name=postback"`
+	xxx_hidden_Referral    *IGWebhookReferralMessage `protobuf:"bytes,7,opt,name=referral"`
+	xxx_hidden_Read        *IGWebhookRead            `protobuf:"bytes,8,opt,name=read"`
+	xxx_hidden_MessageEdit *IGWebhookMessageEdit     `protobuf:"bytes,9,opt,name=message_edit,json=messageEdit"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookMessaging) Reset() {
@@ -1772,200 +1987,202 @@ func (x *IGWebhookMessaging) ProtoReflect() protoreflect.Message {
 
 func (x *IGWebhookMessaging) GetSender() *IGWebhookUser {
 	if x != nil {
-		return x.Sender
+		return x.xxx_hidden_Sender
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) GetRecipient() *IGWebhookUser {
 	if x != nil {
-		return x.Recipient
+		return x.xxx_hidden_Recipient
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) GetTimestamp() int64 {
-	if x != nil && x.Timestamp != nil {
-		return *x.Timestamp
+	if x != nil {
+		return x.xxx_hidden_Timestamp
 	}
 	return 0
 }
 
 func (x *IGWebhookMessaging) GetMessage() *IGWebhookMessage {
 	if x != nil {
-		return x.Message
+		return x.xxx_hidden_Message
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) GetReaction() *IGWebhookReaction {
 	if x != nil {
-		return x.Reaction
+		return x.xxx_hidden_Reaction
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) GetPostback() *IGWebhookPostback {
 	if x != nil {
-		return x.Postback
+		return x.xxx_hidden_Postback
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) GetReferral() *IGWebhookReferralMessage {
 	if x != nil {
-		return x.Referral
+		return x.xxx_hidden_Referral
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) GetRead() *IGWebhookRead {
 	if x != nil {
-		return x.Read
+		return x.xxx_hidden_Read
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) GetMessageEdit() *IGWebhookMessageEdit {
 	if x != nil {
-		return x.MessageEdit
+		return x.xxx_hidden_MessageEdit
 	}
 	return nil
 }
 
 func (x *IGWebhookMessaging) SetSender(v *IGWebhookUser) {
-	x.Sender = v
+	x.xxx_hidden_Sender = v
 }
 
 func (x *IGWebhookMessaging) SetRecipient(v *IGWebhookUser) {
-	x.Recipient = v
+	x.xxx_hidden_Recipient = v
 }
 
 func (x *IGWebhookMessaging) SetTimestamp(v int64) {
-	x.Timestamp = &v
+	x.xxx_hidden_Timestamp = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 9)
 }
 
 func (x *IGWebhookMessaging) SetMessage(v *IGWebhookMessage) {
-	x.Message = v
+	x.xxx_hidden_Message = v
 }
 
 func (x *IGWebhookMessaging) SetReaction(v *IGWebhookReaction) {
-	x.Reaction = v
+	x.xxx_hidden_Reaction = v
 }
 
 func (x *IGWebhookMessaging) SetPostback(v *IGWebhookPostback) {
-	x.Postback = v
+	x.xxx_hidden_Postback = v
 }
 
 func (x *IGWebhookMessaging) SetReferral(v *IGWebhookReferralMessage) {
-	x.Referral = v
+	x.xxx_hidden_Referral = v
 }
 
 func (x *IGWebhookMessaging) SetRead(v *IGWebhookRead) {
-	x.Read = v
+	x.xxx_hidden_Read = v
 }
 
 func (x *IGWebhookMessaging) SetMessageEdit(v *IGWebhookMessageEdit) {
-	x.MessageEdit = v
+	x.xxx_hidden_MessageEdit = v
 }
 
 func (x *IGWebhookMessaging) HasSender() bool {
 	if x == nil {
 		return false
 	}
-	return x.Sender != nil
+	return x.xxx_hidden_Sender != nil
 }
 
 func (x *IGWebhookMessaging) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.Recipient != nil
+	return x.xxx_hidden_Recipient != nil
 }
 
 func (x *IGWebhookMessaging) HasTimestamp() bool {
 	if x == nil {
 		return false
 	}
-	return x.Timestamp != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookMessaging) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.Message != nil
+	return x.xxx_hidden_Message != nil
 }
 
 func (x *IGWebhookMessaging) HasReaction() bool {
 	if x == nil {
 		return false
 	}
-	return x.Reaction != nil
+	return x.xxx_hidden_Reaction != nil
 }
 
 func (x *IGWebhookMessaging) HasPostback() bool {
 	if x == nil {
 		return false
 	}
-	return x.Postback != nil
+	return x.xxx_hidden_Postback != nil
 }
 
 func (x *IGWebhookMessaging) HasReferral() bool {
 	if x == nil {
 		return false
 	}
-	return x.Referral != nil
+	return x.xxx_hidden_Referral != nil
 }
 
 func (x *IGWebhookMessaging) HasRead() bool {
 	if x == nil {
 		return false
 	}
-	return x.Read != nil
+	return x.xxx_hidden_Read != nil
 }
 
 func (x *IGWebhookMessaging) HasMessageEdit() bool {
 	if x == nil {
 		return false
 	}
-	return x.MessageEdit != nil
+	return x.xxx_hidden_MessageEdit != nil
 }
 
 func (x *IGWebhookMessaging) ClearSender() {
-	x.Sender = nil
+	x.xxx_hidden_Sender = nil
 }
 
 func (x *IGWebhookMessaging) ClearRecipient() {
-	x.Recipient = nil
+	x.xxx_hidden_Recipient = nil
 }
 
 func (x *IGWebhookMessaging) ClearTimestamp() {
-	x.Timestamp = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Timestamp = 0
 }
 
 func (x *IGWebhookMessaging) ClearMessage() {
-	x.Message = nil
+	x.xxx_hidden_Message = nil
 }
 
 func (x *IGWebhookMessaging) ClearReaction() {
-	x.Reaction = nil
+	x.xxx_hidden_Reaction = nil
 }
 
 func (x *IGWebhookMessaging) ClearPostback() {
-	x.Postback = nil
+	x.xxx_hidden_Postback = nil
 }
 
 func (x *IGWebhookMessaging) ClearReferral() {
-	x.Referral = nil
+	x.xxx_hidden_Referral = nil
 }
 
 func (x *IGWebhookMessaging) ClearRead() {
-	x.Read = nil
+	x.xxx_hidden_Read = nil
 }
 
 func (x *IGWebhookMessaging) ClearMessageEdit() {
-	x.MessageEdit = nil
+	x.xxx_hidden_MessageEdit = nil
 }
 
 type IGWebhookMessaging_builder struct {
@@ -1995,47 +2212,40 @@ func (b0 IGWebhookMessaging_builder) Build() *IGWebhookMessaging {
 	m0 := &IGWebhookMessaging{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Sender = b.Sender
-	x.Recipient = b.Recipient
-	x.Timestamp = b.Timestamp
-	x.Message = b.Message
-	x.Reaction = b.Reaction
-	x.Postback = b.Postback
-	x.Referral = b.Referral
-	x.Read = b.Read
-	x.MessageEdit = b.MessageEdit
+	x.xxx_hidden_Sender = b.Sender
+	x.xxx_hidden_Recipient = b.Recipient
+	if b.Timestamp != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 9)
+		x.xxx_hidden_Timestamp = *b.Timestamp
+	}
+	x.xxx_hidden_Message = b.Message
+	x.xxx_hidden_Reaction = b.Reaction
+	x.xxx_hidden_Postback = b.Postback
+	x.xxx_hidden_Referral = b.Referral
+	x.xxx_hidden_Read = b.Read
+	x.xxx_hidden_MessageEdit = b.MessageEdit
 	return m0
 }
 
 // IGWebhookMessage represents the message payload inside a messaging event.
 type IGWebhookMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Unique message identifier.
-	Mid *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	// Media attachments included in the message.
-	Attachments []*IGWebhookAttachment `protobuf:"bytes,2,rep,name=attachments" json:"attachments,omitempty"`
-	// Whether the message was deleted.
-	IsDeleted *bool `protobuf:"varint,3,opt,name=is_deleted,json=isDeleted" json:"is_deleted,omitempty"`
-	// Whether the message is an echo from the same account.
-	IsEcho *bool `protobuf:"varint,4,opt,name=is_echo,json=isEcho" json:"is_echo,omitempty"`
-	// Whether the message was sent to self for testing.
-	IsSelf *bool `protobuf:"varint,5,opt,name=is_self,json=isSelf" json:"is_self,omitempty"`
-	// Whether the message type is unsupported.
-	IsUnsupported *bool `protobuf:"varint,6,opt,name=is_unsupported,json=isUnsupported" json:"is_unsupported,omitempty"`
-	// Quick reply selected by the user.
-	QuickReply *IGWebhookQuickReply `protobuf:"bytes,7,opt,name=quick_reply,json=quickReply" json:"quick_reply,omitempty"`
-	// Referral metadata for ad-originated messages.
-	Referral *IGWebhookReferral `protobuf:"bytes,8,opt,name=referral" json:"referral,omitempty"`
-	// Reply metadata referencing another message or story.
-	ReplyTo *IGWebhookReplyTo `protobuf:"bytes,9,opt,name=reply_to,json=replyTo" json:"reply_to,omitempty"`
-	// Message text content.
-	Text *string `protobuf:"bytes,10,opt,name=text" json:"text,omitempty"`
-	// Whether the user reply was self-directed.
-	IsSelfReply *bool `protobuf:"varint,11,opt,name=is_self_reply,json=isSelfReply" json:"is_self_reply,omitempty"`
-	// Folder where the message is stored.
-	Folder        *string `protobuf:"bytes,12,opt,name=folder" json:"folder,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                    protoimpl.MessageState  `protogen:"opaque.v1"`
+	xxx_hidden_Mid           *string                 `protobuf:"bytes,1,opt,name=mid"`
+	xxx_hidden_Attachments   *[]*IGWebhookAttachment `protobuf:"bytes,2,rep,name=attachments"`
+	xxx_hidden_IsDeleted     bool                    `protobuf:"varint,3,opt,name=is_deleted,json=isDeleted"`
+	xxx_hidden_IsEcho        bool                    `protobuf:"varint,4,opt,name=is_echo,json=isEcho"`
+	xxx_hidden_IsSelf        bool                    `protobuf:"varint,5,opt,name=is_self,json=isSelf"`
+	xxx_hidden_IsUnsupported bool                    `protobuf:"varint,6,opt,name=is_unsupported,json=isUnsupported"`
+	xxx_hidden_QuickReply    *IGWebhookQuickReply    `protobuf:"bytes,7,opt,name=quick_reply,json=quickReply"`
+	xxx_hidden_Referral      *IGWebhookReferral      `protobuf:"bytes,8,opt,name=referral"`
+	xxx_hidden_ReplyTo       *IGWebhookReplyTo       `protobuf:"bytes,9,opt,name=reply_to,json=replyTo"`
+	xxx_hidden_Text          *string                 `protobuf:"bytes,10,opt,name=text"`
+	xxx_hidden_IsSelfReply   bool                    `protobuf:"varint,11,opt,name=is_self_reply,json=isSelfReply"`
+	xxx_hidden_Folder        *string                 `protobuf:"bytes,12,opt,name=folder"`
+	XXX_raceDetectHookData   protoimpl.RaceDetectHookData
+	XXX_presence             [1]uint32
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *IGWebhookMessage) Reset() {
@@ -2064,256 +2274,283 @@ func (x *IGWebhookMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookMessage) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookMessage) GetAttachments() []*IGWebhookAttachment {
 	if x != nil {
-		return x.Attachments
+		if x.xxx_hidden_Attachments != nil {
+			return *x.xxx_hidden_Attachments
+		}
 	}
 	return nil
 }
 
 func (x *IGWebhookMessage) GetIsDeleted() bool {
-	if x != nil && x.IsDeleted != nil {
-		return *x.IsDeleted
+	if x != nil {
+		return x.xxx_hidden_IsDeleted
 	}
 	return false
 }
 
 func (x *IGWebhookMessage) GetIsEcho() bool {
-	if x != nil && x.IsEcho != nil {
-		return *x.IsEcho
+	if x != nil {
+		return x.xxx_hidden_IsEcho
 	}
 	return false
 }
 
 func (x *IGWebhookMessage) GetIsSelf() bool {
-	if x != nil && x.IsSelf != nil {
-		return *x.IsSelf
+	if x != nil {
+		return x.xxx_hidden_IsSelf
 	}
 	return false
 }
 
 func (x *IGWebhookMessage) GetIsUnsupported() bool {
-	if x != nil && x.IsUnsupported != nil {
-		return *x.IsUnsupported
+	if x != nil {
+		return x.xxx_hidden_IsUnsupported
 	}
 	return false
 }
 
 func (x *IGWebhookMessage) GetQuickReply() *IGWebhookQuickReply {
 	if x != nil {
-		return x.QuickReply
+		return x.xxx_hidden_QuickReply
 	}
 	return nil
 }
 
 func (x *IGWebhookMessage) GetReferral() *IGWebhookReferral {
 	if x != nil {
-		return x.Referral
+		return x.xxx_hidden_Referral
 	}
 	return nil
 }
 
 func (x *IGWebhookMessage) GetReplyTo() *IGWebhookReplyTo {
 	if x != nil {
-		return x.ReplyTo
+		return x.xxx_hidden_ReplyTo
 	}
 	return nil
 }
 
 func (x *IGWebhookMessage) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookMessage) GetIsSelfReply() bool {
-	if x != nil && x.IsSelfReply != nil {
-		return *x.IsSelfReply
+	if x != nil {
+		return x.xxx_hidden_IsSelfReply
 	}
 	return false
 }
 
 func (x *IGWebhookMessage) GetFolder() string {
-	if x != nil && x.Folder != nil {
-		return *x.Folder
+	if x != nil {
+		if x.xxx_hidden_Folder != nil {
+			return *x.xxx_hidden_Folder
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookMessage) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 12)
 }
 
 func (x *IGWebhookMessage) SetAttachments(v []*IGWebhookAttachment) {
-	x.Attachments = v
+	x.xxx_hidden_Attachments = &v
 }
 
 func (x *IGWebhookMessage) SetIsDeleted(v bool) {
-	x.IsDeleted = &v
+	x.xxx_hidden_IsDeleted = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 12)
 }
 
 func (x *IGWebhookMessage) SetIsEcho(v bool) {
-	x.IsEcho = &v
+	x.xxx_hidden_IsEcho = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 12)
 }
 
 func (x *IGWebhookMessage) SetIsSelf(v bool) {
-	x.IsSelf = &v
+	x.xxx_hidden_IsSelf = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 12)
 }
 
 func (x *IGWebhookMessage) SetIsUnsupported(v bool) {
-	x.IsUnsupported = &v
+	x.xxx_hidden_IsUnsupported = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 12)
 }
 
 func (x *IGWebhookMessage) SetQuickReply(v *IGWebhookQuickReply) {
-	x.QuickReply = v
+	x.xxx_hidden_QuickReply = v
 }
 
 func (x *IGWebhookMessage) SetReferral(v *IGWebhookReferral) {
-	x.Referral = v
+	x.xxx_hidden_Referral = v
 }
 
 func (x *IGWebhookMessage) SetReplyTo(v *IGWebhookReplyTo) {
-	x.ReplyTo = v
+	x.xxx_hidden_ReplyTo = v
 }
 
 func (x *IGWebhookMessage) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 12)
 }
 
 func (x *IGWebhookMessage) SetIsSelfReply(v bool) {
-	x.IsSelfReply = &v
+	x.xxx_hidden_IsSelfReply = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 12)
 }
 
 func (x *IGWebhookMessage) SetFolder(v string) {
-	x.Folder = &v
+	x.xxx_hidden_Folder = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 12)
 }
 
 func (x *IGWebhookMessage) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookMessage) HasIsDeleted() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsDeleted != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookMessage) HasIsEcho() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsEcho != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *IGWebhookMessage) HasIsSelf() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsSelf != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *IGWebhookMessage) HasIsUnsupported() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsUnsupported != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
 }
 
 func (x *IGWebhookMessage) HasQuickReply() bool {
 	if x == nil {
 		return false
 	}
-	return x.QuickReply != nil
+	return x.xxx_hidden_QuickReply != nil
 }
 
 func (x *IGWebhookMessage) HasReferral() bool {
 	if x == nil {
 		return false
 	}
-	return x.Referral != nil
+	return x.xxx_hidden_Referral != nil
 }
 
 func (x *IGWebhookMessage) HasReplyTo() bool {
 	if x == nil {
 		return false
 	}
-	return x.ReplyTo != nil
+	return x.xxx_hidden_ReplyTo != nil
 }
 
 func (x *IGWebhookMessage) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
 }
 
 func (x *IGWebhookMessage) HasIsSelfReply() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsSelfReply != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
 func (x *IGWebhookMessage) HasFolder() bool {
 	if x == nil {
 		return false
 	}
-	return x.Folder != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
 }
 
 func (x *IGWebhookMessage) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *IGWebhookMessage) ClearIsDeleted() {
-	x.IsDeleted = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_IsDeleted = false
 }
 
 func (x *IGWebhookMessage) ClearIsEcho() {
-	x.IsEcho = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_IsEcho = false
 }
 
 func (x *IGWebhookMessage) ClearIsSelf() {
-	x.IsSelf = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_IsSelf = false
 }
 
 func (x *IGWebhookMessage) ClearIsUnsupported() {
-	x.IsUnsupported = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_IsUnsupported = false
 }
 
 func (x *IGWebhookMessage) ClearQuickReply() {
-	x.QuickReply = nil
+	x.xxx_hidden_QuickReply = nil
 }
 
 func (x *IGWebhookMessage) ClearReferral() {
-	x.Referral = nil
+	x.xxx_hidden_Referral = nil
 }
 
 func (x *IGWebhookMessage) ClearReplyTo() {
-	x.ReplyTo = nil
+	x.xxx_hidden_ReplyTo = nil
 }
 
 func (x *IGWebhookMessage) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	x.xxx_hidden_Text = nil
 }
 
 func (x *IGWebhookMessage) ClearIsSelfReply() {
-	x.IsSelfReply = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
+	x.xxx_hidden_IsSelfReply = false
 }
 
 func (x *IGWebhookMessage) ClearFolder() {
-	x.Folder = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	x.xxx_hidden_Folder = nil
 }
 
 type IGWebhookMessage_builder struct {
@@ -2349,30 +2586,54 @@ func (b0 IGWebhookMessage_builder) Build() *IGWebhookMessage {
 	m0 := &IGWebhookMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
-	x.Attachments = b.Attachments
-	x.IsDeleted = b.IsDeleted
-	x.IsEcho = b.IsEcho
-	x.IsSelf = b.IsSelf
-	x.IsUnsupported = b.IsUnsupported
-	x.QuickReply = b.QuickReply
-	x.Referral = b.Referral
-	x.ReplyTo = b.ReplyTo
-	x.Text = b.Text
-	x.IsSelfReply = b.IsSelfReply
-	x.Folder = b.Folder
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 12)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	x.xxx_hidden_Attachments = &b.Attachments
+	if b.IsDeleted != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 12)
+		x.xxx_hidden_IsDeleted = *b.IsDeleted
+	}
+	if b.IsEcho != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 12)
+		x.xxx_hidden_IsEcho = *b.IsEcho
+	}
+	if b.IsSelf != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 12)
+		x.xxx_hidden_IsSelf = *b.IsSelf
+	}
+	if b.IsUnsupported != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 12)
+		x.xxx_hidden_IsUnsupported = *b.IsUnsupported
+	}
+	x.xxx_hidden_QuickReply = b.QuickReply
+	x.xxx_hidden_Referral = b.Referral
+	x.xxx_hidden_ReplyTo = b.ReplyTo
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 12)
+		x.xxx_hidden_Text = b.Text
+	}
+	if b.IsSelfReply != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 12)
+		x.xxx_hidden_IsSelfReply = *b.IsSelfReply
+	}
+	if b.Folder != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 12)
+		x.xxx_hidden_Folder = b.Folder
+	}
 	return m0
 }
 
 // IGWebhookAttachment represents a media attachment included in a message.
 type IGWebhookAttachment struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Attachment media type.
-	Type *string `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
-	// Attachment payload details.
-	Payload       *IGWebhookAttachmentPayload `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState      `protogen:"opaque.v1"`
+	xxx_hidden_Type        *string                     `protobuf:"bytes,1,opt,name=type"`
+	xxx_hidden_Payload     *IGWebhookAttachmentPayload `protobuf:"bytes,2,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookAttachment) Reset() {
@@ -2401,47 +2662,52 @@ func (x *IGWebhookAttachment) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookAttachment) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookAttachment) GetPayload() *IGWebhookAttachmentPayload {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *IGWebhookAttachment) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *IGWebhookAttachment) SetPayload(v *IGWebhookAttachmentPayload) {
-	x.Payload = v
+	x.xxx_hidden_Payload = v
 }
 
 func (x *IGWebhookAttachment) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookAttachment) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return x.xxx_hidden_Payload != nil
 }
 
 func (x *IGWebhookAttachment) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Type = nil
 }
 
 func (x *IGWebhookAttachment) ClearPayload() {
-	x.Payload = nil
+	x.xxx_hidden_Payload = nil
 }
 
 type IGWebhookAttachment_builder struct {
@@ -2457,18 +2723,22 @@ func (b0 IGWebhookAttachment_builder) Build() *IGWebhookAttachment {
 	m0 := &IGWebhookAttachment{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Type = b.Type
-	x.Payload = b.Payload
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Type = b.Type
+	}
+	x.xxx_hidden_Payload = b.Payload
 	return m0
 }
 
 // IGWebhookAttachmentPayload contains attachment metadata.
 type IGWebhookAttachmentPayload struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Media URL for the attachment.
-	Url           *string `protobuf:"bytes,1,opt,name=url" json:"url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Url         *string                `protobuf:"bytes,1,opt,name=url"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookAttachmentPayload) Reset() {
@@ -2497,25 +2767,30 @@ func (x *IGWebhookAttachmentPayload) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookAttachmentPayload) GetUrl() string {
-	if x != nil && x.Url != nil {
-		return *x.Url
+	if x != nil {
+		if x.xxx_hidden_Url != nil {
+			return *x.xxx_hidden_Url
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookAttachmentPayload) SetUrl(v string) {
-	x.Url = &v
+	x.xxx_hidden_Url = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *IGWebhookAttachmentPayload) HasUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.Url != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookAttachmentPayload) ClearUrl() {
-	x.Url = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Url = nil
 }
 
 type IGWebhookAttachmentPayload_builder struct {
@@ -2529,17 +2804,21 @@ func (b0 IGWebhookAttachmentPayload_builder) Build() *IGWebhookAttachmentPayload
 	m0 := &IGWebhookAttachmentPayload{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Url = b.Url
+	if b.Url != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Url = b.Url
+	}
 	return m0
 }
 
 // IGWebhookQuickReply stores the quick-reply payload selected by the user.
 type IGWebhookQuickReply struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Quick reply payload value.
-	Payload       *string `protobuf:"bytes,1,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Payload     *string                `protobuf:"bytes,1,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookQuickReply) Reset() {
@@ -2568,25 +2847,30 @@ func (x *IGWebhookQuickReply) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookQuickReply) GetPayload() string {
-	if x != nil && x.Payload != nil {
-		return *x.Payload
+	if x != nil {
+		if x.xxx_hidden_Payload != nil {
+			return *x.xxx_hidden_Payload
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookQuickReply) SetPayload(v string) {
-	x.Payload = &v
+	x.xxx_hidden_Payload = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *IGWebhookQuickReply) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookQuickReply) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Payload = nil
 }
 
 type IGWebhookQuickReply_builder struct {
@@ -2600,25 +2884,25 @@ func (b0 IGWebhookQuickReply_builder) Build() *IGWebhookQuickReply {
 	m0 := &IGWebhookQuickReply{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Payload = b.Payload
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
 // IGWebhookReferral stores referral and ad metadata for a message.
 type IGWebhookReferral struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Advertising ref parameter value.
-	Ref *string `protobuf:"bytes,1,opt,name=ref" json:"ref,omitempty"`
-	// Ad identifier.
-	AdId *string `protobuf:"bytes,2,opt,name=ad_id,json=adId" json:"ad_id,omitempty"`
-	// Referral source.
-	Source *string `protobuf:"bytes,3,opt,name=source" json:"source,omitempty"`
-	// Referral type.
-	Type *string `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	// Ad metadata context data.
-	AdsContextData *IGWebhookAdsContextData `protobuf:"bytes,5,opt,name=ads_context_data,json=adsContextData" json:"ads_context_data,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state                     protoimpl.MessageState   `protogen:"opaque.v1"`
+	xxx_hidden_Ref            *string                  `protobuf:"bytes,1,opt,name=ref"`
+	xxx_hidden_AdId           *string                  `protobuf:"bytes,2,opt,name=ad_id,json=adId"`
+	xxx_hidden_Source         *string                  `protobuf:"bytes,3,opt,name=source"`
+	xxx_hidden_Type           *string                  `protobuf:"bytes,4,opt,name=type"`
+	xxx_hidden_AdsContextData *IGWebhookAdsContextData `protobuf:"bytes,5,opt,name=ads_context_data,json=adsContextData"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *IGWebhookReferral) Reset() {
@@ -2647,113 +2931,133 @@ func (x *IGWebhookReferral) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookReferral) GetRef() string {
-	if x != nil && x.Ref != nil {
-		return *x.Ref
+	if x != nil {
+		if x.xxx_hidden_Ref != nil {
+			return *x.xxx_hidden_Ref
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReferral) GetAdId() string {
-	if x != nil && x.AdId != nil {
-		return *x.AdId
+	if x != nil {
+		if x.xxx_hidden_AdId != nil {
+			return *x.xxx_hidden_AdId
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReferral) GetSource() string {
-	if x != nil && x.Source != nil {
-		return *x.Source
+	if x != nil {
+		if x.xxx_hidden_Source != nil {
+			return *x.xxx_hidden_Source
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReferral) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReferral) GetAdsContextData() *IGWebhookAdsContextData {
 	if x != nil {
-		return x.AdsContextData
+		return x.xxx_hidden_AdsContextData
 	}
 	return nil
 }
 
 func (x *IGWebhookReferral) SetRef(v string) {
-	x.Ref = &v
+	x.xxx_hidden_Ref = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
 }
 
 func (x *IGWebhookReferral) SetAdId(v string) {
-	x.AdId = &v
+	x.xxx_hidden_AdId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
 }
 
 func (x *IGWebhookReferral) SetSource(v string) {
-	x.Source = &v
+	x.xxx_hidden_Source = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
 }
 
 func (x *IGWebhookReferral) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
 }
 
 func (x *IGWebhookReferral) SetAdsContextData(v *IGWebhookAdsContextData) {
-	x.AdsContextData = v
+	x.xxx_hidden_AdsContextData = v
 }
 
 func (x *IGWebhookReferral) HasRef() bool {
 	if x == nil {
 		return false
 	}
-	return x.Ref != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookReferral) HasAdId() bool {
 	if x == nil {
 		return false
 	}
-	return x.AdId != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookReferral) HasSource() bool {
 	if x == nil {
 		return false
 	}
-	return x.Source != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookReferral) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *IGWebhookReferral) HasAdsContextData() bool {
 	if x == nil {
 		return false
 	}
-	return x.AdsContextData != nil
+	return x.xxx_hidden_AdsContextData != nil
 }
 
 func (x *IGWebhookReferral) ClearRef() {
-	x.Ref = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Ref = nil
 }
 
 func (x *IGWebhookReferral) ClearAdId() {
-	x.AdId = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_AdId = nil
 }
 
 func (x *IGWebhookReferral) ClearSource() {
-	x.Source = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Source = nil
 }
 
 func (x *IGWebhookReferral) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Type = nil
 }
 
 func (x *IGWebhookReferral) ClearAdsContextData() {
-	x.AdsContextData = nil
+	x.xxx_hidden_AdsContextData = nil
 }
 
 type IGWebhookReferral_builder struct {
@@ -2775,25 +3079,36 @@ func (b0 IGWebhookReferral_builder) Build() *IGWebhookReferral {
 	m0 := &IGWebhookReferral{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Ref = b.Ref
-	x.AdId = b.AdId
-	x.Source = b.Source
-	x.Type = b.Type
-	x.AdsContextData = b.AdsContextData
+	if b.Ref != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		x.xxx_hidden_Ref = b.Ref
+	}
+	if b.AdId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_AdId = b.AdId
+	}
+	if b.Source != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Source = b.Source
+	}
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_Type = b.Type
+	}
+	x.xxx_hidden_AdsContextData = b.AdsContextData
 	return m0
 }
 
 // IGWebhookReferralMessage stores a messaging referral from an existing conversation.
 type IGWebhookReferralMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// IGME link ref parameter value.
-	Ref *string `protobuf:"bytes,1,opt,name=ref" json:"ref,omitempty"`
-	// IGME source link.
-	Source *string `protobuf:"bytes,2,opt,name=source" json:"source,omitempty"`
-	// Referral type.
-	Type          *string `protobuf:"bytes,3,opt,name=type" json:"type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Ref         *string                `protobuf:"bytes,1,opt,name=ref"`
+	xxx_hidden_Source      *string                `protobuf:"bytes,2,opt,name=source"`
+	xxx_hidden_Type        *string                `protobuf:"bytes,3,opt,name=type"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookReferralMessage) Reset() {
@@ -2822,69 +3137,84 @@ func (x *IGWebhookReferralMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookReferralMessage) GetRef() string {
-	if x != nil && x.Ref != nil {
-		return *x.Ref
+	if x != nil {
+		if x.xxx_hidden_Ref != nil {
+			return *x.xxx_hidden_Ref
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReferralMessage) GetSource() string {
-	if x != nil && x.Source != nil {
-		return *x.Source
+	if x != nil {
+		if x.xxx_hidden_Source != nil {
+			return *x.xxx_hidden_Source
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReferralMessage) GetType() string {
-	if x != nil && x.Type != nil {
-		return *x.Type
+	if x != nil {
+		if x.xxx_hidden_Type != nil {
+			return *x.xxx_hidden_Type
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReferralMessage) SetRef(v string) {
-	x.Ref = &v
+	x.xxx_hidden_Ref = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookReferralMessage) SetSource(v string) {
-	x.Source = &v
+	x.xxx_hidden_Source = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookReferralMessage) SetType(v string) {
-	x.Type = &v
+	x.xxx_hidden_Type = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookReferralMessage) HasRef() bool {
 	if x == nil {
 		return false
 	}
-	return x.Ref != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookReferralMessage) HasSource() bool {
 	if x == nil {
 		return false
 	}
-	return x.Source != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookReferralMessage) HasType() bool {
 	if x == nil {
 		return false
 	}
-	return x.Type != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookReferralMessage) ClearRef() {
-	x.Ref = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Ref = nil
 }
 
 func (x *IGWebhookReferralMessage) ClearSource() {
-	x.Source = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Source = nil
 }
 
 func (x *IGWebhookReferralMessage) ClearType() {
-	x.Type = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Type = nil
 }
 
 type IGWebhookReferralMessage_builder struct {
@@ -2902,23 +3232,31 @@ func (b0 IGWebhookReferralMessage_builder) Build() *IGWebhookReferralMessage {
 	m0 := &IGWebhookReferralMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Ref = b.Ref
-	x.Source = b.Source
-	x.Type = b.Type
+	if b.Ref != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Ref = b.Ref
+	}
+	if b.Source != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Source = b.Source
+	}
+	if b.Type != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Type = b.Type
+	}
 	return m0
 }
 
 // IGWebhookAdsContextData contains ad metadata when the message originates from an ad.
 type IGWebhookAdsContextData struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Ad title.
-	AdTitle *string `protobuf:"bytes,1,opt,name=ad_title,json=adTitle" json:"ad_title,omitempty"`
-	// Photo URL associated with the ad.
-	PhotoUrl *string `protobuf:"bytes,2,opt,name=photo_url,json=photoUrl" json:"photo_url,omitempty"`
-	// Video thumbnail URL associated with the ad.
-	VideoUrl      *string `protobuf:"bytes,3,opt,name=video_url,json=videoUrl" json:"video_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_AdTitle     *string                `protobuf:"bytes,1,opt,name=ad_title,json=adTitle"`
+	xxx_hidden_PhotoUrl    *string                `protobuf:"bytes,2,opt,name=photo_url,json=photoUrl"`
+	xxx_hidden_VideoUrl    *string                `protobuf:"bytes,3,opt,name=video_url,json=videoUrl"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookAdsContextData) Reset() {
@@ -2947,69 +3285,84 @@ func (x *IGWebhookAdsContextData) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookAdsContextData) GetAdTitle() string {
-	if x != nil && x.AdTitle != nil {
-		return *x.AdTitle
+	if x != nil {
+		if x.xxx_hidden_AdTitle != nil {
+			return *x.xxx_hidden_AdTitle
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookAdsContextData) GetPhotoUrl() string {
-	if x != nil && x.PhotoUrl != nil {
-		return *x.PhotoUrl
+	if x != nil {
+		if x.xxx_hidden_PhotoUrl != nil {
+			return *x.xxx_hidden_PhotoUrl
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookAdsContextData) GetVideoUrl() string {
-	if x != nil && x.VideoUrl != nil {
-		return *x.VideoUrl
+	if x != nil {
+		if x.xxx_hidden_VideoUrl != nil {
+			return *x.xxx_hidden_VideoUrl
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookAdsContextData) SetAdTitle(v string) {
-	x.AdTitle = &v
+	x.xxx_hidden_AdTitle = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookAdsContextData) SetPhotoUrl(v string) {
-	x.PhotoUrl = &v
+	x.xxx_hidden_PhotoUrl = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookAdsContextData) SetVideoUrl(v string) {
-	x.VideoUrl = &v
+	x.xxx_hidden_VideoUrl = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookAdsContextData) HasAdTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.AdTitle != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookAdsContextData) HasPhotoUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.PhotoUrl != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookAdsContextData) HasVideoUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.VideoUrl != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookAdsContextData) ClearAdTitle() {
-	x.AdTitle = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_AdTitle = nil
 }
 
 func (x *IGWebhookAdsContextData) ClearPhotoUrl() {
-	x.PhotoUrl = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_PhotoUrl = nil
 }
 
 func (x *IGWebhookAdsContextData) ClearVideoUrl() {
-	x.VideoUrl = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_VideoUrl = nil
 }
 
 type IGWebhookAdsContextData_builder struct {
@@ -3027,21 +3380,30 @@ func (b0 IGWebhookAdsContextData_builder) Build() *IGWebhookAdsContextData {
 	m0 := &IGWebhookAdsContextData{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.AdTitle = b.AdTitle
-	x.PhotoUrl = b.PhotoUrl
-	x.VideoUrl = b.VideoUrl
+	if b.AdTitle != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_AdTitle = b.AdTitle
+	}
+	if b.PhotoUrl != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_PhotoUrl = b.PhotoUrl
+	}
+	if b.VideoUrl != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_VideoUrl = b.VideoUrl
+	}
 	return m0
 }
 
 // IGWebhookReplyTo contains the message or story being replied to.
 type IGWebhookReplyTo struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Original message identifier if the message is a reply to another message.
-	Mid *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	// Story metadata if the reply references a story.
-	Story         *IGWebhookStory `protobuf:"bytes,2,opt,name=story" json:"story,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	xxx_hidden_Story       *IGWebhookStory        `protobuf:"bytes,2,opt,name=story"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookReplyTo) Reset() {
@@ -3070,47 +3432,52 @@ func (x *IGWebhookReplyTo) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookReplyTo) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReplyTo) GetStory() *IGWebhookStory {
 	if x != nil {
-		return x.Story
+		return x.xxx_hidden_Story
 	}
 	return nil
 }
 
 func (x *IGWebhookReplyTo) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *IGWebhookReplyTo) SetStory(v *IGWebhookStory) {
-	x.Story = v
+	x.xxx_hidden_Story = v
 }
 
 func (x *IGWebhookReplyTo) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookReplyTo) HasStory() bool {
 	if x == nil {
 		return false
 	}
-	return x.Story != nil
+	return x.xxx_hidden_Story != nil
 }
 
 func (x *IGWebhookReplyTo) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *IGWebhookReplyTo) ClearStory() {
-	x.Story = nil
+	x.xxx_hidden_Story = nil
 }
 
 type IGWebhookReplyTo_builder struct {
@@ -3126,22 +3493,24 @@ func (b0 IGWebhookReplyTo_builder) Build() *IGWebhookReplyTo {
 	m0 := &IGWebhookReplyTo{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
-	x.Story = b.Story
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	x.xxx_hidden_Story = b.Story
 	return m0
 }
 
 // IGWebhookStory stores story metadata for a reply action.
 type IGWebhookStory struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Story CDN URL.
-	Url *string `protobuf:"bytes,1,opt,name=url" json:"url,omitempty"`
-	// Story identifier.
-	Id *string `protobuf:"bytes,2,opt,name=id" json:"id,omitempty"`
-	// Sticker link URL associated with the story reply.
-	LinkStickerUrl *string `protobuf:"bytes,3,opt,name=link_sticker_url,json=linkStickerUrl" json:"link_sticker_url,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Url            *string                `protobuf:"bytes,1,opt,name=url"`
+	xxx_hidden_Id             *string                `protobuf:"bytes,2,opt,name=id"`
+	xxx_hidden_LinkStickerUrl *string                `protobuf:"bytes,3,opt,name=link_sticker_url,json=linkStickerUrl"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *IGWebhookStory) Reset() {
@@ -3170,69 +3539,84 @@ func (x *IGWebhookStory) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookStory) GetUrl() string {
-	if x != nil && x.Url != nil {
-		return *x.Url
+	if x != nil {
+		if x.xxx_hidden_Url != nil {
+			return *x.xxx_hidden_Url
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookStory) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookStory) GetLinkStickerUrl() string {
-	if x != nil && x.LinkStickerUrl != nil {
-		return *x.LinkStickerUrl
+	if x != nil {
+		if x.xxx_hidden_LinkStickerUrl != nil {
+			return *x.xxx_hidden_LinkStickerUrl
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookStory) SetUrl(v string) {
-	x.Url = &v
+	x.xxx_hidden_Url = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookStory) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookStory) SetLinkStickerUrl(v string) {
-	x.LinkStickerUrl = &v
+	x.xxx_hidden_LinkStickerUrl = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookStory) HasUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.Url != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookStory) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookStory) HasLinkStickerUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.LinkStickerUrl != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookStory) ClearUrl() {
-	x.Url = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Url = nil
 }
 
 func (x *IGWebhookStory) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *IGWebhookStory) ClearLinkStickerUrl() {
-	x.LinkStickerUrl = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_LinkStickerUrl = nil
 }
 
 type IGWebhookStory_builder struct {
@@ -3250,25 +3634,32 @@ func (b0 IGWebhookStory_builder) Build() *IGWebhookStory {
 	m0 := &IGWebhookStory{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Url = b.Url
-	x.Id = b.Id
-	x.LinkStickerUrl = b.LinkStickerUrl
+	if b.Url != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Url = b.Url
+	}
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.LinkStickerUrl != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_LinkStickerUrl = b.LinkStickerUrl
+	}
 	return m0
 }
 
 // IGWebhookReaction represents a reaction event on a message.
 type IGWebhookReaction struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Message identifier affected by the reaction.
-	Mid *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	// Reaction action: react or unreact.
-	Action *string `protobuf:"bytes,2,opt,name=action" json:"action,omitempty"`
-	// Reaction value, for example love.
-	Reaction *string `protobuf:"bytes,3,opt,name=reaction" json:"reaction,omitempty"`
-	// Emoji used for the reaction.
-	Emoji         *string `protobuf:"bytes,4,opt,name=emoji" json:"emoji,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	xxx_hidden_Action      *string                `protobuf:"bytes,2,opt,name=action"`
+	xxx_hidden_Reaction    *string                `protobuf:"bytes,3,opt,name=reaction"`
+	xxx_hidden_Emoji       *string                `protobuf:"bytes,4,opt,name=emoji"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookReaction) Reset() {
@@ -3297,91 +3688,111 @@ func (x *IGWebhookReaction) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookReaction) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReaction) GetAction() string {
-	if x != nil && x.Action != nil {
-		return *x.Action
+	if x != nil {
+		if x.xxx_hidden_Action != nil {
+			return *x.xxx_hidden_Action
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReaction) GetReaction() string {
-	if x != nil && x.Reaction != nil {
-		return *x.Reaction
+	if x != nil {
+		if x.xxx_hidden_Reaction != nil {
+			return *x.xxx_hidden_Reaction
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReaction) GetEmoji() string {
-	if x != nil && x.Emoji != nil {
-		return *x.Emoji
+	if x != nil {
+		if x.xxx_hidden_Emoji != nil {
+			return *x.xxx_hidden_Emoji
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookReaction) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
 }
 
 func (x *IGWebhookReaction) SetAction(v string) {
-	x.Action = &v
+	x.xxx_hidden_Action = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
 }
 
 func (x *IGWebhookReaction) SetReaction(v string) {
-	x.Reaction = &v
+	x.xxx_hidden_Reaction = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
 }
 
 func (x *IGWebhookReaction) SetEmoji(v string) {
-	x.Emoji = &v
+	x.xxx_hidden_Emoji = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
 }
 
 func (x *IGWebhookReaction) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookReaction) HasAction() bool {
 	if x == nil {
 		return false
 	}
-	return x.Action != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookReaction) HasReaction() bool {
 	if x == nil {
 		return false
 	}
-	return x.Reaction != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookReaction) HasEmoji() bool {
 	if x == nil {
 		return false
 	}
-	return x.Emoji != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *IGWebhookReaction) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *IGWebhookReaction) ClearAction() {
-	x.Action = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Action = nil
 }
 
 func (x *IGWebhookReaction) ClearReaction() {
-	x.Reaction = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Reaction = nil
 }
 
 func (x *IGWebhookReaction) ClearEmoji() {
-	x.Emoji = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Emoji = nil
 }
 
 type IGWebhookReaction_builder struct {
@@ -3401,20 +3812,33 @@ func (b0 IGWebhookReaction_builder) Build() *IGWebhookReaction {
 	m0 := &IGWebhookReaction{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
-	x.Action = b.Action
-	x.Reaction = b.Reaction
-	x.Emoji = b.Emoji
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.Action != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_Action = b.Action
+	}
+	if b.Reaction != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_Reaction = b.Reaction
+	}
+	if b.Emoji != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_Emoji = b.Emoji
+	}
 	return m0
 }
 
 // IGWebhookRead represents a message read event.
 type IGWebhookRead struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Message identifier that was read.
-	Mid           *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookRead) Reset() {
@@ -3443,25 +3867,30 @@ func (x *IGWebhookRead) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookRead) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookRead) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *IGWebhookRead) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookRead) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 type IGWebhookRead_builder struct {
@@ -3475,21 +3904,23 @@ func (b0 IGWebhookRead_builder) Build() *IGWebhookRead {
 	m0 := &IGWebhookRead{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Mid = b.Mid
+	}
 	return m0
 }
 
 // IGWebhookMessageEdit represents an edited message event.
 type IGWebhookMessageEdit struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Message identifier that was edited.
-	Mid *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	// Edited message text.
-	Text *string `protobuf:"bytes,2,opt,name=text" json:"text,omitempty"`
-	// Number of times the message has been edited.
-	NumEdit       *int32 `protobuf:"varint,3,opt,name=num_edit,json=numEdit" json:"num_edit,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	xxx_hidden_Text        *string                `protobuf:"bytes,2,opt,name=text"`
+	xxx_hidden_NumEdit     int32                  `protobuf:"varint,3,opt,name=num_edit,json=numEdit"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookMessageEdit) Reset() {
@@ -3518,69 +3949,81 @@ func (x *IGWebhookMessageEdit) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookMessageEdit) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookMessageEdit) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookMessageEdit) GetNumEdit() int32 {
-	if x != nil && x.NumEdit != nil {
-		return *x.NumEdit
+	if x != nil {
+		return x.xxx_hidden_NumEdit
 	}
 	return 0
 }
 
 func (x *IGWebhookMessageEdit) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookMessageEdit) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookMessageEdit) SetNumEdit(v int32) {
-	x.NumEdit = &v
+	x.xxx_hidden_NumEdit = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookMessageEdit) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookMessageEdit) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookMessageEdit) HasNumEdit() bool {
 	if x == nil {
 		return false
 	}
-	return x.NumEdit != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookMessageEdit) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *IGWebhookMessageEdit) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Text = nil
 }
 
 func (x *IGWebhookMessageEdit) ClearNumEdit() {
-	x.NumEdit = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_NumEdit = 0
 }
 
 type IGWebhookMessageEdit_builder struct {
@@ -3598,23 +4041,31 @@ func (b0 IGWebhookMessageEdit_builder) Build() *IGWebhookMessageEdit {
 	m0 := &IGWebhookMessageEdit{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
-	x.Text = b.Text
-	x.NumEdit = b.NumEdit
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Text = b.Text
+	}
+	if b.NumEdit != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_NumEdit = *b.NumEdit
+	}
 	return m0
 }
 
 // IGWebhookPostback represents a user-selected CTA or icebreaker response.
 type IGWebhookPostback struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Message identifier related to the postback.
-	Mid *string `protobuf:"bytes,1,opt,name=mid" json:"mid,omitempty"`
-	// Title displayed in the CTA or option.
-	Title *string `protobuf:"bytes,2,opt,name=title" json:"title,omitempty"`
-	// Option or button payload selected by the user.
-	Payload       *string `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Mid         *string                `protobuf:"bytes,1,opt,name=mid"`
+	xxx_hidden_Title       *string                `protobuf:"bytes,2,opt,name=title"`
+	xxx_hidden_Payload     *string                `protobuf:"bytes,3,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookPostback) Reset() {
@@ -3643,69 +4094,84 @@ func (x *IGWebhookPostback) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookPostback) GetMid() string {
-	if x != nil && x.Mid != nil {
-		return *x.Mid
+	if x != nil {
+		if x.xxx_hidden_Mid != nil {
+			return *x.xxx_hidden_Mid
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookPostback) GetTitle() string {
-	if x != nil && x.Title != nil {
-		return *x.Title
+	if x != nil {
+		if x.xxx_hidden_Title != nil {
+			return *x.xxx_hidden_Title
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookPostback) GetPayload() string {
-	if x != nil && x.Payload != nil {
-		return *x.Payload
+	if x != nil {
+		if x.xxx_hidden_Payload != nil {
+			return *x.xxx_hidden_Payload
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookPostback) SetMid(v string) {
-	x.Mid = &v
+	x.xxx_hidden_Mid = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *IGWebhookPostback) SetTitle(v string) {
-	x.Title = &v
+	x.xxx_hidden_Title = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *IGWebhookPostback) SetPayload(v string) {
-	x.Payload = &v
+	x.xxx_hidden_Payload = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *IGWebhookPostback) HasMid() bool {
 	if x == nil {
 		return false
 	}
-	return x.Mid != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookPostback) HasTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.Title != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *IGWebhookPostback) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *IGWebhookPostback) ClearMid() {
-	x.Mid = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Mid = nil
 }
 
 func (x *IGWebhookPostback) ClearTitle() {
-	x.Title = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Title = nil
 }
 
 func (x *IGWebhookPostback) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
 }
 
 type IGWebhookPostback_builder struct {
@@ -3723,19 +4189,29 @@ func (b0 IGWebhookPostback_builder) Build() *IGWebhookPostback {
 	m0 := &IGWebhookPostback{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Mid = b.Mid
-	x.Title = b.Title
-	x.Payload = b.Payload
+	if b.Mid != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Mid = b.Mid
+	}
+	if b.Title != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Title = b.Title
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
 // IGWebhookUser describes a sender or recipient in an Instagram messaging event.
 type IGWebhookUser struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// User identifier.
-	Id            *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *IGWebhookUser) Reset() {
@@ -3764,25 +4240,30 @@ func (x *IGWebhookUser) ProtoReflect() protoreflect.Message {
 }
 
 func (x *IGWebhookUser) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *IGWebhookUser) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *IGWebhookUser) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *IGWebhookUser) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 type IGWebhookUser_builder struct {
@@ -3796,7 +4277,10 @@ func (b0 IGWebhookUser_builder) Build() *IGWebhookUser {
 	m0 := &IGWebhookUser{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Id = b.Id
+	}
 	return m0
 }
 

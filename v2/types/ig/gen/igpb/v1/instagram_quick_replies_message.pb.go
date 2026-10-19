@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_quick_replies_message.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,15 +24,14 @@ const (
 
 // QuickReply represents a single quick reply button option
 type QuickReply struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The content type of the quick reply (text, user_phone_number, user_email)
-	ContentType *string `protobuf:"bytes,1,opt,name=content_type,json=contentType" json:"content_type,omitempty"`
-	// The title text displayed on the quick reply button
-	Title *string `protobuf:"bytes,2,opt,name=title" json:"title,omitempty"`
-	// The payload content to be received in webhook notification when quick reply is clicked
-	Payload       *string `protobuf:"bytes,3,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ContentType *string                `protobuf:"bytes,1,opt,name=content_type,json=contentType"`
+	xxx_hidden_Title       *string                `protobuf:"bytes,2,opt,name=title"`
+	xxx_hidden_Payload     *string                `protobuf:"bytes,3,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *QuickReply) Reset() {
@@ -63,69 +60,84 @@ func (x *QuickReply) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QuickReply) GetContentType() string {
-	if x != nil && x.ContentType != nil {
-		return *x.ContentType
+	if x != nil {
+		if x.xxx_hidden_ContentType != nil {
+			return *x.xxx_hidden_ContentType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *QuickReply) GetTitle() string {
-	if x != nil && x.Title != nil {
-		return *x.Title
+	if x != nil {
+		if x.xxx_hidden_Title != nil {
+			return *x.xxx_hidden_Title
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *QuickReply) GetPayload() string {
-	if x != nil && x.Payload != nil {
-		return *x.Payload
+	if x != nil {
+		if x.xxx_hidden_Payload != nil {
+			return *x.xxx_hidden_Payload
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *QuickReply) SetContentType(v string) {
-	x.ContentType = &v
+	x.xxx_hidden_ContentType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *QuickReply) SetTitle(v string) {
-	x.Title = &v
+	x.xxx_hidden_Title = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *QuickReply) SetPayload(v string) {
-	x.Payload = &v
+	x.xxx_hidden_Payload = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
 }
 
 func (x *QuickReply) HasContentType() bool {
 	if x == nil {
 		return false
 	}
-	return x.ContentType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *QuickReply) HasTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.Title != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *QuickReply) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *QuickReply) ClearContentType() {
-	x.ContentType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_ContentType = nil
 }
 
 func (x *QuickReply) ClearTitle() {
-	x.Title = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Title = nil
 }
 
 func (x *QuickReply) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Payload = nil
 }
 
 type QuickReply_builder struct {
@@ -143,21 +155,30 @@ func (b0 QuickReply_builder) Build() *QuickReply {
 	m0 := &QuickReply{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.ContentType = b.ContentType
-	x.Title = b.Title
-	x.Payload = b.Payload
+	if b.ContentType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_ContentType = b.ContentType
+	}
+	if b.Title != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Title = b.Title
+	}
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
 // QuickRepliesMessage contains text prompt and array of quick reply options
 type QuickRepliesMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The text that prompts a person to click a quick reply
-	Text *string `protobuf:"bytes,1,opt,name=text" json:"text,omitempty"`
-	// Array of quick reply options available to the user
-	QuickReplies  []*QuickReply `protobuf:"bytes,2,rep,name=quick_replies,json=quickReplies" json:"quick_replies,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                   protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Text         *string                `protobuf:"bytes,1,opt,name=text"`
+	xxx_hidden_QuickReplies *[]*QuickReply         `protobuf:"bytes,2,rep,name=quick_replies,json=quickReplies"`
+	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
+	XXX_presence            [1]uint32
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *QuickRepliesMessage) Reset() {
@@ -186,36 +207,43 @@ func (x *QuickRepliesMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *QuickRepliesMessage) GetText() string {
-	if x != nil && x.Text != nil {
-		return *x.Text
+	if x != nil {
+		if x.xxx_hidden_Text != nil {
+			return *x.xxx_hidden_Text
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *QuickRepliesMessage) GetQuickReplies() []*QuickReply {
 	if x != nil {
-		return x.QuickReplies
+		if x.xxx_hidden_QuickReplies != nil {
+			return *x.xxx_hidden_QuickReplies
+		}
 	}
 	return nil
 }
 
 func (x *QuickRepliesMessage) SetText(v string) {
-	x.Text = &v
+	x.xxx_hidden_Text = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *QuickRepliesMessage) SetQuickReplies(v []*QuickReply) {
-	x.QuickReplies = v
+	x.xxx_hidden_QuickReplies = &v
 }
 
 func (x *QuickRepliesMessage) HasText() bool {
 	if x == nil {
 		return false
 	}
-	return x.Text != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *QuickRepliesMessage) ClearText() {
-	x.Text = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Text = nil
 }
 
 type QuickRepliesMessage_builder struct {
@@ -231,20 +259,21 @@ func (b0 QuickRepliesMessage_builder) Build() *QuickRepliesMessage {
 	m0 := &QuickRepliesMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Text = b.Text
-	x.QuickReplies = b.QuickReplies
+	if b.Text != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Text = b.Text
+	}
+	x.xxx_hidden_QuickReplies = &b.QuickReplies
 	return m0
 }
 
 // InstagramQuickRepliesMessage is the main message structure for sending quick replies via Instagram
 type InstagramQuickRepliesMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The recipient who will receive the quick replies
-	Recipient *Recipient `protobuf:"bytes,1,opt,name=recipient" json:"recipient,omitempty"`
-	// The message content with quick reply options
-	Message       *QuickRepliesMessage `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Recipient *Recipient             `protobuf:"bytes,1,opt,name=recipient"`
+	xxx_hidden_Message   *QuickRepliesMessage   `protobuf:"bytes,2,opt,name=message"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *InstagramQuickRepliesMessage) Reset() {
@@ -274,46 +303,46 @@ func (x *InstagramQuickRepliesMessage) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramQuickRepliesMessage) GetRecipient() *Recipient {
 	if x != nil {
-		return x.Recipient
+		return x.xxx_hidden_Recipient
 	}
 	return nil
 }
 
 func (x *InstagramQuickRepliesMessage) GetMessage() *QuickRepliesMessage {
 	if x != nil {
-		return x.Message
+		return x.xxx_hidden_Message
 	}
 	return nil
 }
 
 func (x *InstagramQuickRepliesMessage) SetRecipient(v *Recipient) {
-	x.Recipient = v
+	x.xxx_hidden_Recipient = v
 }
 
 func (x *InstagramQuickRepliesMessage) SetMessage(v *QuickRepliesMessage) {
-	x.Message = v
+	x.xxx_hidden_Message = v
 }
 
 func (x *InstagramQuickRepliesMessage) HasRecipient() bool {
 	if x == nil {
 		return false
 	}
-	return x.Recipient != nil
+	return x.xxx_hidden_Recipient != nil
 }
 
 func (x *InstagramQuickRepliesMessage) HasMessage() bool {
 	if x == nil {
 		return false
 	}
-	return x.Message != nil
+	return x.xxx_hidden_Message != nil
 }
 
 func (x *InstagramQuickRepliesMessage) ClearRecipient() {
-	x.Recipient = nil
+	x.xxx_hidden_Recipient = nil
 }
 
 func (x *InstagramQuickRepliesMessage) ClearMessage() {
-	x.Message = nil
+	x.xxx_hidden_Message = nil
 }
 
 type InstagramQuickRepliesMessage_builder struct {
@@ -329,8 +358,8 @@ func (b0 InstagramQuickRepliesMessage_builder) Build() *InstagramQuickRepliesMes
 	m0 := &InstagramQuickRepliesMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Recipient = b.Recipient
-	x.Message = b.Message
+	x.xxx_hidden_Recipient = b.Recipient
+	x.xxx_hidden_Message = b.Message
 	return m0
 }
 

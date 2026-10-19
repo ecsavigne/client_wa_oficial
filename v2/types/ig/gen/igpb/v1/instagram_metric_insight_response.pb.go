@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_metric_insight_response.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -25,12 +23,13 @@ const (
 )
 
 type InstagramMetricInsightResponse struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	Data  []*MetricInsight       `protobuf:"bytes,1,rep,name=data" json:"data,omitempty"`
-	// The payload of the webhook, which can contain additional information about the message, such as attachments or other metadata. This field is flexible and can be used to include any relevant data that may not fit into the predefined fields above.
-	Payload       []byte `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Data        *[]*MetricInsight      `protobuf:"bytes,1,rep,name=data"`
+	xxx_hidden_Payload     []byte                 `protobuf:"bytes,2,opt,name=payload"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *InstagramMetricInsightResponse) Reset() {
@@ -60,38 +59,42 @@ func (x *InstagramMetricInsightResponse) ProtoReflect() protoreflect.Message {
 
 func (x *InstagramMetricInsightResponse) GetData() []*MetricInsight {
 	if x != nil {
-		return x.Data
+		if x.xxx_hidden_Data != nil {
+			return *x.xxx_hidden_Data
+		}
 	}
 	return nil
 }
 
 func (x *InstagramMetricInsightResponse) GetPayload() []byte {
 	if x != nil {
-		return x.Payload
+		return x.xxx_hidden_Payload
 	}
 	return nil
 }
 
 func (x *InstagramMetricInsightResponse) SetData(v []*MetricInsight) {
-	x.Data = v
+	x.xxx_hidden_Data = &v
 }
 
 func (x *InstagramMetricInsightResponse) SetPayload(v []byte) {
 	if v == nil {
 		v = []byte{}
 	}
-	x.Payload = v
+	x.xxx_hidden_Payload = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *InstagramMetricInsightResponse) HasPayload() bool {
 	if x == nil {
 		return false
 	}
-	return x.Payload != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *InstagramMetricInsightResponse) ClearPayload() {
-	x.Payload = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Payload = nil
 }
 
 type InstagramMetricInsightResponse_builder struct {
@@ -106,21 +109,26 @@ func (b0 InstagramMetricInsightResponse_builder) Build() *InstagramMetricInsight
 	m0 := &InstagramMetricInsightResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Data = b.Data
-	x.Payload = b.Payload
+	x.xxx_hidden_Data = &b.Data
+	if b.Payload != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Payload = b.Payload
+	}
 	return m0
 }
 
 type MetricInsight struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Description   *string                `protobuf:"bytes,1,opt,name=description" json:"description,omitempty"`
-	Id            *string                `protobuf:"bytes,2,opt,name=id" json:"id,omitempty"`
-	Name          *string                `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	Period        *string                `protobuf:"bytes,4,opt,name=period" json:"period,omitempty"`
-	Title         *string                `protobuf:"bytes,5,opt,name=title" json:"title,omitempty"`
-	Values        []*MetricValue         `protobuf:"bytes,6,rep,name=values" json:"values,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Description *string                `protobuf:"bytes,1,opt,name=description"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,2,opt,name=id"`
+	xxx_hidden_Name        *string                `protobuf:"bytes,3,opt,name=name"`
+	xxx_hidden_Period      *string                `protobuf:"bytes,4,opt,name=period"`
+	xxx_hidden_Title       *string                `protobuf:"bytes,5,opt,name=title"`
+	xxx_hidden_Values      *[]*MetricValue        `protobuf:"bytes,6,rep,name=values"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *MetricInsight) Reset() {
@@ -149,124 +157,151 @@ func (x *MetricInsight) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MetricInsight) GetDescription() string {
-	if x != nil && x.Description != nil {
-		return *x.Description
+	if x != nil {
+		if x.xxx_hidden_Description != nil {
+			return *x.xxx_hidden_Description
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *MetricInsight) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *MetricInsight) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+	if x != nil {
+		if x.xxx_hidden_Name != nil {
+			return *x.xxx_hidden_Name
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *MetricInsight) GetPeriod() string {
-	if x != nil && x.Period != nil {
-		return *x.Period
+	if x != nil {
+		if x.xxx_hidden_Period != nil {
+			return *x.xxx_hidden_Period
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *MetricInsight) GetTitle() string {
-	if x != nil && x.Title != nil {
-		return *x.Title
+	if x != nil {
+		if x.xxx_hidden_Title != nil {
+			return *x.xxx_hidden_Title
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *MetricInsight) GetValues() []*MetricValue {
 	if x != nil {
-		return x.Values
+		if x.xxx_hidden_Values != nil {
+			return *x.xxx_hidden_Values
+		}
 	}
 	return nil
 }
 
 func (x *MetricInsight) SetDescription(v string) {
-	x.Description = &v
+	x.xxx_hidden_Description = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 6)
 }
 
 func (x *MetricInsight) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 6)
 }
 
 func (x *MetricInsight) SetName(v string) {
-	x.Name = &v
+	x.xxx_hidden_Name = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
 }
 
 func (x *MetricInsight) SetPeriod(v string) {
-	x.Period = &v
+	x.xxx_hidden_Period = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
 }
 
 func (x *MetricInsight) SetTitle(v string) {
-	x.Title = &v
+	x.xxx_hidden_Title = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
 }
 
 func (x *MetricInsight) SetValues(v []*MetricValue) {
-	x.Values = v
+	x.xxx_hidden_Values = &v
 }
 
 func (x *MetricInsight) HasDescription() bool {
 	if x == nil {
 		return false
 	}
-	return x.Description != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *MetricInsight) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *MetricInsight) HasName() bool {
 	if x == nil {
 		return false
 	}
-	return x.Name != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *MetricInsight) HasPeriod() bool {
 	if x == nil {
 		return false
 	}
-	return x.Period != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *MetricInsight) HasTitle() bool {
 	if x == nil {
 		return false
 	}
-	return x.Title != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *MetricInsight) ClearDescription() {
-	x.Description = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Description = nil
 }
 
 func (x *MetricInsight) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Id = nil
 }
 
 func (x *MetricInsight) ClearName() {
-	x.Name = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Name = nil
 }
 
 func (x *MetricInsight) ClearPeriod() {
-	x.Period = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Period = nil
 }
 
 func (x *MetricInsight) ClearTitle() {
-	x.Title = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Title = nil
 }
 
 type MetricInsight_builder struct {
@@ -284,21 +319,38 @@ func (b0 MetricInsight_builder) Build() *MetricInsight {
 	m0 := &MetricInsight{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Description = b.Description
-	x.Id = b.Id
-	x.Name = b.Name
-	x.Period = b.Period
-	x.Title = b.Title
-	x.Values = b.Values
+	if b.Description != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 6)
+		x.xxx_hidden_Description = b.Description
+	}
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 6)
+		x.xxx_hidden_Id = b.Id
+	}
+	if b.Name != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
+		x.xxx_hidden_Name = b.Name
+	}
+	if b.Period != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
+		x.xxx_hidden_Period = b.Period
+	}
+	if b.Title != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
+		x.xxx_hidden_Title = b.Title
+	}
+	x.xxx_hidden_Values = &b.Values
 	return m0
 }
 
 type MetricValue struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	EndTime       *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=end_time,json=endTime" json:"end_time,omitempty"`
-	Value         *int64                 `protobuf:"varint,2,opt,name=value" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_EndTime     *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=end_time,json=endTime"`
+	xxx_hidden_Value       int64                  `protobuf:"varint,2,opt,name=value"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *MetricValue) Reset() {
@@ -328,46 +380,48 @@ func (x *MetricValue) ProtoReflect() protoreflect.Message {
 
 func (x *MetricValue) GetEndTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.EndTime
+		return x.xxx_hidden_EndTime
 	}
 	return nil
 }
 
 func (x *MetricValue) GetValue() int64 {
-	if x != nil && x.Value != nil {
-		return *x.Value
+	if x != nil {
+		return x.xxx_hidden_Value
 	}
 	return 0
 }
 
 func (x *MetricValue) SetEndTime(v *timestamppb.Timestamp) {
-	x.EndTime = v
+	x.xxx_hidden_EndTime = v
 }
 
 func (x *MetricValue) SetValue(v int64) {
-	x.Value = &v
+	x.xxx_hidden_Value = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
 }
 
 func (x *MetricValue) HasEndTime() bool {
 	if x == nil {
 		return false
 	}
-	return x.EndTime != nil
+	return x.xxx_hidden_EndTime != nil
 }
 
 func (x *MetricValue) HasValue() bool {
 	if x == nil {
 		return false
 	}
-	return x.Value != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *MetricValue) ClearEndTime() {
-	x.EndTime = nil
+	x.xxx_hidden_EndTime = nil
 }
 
 func (x *MetricValue) ClearValue() {
-	x.Value = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Value = 0
 }
 
 type MetricValue_builder struct {
@@ -381,8 +435,11 @@ func (b0 MetricValue_builder) Build() *MetricValue {
 	m0 := &MetricValue{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.EndTime = b.EndTime
-	x.Value = b.Value
+	x.xxx_hidden_EndTime = b.EndTime
+	if b.Value != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Value = *b.Value
+	}
 	return m0
 }
 

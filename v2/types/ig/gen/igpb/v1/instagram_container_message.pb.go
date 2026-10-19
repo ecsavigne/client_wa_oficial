@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_container_message.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,23 +24,18 @@ const (
 
 // InstagramContainerMessage represents a container for media to be published on Instagram
 type InstagramContainerMessage struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// The URL of the image. Set to the path of the image on a public server
-	ImageUrl *string `protobuf:"bytes,1,opt,name=image_url,json=imageUrl" json:"image_url,omitempty"`
-	// The URL of the video. Set to the path of the video on a public server
-	VideoUrl *string `protobuf:"bytes,2,opt,name=video_url,json=videoUrl" json:"video_url,omitempty"`
-	// The type of media (VIDEO, REELS, CAROUSEL, or STORIES)
-	MediaType *string `protobuf:"bytes,3,opt,name=media_type,json=mediaType" json:"media_type,omitempty"`
-	// Whether the media will be part of a carousel
-	IsCarouselItem *bool `protobuf:"varint,4,opt,name=is_carousel_item,json=isCarouselItem" json:"is_carousel_item,omitempty"`
-	// The upload session type (resumable for large files)
-	UploadType *string `protobuf:"bytes,5,opt,name=upload_type,json=uploadType" json:"upload_type,omitempty"`
-	// List of up to 10 container IDs of each image and video that should appear in the published carousel
-	Children []string `protobuf:"bytes,6,rep,name=children" json:"children,omitempty"`
-	// The caption for the carousel
-	Caption       *string `protobuf:"bytes,7,opt,name=caption" json:"caption,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ImageUrl       *string                `protobuf:"bytes,1,opt,name=image_url,json=imageUrl"`
+	xxx_hidden_VideoUrl       *string                `protobuf:"bytes,2,opt,name=video_url,json=videoUrl"`
+	xxx_hidden_MediaType      *string                `protobuf:"bytes,3,opt,name=media_type,json=mediaType"`
+	xxx_hidden_IsCarouselItem bool                   `protobuf:"varint,4,opt,name=is_carousel_item,json=isCarouselItem"`
+	xxx_hidden_UploadType     *string                `protobuf:"bytes,5,opt,name=upload_type,json=uploadType"`
+	xxx_hidden_Children       []string               `protobuf:"bytes,6,rep,name=children"`
+	xxx_hidden_Caption        *string                `protobuf:"bytes,7,opt,name=caption"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *InstagramContainerMessage) Reset() {
@@ -71,146 +64,173 @@ func (x *InstagramContainerMessage) ProtoReflect() protoreflect.Message {
 }
 
 func (x *InstagramContainerMessage) GetImageUrl() string {
-	if x != nil && x.ImageUrl != nil {
-		return *x.ImageUrl
+	if x != nil {
+		if x.xxx_hidden_ImageUrl != nil {
+			return *x.xxx_hidden_ImageUrl
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramContainerMessage) GetVideoUrl() string {
-	if x != nil && x.VideoUrl != nil {
-		return *x.VideoUrl
+	if x != nil {
+		if x.xxx_hidden_VideoUrl != nil {
+			return *x.xxx_hidden_VideoUrl
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramContainerMessage) GetMediaType() string {
-	if x != nil && x.MediaType != nil {
-		return *x.MediaType
+	if x != nil {
+		if x.xxx_hidden_MediaType != nil {
+			return *x.xxx_hidden_MediaType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramContainerMessage) GetIsCarouselItem() bool {
-	if x != nil && x.IsCarouselItem != nil {
-		return *x.IsCarouselItem
+	if x != nil {
+		return x.xxx_hidden_IsCarouselItem
 	}
 	return false
 }
 
 func (x *InstagramContainerMessage) GetUploadType() string {
-	if x != nil && x.UploadType != nil {
-		return *x.UploadType
+	if x != nil {
+		if x.xxx_hidden_UploadType != nil {
+			return *x.xxx_hidden_UploadType
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramContainerMessage) GetChildren() []string {
 	if x != nil {
-		return x.Children
+		return x.xxx_hidden_Children
 	}
 	return nil
 }
 
 func (x *InstagramContainerMessage) GetCaption() string {
-	if x != nil && x.Caption != nil {
-		return *x.Caption
+	if x != nil {
+		if x.xxx_hidden_Caption != nil {
+			return *x.xxx_hidden_Caption
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *InstagramContainerMessage) SetImageUrl(v string) {
-	x.ImageUrl = &v
+	x.xxx_hidden_ImageUrl = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 7)
 }
 
 func (x *InstagramContainerMessage) SetVideoUrl(v string) {
-	x.VideoUrl = &v
+	x.xxx_hidden_VideoUrl = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 7)
 }
 
 func (x *InstagramContainerMessage) SetMediaType(v string) {
-	x.MediaType = &v
+	x.xxx_hidden_MediaType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 7)
 }
 
 func (x *InstagramContainerMessage) SetIsCarouselItem(v bool) {
-	x.IsCarouselItem = &v
+	x.xxx_hidden_IsCarouselItem = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
 }
 
 func (x *InstagramContainerMessage) SetUploadType(v string) {
-	x.UploadType = &v
+	x.xxx_hidden_UploadType = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 7)
 }
 
 func (x *InstagramContainerMessage) SetChildren(v []string) {
-	x.Children = v
+	x.xxx_hidden_Children = v
 }
 
 func (x *InstagramContainerMessage) SetCaption(v string) {
-	x.Caption = &v
+	x.xxx_hidden_Caption = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 7)
 }
 
 func (x *InstagramContainerMessage) HasImageUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.ImageUrl != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *InstagramContainerMessage) HasVideoUrl() bool {
 	if x == nil {
 		return false
 	}
-	return x.VideoUrl != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
 }
 
 func (x *InstagramContainerMessage) HasMediaType() bool {
 	if x == nil {
 		return false
 	}
-	return x.MediaType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
 }
 
 func (x *InstagramContainerMessage) HasIsCarouselItem() bool {
 	if x == nil {
 		return false
 	}
-	return x.IsCarouselItem != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
 }
 
 func (x *InstagramContainerMessage) HasUploadType() bool {
 	if x == nil {
 		return false
 	}
-	return x.UploadType != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
 }
 
 func (x *InstagramContainerMessage) HasCaption() bool {
 	if x == nil {
 		return false
 	}
-	return x.Caption != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
 }
 
 func (x *InstagramContainerMessage) ClearImageUrl() {
-	x.ImageUrl = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_ImageUrl = nil
 }
 
 func (x *InstagramContainerMessage) ClearVideoUrl() {
-	x.VideoUrl = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_VideoUrl = nil
 }
 
 func (x *InstagramContainerMessage) ClearMediaType() {
-	x.MediaType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_MediaType = nil
 }
 
 func (x *InstagramContainerMessage) ClearIsCarouselItem() {
-	x.IsCarouselItem = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_IsCarouselItem = false
 }
 
 func (x *InstagramContainerMessage) ClearUploadType() {
-	x.UploadType = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_UploadType = nil
 }
 
 func (x *InstagramContainerMessage) ClearCaption() {
-	x.Caption = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_Caption = nil
 }
 
 type InstagramContainerMessage_builder struct {
@@ -236,13 +256,31 @@ func (b0 InstagramContainerMessage_builder) Build() *InstagramContainerMessage {
 	m0 := &InstagramContainerMessage{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.ImageUrl = b.ImageUrl
-	x.VideoUrl = b.VideoUrl
-	x.MediaType = b.MediaType
-	x.IsCarouselItem = b.IsCarouselItem
-	x.UploadType = b.UploadType
-	x.Children = b.Children
-	x.Caption = b.Caption
+	if b.ImageUrl != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 7)
+		x.xxx_hidden_ImageUrl = b.ImageUrl
+	}
+	if b.VideoUrl != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 7)
+		x.xxx_hidden_VideoUrl = b.VideoUrl
+	}
+	if b.MediaType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 7)
+		x.xxx_hidden_MediaType = b.MediaType
+	}
+	if b.IsCarouselItem != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
+		x.xxx_hidden_IsCarouselItem = *b.IsCarouselItem
+	}
+	if b.UploadType != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 7)
+		x.xxx_hidden_UploadType = b.UploadType
+	}
+	x.xxx_hidden_Children = b.Children
+	if b.Caption != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 7)
+		x.xxx_hidden_Caption = b.Caption
+	}
 	return m0
 }
 

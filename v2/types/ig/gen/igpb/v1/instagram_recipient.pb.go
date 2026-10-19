@@ -4,8 +4,6 @@
 // 	protoc        (unknown)
 // source: igpb/v1/instagram_recipient.proto
 
-//go:build !protoopaque
-
 package igpbv1
 
 import (
@@ -26,11 +24,12 @@ const (
 
 // Recipient represents the Instagram user who will receive the message
 type Recipient struct {
-	state protoimpl.MessageState `protogen:"hybrid.v1"`
-	// Instagram chat ID of the recipient (scoped ID)
-	Id            *string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          *string                `protobuf:"bytes,1,opt,name=id"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *Recipient) Reset() {
@@ -59,25 +58,30 @@ func (x *Recipient) ProtoReflect() protoreflect.Message {
 }
 
 func (x *Recipient) GetId() string {
-	if x != nil && x.Id != nil {
-		return *x.Id
+	if x != nil {
+		if x.xxx_hidden_Id != nil {
+			return *x.xxx_hidden_Id
+		}
+		return ""
 	}
 	return ""
 }
 
 func (x *Recipient) SetId(v string) {
-	x.Id = &v
+	x.xxx_hidden_Id = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
 }
 
 func (x *Recipient) HasId() bool {
 	if x == nil {
 		return false
 	}
-	return x.Id != nil
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *Recipient) ClearId() {
-	x.Id = nil
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Id = nil
 }
 
 type Recipient_builder struct {
@@ -91,7 +95,10 @@ func (b0 Recipient_builder) Build() *Recipient {
 	m0 := &Recipient{}
 	b, x := &b0, m0
 	_, _ = b, x
-	x.Id = b.Id
+	if b.Id != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		x.xxx_hidden_Id = b.Id
+	}
 	return m0
 }
 
