@@ -1905,12 +1905,16 @@ func (c *ClientWA) UnSubscribedWaba(waba_id string) response.Responser {
 	return response.GetResponseRequest(resp.Body, "UnSubscribedWaba", "ClientWA", response.ResponseSuccess)
 }
 
-func (c *ClientWA) setWabaID(waba_id string) {
+func (c *ClientWA) SetWabaID(waba_id string) {
 	c.Config.setWabaID(waba_id)
 }
 
 func (c *ClientWA) SetPhoneId(phone_id string) {
 	c.Config.setPhoneID(phone_id)
+}
+
+func (c *ClientWA) SetBusinessId(phone_id string) {
+	c.Config.setBusinessID(phone_id)
 }
 
 func (c ClientWA) GetWabaId() string {
@@ -1919,6 +1923,10 @@ func (c ClientWA) GetWabaId() string {
 
 func (c ClientWA) GetPhoneId() string {
 	return c.getphoneID()
+}
+
+func (c ClientWA) GetBusinessId() string {
+	return c.getBusinessID()
 }
 
 // GetWabaInfo makes a GET call to the WhatsApp API to get info about
