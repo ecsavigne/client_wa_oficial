@@ -224,6 +224,7 @@ func (cl *ClientWA) Broadcast(data map[string]any) {
 				}
 			default:
 				cl.Config.EventHandle(message)
+				return
 			}
 		}
 	// 	template
@@ -2033,12 +2034,14 @@ func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
 		if err, ok := err.(*response.Error); ok {
 			return err
 		}
+
 		return response.NewError(&response.Error{
 			Type:    response.ResponseError,
 			Code:    types.CodeErrorUnrecognized,
 			Message: fmt.Sprintln("Error in GetNumberInfo request of ClientWA. error is: ", err.Error()),
 		})
 	}
+	payload := make(map[string]any)
 
 	// Do request
 	resp, err := doRequest(c.request, c)
@@ -2058,11 +2061,22 @@ func (c *ClientWA) GetBusinessInfo(business_id string) response.Responser {
 					Message: "Unauthorized: Invalid access token or missing token. original error: " + err.Message,
 				})
 			case types.CodeErrorForbidden:
-				return response.NewError(&response.Error{
+				e := &response.Error{
 					Type:    response.ResponseError,
 					Code:    types.CodeErrorForbidden,
 					Message: "Forbidden: Access token does not have permission to access this resource. original error: " + err.Message,
-				})
+				}
+
+				x_app_usage := resp.Header.Get("X-App-Usage")
+				if x_app_usage != "" {
+					payload["x_app_usage"] = x_app_usage
+				}
+
+				if len(payload) > 0 {
+					e.X_Error = payload
+				}
+
+				return response.NewError(e)
 			case types.CodeErrorUrlNotFound:
 				return response.NewError(&response.Error{
 					Type:    response.ResponseError,

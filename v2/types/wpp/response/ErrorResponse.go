@@ -4,16 +4,16 @@ import "fmt"
 
 type Error struct {
 	KernelResponser
-	Type           string `json:"type,omitempty"`
-	ResponseType   string `json:"response_type,omitempty"`
-	Message        string `json:"message,omitempty"`
-	Code           int64  `json:"code,omitempty"`
-	ErrorSubcode   int64  `json:"error_subcode,omitempty"`
-	IsTransient    bool   `json:"is_transient,omitempty"`
-	ErrorUserTitle string `json:"error_user_title,omitempty"`
-	ErrorUserMsg   string `json:"error_user_msg,omitempty"`
-
-	FbtraceID string `json:"fbtrace_id,omitempty"`
+	Type           string         `json:"type,omitempty"`
+	ResponseType   string         `json:"response_type,omitempty"`
+	Message        string         `json:"message,omitempty"`
+	Code           int64          `json:"code,omitempty"`
+	ErrorSubcode   int64          `json:"error_subcode,omitempty"`
+	IsTransient    bool           `json:"is_transient,omitempty"`
+	ErrorUserTitle string         `json:"error_user_title,omitempty"`
+	ErrorUserMsg   string         `json:"error_user_msg,omitempty"`
+	X_Error        map[string]any `json:"x_error,omitempty"`
+	FbtraceID      string         `json:"fbtrace_id,omitempty"`
 }
 
 func NewError(config Responser) *Error {
