@@ -67,7 +67,13 @@ message InstagramInfoAccountBusinessResponse {
   ];
 
   // The app user's Instagram username
-  string username = 10 [
+  string profile_pic = 10 [
+    (buf.validate.field).string = {min_len: 1},
+    (google.api.field_behavior) = REQUIRED
+  ];
+
+  // The URL for the profile picture account contact
+  string username = 11 [
     (buf.validate.field).string = {min_len: 1},
     (google.api.field_behavior) = REQUIRED
   ];

@@ -1195,6 +1195,12 @@ func (self *ClientIG) getInfoAccountBusiness() gralresponse.Responser {
 	}, false, gralresponse.InfoAccountBusinessResponse)
 }
 
+func (self *ClientIG) getInfoContact(account_id string) gralresponse.Responser {
+	return self.executeRequest(http.MethodGet, fmt.Sprintf("/%s", account_id), types.QueryData{
+		"fields": "name,username,profile_pic",
+	}, false, gralresponse.InfoAccountBusinessResponse)
+}
+
 func (self *ClientIG) getInstagramPersistentMenu() gralresponse.Responser {
 	return self.executeRequest(http.MethodGet, "/messenger_profile", types.QueryData{
 		"fields": "persistent_menu",
@@ -1442,6 +1448,8 @@ func (self *ClientIG) Get(type_info ig.IG_GET_INFO_TYPE, data ...map[string]any)
 	switch type_info {
 	case ig.IG_GET_INFO_ACCOUNT_BUSINESS:
 		return self.getInfoAccountBusiness()
+	case ig.IG_GET_INFO_CONTACT:
+		return self.getInfoContact(dataParam["account_id"].(string))
 	case ig.IG_GET_INFO_PERSISTENT_MENU:
 		return self.getInstagramPersistentMenu()
 	case ig.IG_GET_INFO_ICE_BREAKERS:

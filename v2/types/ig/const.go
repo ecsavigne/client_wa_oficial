@@ -29,6 +29,7 @@ type IG_GET_INFO_TYPE string
 
 const (
 	IG_GET_INFO_ACCOUNT_BUSINESS      IG_GET_INFO_TYPE = "account_business"
+	IG_GET_INFO_CONTACT               IG_GET_INFO_TYPE = "account_contact"
 	IG_GET_INFO_LINK                  IG_GET_INFO_TYPE = "ig_link"
 	IG_GET_INFO_PERSISTENT_MENU       IG_GET_INFO_TYPE = "persistent_menu"
 	IG_GET_INFO_ICE_BREAKERS          IG_GET_INFO_TYPE = "ice_breakers"

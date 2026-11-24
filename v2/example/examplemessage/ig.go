@@ -14,7 +14,7 @@ func NewClientIG() clientpack.Client {
 	client, e := ig.NewClientIG(
 		// ig.WithEnvFilePath("../../config_env"),
 		ig.WithEnvFilePath("../config_env"),
-		ig.WithToken("IGAAQ7JedvaElBZAGFxUkc0ZAm5idGZAMdGIyV29VNFRLUkY4d0QtVnlCaHpwX0VncWFtYXE0TkxMb2JOdktIN1RfaENma2c4a29SMWtGZAU4zNFJsY1BLVHFEZAzYxMTFfZAE1jSjBRYk1tTGdQLXViVDRzSUJ0bnJFV2QzSFZAUblZAzd3ItRDdhQ04wUWtLbjhScFJXMnlvTAZDZD"),
+		ig.WithToken("IGAAQ7JedvaElBZAFkyM05MbHBNbGt3cWRybHBDR1ZAOdkFuRmwySG80eU8zVFgzd0pKcjFsc0l6alFCeE04LUkxZA3o5Mkt0U3lFczNtUm9vdUFiOXcwNWNoZA0pMa1E3eEhXVDJMMjNjRUQyUzdiY2JGd1ZApY0w3SThZAdnpxNDNYQQZDZD"),
 		ig.WithUserID("111111111"))
 
 	if e != nil {
@@ -392,6 +392,10 @@ media_count:			The number of Media object on the User
 */
 func GetAccountInfoBusiness(cl clientpack.Client) response.Responser {
 	return cl.Get(type_ig.IG_GET_INFO_ACCOUNT_BUSINESS)
+}
+
+func GetInfoContactAccount(cl clientpack.Client, account_id string) response.Responser {
+	return cl.Get(type_ig.IG_GET_INFO_CONTACT, map[string]any{"account_id": account_id})
 }
 
 func GetPersistentMenu(cl clientpack.Client) response.Responser {
