@@ -14,7 +14,7 @@ func NewClientIG() clientpack.Client {
 	client, e := ig.NewClientIG(
 		// ig.WithEnvFilePath("../../config_env"),
 		ig.WithEnvFilePath("../config_env"),
-		ig.WithToken("IGAAQ7JedvaElBZAFkyM05MbHBNbGt3cWRybHBDR1ZAOdkFuRmwySG80eU8zVFgzd0pKcjFsc0l6alFCeE04LUkxZA3o5Mkt0U3lFczNtUm9vdUFiOXcwNWNoZA0pMa1E3eEhXVDJMMjNjRUQyUzdiY2JGd1ZApY0w3SThZAdnpxNDNYQQZDZD"),
+		ig.WithToken("XXXXXXXXXXXXXXXXXX"),
 		ig.WithUserID("111111111"))
 
 	if e != nil {

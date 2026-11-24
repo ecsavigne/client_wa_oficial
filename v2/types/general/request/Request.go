@@ -124,7 +124,7 @@ func DefaultRequest(config clientoficial.ConfigClient, method string, ePoint str
 	}
 
 	urlStr = strings.ReplaceAll(urlStr, "%3F", "?")
-	fmt.Println("EndPoint URL:\n", method, "  ", urlStr, " Data:\n", buff.String())
+	// fmt.Println("EndPoint URL:\n", method, "  ", urlStr, " Data:\n", buff.String())
 
 	req, err = http.NewRequestWithContext(context.Background(), method, urlStr, buff)
 	defaultHeader(config, req)
